@@ -46,6 +46,7 @@ export const useGetExpoPushToken = async () => {
       token: tokenData.data,
     };
   } catch (e) {
+    console.log(e)
     return null;
   }
 };

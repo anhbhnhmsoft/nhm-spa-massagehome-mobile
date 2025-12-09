@@ -40,3 +40,10 @@ yarn-error.*
 expo-env.d.ts
 # @end expo-cli
 
+android
+ios
+google-services.json
+yarn.lock
+package-lock.json
+.idea
+.env
