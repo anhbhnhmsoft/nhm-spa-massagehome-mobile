@@ -4,6 +4,7 @@ import { SecureStorage } from '@/lib/storages';
 import { _StorageKey } from '@/lib/storages/key';
 import ErrorAPIServer, { IValidationErrors } from '@/lib/types';
 import i18next from 'i18next';
+import useAuthStore from '@/features/auth/store';
 
 
 
@@ -48,7 +49,16 @@ client.interceptors.response.use(
       if (statusCodeResponse === _HTTPStatus.VALIDATE_FAILED_REQUEST) {
         const errorValidate: IValidationErrors = errorData.errors;
         return Promise.reject(new ErrorAPIServer(statusCodeResponse, messageError, errorResponse, errorValidate));
-      } else {
+      } else if (statusCodeResponse === _HTTPStatus.UNAUTHORIZED) {
+        //Xử lý khi token không hợp lệ
+        // Gọi hàm logout từ store (dùng getState vì đang ở ngoài React Component)
+        useAuthStore.getState().logout();
+        return Promise.reject(new ErrorAPIServer(
+          _HTTPStatus.UNAUTHORIZED,
+          i18next.t("common_error.invalid_or_expired_token"),
+          errorResponse
+        ));
+      }else{
         return Promise.reject(new ErrorAPIServer(statusCodeResponse, messageError, errorResponse));
       }
     } else if (error.request) {

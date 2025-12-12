@@ -33,7 +33,7 @@ export default function MasseursScreen() {
 
       {/* --- CONTENT --- */}
       <FlatList
-        keyExtractor={(item, index) => `package-${item.id}-${index}`}
+        keyExtractor={(item, index) => `masseur-${item.id}-${index}`}
         data={data}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -70,48 +70,4 @@ export default function MasseursScreen() {
   );
 }
 
-// const FilterBar = () => {
-//   return (
-//     <View className="bg-[#1d4ed8] pb-6 rounded-b-3xl -mt-4 z-10 pt-4">
-//       <ScrollView
-//         horizontal
-//         showsHorizontalScrollIndicator={false}
-//         contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
-//       >
-//         {FILTERS.map((filter) => {
-//           const isActive = activeFilter === filter.id;
-//           return (
-//             <TouchableOpacity
-//               key={filter.id}
-//               onPress={() => setActiveFilter(filter.id)}
-//               className={`flex-row items-center rounded-full px-4 py-1.5 border ${
-//                 isActive
-//                   ? 'bg-white border-white'
-//                   : 'bg-blue-800/30 border-blue-400/30'
-//               }`}
-//             >
-//               <Text
-//                 className={`text-xs font-medium ${
-//                   isActive ? 'text-blue-700' : 'text-blue-100'
-//                 }`}
-//               >
-//                 {filter.label}
-//               </Text>
-//               {filter.count && (
-//                 <View className={`ml-1 rounded-full px-1.5 py-0.5 ${
-//                   isActive ? 'bg-blue-100' : 'bg-blue-700'
-//                 }`}>
-//                   <Text className={`text-[9px] font-bold ${
-//                     isActive ? 'text-blue-700' : 'text-white'
-//                   }`}>
-//                     {filter.count}
-//                   </Text>
-//                 </View>
-//               )}
-//             </TouchableOpacity>
-//           );
-//         })}
-//       </ScrollView>
-//     </View>
-//   )
-// }
+

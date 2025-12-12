@@ -13,10 +13,10 @@ import { useColorScheme } from 'nativewind';
 import ToastManager from 'toastify-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHeartbeat, useHydrateAuth } from '@/features/auth/hooks';
+import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
 import { useLocation } from '@/features/app/hooks/use-location';
-import { useNotification } from '@/features/app/hooks/use-notification';
+import useAuthStore from '@/features/auth/store';
 
 
 
@@ -80,11 +80,9 @@ export default function RootLayout() {
 }
 
 const AppContainer = () => {
-  const { complete, status } = useHydrateAuth();
+  const complete = useHydrateAuth();
+  const status = useAuthStore((state) => state.status);
   const { locationPermission } = useLocation();
-  // Kiểm tra heartbeat khi user có đang được xác thực hay không
-  useHeartbeat();
-  useNotification();
   return (
     <>
       <Stack
@@ -96,16 +94,17 @@ const AppContainer = () => {
         </Stack.Protected>
         <Stack.Protected guard={complete}>
           {/* Hiển thị màn hình request location nếu chưa có quyền location, và không nhấn bỏ qua */}
-          <Stack.Protected guard={locationPermission !== "skipped" && locationPermission !== "granted" && locationPermission === null}>
+          <Stack.Protected
+            guard={
+              locationPermission !== 'skipped' &&
+              locationPermission !== 'granted' &&
+              locationPermission === null
+            }>
             <Stack.Screen name="request-location" />
           </Stack.Protected>
-
-          <Stack.Screen name="(tab)" />
+          <Stack.Screen name="(app)" />
           <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
             <Stack.Screen name="(auth)" />
-          </Stack.Protected>
-          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED}>
-            <Stack.Screen name="(service)" />
           </Stack.Protected>
         </Stack.Protected>
       </Stack>

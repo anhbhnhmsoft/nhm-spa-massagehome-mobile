@@ -53,7 +53,7 @@ export default function Index() {
               onPress={() => languageSheetRef.current?.present()}
             >
               <Image source={langConfig?.icon} className="mr-2 h-6 w-6" />
-              <Text className="mr-1 font-medium text-white">{langConfig?.label}</Text>
+              <Text className="mr-1 font-inter-medium text-white">{langConfig?.label}</Text>
               <ChevronDown color="white" size={16} />
             </TouchableOpacity>
           </View>
@@ -64,7 +64,7 @@ export default function Index() {
               Massage Home
             </Text>
 
-            <Text className="text-center text-lg font-medium leading-7 text-white">
+            <Text className="text-center text-lg font-inter-medium leading-7 text-white">
               {t('auth.index_label')}
             </Text>
           </View>

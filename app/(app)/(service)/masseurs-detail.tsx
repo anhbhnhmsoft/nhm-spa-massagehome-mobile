@@ -180,13 +180,6 @@ export default function MasseursDetailScreen() {
                   <Text className="text-lg font-inter-bold text-gray-900 mb-3">
                     {t('services.specialty')}
                   </Text>
-                  <View className="flex-row flex-wrap gap-2">
-                    {ktv.review_application.skills.map((skill, index) => (
-                      <View key={index} className="bg-blue-50 px-4 py-2 rounded-xl">
-                        <Text className="text-blue-700 font-medium text-sm">{skill}</Text>
-                      </View>
-                    ))}
-                  </View>
                 </View>
               </View>
             </View>

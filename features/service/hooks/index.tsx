@@ -5,7 +5,6 @@ import {
 import {
   BookingServiceRequest,
   CategoryListRequest,
-  ListCouponRequest,
   PickBookingItem,
   PickBookingRequirement,
   ServiceListRequest,
@@ -23,6 +22,8 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useLocationAddress } from '@/features/app/hooks/use-location';
 import { _StepFormBooking } from '@/features/service/const';
+import useAuthStore from '@/features/auth/store';
+import { _AuthStatus } from '@/features/auth/const';
 
 /**
  * Lấy danh sách danh mục dịch vụ
@@ -86,6 +87,8 @@ export const useGetServiceList = (params: ServiceListRequest, enabled?: boolean)
 export const useSetService = () => {
   const setService = useServiceStore((s) => s.setService);
 
+  const status = useAuthStore((state) => state.status);
+
   const { mutate } = useMutationServiceDetail();
 
   const setLoading = useApplicationStore((s) => s.setLoading);
@@ -93,19 +96,24 @@ export const useSetService = () => {
   const handleError = useErrorToast();
 
   return useCallback((id: string) => {
-    setLoading(true);
-    mutate(id, {
-      onSuccess: (res) => {
-        setService(res.data);
-        setLoading(false);
-        router.push('/(service)/service-detail');
-      },
-      onError: (error) => {
-        setLoading(false);
-        handleError(error);
-      },
-    });
-  }, []);
+    if (status === _AuthStatus.UNAUTHORIZED ) {
+      router.push(`/(auth)`);
+    }else if(status === _AuthStatus.AUTHORIZED){
+      setLoading(true);
+      mutate(id, {
+        onSuccess: (res) => {
+          setService(res.data);
+          router.push('/(app)/(service)/service-detail');
+        },
+        onError: (error) => {
+          handleError(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        }
+      });
+    }
+  }, [status]);
 };
 
 /**
@@ -128,7 +136,7 @@ export const useServiceDetail = () => {
 
   const pickServiceToBooking = (data: PickBookingItem) => {
     setPickServiceBooking(data);
-    router.push('/(service)/service-booking');
+    router.push('/(app)/(service)/service-booking');
   };
 
   return {
@@ -254,7 +262,7 @@ export const useServiceBooking = () => {
           setLoading(false);
           setPickServiceBooking(null);
           setStep(_StepFormBooking.MAP);
-          router.push('/(tab)/orders');
+          router.push('/(app)/(tab)/orders');
         },
         onError: (error) => {
           // Xử lý khi có lỗi xảy ra

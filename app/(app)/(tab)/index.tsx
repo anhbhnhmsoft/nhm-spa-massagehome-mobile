@@ -89,7 +89,7 @@ export default function HomeScreen() {
         <View className="mb-6 gap-4">
           <TouchableOpacity
             onPress={() => {
-              router.push('/(tab)/services');
+              router.push('/(app)/(tab)/services');
             }}>
             <GradientImageBackground
               className="h-48 w-full justify-center rounded-2xl"
@@ -140,7 +140,7 @@ export default function HomeScreen() {
             <Text className="text-lg font-inter-bold text-slate-800">
               {t('homepage.technician_suggest')}
             </Text>
-            <TouchableOpacity onPress={() => router.push('/(tab)/masseurs')}>
+            <TouchableOpacity onPress={() => router.push('/(app)/(tab)/masseurs')}>
               <Text className="text-sm font-medium text-blue-600">{t('common.see_all')}</Text>
             </TouchableOpacity>
           </View>
@@ -165,7 +165,7 @@ export default function HomeScreen() {
           {/*Header Category*/}
           <View className="mb-4 flex-row items-center justify-between">
             <Text className="text-lg font-inter-bold text-slate-800">{t('homepage.services')}</Text>
-            <TouchableOpacity onPress={() => router.push('/(tab)/services')}>
+            <TouchableOpacity onPress={() => router.push('/(app)/(tab)/services')}>
               <Text className="text-sm font-medium text-blue-600">{t('common.see_all')}</Text>
             </TouchableOpacity>
           </View>

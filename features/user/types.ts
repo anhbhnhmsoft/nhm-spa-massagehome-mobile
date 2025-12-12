@@ -21,7 +21,6 @@ export type ListKTVItem = {
   };
   review_application: {
     address: string;
-    skills: string[];
     experience: number;
     latitude: number;
     longitude: number;

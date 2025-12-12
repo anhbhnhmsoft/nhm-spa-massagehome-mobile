@@ -79,7 +79,7 @@ export const useLocation = () => {
     return () => {
       subscription.remove();
     };
-  }, [locationPermission]); // Dependency này ok, nhưng cẩn thận loop nếu logic bên trong thay đổi permission liên tục
+  }, [locationPermission]);
 
   return { locationPermission };
 };

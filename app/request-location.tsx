@@ -21,7 +21,7 @@ export default function RequestLocationScreen() {
     setLoading(true);
     try {
       await getPermission();
-      router.replace('/(tab)');
+      router.replace('/(app)/(tab)');
     } finally {
       setLoading(false);
     }
@@ -64,6 +64,15 @@ export default function RequestLocationScreen() {
           >
             <Text className="text-white text-lg font-bold">
               {loading ? t('common.loading') : t('request_location.use_current_location')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={skipGetLocation}
+            className="w-full py-4 items-center flex-row justify-center"
+          >
+            <Text className="text-gray-500 text-lg font-inter-bold">
+              {t('common.skip')}
             </Text>
           </TouchableOpacity>
         </View>

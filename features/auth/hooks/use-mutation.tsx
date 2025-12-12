@@ -7,7 +7,9 @@ import {
 } from '@/features/auth/types';
 import authApi from '@/features/auth/api';
 
-
+/**
+ * Hook để xác thực user xem là login hay register
+ */
 export const useAuthenticateMutation = () => {
   return useMutation({
     mutationFn: (data: AuthenticateRequest) => authApi.authenticate(data),
@@ -56,8 +58,21 @@ export const useLoginMutation = () => {
   });
 };
 
+/**
+ * Hook để lấy thông tin profile user
+ */
+export const useProfileMutation = () => {
+  return useMutation({
+    mutationFn: () => authApi.profile(),
+  });
+};
 
-
+/**
+ * Hook để chỉnh sửa avatar user
+ */
+export const useMutationEditAvatar = () => useMutation({
+  mutationFn: (data: FormData) => authApi.editAvatar(data),
+});
 
 
 

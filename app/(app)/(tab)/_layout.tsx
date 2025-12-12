@@ -1,14 +1,11 @@
-import { View, StyleSheet } from 'react-native';
-import DefaultColor from '@/components/styles/color';
-import { Text } from '@/components/ui/text';
+import { StyleSheet } from 'react-native';
 import { router, Tabs } from 'expo-router';
 import { Home, Briefcase, Users, ShoppingBag, User } from 'lucide-react-native';
 import { useCheckAuth } from '@/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
-import useApplicationStore from '@/lib/store';
-import FullScreenLoading from '@/components/full-screen-loading';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { NotificationPermissionModal } from '@/components/notification-permission-modal';
+import { TabIcon } from '@/components/app/tab-icon';
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -37,59 +34,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const TabIcon = ({
-  focused,
-  icon: IconComponent,
-  label,
-}: {
-  focused: boolean;
-  icon: any;
-  label: string;
-}) => {
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        top: 24, // iOS đẩy xuống 12px, Android giữ nguyên
-      }}>
-      {/* Khối nền của Icon */}
-      <View
-        className={`mb-1 h-10 w-10 items-center justify-center rounded-2xl ${
-          focused ? 'bg-blue-600' : 'bg-transparent'
-        }`}>
-        <IconComponent
-          size={20}
-          color={focused ? 'white' : DefaultColor.gray['400']}
-          strokeWidth={focused ? 2.5 : 2}
-        />
-      </View>
-
-      {/* Label */}
-      <Text
-        numberOfLines={1}
-        style={{
-          fontSize: 10,
-          fontWeight: focused ? '700' : '500',
-          color: focused ? '#2563eb' : DefaultColor.gray['400'],
-          textAlign: 'center',
-          width: 70,
-        }}>
-        {label}
-      </Text>
-    </View>
-  );
-};
 
 export default function TabsLayout() {
   const checkAuth = useCheckAuth();
   const { t } = useTranslation();
-  const loading = useApplicationStore((s) => s.loading);
 
   return (
     <>
-      <FullScreenLoading loading={loading} />
       <FocusAwareStatusBar />
+      {/* --- NOTIFICATION PERMISSION MODAL --- */}
       <NotificationPermissionModal />
       <Tabs
         screenOptions={{

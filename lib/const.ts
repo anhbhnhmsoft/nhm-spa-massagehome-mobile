@@ -1,7 +1,5 @@
 export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
-export const APP_NAME = 'glow';
-
 export enum _LanguageCode {
   VI = 'vi',
   EN = 'en',

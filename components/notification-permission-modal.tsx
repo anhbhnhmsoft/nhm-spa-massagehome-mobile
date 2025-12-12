@@ -1,25 +1,30 @@
-
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Modal, Pressable, AppState, Linking, Platform } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { AppState, Linking, Modal, Pressable, Text, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import useAuthStore from '@/features/auth/store';
 import { BellRing } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { useCheckNotificationPermission, useSyncTokenToServer } from '@/features/app/hooks/use-notification'; // Nếu có icon
+import { useCheckNotificationPermission } from '@/features/app/hooks/use-notification';
+import { _AuthStatus } from '@/features/auth/const'; // Nếu có icon
 
 export function NotificationPermissionModal() {
   const {t} = useTranslation();
-  const user = useAuthStore(state => state.user); // Lấy trạng thái login
+  const status = useAuthStore(state => state.status); // Lấy trạng thái login
+
   const [visible, setVisible] = useState(false);
 
   const appState = useRef(AppState.currentState);
-
+  const checkGranted =  useCheckNotificationPermission();
+  // const syncTokenToServer = useSyncTokenToServer();
 
   // Hàm kiểm tra quyền
   const checkPermission = async () => {
-    const isGranted = await useCheckNotificationPermission(user);
-    if (!isGranted) {
-      setVisible(true);
+    // Chỉ kiểm tra khi user đã login
+    if (status === _AuthStatus.AUTHORIZED){
+      const isGranted = await checkGranted();
+      if (!isGranted) {
+        setVisible(true);
+      }
     }
   };
 
@@ -41,19 +46,19 @@ export function NotificationPermissionModal() {
     return () => {
       subscription.remove();
     };
-  }, [user]);
+  }, [status]);
 
   // 4. Xử lý khi bấm nút "Bật thông báo"
   const handleRequestPermission = async () => {
     const { status } = await Notifications.getPermissionsAsync();
-
     // Trường hợp 1: Chưa hỏi bao giờ -> Hiện popup hệ thống
     if (status === 'undetermined') {
       const { status: newStatus } = await Notifications.requestPermissionsAsync();
+      // Đồng bộ token lên server khi bật thông báo thành công
+      // await syncTokenToServer();
 
       if (newStatus === 'granted') {
         setVisible(false);
-        await useSyncTokenToServer(user)
       }
     }
     // Trường hợp 2: Đã từng từ chối (denied) -> Phải mở Settings

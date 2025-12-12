@@ -10,6 +10,7 @@ import useErrorToast from '@/features/app/hooks/use-error-toast';
 import useAuthStore from '@/features/auth/store';
 import { _AuthStatus } from '@/features/auth/const';
 
+
 export const useGetListKTV = (params: ListKTVRequest) => {
   const query = useInfiniteListKTV(params);
 
@@ -42,24 +43,24 @@ export const useSetKtv = () => {
 
   const { mutate } = useMutationKtvDetail();
 
-  return useCallback(
-    (id: string) => {
-      setLoading(true);
+  return useCallback((id: string) => {
       if (status === _AuthStatus.UNAUTHORIZED ) {
         router.push(`/(auth)`);
-        setLoading(false);
+      }else{
+        setLoading(true);
+        mutate(id, {
+          onSuccess: (res) => {
+            setKtv(res.data);
+            router.push('/(app)/(service)/masseurs-detail');
+          },
+          onError: (error) => {
+            handleError(error);
+          },
+          onSettled: () => {
+            setLoading(false);
+          }
+        });
       }
-      mutate(id, {
-        onSuccess: (res) => {
-          setKtv(res.data);
-          setLoading(false);
-          router.push('/(service)/masseurs-detail');
-        },
-        onError: (error) => {
-          setLoading(false);
-          handleError(error);
-        },
-      });
     },
     [status]
   );
@@ -97,5 +98,25 @@ export const useKTVDetail = () => {
   return {
     ktv,
     queryServices,
+  };
+};
+
+/**
+ * Xử lý màn hình profile
+ */
+export const useProfile = () => {
+  const status = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
+
+
+  // Chuyển hướng đến màn hình đăng nhập nếu chưa đăng nhập
+  useEffect(() => {
+    if (!user && status === _AuthStatus.UNAUTHORIZED) {
+      router.push('/(auth)');
+    }
+  }, [user, status]);
+
+  return {
+    user,
   };
 };

@@ -74,11 +74,25 @@
     "expire_date": "HSD",
     "remaining_usage": "Còn lại",
     "sold_out": "Hết lượt",
-    "expired": "Hết hạn"
+    "expired": "Hết hạn",
+    "version": "Phiên bản",
+    "currency": "Point",
+    "auto_pay": "Duyệt tự động 24/7",
+    "save_image": "Lưu ảnh"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
-    "copy_success": "Copy thành công"
+    "copied_to_clipboard": "Đã sao chép vào clipboard"
+  },
+  "permission": {
+    "picture_lib": {
+      "title": "Cần cấp quyền truy cập vào thư viện ảnh",
+      "message": "Vui lòng cấp quyền truy cập vào thư viện ảnh để lưu trữ ảnh."
+    },
+    "camera": {
+      "title": "Cần cấp quyền truy cập vào camera",
+      "message": "Vui lòng cấp quyền truy cập vào camera để xử lý tác vụ."
+    }
   },
   "common_error": {
     "server_error": "Đã xảy ra lỗi trên máy chủ, vui lòng liên hệ quản trị viên để được hỗ trợ.",
@@ -99,7 +113,35 @@
     "download_failed": "Download file thất bại, vui lòng liên hệ với quản trị viên để được hỗ trợ",
     "file_already_exist": "File này đã tồn tại trong máy của bạn",
     "linking_not_support": "Điện thoại của bạn không hỗ trợ Linking nhanh",
-    "failed_to_set_language": "Lỗi khi set ngôn ngữ, vui lòng thử lại sau."
+    "failed_to_set_language": "Lỗi khi set ngôn ngữ, vui lòng thử lại sau.",
+    "error_save_image": "Lỗi khi lưu ảnh, vui lòng thử lại sau."
+  },
+  "enum": {
+    "order_status": {
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "ONGOING": "Đang thực hiện",
+      "COMPLETED": "Hoàn thành",
+      "CANCELED": "Hủy"
+    },
+    "payment_type": {
+      "QR_BANKING": "Chuyển khoản QR Banking",
+      "ZALO_PAY": "Thanh toán Zalo Pay",
+      "MOMO_PAY": "Thanh toán Momo Pay"
+    },
+    "transaction_type": {
+      "DEPOSIT_QR_CODE": "Nạp tiền qua QR Banking",
+      "DEPOSIT_ZALO_PAY": "Nạp tiền qua Zalo Pay",
+      "DEPOSIT_MOMO_PAY": "Nạp tiền qua Momo Pay",
+      "WITHDRAWAL": "Rút tiền",
+      "PAYMENT": "Thanh toán",
+      "AFFILIATE": "Nhận hoa hồng"
+    },
+    "transaction_status": {
+      "PENDING": "Chờ xử lý",
+      "COMPLETED": "Hoàn thành",
+      "FAILED": "Thất bại"
+    }
   },
   "tab": {
     "home": "Trang chủ",
@@ -163,7 +205,8 @@
     "hello": "Chào mừng trở lại",
     "search_description": "Tìm chuyên viên massage hoàn hảo cho bạn",
     "search_placeholder": "Tìm kiếm dịch vụ hoặc chuyên viên...",
-    "title_orders": "Danh sách đơn hàng"
+    "title_orders": "Danh sách đơn hàng",
+    "orders_description": "Quản lý thông tin đơn hàng của bạn"
   },
   "homepage": {
     "hero_title": "Massage tại nhà",
@@ -179,6 +222,54 @@
       "cancel_sub": "Hoàn tiền đầy đủ trong vòng 24 giờ",
       "award": "Chứng nhận",
       "award_sub": "Chứng chỉ chuyên môn được xác nhận"
+    }
+  },
+  "profile": {
+    "partner_register_1": "Trở thành",
+    "partner_register_2": "Đối tác của chúng tôi",
+    "partner_commission_1": "Ưu đãi hoa hồng",
+    "partner_commission_2": "trọn đời",
+    "partner_commission_3": "Nhận ngay 30% hoàn tiền từ đơn thành công đầu tiên của người được giới thiệu",
+    "language": "Ngôn ngữ",
+    "wallet": "Ví của tôi",
+    "user_info": "Thông tin cá nhân",
+    "app_info": "Thông tin về ứng dụng",
+    "support": "Trung tâm hỗ trợ",
+    "log_out": "Đăng xuất",
+    "take_photo": "Chụp ảnh",
+    "choose_from_lib": "Chọn từ thư viện",
+    "delete_avatar_title": "Xóa ảnh đại diện"
+  },
+  "wallet": {
+    "balance": "Số dư ví",
+    "transactions": "Lịch sử giao dịch",
+    "deposit": "Nạp tiền",
+    "withdraw": "Rút tiền",
+    "no_transactions": "Chưa có giao dịch nào"
+  },
+  "payment": {
+    "deposit_title": "Nạp tiền vào ví",
+    "received_points": "Quy đổi nhận được",
+    "payment_methods": "Phương thức thanh toán",
+    "deposit_label_input": "Nhập số tiền",
+    "confirm_payment": "Xác nhận nạp tiền",
+    "total_payment": "Tổng thanh toán",
+    "payment_qr_title": "Thanh toán chuyển khoản",
+    "bank_name": "Tên ngân hàng",
+    "account_name": "Tên chủ tài khoản",
+    "account_number": "Số tài khoản",
+    "description_qr_bank": "Nội dung chuyển khoản",
+    "description_qr_bank_note": "*Bắt buộc ghi đúng nội dung này",
+    "waiting_payment": "Đang chờ thanh toán...",
+    "scan_qr_in_bank_app": "Quét mã QR trong ứng dụng Ngân hàng",
+    "success": {
+      "deposit": "Nạp tiền thành công, cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!"
+    },
+    "error": {
+      "empty_amount": "Vui lòng nhập số tiền nạp",
+      "min_amount": "Số tiền nạp tối thiểu là 10.000 đ",
+      "max_amount": "Số tiền nạp tối đa là 50.000.000 đ",
+      "invalid_payment_type": "Phương thức thanh toán không hợp lệ"
     }
   },
   "services": {

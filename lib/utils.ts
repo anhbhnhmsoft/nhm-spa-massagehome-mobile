@@ -20,11 +20,12 @@ export function uuid() {
   return v4();
 }
 
-
+// Hàm format tiền tệ
 export const formatBalance = (balance: string | number) => {
-  return Number(balance).toLocaleString('en-US');
+  return Number(balance).toLocaleString('vi-VN');
 };
 
+// Kiểm tra ngôn ngữ có hợp lệ hay không
 export const checkLanguage = (lang: string) => {
   return [_LanguageCode.EN, _LanguageCode.VI, _LanguageCode.CN].includes(lang as _LanguageCode);
 };
@@ -69,6 +70,7 @@ export const formatDistance = (distanceInKm: number) => {
   return `${distanceInKm.toFixed(1)} km`;
 };
 
+// Lấy thông tin tiền tệ
 export const formatCurrency = (value: string | number) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -76,7 +78,7 @@ export const formatCurrency = (value: string | number) => {
   }).format(Number(value));
 };
 
-
+// Lấy thông tin thiết bị
 export async function getInfoDevice(): Promise<IDeviceInfo> {
   const deviceName = Device.modelName || '';
   // chỉ lấy ios và android
@@ -90,6 +92,7 @@ export async function getInfoDevice(): Promise<IDeviceInfo> {
   };
 }
 
+// Lấy hoặc tạo deviceId duy nhất và lưu trữ trong keychain
 export async function getPersistentDeviceId(): Promise<string> {
   // 1) Kiểm tra xem có id đã lưu trước đó hay không
   const saved = await SecureStorage.getItem<string>(_StorageKey.SECURE_DEVICE_ID);
@@ -113,4 +116,19 @@ export async function getPersistentDeviceId(): Promise<string> {
   });
 
   return finalId;
+}
+
+/**
+ * Tạo URL hình ảnh QR Code cho VietQR
+ * @param config Tham số cấu hình QR Code
+ * @returns URL hình ảnh QR Code
+ */
+export const generateQRCodeImageUrl = (config: {
+  bin: string,
+  numberCode: string,
+  name: string,
+  money: string,
+  desc: string,
+}) => {
+  return `https://img.vietqr.io/image/${config.bin}-${config.numberCode}-qr_only.png?amount=${config.money}&addInfo=${config.desc}&accountName=${encodeURIComponent(config.name)}`;
 }

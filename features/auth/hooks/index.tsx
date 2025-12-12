@@ -1,14 +1,19 @@
 import useAuthStore from '@/features/auth/store';
 import { _AuthStatus, _Gender } from '@/features/auth/const';
-import { useHeartbeatQuery, useProfileQuery } from '@/features/auth/hooks/use-query';
+import { useHeartbeatQuery } from '@/features/auth/hooks/use-query';
 import useToast from '@/features/app/hooks/use-toast';
 import { ForwardedRef, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
 import {
-  useAuthenticateMutation, useLoginMutation, useRegisterMutation, useResendRegisterOTPMutation,
-  useSetLanguageMutation, useVerifyRegisterOTPMutation,
+  useAuthenticateMutation,
+  useLoginMutation, useMutationEditAvatar,
+  useProfileMutation,
+  useRegisterMutation,
+  useResendRegisterOTPMutation,
+  useSetLanguageMutation,
+  useVerifyRegisterOTPMutation,
 } from '@/features/auth/hooks/use-mutation';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { AuthenticateRequest, LoginRequest, RegisterRequest, VerifyRegisterOTPRequest } from '@/features/auth/types';
@@ -17,6 +22,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
+import {useCameraPermissions} from "expo-camera";
+import { Alert } from 'react-native';
 
 /**
  * Hàm để xác thực user xem là login hay register
@@ -126,7 +133,8 @@ export const useHandleLogin = () => {
             message: t('auth.success.login_success'),
           });
           // Sau khi login thành công thì redirect về màn hình home
-          router.replace('/(tab)');
+
+          router.push('/(app)/(tab)');
         }).catch((err) => {
           error({
             message: t('auth.error.register_failed'),
@@ -318,7 +326,7 @@ export const useHandleRegister = () => {
             message: t('auth.success.register_success'),
           });
           // Sau khi login thành công thì redirect về màn hình home
-          router.replace('/(tab)');
+          router.push('/(app)/(tab)');
         }).catch((err) => {
           error({
             message: t('auth.error.register_failed'),
@@ -350,55 +358,56 @@ export const useCheckAuth = () => {
  * Hook để hydrate auth state từ local storage
  */
 export const useHydrateAuth = () => {
-  const { hydrate, setUser, _hydrated, logout, status } = useAuthStore();
 
-  const { refetch, data, isError, isSuccess, error: errorQuery } = useProfileQuery();
+  const _hydrated = useAuthStore((state) => state._hydrated);
+  const hydrate = useAuthStore((state) => state.hydrate);
+  const status = useAuthStore((state) => state.status);
+  const setUser = useAuthStore((state) => state.setUser);
+  const logout = useAuthStore((state) => state.logout);
 
+  const { mutate } = useProfileMutation();
   const { error } = useToast();
+  const { t } = useTranslation();
 
   const [complete, setComplete] = useState(false);
 
-  const { t } = useTranslation();
-
   useEffect(() => {
-    // hydrate auth store và refetch profile query khi app ready
+    // Nếu chưa hydrate xong từ local storage thì chưa làm gì cả
     if (!_hydrated) {
       hydrate();
     }
-    if (status === _AuthStatus.AUTHORIZED) {
-      refetch();
-    }
-  }, [_hydrated]);
 
-  useEffect(() => {
-    // Nếu đã hydrate rồi và không có lỗi thì set user vào store
-    if (_hydrated) {
+    const initAuth = () => {
+      //  Nếu trạng thái là đã đăng nhập, cần verify token
       if (status === _AuthStatus.AUTHORIZED) {
-        if (isSuccess && data) {
-          // Nếu có dữ liệu user thì set vào store
-          setUser(data).finally(() => {
-            // Sau khi set user thành công thì set complete thành true
+        mutate(undefined, {
+          onSuccess: (res) => {
+            // Cập nhật thông tin user mới nhất
+            setUser(res.data.user);
+          },
+          onError: () => {
+            // Token hết hạn hoặc không hợp lệ
+            error({
+              message: t('common_error.invalid_or_expired_token'),
+            });
+            logout();
+          },
+          onSettled: () => {
+            // Dù thành công hay thất bại đều phải cho app chạy tiếp
             setComplete(true);
-          });
-        }
-        if (isError) {
-          // Nếu có lỗi thì logout
-          error({
-            message: t('common_error.invalid_or_expired_token'),
-          });
-          logout();
-          setComplete(true);
-        }
+          },
+        });
       } else {
+        // Nếu chưa đăng nhập (GUEST), cho qua luôn
         setComplete(true);
       }
-    }
-  }, [_hydrated, status, isError, data, isSuccess, errorQuery]);
+    };
 
-  return {
-    complete,
-    status,
-  };
+    initAuth();
+
+  }, [_hydrated]);
+
+  return complete;
 };
 
 /**
@@ -438,6 +447,7 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
               setLanguageStore(lang);
             },
             onError: (error) => {
+              console.log(error)
               errorToast({
                 message: t('common_error.failed_to_set_language'),
               });
@@ -462,9 +472,65 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
 };
 
 /**
- * Hook để kiểm tra xem user có đang được xác thực hay không
+ * Hook để kiểm tra xem user có đang hoạt động hay không
  */
 export const useHeartbeat = () => {
   const status = useAuthStore((state) => state.status);
   useHeartbeatQuery(status === _AuthStatus.AUTHORIZED);
+}
+
+
+/**
+ * Xử lý thay đổi avatar
+ */
+export const useChangeAvatar = () => {
+  const {t} = useTranslation();
+  const [permission, requestPermission] = useCameraPermissions();
+
+  // Xử lý khi nhấn nút chụp ảnh
+  const takePictureCamera = useCallback(async () => {
+    if (!permission?.granted) {
+      const res = await requestPermission();
+      if (!res.granted) {
+        Alert.alert(
+          t('permission.camera.title'),
+          t('permission.camera.message')
+        );
+        return false;
+      }
+      router.push("/(app)/(profile)/take-picture-avatar")
+      return true;
+    }
+  },[permission?.granted, t])
+
+  return {
+    takePictureCamera,
+  }
+
+}
+/**
+ * Hook để chỉnh sửa avatar
+ */
+export const useEditAvatar = () => {
+  const {mutate} = useMutationEditAvatar();
+  const errorHandle = useErrorToast();
+  const setUser = useAuthStore(state => state.setUser);
+  const setLoading = useApplicationStore(state => state.setLoading);
+
+  return useCallback((data: FormData) => {
+    setLoading(true);
+    mutate(data, {
+      onSuccess: (res) => {
+        setUser(res.data.user);
+        router.back();
+      },
+      onError: (error) => {
+        errorHandle(error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  }, []);
+
 }

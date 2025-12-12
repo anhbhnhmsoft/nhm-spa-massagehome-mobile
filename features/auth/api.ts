@@ -87,8 +87,18 @@ const authApi = {
     const response = await client.post(`${defaultUri}/set-device`, data);
     return response.data;
   },
-
-
+  /**
+   * Hàm để edit avatar cho user
+   * @param data
+   */
+  editAvatar: async (data:FormData): Promise<ProfileResponse> =>  {
+    const response = await client.post(`${defaultUri}/edit-avatar`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return response.data;
+  },
 
 };
 

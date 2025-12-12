@@ -20,7 +20,6 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
 
   const setKtv = useSetKtv();
 
-
   return (
     <TouchableOpacity className="mr-4 w-44 rounded-xl border border-slate-100 bg-white p-3 shadow-sm" onPress={() => setKtv(item.id)}>
       {/* --- PHẦN AVATAR --- */}
@@ -130,23 +129,6 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
           </View>
         </View>
 
-        {/* Tags */}
-        <View className="flex-row flex-wrap gap-1 mt-2">
-          {/* 1. Chỉ render 2 phần tử đầu tiên */}
-          {item.review_application.skills.slice(0, 2).map((tag: string, index: number) => (
-            <View key={index} className="rounded bg-blue-50 px-1.5 py-0.5">
-              <Text className="text-[10px] font-medium text-blue-600">{tag}</Text>
-            </View>
-          ))}
-          {/* 2. Kiểm tra nếu còn dư thì hiển thị số lượng (+3, +5...) */}
-          {item.review_application.skills.length > 2 && (
-            <View className="rounded bg-blue-50 px-1.5 py-0.5">
-              <Text className="text-[10px] font-medium text-blue-600">
-                +{item.review_application.skills.length - 2}
-              </Text>
-            </View>
-          )}
-        </View>
 
         {/* Stats: Năm, Km, Jobs */}
         <View className="mt-2 flex-row items-center gap-3">
