@@ -15,10 +15,6 @@ export type User = {
     avatar_url: string | null;
     date_of_birth: string | null;
     gender: _Gender | null;
-    address: string | null;
-    province_code: string | null;
-    district_code: string | null;
-    ward_code: string | null;
     bio: string | null;
   }
 };
@@ -86,5 +82,12 @@ export type DeviceInfoRequest = {
   token: string;
 }
 
-
+export type EditProfileRequest = {
+  name?: string;
+  date_of_birth?: string
+  gender?: _Gender;
+  bio?: string;
+  old_password?: string;
+  new_password?: string;
+}
 

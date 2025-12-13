@@ -16,3 +16,8 @@ export enum _Gender {
   MALE = 1,
   FEMALE = 2,
 }
+export const _GenderMap = {
+  [_Gender.MALE]: 'enum.gender.MALE',
+  [_Gender.FEMALE]: 'enum.gender.FEMALE',
+} as const;
+

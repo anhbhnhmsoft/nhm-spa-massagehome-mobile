@@ -1,18 +1,19 @@
 import React from 'react';
-import { View, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { MapPin, Bell, Search } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from '@/components/styles/gradient-background';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
-import { useGetLocation, useLocationAddress } from '@/features/app/hooks/use-location';
-import useAuthStore from '@/features/auth/store';
+import {  useLocationAddress } from '@/features/app/hooks/use-location';
+import { useCheckAuth } from '@/features/auth/hooks';
+import { router } from 'expo-router';
 
 export function HeaderApp() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const { location, permission } = useLocationAddress();
-  const { getPermission } = useGetLocation();
+  const { location } = useLocationAddress();
+  const checkAuth = useCheckAuth();
 
   return (
     <GradientBackground
@@ -21,8 +22,13 @@ export function HeaderApp() {
       {/* Top Bar: Location & Noti */}
       <View className="mb-4 mt-2 flex-row items-center justify-between gap-8">
         <TouchableOpacity
-          disabled={permission === 'granted'}
-          onPress={getPermission}
+          onPress={() => {
+            if (!checkAuth) {
+              router.push('/(auth)');
+            }else{
+              router.push('/(app)/(profile)/save-location');
+            }
+          }}
           activeOpacity={0.8}
           className={'flex-1'}>
           <Text className="text-xs font-medium text-blue-200">{t('header_app.location')}</Text>

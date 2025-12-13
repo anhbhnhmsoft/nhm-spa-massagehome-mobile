@@ -1,4 +1,4 @@
-import { FC, useState, ReactNode, JSX, forwardRef, useCallback } from 'react';
+import React, { FC, useState, ReactNode, JSX, forwardRef, useCallback } from 'react';
 import { User } from '@/features/auth/types';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { ChevronRight, Gift, Star, User as UserIcon, X } from 'lucide-react-native';
@@ -8,6 +8,8 @@ import { _UserRole } from '@/features/auth/const';
 import { cn } from '@/lib/utils';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { _LanguageCode, _LanguagesMap } from '@/lib/const';
+import { useChangeAvatar } from '@/features/auth/hooks';
+import { Icon } from '@/components/ui/icon';
 
 // USER PROFILE CARD
 type UserProfileCardProps = {
@@ -31,7 +33,7 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({ user }) => {
         ) : (
           // Fallback UI khi không có ảnh hoặc ảnh lỗi
           <View className="mr-3 h-14 w-14 items-center justify-center rounded-full bg-slate-200">
-            <UserIcon size={24} color="#94a3b8" />
+            <Icon as={UserIcon} size={24} className={'text-slate-400'} />
           </View>
         )}
         <View>
@@ -132,13 +134,12 @@ export const MenuProfileItem: FC<MenuProfileItemProps> = ({
 
 
 // Bottom Edit image
-export const BottomEditAvatar = forwardRef<
-  BottomSheetModal,
-  {
-    closeOnSelect?: boolean;
-  }
->(({  closeOnSelect}, ref) => {
+export const BottomEditAvatar = forwardRef<BottomSheetModal,{
+  canDelete?: boolean;
+}>(({canDelete}, ref) => {
   const { t } = useTranslation();
+
+  const {takePictureCamera, chooseImageFormLib, deleteAvatar} = useChangeAvatar();
 
   // Cấu hình Backdrop (Lớp nền mờ đen phía sau)
   const renderBackdrop = useCallback(
@@ -159,14 +160,34 @@ export const BottomEditAvatar = forwardRef<
       handleIndicatorStyle={{ backgroundColor: 'white' }} // Màu cái thanh ngang nhỏ ở trên
     >
       <BottomSheetView className="flex-1 pb-5">
-        <TouchableOpacity className={"flex-row items-center border-b border-gray-100 px-5 py-2 pb-4"}>
-            <Text className="text-lg font-inter-bold text-slate-800">{t('profile.take_photo')}</Text>
+        <TouchableOpacity className={"flex-row items-center border-b border-gray-100 px-5 py-2 pb-4"} onPress={() => {
+          takePictureCamera().finally(() => {
+            (ref as any)?.current?.dismiss();
+          });
+        }}>
+            <Text className="text-lg font-inter-medium text-slate-800">{t('profile.take_photo')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity className={"flex-row items-center border-b border-gray-100 px-5 py-2 pb-4"}>
-          <Text className="text-lg font-inter-bold text-slate-800">{t('profile.choose_from_lib')}</Text>
+        <TouchableOpacity className={"flex-row items-center border-b border-gray-100 px-5 py-2 pb-4"} onPress={() => {
+          chooseImageFormLib().finally(() => {
+            (ref as any)?.current?.dismiss();
+          });
+        }}>
+          <Text className="text-lg font-inter-medium text-slate-800">{t('profile.choose_from_lib')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity className={"flex-row items-center px-5 py-2 pb-4"}>
-          <Text className="text-lg font-inter-bold text-red-500">{t('profile.delete_avatar_title')}</Text>
+        <TouchableOpacity
+          className={"flex-row items-center px-5 py-2 pb-4"}
+          onPress={() => {
+            deleteAvatar();
+            (ref as any)?.current?.dismiss();
+          }}
+          disabled={!canDelete}
+        >
+          <Text className={
+            cn(
+              'text-lg font-inter-medium text-red-500 ',
+              !canDelete ? 'opacity-50' : '',
+            )
+          }>{t('profile.delete_avatar_title')}</Text>
         </TouchableOpacity>
       </BottomSheetView>
     </BottomSheetModal>

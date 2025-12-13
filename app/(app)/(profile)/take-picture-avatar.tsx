@@ -6,6 +6,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import {router} from "expo-router";
 
 import { useEditAvatar } from '@/features/auth/hooks';
+import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
 
 export default function TakePictureScreen(){
@@ -33,12 +34,13 @@ export default function TakePictureScreen(){
 
   return (
     <View className="flex-1">
+      <FocusAwareStatusBar hidden={true} />
       <CameraView
         style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
         ref={cameraRef}
         facing={facing}
       />
-      <View className="flex-row items-center justify-between px-10 py-10">
+      <View className="flex-row items-center justify-between px-10 py-10 bg-base-color-3">
         <TouchableOpacity
           onPress={() => router.back()}
         >

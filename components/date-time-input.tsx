@@ -6,14 +6,12 @@ import { useTranslation } from 'react-i18next';
 
 
 type DateTimePickerInputProps = {
-  label: string;
   value: Date;
   onChange: (date: Date) => void;
   mode?: 'date' | 'time';
 }
 
 export default function DateTimePickerInput({
-                                              label,
                                               value,
                                               onChange,
                                               mode = 'date'
@@ -47,9 +45,6 @@ export default function DateTimePickerInput({
 
   return (
     <View className="mb-4">
-      {/* Label */}
-      {label && <Text className="text-slate-500 font-medium mb-2 ml-1">{label}</Text>}
-
       {/* Input Box */}
       <Pressable
         onPress={handlePressInput}

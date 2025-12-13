@@ -8,7 +8,7 @@ import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
 import {
   useAuthenticateMutation,
-  useLoginMutation, useMutationEditAvatar,
+  useLoginMutation, useMutationDeleteAvatar, useMutationEditAvatar, useMutationEditProfile,
   useProfileMutation,
   useRegisterMutation,
   useResendRegisterOTPMutation,
@@ -16,7 +16,13 @@ import {
   useVerifyRegisterOTPMutation,
 } from '@/features/auth/hooks/use-mutation';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { AuthenticateRequest, LoginRequest, RegisterRequest, VerifyRegisterOTPRequest } from '@/features/auth/types';
+import {
+  AuthenticateRequest,
+  EditProfileRequest,
+  LoginRequest,
+  RegisterRequest,
+  VerifyRegisterOTPRequest,
+} from '@/features/auth/types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +30,9 @@ import { router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import {useCameraPermissions} from "expo-camera";
 import { Alert } from 'react-native';
+import * as ImagePicker from "expo-image-picker";
+import dayjs from 'dayjs';
+
 
 /**
  * Hàm để xác thực user xem là login hay register
@@ -479,13 +488,15 @@ export const useHeartbeat = () => {
   useHeartbeatQuery(status === _AuthStatus.AUTHORIZED);
 }
 
-
 /**
  * Xử lý thay đổi avatar
  */
 export const useChangeAvatar = () => {
   const {t} = useTranslation();
+
   const [permission, requestPermission] = useCameraPermissions();
+
+  const editAvatar = useEditAvatar();
 
   // Xử lý khi nhấn nút chụp ảnh
   const takePictureCamera = useCallback(async () => {
@@ -498,28 +509,167 @@ export const useChangeAvatar = () => {
         );
         return false;
       }
+    }else{
+      // Nếu có quyền chụp ảnh thì chuyển sang màn hình chụp ảnh
       router.push("/(app)/(profile)/take-picture-avatar")
       return true;
     }
+
   },[permission?.granted, t])
+
+  // Xử lý khi nhấn nút chọn ảnh từ thư viện
+  const chooseImageFormLib = useCallback(async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        t('permission.picture_lib.title'),
+        t('permission.picture_lib.message')
+      );
+      return false;
+    }else{
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.5,
+      });
+      if (!result.canceled) {
+        const form = new FormData();
+        form.append('file',{
+          uri: result.assets[0].uri,
+          name: "avatar.jpg",
+          type: "image/jpg"
+        } as any);
+        editAvatar(form, false);
+      }
+    }
+  },[t]);
+
+  // Trả về hàm xử lý xoóa avatar và thay đổi avatar
+  const deleteAvatar = useCallback(() => {
+    editAvatar(undefined, false, true);
+  },[editAvatar]);
 
   return {
     takePictureCamera,
+    chooseImageFormLib,
+    deleteAvatar,
   }
 
 }
+
 /**
  * Hook để chỉnh sửa avatar
  */
 export const useEditAvatar = () => {
-  const {mutate} = useMutationEditAvatar();
+  const {mutate: editAvatar} = useMutationEditAvatar();
+  const {mutate: deleteAvatar} = useMutationDeleteAvatar();
   const errorHandle = useErrorToast();
   const setUser = useAuthStore(state => state.setUser);
   const setLoading = useApplicationStore(state => state.setLoading);
 
-  return useCallback((data: FormData) => {
+  return useCallback((data: FormData | undefined, routerBack: boolean = true, isDelete: boolean = false) => {
     setLoading(true);
-    mutate(data, {
+    // Xử lý khi xóa avatar
+    if (isDelete) {
+      deleteAvatar(undefined, {
+        onSuccess: (res) => {
+          setUser(res.data.user);
+          if (routerBack) {
+            router.back();
+          }
+        },
+        onError: (error) => {
+          errorHandle(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    }
+    else if (data) {
+      // Xử lý khi chỉnh sửa avatar
+      editAvatar(data, {
+        onSuccess: (res) => {
+          setUser(res.data.user);
+          if (routerBack) {
+            router.back();
+          }
+        },
+        onError: (error) => {
+          errorHandle(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    }
+  }, []);
+
+}
+
+export const useEditProfile = () => {
+  const {t} = useTranslation();
+  const errorHandle = useErrorToast();
+  const setUser = useAuthStore(state => state.setUser);
+  const user = useAuthStore(state => state.user);
+  const setLoading = useApplicationStore(state => state.setLoading);
+
+  const {mutate: editProfile} = useMutationEditProfile();
+
+  const form = useForm<EditProfileRequest>({
+    defaultValues: {
+      name: user?.name,
+      date_of_birth: user?.profile.date_of_birth || undefined,
+      gender: user?.profile.gender || undefined,
+      bio: user?.profile.bio || undefined,
+    },
+    resolver: zodResolver(z.object({
+      name: z.string().min(4, t('profile.error.invalid_name')).max(255).optional().or(z.literal('')),
+
+      // Lưu ý: Form dùng Date object để DatePicker hoạt động
+      date_of_birth:  z.string()
+        .optional()
+        .refine((val) => dayjs(val).isValid(), {
+          error: t('profile.error.invalid_date_of_birth')
+        })
+        .refine((val) => {
+          const inputTime = dayjs(val);
+          // Ngày sinh phải trước ngày hiện tại
+          return inputTime.isBefore(dayjs());
+        }, {
+          error: t('profile.error.invalid_date_of_birth'), // "Ngày sinh phải trước ngày hiện tại"
+        }),
+
+      gender: z.enum(_Gender).optional(),
+      bio: z.string().optional(),
+
+      // Thêm password vào schema
+      old_password: z.string().min(8, 'Mật khẩu cũ tối thiểu 8 ký tự').optional().or(z.literal('')),
+      new_password: z.string().min(8, 'Mật khẩu mới tối thiểu 8 ký tự').optional().or(z.literal('')),
+    })
+      // Validate logic chéo: Nếu nhập mật khẩu mới thì bắt buộc nhập mật khẩu cũ
+      .refine((data) => {
+        return !(data.new_password && !data.old_password);
+      }, {
+        message: t('profile.error.old_password_required'),
+        path: ["old_password"], // Hiển thị lỗi ở trường old_password
+      })),
+  });
+
+  useEffect(() => {
+    // Cập nhật giá trị mặc định khi user thay đổi
+    form.reset({
+      name: user?.name,
+      date_of_birth: user?.profile.date_of_birth || undefined,
+      gender: user?.profile.gender || undefined,
+      bio: user?.profile.bio || undefined,
+    });
+  }, [user]);
+
+  // handle submit form
+  const onSubmit = useCallback((data: EditProfileRequest) => {
+    setLoading(true);
+    // Xử lý submit form
+    editProfile(data, {
       onSuccess: (res) => {
         setUser(res.data.user);
         router.back();
@@ -532,5 +682,12 @@ export const useEditAvatar = () => {
       },
     });
   }, []);
+
+
+  return {
+    form,
+    onSubmit
+  }
+
 
 }

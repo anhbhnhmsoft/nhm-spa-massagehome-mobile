@@ -6,6 +6,11 @@ export default function ProfileLayout() {
       <Stack.Screen name="wallet" />
       <Stack.Screen name="deposit" />
       <Stack.Screen name="profile" />
+      <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="take-picture-avatar" />
+
+      {/* Location */}
+      <Stack.Screen name="save-location" />
     </Stack>
   );
 }

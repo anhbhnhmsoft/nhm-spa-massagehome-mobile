@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import {
-  AuthenticateRequest, LoginRequest,
+  AuthenticateRequest, EditProfileRequest, LoginRequest,
   RegisterRequest,
   SetLanguageRequest,
   VerifyRegisterOTPRequest,
@@ -75,6 +75,20 @@ export const useMutationEditAvatar = () => useMutation({
 });
 
 
+/**
+ * Hook để xóa avatar user
+ */
+export const useMutationDeleteAvatar = () => useMutation({
+  mutationFn: () => authApi.deleteAvatar(),
+});
+
+
+/**
+ * Hook để chỉnh sửa profile user
+ */
+export const useMutationEditProfile = () => useMutation({
+  mutationFn: (data: EditProfileRequest) => authApi.editProfile(data),
+});
 
 
 

@@ -14,7 +14,6 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import AddressAutocomplete from '@/components/address-autocomplete';
 import DateTimePickerInput from '@/components/date-time-input';
-import dayjs from 'dayjs';
 import { Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';

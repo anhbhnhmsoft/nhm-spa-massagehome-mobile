@@ -1,7 +1,7 @@
 import { client } from '@/lib/axios-client';
 import {
   AuthenticateRequest,
-  AuthenticateResponse, DeviceInfoRequest, LoginRequest, LoginResponse,
+  AuthenticateResponse, DeviceInfoRequest, EditProfileRequest, LoginRequest, LoginResponse,
   ProfileResponse,
   RegisterRequest,
   RegisterResponse,
@@ -99,6 +99,20 @@ const authApi = {
     });
     return response.data;
   },
+  /**
+   * Hàm để xóa avatar cho user
+   */
+  deleteAvatar: async (): Promise<ProfileResponse> =>  {
+    const response = await client.delete(`${defaultUri}/delete-avatar`);
+    return response.data;
+  },
+  /**
+   * Hàm để edit profile cho user
+   */
+  editProfile: async (data: EditProfileRequest): Promise<ProfileResponse> =>  {
+    const response = await client.post(`${defaultUri}/edit-profile`, data);
+    return response.data;
+  }
 
 };
 

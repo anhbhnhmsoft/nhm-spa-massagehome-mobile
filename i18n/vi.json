@@ -78,7 +78,10 @@
     "version": "Phiên bản",
     "currency": "Point",
     "auto_pay": "Duyệt tự động 24/7",
-    "save_image": "Lưu ảnh"
+    "save_image": "Lưu ảnh",
+    "date_of_birth": "Ngày sinh",
+    "bio": "Giới thiệu",
+    "old_password": "Mật khẩu cũ"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -141,6 +144,10 @@
       "PENDING": "Chờ xử lý",
       "COMPLETED": "Hoàn thành",
       "FAILED": "Thất bại"
+    },
+    "gender": {
+      "MALE": "Nam",
+      "FEMALE": "Nữ"
     }
   },
   "tab": {
@@ -201,7 +208,7 @@
   "header_app": {
     "location": "Vị trí của bạn",
     "notification": "Thông báo",
-    "need_location": "Vui lòng bật định vị để sử dụng chức năng này.",
+    "need_location": "Vui lòng bật định vị để tìm kiếm.",
     "hello": "Chào mừng trở lại",
     "search_description": "Tìm chuyên viên massage hoàn hảo cho bạn",
     "search_placeholder": "Tìm kiếm dịch vụ hoặc chuyên viên...",
@@ -238,7 +245,14 @@
     "log_out": "Đăng xuất",
     "take_photo": "Chụp ảnh",
     "choose_from_lib": "Chọn từ thư viện",
-    "delete_avatar_title": "Xóa ảnh đại diện"
+    "delete_avatar_title": "Xóa ảnh đại diện",
+    "user_info_title": "Thông tin tài khoản",
+    "edit_info": "Sửa thông tin",
+    "error": {
+        "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
+        "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
+        "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu"
+    }
   },
   "wallet": {
     "balance": "Số dư ví",
