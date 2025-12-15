@@ -1,5 +1,8 @@
-export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://localhost:8000";
+import { BackHandler } from 'react-native';
 
+export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+console.log(_BackendURL);
 export enum _LanguageCode {
   VI = 'vi',
   EN = 'en',

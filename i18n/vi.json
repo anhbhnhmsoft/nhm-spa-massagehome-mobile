@@ -156,7 +156,8 @@
     "services": "Dịch vụ",
     "masseurs": "Thợ massage",
     "profile": "Hồ sơ",
-    "orders": "Đơn hàng"
+    "orders": "Đơn hàng",
+    "chat" : "Nhắn tin"
   },
   "auth": {
     "index_label": "Tập luyện, massage, spa theo cách bạn muốn",

@@ -2,7 +2,19 @@ const DefaultColor = {
   white: '#ffffff',
   black: '#000000',
   base: {
+    '1': '#001E37',
+    '2': '#FFFFFF',
+    '3': '#D6E2F3',
+  },
+  note: {
+    '3': '#00B96B',
+  },
 
+  primary: {
+    '1': '#044984',
+    '2': '#2B7BBE',
+    '3': '#45556C',
+    '4': '#90A1B9',
   },
   slate: {
     50: '#f8fafc',

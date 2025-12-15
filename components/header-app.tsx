@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, TouchableOpacity, TextInput } from 'react-native';
-import { MapPin, Bell, Search, X } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { MapPin, Bell, Search, X, User as UserIcon } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from '@/components/styles/gradient-background';
 import { useTranslation } from 'react-i18next';
@@ -9,16 +9,19 @@ import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import useAuthStore from '@/features/auth/store';
 import { Icon } from '@/components/ui/icon';
 
-
-
 type HeaderAppProps = {
   showSearch?: boolean;
-  forSearch?: "service" | "massage";
+  forSearch?: 'service' | 'massage';
   setTextSearch?: (text: string) => void;
   textSearch?: string;
-}
+};
 
-export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSearch }: HeaderAppProps) {
+export function HeaderApp({
+  showSearch = false,
+  forSearch,
+  setTextSearch,
+  textSearch,
+}: HeaderAppProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
@@ -34,7 +37,7 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
         {/* Location Button */}
         <TouchableOpacity
           onPress={() => {
-            redirectAuth("/(app)/(profile)/location/list");
+            redirectAuth('/(app)/(profile)/location/list');
           }}
           activeOpacity={0.8}
           className={'flex-1'}>
@@ -59,15 +62,15 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
       {showSearch && (
         <View>
           {/* Search Bar */}
-          <View className="h-12 flex-row items-center rounded-xl bg-white px-3 shadow-sm border border-gray-100">
+          <View className="h-12 flex-row items-center rounded-xl border border-gray-100 bg-white px-3 shadow-sm">
             {/* Icon Search bên trái */}
             <Search size={20} color="#94a3b8" />
 
             {/* Input nhập liệu */}
             <TextInput
-              className="ml-2 flex-1 text-sm text-slate-700 h-full"
+              className="ml-2 h-full flex-1 text-sm text-slate-700"
               placeholder={
-                forSearch === "service"
+                forSearch === 'service'
                   ? t('header_app.search_placeholder_service')
                   : t('header_app.search_placeholder_massage')
               }
@@ -92,3 +95,85 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
   );
 }
 
+export function HeaderAppKTV({
+  showSearch = false,
+  forSearch,
+  setTextSearch,
+  textSearch,
+}: HeaderAppProps) {
+  const [imageError, setImageError] = useState(false);
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const user = useAuthStore((state) => state.user);
+
+  const redirectAuth = useCheckAuthToRedirect();
+
+  return (
+    <GradientBackground
+      style={{ paddingTop: insets.top + 10, paddingHorizontal: 16, paddingBottom: 20, zIndex: 10 }}
+      className="z-10 px-4 pb-6 shadow-sm">
+      {/* Top Bar: Location & Noti */}
+      <View className="mb-4 mt-2 flex-row items-center justify-between gap-8">
+        {/* Left: User info */}
+        <View className="flex-row items-center">
+          {user?.profile.avatar_url && !imageError ? (
+            <Image
+              source={{ uri: user.profile.avatar_url }}
+              className="mr-3 h-14 w-14 rounded-full bg-slate-200"
+              resizeMode="cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <View className="mr-3 h-14 w-14 items-center justify-center rounded-full bg-slate-200">
+              <Icon as={UserIcon} size={24} className="text-slate-400" />
+            </View>
+          )}
+
+          <View>
+            <Text className="font-inter-bold text-lg text-white">{user?.phone}</Text>
+            <Text className="text-sm text-white">{user?.name}</Text>
+          </View>
+        </View>
+
+        {/* Right: Notification */}
+        <TouchableOpacity className="relative">
+          <Icon as={Bell} size={24} className="text-slate-800" />
+          <View className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500" />
+        </TouchableOpacity>
+      </View>
+
+      {showSearch && (
+        <View>
+          {/* Search Bar */}
+          <View className="h-12 flex-row items-center rounded-xl border border-gray-100 bg-white px-3 shadow-sm">
+            {/* Icon Search bên trái */}
+            <Search size={20} color="#94a3b8" />
+
+            {/* Input nhập liệu */}
+            <TextInput
+              className="ml-2 h-full flex-1 text-sm text-slate-700"
+              placeholder={
+                forSearch === 'service'
+                  ? t('header_app.search_placeholder_service')
+                  : t('header_app.search_placeholder_massage')
+              }
+              placeholderTextColor="#94a3b8" // Màu placeholder nhạt giống icon
+              value={textSearch}
+              onChangeText={setTextSearch}
+              returnKeyType="search"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            {/* Nút X để xóa nhanh text (chỉ hiện khi có text) */}
+            {textSearch && setTextSearch && textSearch.length > 0 && (
+              <TouchableOpacity onPress={() => setTextSearch('')} className="p-1">
+                <Icon as={X} size={18} color="#94a3b8" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
+    </GradientBackground>
+  );
+}
