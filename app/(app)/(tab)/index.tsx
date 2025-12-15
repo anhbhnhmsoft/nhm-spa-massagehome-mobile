@@ -64,13 +64,11 @@ export default function HomeScreen() {
   const { t } = useTranslation();
 
   const queryKTV = useGetListKTV({
-    filter: {},
     page: 1,
     per_page: 5,
   });
 
   const queryCategory = useGetCategoryList({
-    filter: {},
     page: 1,
     per_page: 5,
   });

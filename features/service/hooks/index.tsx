@@ -1,9 +1,11 @@
 import {
   useInfiniteCategoryList,
-  useInfiniteServiceList, useQueryListCoupon,
+  useInfiniteServiceList,
+  useQueryListCoupon,
 } from '@/features/service/hooks/use-query';
 import {
   BookingServiceRequest,
+  CategoryListFilterPatch,
   CategoryListRequest,
   PickBookingItem,
   PickBookingRequirement,
@@ -13,7 +15,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useApplicationStore from '@/lib/store';
 import useServiceStore from '@/features/service/stores';
 import { router } from 'expo-router';
-import { useMutationBookingService, useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
+import {
+  useMutationBookingService,
+  useMutationServiceDetail,
+} from '@/features/service/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,14 +29,38 @@ import { useLocationAddress } from '@/features/app/hooks/use-location';
 import { _StepFormBooking } from '@/features/service/const';
 import useAuthStore from '@/features/auth/store';
 import { _AuthStatus } from '@/features/auth/const';
+import { useImmer } from 'use-immer';
 
 /**
  * Lấy danh sách danh mục dịch vụ
- * @param params
+ * @param initialParams
  */
-export const useGetCategoryList = (params: CategoryListRequest) => {
+export const useGetCategoryList = (initialParams: Omit<CategoryListRequest, 'filter'>) => {
+  // Sử dụng useImmer để quản lý params (chứa filter)
+  const [params, setParams] = useImmer<CategoryListRequest>({
+    ...initialParams,
+    filter: {
+      keyword: '',
+    },
+  });
+
+  // Hàm setFilter
+  const setFilter = useCallback(
+    (filterPatch: CategoryListFilterPatch) => {
+      setParams((draft) => {
+        // 🚨 QUAN TRỌNG: Reset page về 1 khi filter thay đổi
+        draft.page = 1;
+        // Merge filter mới vào draft.filter (sử dụng logic Immer)
+        draft.filter = {
+          ...draft.filter,
+          ...filterPatch,
+        };
+      });
+    },
+    [setParams]
+  );
+
   const query = useInfiniteCategoryList(params);
-  const setLoading = useApplicationStore((s) => s.setLoading);
 
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
@@ -41,14 +70,12 @@ export const useGetCategoryList = (params: CategoryListRequest) => {
     return query.data?.pages[0].data || null;
   }, [query.data]);
 
-  useEffect(() => {
-    setLoading(query.isLoading);
-  }, [query.isLoading]);
-
   return {
     ...query,
     data,
     pagination,
+    params, // Trả về params hiện tại để dễ debug/hiển thị
+    setFilter, // Trả về hàm setFilter để component sử dụng
   };
 };
 
@@ -95,25 +122,28 @@ export const useSetService = () => {
 
   const handleError = useErrorToast();
 
-  return useCallback((id: string) => {
-    if (status === _AuthStatus.UNAUTHORIZED ) {
-      router.push(`/(auth)`);
-    }else if(status === _AuthStatus.AUTHORIZED){
-      setLoading(true);
-      mutate(id, {
-        onSuccess: (res) => {
-          setService(res.data);
-          router.push('/(app)/(service)/service-detail');
-        },
-        onError: (error) => {
-          handleError(error);
-        },
-        onSettled: () => {
-          setLoading(false);
-        }
-      });
-    }
-  }, [status]);
+  return useCallback(
+    (id: string) => {
+      if (status === _AuthStatus.UNAUTHORIZED) {
+        router.push(`/(auth)`);
+      } else if (status === _AuthStatus.AUTHORIZED) {
+        setLoading(true);
+        mutate(id, {
+          onSuccess: (res) => {
+            setService(res.data);
+            router.push('/(app)/(service)/service-detail');
+          },
+          onError: (error) => {
+            handleError(error);
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        });
+      }
+    },
+    [status]
+  );
 };
 
 /**
@@ -145,7 +175,6 @@ export const useServiceDetail = () => {
   };
 };
 
-
 /**
  * booking service
  */
@@ -170,19 +199,22 @@ export const useServiceBooking = () => {
         book_time: z
           .string()
           .refine((val) => dayjs(val).isValid(), {
-            error: t('services.error.invalid_time')
+            error: t('services.error.invalid_time'),
           })
-          .refine((val) => {
-            const inputTime = dayjs(val);
-            // Thời gian tối thiểu = Hiện tại + 1 tiếng
-            const minTime = dayjs().add(1, 'hour');
+          .refine(
+            (val) => {
+              const inputTime = dayjs(val);
+              // Thời gian tối thiểu = Hiện tại + 1 tiếng
+              const minTime = dayjs().add(1, 'hour');
 
-            // Kiểm tra: inputTime phải LỚN HƠN hoặc BẰNG minTime (tính theo phút)
-            // 'minute' ở tham số thứ 2 giúp dayjs bỏ qua giây và mili-giây khi so sánh
-            return inputTime.isAfter(minTime, 'minute') || inputTime.isSame(minTime, 'minute');
-          }, {
-            error: t('services.error.invalid_time'), // "Vui lòng đặt trước ít nhất 1 tiếng"
-          }),
+              // Kiểm tra: inputTime phải LỚN HƠN hoặc BẰNG minTime (tính theo phút)
+              // 'minute' ở tham số thứ 2 giúp dayjs bỏ qua giây và mili-giây khi so sánh
+              return inputTime.isAfter(minTime, 'minute') || inputTime.isSame(minTime, 'minute');
+            },
+            {
+              error: t('services.error.invalid_time'), // "Vui lòng đặt trước ít nhất 1 tiếng"
+            }
+          ),
         note: z.string().optional(), // Cho phép rỗng
         address: z.string().min(1, { error: t('services.error.invalid_address') }),
         lat: z.number(),
@@ -199,11 +231,14 @@ export const useServiceBooking = () => {
   });
 
   // Lấy danh sách coupon (tất cả) cho dịch vụ đang chọn
-  const queryCoupon = useQueryListCoupon({
-    filter:{
-      for_service_id: pickServiceBooking?.service_id,
-    }
-  }, enableCoupon && !!pickServiceBooking?.service_id);
+  const queryCoupon = useQueryListCoupon(
+    {
+      filter: {
+        for_service_id: pickServiceBooking?.service_id,
+      },
+    },
+    enableCoupon && !!pickServiceBooking?.service_id
+  );
 
   const mutationBookingService = useMutationBookingService();
   // Auto-fill location
@@ -242,19 +277,19 @@ export const useServiceBooking = () => {
   const handleForwardStep = () => {
     setStep(_StepFormBooking.MAP);
     form.setValue('book_time', dayjs().toISOString());
-    form.setValue('note' , '');
+    form.setValue('note', '');
     form.setValue('coupon_id', undefined);
     setEnableCoupon(false);
   };
 
   // Xử lý khi nhấn nút "Đặt lịch" ở bước FORM
   const handleBooking = (data: PickBookingRequirement) => {
-    if (pickServiceBooking){
+    if (pickServiceBooking) {
       const request: BookingServiceRequest = {
         ...data,
         ...pickServiceBooking,
         book_time: dayjs(data.book_time).format('YYYY-MM-DD HH:mm:ss'),
-      }
+      };
       setLoading(true);
       mutationBookingService.mutate(request, {
         onSuccess: () => {

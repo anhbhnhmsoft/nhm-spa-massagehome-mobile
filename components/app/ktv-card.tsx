@@ -6,6 +6,7 @@ import { Award, Briefcase, CheckCircle, TrendingUp, MapPin, ShieldCheck, Star, U
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { formatDistance } from '@/lib/utils';
 import { useSetKtv } from '@/features/user/hooks';
+import { Skeleton } from '@/components/ui/skeleton';
 
 /**
  * Card hiển thị thông tin của massager trong trang chủ
@@ -161,3 +162,42 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
     </TouchableOpacity>
   );
 };
+
+
+/** * Card Skeleton hiển thị thông tin của massager trong trang dịch vụ
+ * @constructor
+ */
+export const KTVServiceCardSkeleton = () => {
+  return (
+    <View className="mb-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm flex-row">
+      {/* --- CỘT TRÁI: AVATAR --- */}
+      <View className="mr-3 w-20 h-20">
+        <Skeleton className="h-20 w-20 rounded-full bg-slate-200" />
+      </View>
+
+      {/* --- CỘT PHẢI: INFO --- */}
+      <View className="flex-1 justify-between">
+        {/* Header */}
+        <View className="flex-row items-start justify-between">
+          <View>
+            <Skeleton className="h-5 w-32 rounded-lg bg-slate-200 mb-2" />
+            <Skeleton className="h-4 w-20 rounded-lg bg-slate-200" />
+          </View>
+        </View>
+
+        {/* Stats: Năm, Km, Jobs */}
+        <View className="mt-2 flex-row items-center gap-3">
+          <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
+          <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
+          <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
+        </View>
+
+        {/* Nút Đặt lịch */}
+        <View className="mt-3 w-full flex-row items-center justify-between pt-2">
+          <View/>
+          <Skeleton className="h-8 w-20 rounded-md bg-slate-200" />
+        </View>
+      </View>
+    </View>
+  );
+}

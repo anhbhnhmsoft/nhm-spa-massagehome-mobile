@@ -28,7 +28,15 @@ export type ListKTVItem = {
   };
 };
 
-export type ListKTVRequest = BaseSearchRequest<{}>;
+export type ListKTVRequest = BaseSearchRequest<{
+  keyword?: string;
+  category_id?: string;
+  category_name?: string;
+  lat?: number;
+  lng?: number;
+}>;
+
+export type KTVListFilterPatch = Partial<ListKTVRequest['filter']>;
 
 export type ListKTVResponse = ResponseDataSuccessType<Paginator<ListKTVItem>>;
 

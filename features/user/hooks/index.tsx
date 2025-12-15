@@ -1,8 +1,8 @@
 import { useInfiniteListKTV } from '@/features/user/hooks/use-query';
-import { ListKTVRequest } from '@/features/user/types';
+import { KTVListFilterPatch, ListKTVRequest } from '@/features/user/types';
 import { useCallback, useEffect, useMemo } from 'react';
 import { router } from 'expo-router';
-import useUserServiceStore from '@/features/user/stores';
+import useUserServiceStore, { useKTVStore } from '@/features/user/stores';
 import { useGetServiceList } from '@/features/service/hooks';
 import { useMutationKtvDetail } from '@/features/user/hooks/use-mutation';
 import useApplicationStore from '@/lib/store';
@@ -11,7 +11,10 @@ import useAuthStore from '@/features/auth/store';
 import { _AuthStatus } from '@/features/auth/const';
 
 
-export const useGetListKTV = (params: ListKTVRequest) => {
+export const useGetListKTV = (initialParams: Omit<ListKTVRequest, 'filter'>) => {
+  const params = useKTVStore((state) => state.params);
+  const setFilter = useKTVStore((state) => state.setFilter);
+
   const query = useInfiniteListKTV(params);
 
   const data = useMemo(() => {
@@ -26,6 +29,8 @@ export const useGetListKTV = (params: ListKTVRequest) => {
     ...query,
     data,
     pagination,
+    setFilter,
+    params,
   };
 };
 
@@ -71,15 +76,12 @@ export const useSetKtv = () => {
  */
 export const useKTVDetail = () => {
   const ktv = useUserServiceStore((s) => s.ktv);
-  const setKtv = useUserServiceStore((s) => s.setKtv);
 
   useEffect(() => {
     // Nếu không có massager, quay lại màn hình trước
     if (!ktv) {
       router.back();
     }
-    // Xóa massager khi component unmount
-    return () => setKtv(null);
   }, [ktv]);
 
   const serviceParams = useMemo(

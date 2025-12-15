@@ -82,7 +82,7 @@ export default function RootLayout() {
 const AppContainer = () => {
   const complete = useHydrateAuth();
   const status = useAuthStore((state) => state.status);
-  const { locationPermission } = useLocation();
+  const { locationPermission, completeCheck } = useLocation();
   return (
     <>
       <Stack
@@ -98,7 +98,8 @@ const AppContainer = () => {
             guard={
               locationPermission !== 'skipped' &&
               locationPermission !== 'granted' &&
-              locationPermission === null
+              locationPermission === null &&
+              completeCheck // Đảm bảo đã check xong permission
             }>
             <Stack.Screen name="request-location" />
           </Stack.Protected>

@@ -16,18 +16,23 @@ export type User = {
     date_of_birth: string | null;
     gender: _Gender | null;
     bio: string | null;
-  }
+  };
+  primary_location: {
+    address: string;
+    latitude: number;
+    longitude: number;
+    desc: string | null;
+  } | null;
 };
 
-
-export type AuthData  = {
+export type AuthData = {
   token: string;
   user: User;
-}
+};
 
 export type AuthenticateRequest = {
   phone: string;
-}
+};
 
 export type AuthenticateResponse = ResponseDataSuccessType<{
   need_register: boolean;
@@ -42,7 +47,7 @@ export type ResendRegisterOTPResponse = ResponseDataSuccessType<{
 export type VerifyRegisterOTPRequest = {
   phone: string;
   otp: string;
-}
+};
 
 export type VerifyRegisterOTPResponse = ResponseDataSuccessType<{
   token: string;
@@ -55,7 +60,7 @@ export type RegisterRequest = {
   referral_code?: string | null;
   gender: _Gender;
   language: _LanguageCode;
-}
+};
 
 export type RegisterResponse = ResponseDataSuccessType<AuthData>;
 
@@ -66,28 +71,26 @@ export type LoginRequest = {
 
 export type LoginResponse = ResponseDataSuccessType<AuthData>;
 
-
 export type ProfileResponse = ResponseDataSuccessType<{
   user: User;
 }>;
 
 export type SetLanguageRequest = {
   lang: _LanguageCode;
-}
+};
 
 export type DeviceInfoRequest = {
   platform: 'ios' | 'android';
   device_id: string;
   device_name: string;
   token: string;
-}
+};
 
 export type EditProfileRequest = {
   name?: string;
-  date_of_birth?: string
+  date_of_birth?: string;
   gender?: _Gender;
   bio?: string;
   old_password?: string;
   new_password?: string;
-}
-
+};

@@ -1,7 +1,6 @@
 import { TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { FC } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationState } from '@react-navigation/core';
 import { Icon } from '@/components/ui/icon';
@@ -10,15 +9,13 @@ import { Text } from '@/components/ui/text';
 
 const HeaderBack: FC<{ title?: string; onBack?: () => void }> = ({ title, onBack }) => {
   const { t } = useTranslation();
-
-  const insets = useSafeAreaInsets();
   const state = useNavigationState((s) => s);
 
   return (
     <View
-      style={{ paddingTop: insets.top + 20 }}
-      className={'flex flex-row items-center justify-between px-5 pb-4'}>
+      className={'flex-row items-center justify-between border-b border-gray-200 px-4 py-3 bg-white'}>
       <TouchableOpacity
+        className="p-1"
         onPress={() => {
           if (onBack) {
             onBack();
@@ -30,9 +27,10 @@ const HeaderBack: FC<{ title?: string; onBack?: () => void }> = ({ title, onBack
             }
           }
         }}>
-        <Icon as={ChevronLeft} size={24} color="black" />
+        <Icon as={ChevronLeft} size={28} className="text-slate-800" />
       </TouchableOpacity>
-      {title && <Text className={'text-lg font-bold'}>{t(title)}</Text>}
+      {title && <Text className={'text-lg font-inter-bold text-slate-800'}>{t(title)}</Text>}
+      <View className="w-8" />
     </View>
   );
 };

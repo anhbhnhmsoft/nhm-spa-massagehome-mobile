@@ -26,7 +26,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import {useCameraPermissions} from "expo-camera";
 import { Alert } from 'react-native';
@@ -362,6 +362,48 @@ export const useCheckAuth = () => {
   const status = useAuthStore((state) => state.status);
   return status === _AuthStatus.AUTHORIZED;
 };
+
+/**
+ * Hook để kiểm tra xem user có đang được xác thực hay không, nếu không thì push về màn hình auth
+ */
+export const useCheckAuthToRedirect = () => {
+  const isAuthorized = useCheckAuth();
+
+  return useCallback((redirectTo: Href) => {
+    if (!isAuthorized) {
+      router.push('/(auth)');
+    }else{
+      router.push(redirectTo);
+    }
+  }, [isAuthorized]);
+
+}
+/**
+ * Hook để lấy profile user
+ */
+export const useGetProfile = () => {
+  const { t } = useTranslation();
+  const setUser = useAuthStore((state) => state.setUser);
+  const logout = useAuthStore((state) => state.logout);
+  const { mutate } = useProfileMutation();
+  const { error } = useToast();
+
+  return useCallback(() => {
+    mutate(undefined, {
+      onSuccess: (res) => {
+        setUser(res.data.user);
+      },
+      onError: () => {
+        // Token hết hạn hoặc không hợp lệ
+        error({
+          message: t('common_error.invalid_or_expired_token'),
+        });
+        logout();
+      },
+    });
+  }, []);
+
+}
 
 /**
  * Hook để hydrate auth state từ local storage

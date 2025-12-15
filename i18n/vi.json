@@ -27,6 +27,7 @@
     "send": "Gửi",
     "save": "Lưu",
     "see_more": "Xem thêm",
+    "hide": "Thu gọn",
     "month": "Tháng",
     "desc": "Ghi chú",
     "to": "đến",
@@ -208,10 +209,11 @@
   "header_app": {
     "location": "Vị trí của bạn",
     "notification": "Thông báo",
-    "need_location": "Vui lòng bật định vị để tìm kiếm.",
+    "need_location": "Chưa có địa chỉ mặc định.",
     "hello": "Chào mừng trở lại",
     "search_description": "Tìm chuyên viên massage hoàn hảo cho bạn",
-    "search_placeholder": "Tìm kiếm dịch vụ hoặc chuyên viên...",
+    "search_placeholder_service": "Tìm kiếm dịch vụ...",
+    "search_placeholder_massage": "Tìm kiếm kỹ thuật viên...",
     "title_orders": "Danh sách đơn hàng",
     "orders_description": "Quản lý thông tin đơn hàng của bạn"
   },
@@ -307,9 +309,34 @@
     "note": "Ghi chú",
     "coupon": "Mã giảm giá",
     "btn_booking": "Đặt lịch",
+    "chat_with_ktv": "Chat với kĩ thuật viên",
     "error": {
       "invalid_time": "Thời gian không hợp lệ, phải sau thời gian hiện tại 1 tiếng",
       "invalid_address": "Địa chỉ không hợp lệ"
     }
+  },
+  "location": {
+    "title": "Địa chỉ đã lưu",
+    "description": "Lưu lại địa chỉ yêu thích",
+    "common_address": "Bạn thường đặt dịch vụ tại địa chỉ nào?",
+    "add_new_address": "Thêm địa chỉ mới",
+    "search_placeholder": "Nhập địa chỉ...",
+    "no_result": "Không có kết quả nào",
+    "title_add": "Thêm địa chỉ",
+    "title_edit": "Chỉnh sửa địa chỉ",
+    "label_address": "Địa chỉ / Vị trí",
+    "placeholder_address": "Nhấn để tìm kiếm địa chỉ...",
+    "label_desc": "Ghi chú (Ví dụ: Nhà riêng, Cty)",
+    "placeholder_desc": "Nhập ghi chú (Tuỳ chọn)",
+    "is_primary": "Đặt làm địa chỉ mặc định",
+    "is_primary_desc": "Địa chỉ mặc định sẽ được chọn khi bạn đặt dịch vụ",
+    "save_address": "Lưu địa chỉ",
+    "primary": "Mặc định",
+    "no_desc": "Không có ghi chú",
+    "error": {
+      "invalid_address": "Vui lòng chọn địa chỉ hợp lệ từ gợi ý",
+      "invalid_location": "Vui lòng chọn toạ độ hợp lệ"
+    }
+
   }
 }

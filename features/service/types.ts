@@ -10,7 +10,11 @@ export type CategoryItem = {
   description: string | null;
 };
 
-export type CategoryListRequest = BaseSearchRequest<{}>;
+export type CategoryListFilterPatch = Partial<CategoryListRequest['filter']>;
+
+export type CategoryListRequest = BaseSearchRequest<{
+  keyword?: string;
+}>;
 
 export type CategoryListResponse = ResponseDataSuccessType<Paginator<CategoryItem>>;
 

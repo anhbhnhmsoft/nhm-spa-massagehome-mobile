@@ -1,5 +1,5 @@
 import useApplicationStore, { LocationApp } from '@/lib/store';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppState, AppStateStatus } from 'react-native';
 
@@ -40,6 +40,7 @@ export const useLocation = () => {
   const locationPermission = useApplicationStore((s) => s.location_permission);
   const setLocationPermission = useApplicationStore((s) => s.setLocationPermission);
   const hydrateLocationPermission = useApplicationStore((s) => s.hydrateLocationPermission);
+  const [completeCheck, setCompleteCheck] = useState(false);
 
   useEffect(() => {
     const checkPermission = async () => {
@@ -66,6 +67,9 @@ export const useLocation = () => {
         await setLocationPermission(null);
         setLocation(null);
       }
+      finally{
+        setCompleteCheck(true);
+      }
     };
 
     checkPermission();
@@ -81,7 +85,7 @@ export const useLocation = () => {
     };
   }, [locationPermission]);
 
-  return { locationPermission };
+  return { locationPermission, completeCheck };
 };
 
 /**

@@ -15,9 +15,6 @@ import { useSearchLocation } from '@/features/location/hooks';
 import { ChevronLeft, MapPin, X } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 
-
-
-
 type LocationSearchModalProps = {
   visible: boolean;
   onClose: () => void;
@@ -34,7 +31,6 @@ const SearchLocationModal: FC<LocationSearchModalProps> = ({
     keyword,
     results,
     loading,
-    setKeyword,
     handleChangeText,
     clearKeyword,
     handleSelect,
@@ -55,8 +51,8 @@ const SearchLocationModal: FC<LocationSearchModalProps> = ({
               <View className="mr-3 h-2 w-2 rounded-full bg-orange-500" />
 
               <TextInput
-                className="flex-1 text-base text-slate-800 leading-5" // Fix lỗi font Android
-                placeholder="Tìm kiếm địa điểm..."
+                className="flex-1 text-base text-slate-800 leading-5"
+                placeholder={t('location.search_placeholder')}
                 value={keyword}
                 onChangeText={handleChangeText}
                 autoFocus={true} // Tự động focus khi mở modal
@@ -75,14 +71,11 @@ const SearchLocationModal: FC<LocationSearchModalProps> = ({
           {/* CONTENT */}
           <View className="flex-1 bg-white">
             {/* Loading Indicator */}
-            {loading && (
+            {loading ? (
               <View className="py-4">
                 <ActivityIndicator color="#F97316" />
               </View>
-            )}
-
-            {/* List Kết quả */}
-            <FlatList
+            ) : <FlatList
               data={results}
               keyExtractor={(item) => item.place_id}
               keyboardShouldPersistTaps="handled" // Quan trọng: Để bấm được vào item khi bàn phím đang mở
@@ -96,7 +89,7 @@ const SearchLocationModal: FC<LocationSearchModalProps> = ({
                   </View>
                   <View className="flex-1">
                     {/* Giả lập hiển thị Title và Subtitle (Laravel của bạn đang trả về 1 string full, nên hiển thị 1 dòng) */}
-                    <Text className="text-base font-medium text-slate-800">
+                    <Text className="text-base font-inter-medium text-slate-800">
                       {item.formatted_address}
                     </Text>
                   </View>
@@ -105,11 +98,11 @@ const SearchLocationModal: FC<LocationSearchModalProps> = ({
               ListEmptyComponent={
                 !loading && keyword.length > 2 ? (
                   <View className="p-8 items-center">
-                    <Text className="text-gray-500">Không tìm thấy kết quả nào</Text>
+                    <Text className="text-gray-500">{t('location.no_result')}</Text>
                   </View>
                 ) : null
               }
-            />
+            />}
           </View>
         </SafeAreaView>
       </Modal>

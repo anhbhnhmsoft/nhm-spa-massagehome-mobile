@@ -1,4 +1,4 @@
-import { ResponseDataSuccessType } from '@/lib/types';
+import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
 
 export type SearchLocationRequest = {
   keyword: string;
@@ -27,3 +27,35 @@ export type DetailLocation  = {
 }
 
 export type DetailLocationResponse = ResponseDataSuccessType<DetailLocation>;
+
+
+export type ListAddressRequest = BaseSearchRequest<object>;
+
+export type AddressItem = {
+  id: string;
+  user_id: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  desc: string;
+  is_primary: boolean;
+}
+export type ListAddressResponse = ResponseDataSuccessType<Paginator<AddressItem>>;
+
+
+export type SaveAddressRequest = {
+  address: string;
+  latitude: number;
+  longitude: number;
+  desc?: string;
+  is_primary: boolean;
+}
+
+export type EditAddressRequest = SaveAddressRequest & {
+  id: string;
+}
+
+export type DeleteAddressRequest = {
+  id: string;
+}
+

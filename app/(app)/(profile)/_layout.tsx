@@ -10,7 +10,8 @@ export default function ProfileLayout() {
       <Stack.Screen name="take-picture-avatar" />
 
       {/* Location */}
-      <Stack.Screen name="save-location" />
+      <Stack.Screen name="location/list" />
+      <Stack.Screen name="location/save" />
     </Stack>
   );
 }
