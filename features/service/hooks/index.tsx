@@ -9,16 +9,14 @@ import {
   CategoryListRequest,
   PickBookingItem,
   PickBookingRequirement,
+  ServiceItem,
   ServiceListRequest,
 } from '@/features/service/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useApplicationStore from '@/lib/store';
 import useServiceStore from '@/features/service/stores';
 import { router } from 'expo-router';
-import {
-  useMutationBookingService,
-  useMutationServiceDetail,
-} from '@/features/service/hooks/use-mutation';
+import { useMutationBookingService, useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,10 +24,10 @@ import { z } from 'zod';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useLocationAddress } from '@/features/app/hooks/use-location';
-import { _StepFormBooking } from '@/features/service/const';
 import useAuthStore from '@/features/auth/store';
-import { _AuthStatus } from '@/features/auth/const';
 import { useImmer } from 'use-immer';
+import { useCheckAuthToRedirect } from '@/features/auth/hooks';
+import { useLogoutMutation } from '@/features/auth/hooks/use-mutation';
 
 /**
  * Lấy danh sách danh mục dịch vụ
@@ -113,8 +111,7 @@ export const useGetServiceList = (params: ServiceListRequest, enabled?: boolean)
  */
 export const useSetService = () => {
   const setService = useServiceStore((s) => s.setService);
-
-  const status = useAuthStore((state) => state.status);
+  const redirect = useCheckAuthToRedirect();
 
   const { mutate } = useMutationServiceDetail();
 
@@ -122,28 +119,23 @@ export const useSetService = () => {
 
   const handleError = useErrorToast();
 
-  return useCallback(
-    (id: string) => {
-      if (status === _AuthStatus.UNAUTHORIZED) {
-        router.push(`/(auth)`);
-      } else if (status === _AuthStatus.AUTHORIZED) {
-        setLoading(true);
-        mutate(id, {
-          onSuccess: (res) => {
-            setService(res.data);
-            router.push('/(app)/(service)/service-detail');
-          },
-          onError: (error) => {
-            handleError(error);
-          },
-          onSettled: () => {
-            setLoading(false);
-          },
-        });
-      }
-    },
-    [status]
-  );
+  return (id: string) => {
+    redirect(() => {
+      setLoading(true);
+      mutate(id, {
+        onSuccess: (res) => {
+          setService(res.data);
+          router.push('/(app)/(service)/service-detail');
+        },
+        onError: (error) => {
+          handleError(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    });
+  }
 };
 
 /**
@@ -151,7 +143,6 @@ export const useSetService = () => {
  */
 export const useServiceDetail = () => {
   const service = useServiceStore((s) => s.service);
-  const setService = useServiceStore((s) => s.setService);
   const setPickServiceBooking = useServiceStore((s) => s.setPickServiceBooking);
 
   // Kiểm tra xem dịch vụ có tồn tại và đang hoạt động hay không
@@ -160,8 +151,6 @@ export const useServiceDetail = () => {
     if (!service || !service.is_active) {
       router.back();
     }
-    // Xóa service khi component unmount
-    return () => setService(null);
   }, [service]);
 
   const pickServiceToBooking = (data: PickBookingItem) => {
@@ -170,7 +159,7 @@ export const useServiceDetail = () => {
   };
 
   return {
-    service,
+    detail: service as ServiceItem,
     pickServiceToBooking,
   };
 };
@@ -181,11 +170,11 @@ export const useServiceDetail = () => {
 export const useServiceBooking = () => {
   const pickServiceBooking = useServiceStore((s) => s.pick_service_booking);
   const setPickServiceBooking = useServiceStore((s) => s.setPickServiceBooking);
+  const user = useAuthStore((s) => s.user);
+
   const { t } = useTranslation();
 
   // Lưu trữ bước hiện tại trong booking
-  const [step, setStep] = useState<_StepFormBooking>(_StepFormBooking.MAP);
-  const [enableCoupon, setEnableCoupon] = useState<boolean>(false);
   const setLoading = useApplicationStore((s) => s.setLoading);
   // Lấy thông tin địa chỉ hiện tại của người dùng
   const { location: storeLocation } = useLocationAddress();
@@ -216,17 +205,18 @@ export const useServiceBooking = () => {
             }
           ),
         note: z.string().optional(), // Cho phép rỗng
+        note_address: z.string().optional(), // Cho phép rỗng
         address: z.string().min(1, { error: t('services.error.invalid_address') }),
-        lat: z.number(),
-        lng: z.number(),
+        latitude: z.number(),
+        longitude: z.number(),
         coupon_id: z.string().optional(),
       })
     ),
     defaultValues: {
       book_time: dayjs().toISOString(),
       address: '',
-      lat: 0,
-      lng: 0,
+      latitude: 0,
+      longitude: 0,
     },
   });
 
@@ -237,18 +227,24 @@ export const useServiceBooking = () => {
         for_service_id: pickServiceBooking?.service_id,
       },
     },
-    enableCoupon && !!pickServiceBooking?.service_id
+    true
   );
 
   const mutationBookingService = useMutationBookingService();
   // Auto-fill location
   useEffect(() => {
-    if (storeLocation) {
+    // Nếu có primary_location, tự động điền thông tin vào form
+    if (user && user.primary_location) {
+      form.setValue('address', user.primary_location.address);
+      form.setValue('latitude', user.primary_location.latitude);
+      form.setValue('longitude', user.primary_location.longitude);
+      form.setValue('note_address', user.primary_location.desc || '');
+    }else if (storeLocation) {
       form.setValue('address', storeLocation.address);
-      form.setValue('lat', storeLocation.location.coords.latitude);
-      form.setValue('lng', storeLocation.location.coords.longitude);
+      form.setValue('latitude', storeLocation.location.coords.latitude);
+      form.setValue('longitude', storeLocation.location.coords.longitude);
     }
-  }, [storeLocation]);
+  }, [storeLocation, user]);
 
   // Kiểm tra xem booking có tồn tại hay không
   useEffect(() => {
@@ -256,31 +252,7 @@ export const useServiceBooking = () => {
     if (!pickServiceBooking) {
       router.back();
     }
-    // Xóa booking khi component unmount
-    return () => {
-      setPickServiceBooking(null);
-      setStep(_StepFormBooking.MAP);
-    };
   }, [pickServiceBooking]);
-
-  // Xử lý khi nhấn nút "Tiếp tục" ở bước MAP
-  const handleNextStep = () => {
-    form.trigger(['address', 'lat', 'lng']).then((valid) => {
-      if (valid) {
-        setStep(_StepFormBooking.FORM);
-        setEnableCoupon(true);
-      }
-    });
-  };
-
-  // Xử lý khi nhấn nút "Quay lại" ở bước FORM
-  const handleForwardStep = () => {
-    setStep(_StepFormBooking.MAP);
-    form.setValue('book_time', dayjs().toISOString());
-    form.setValue('note', '');
-    form.setValue('coupon_id', undefined);
-    setEnableCoupon(false);
-  };
 
   // Xử lý khi nhấn nút "Đặt lịch" ở bước FORM
   const handleBooking = (data: PickBookingRequirement) => {
@@ -296,7 +268,6 @@ export const useServiceBooking = () => {
           // Xử lý khi đặt lịch thành công
           setLoading(false);
           setPickServiceBooking(null);
-          setStep(_StepFormBooking.MAP);
           router.push('/(app)/(tab)/orders');
         },
         onError: (error) => {
@@ -309,11 +280,8 @@ export const useServiceBooking = () => {
   };
 
   return {
-    pickServiceBooking,
-    step,
+    detail: pickServiceBooking as PickBookingItem,
     form,
-    handleNextStep,
-    handleForwardStep,
     queryCoupon,
     handleBooking,
   };

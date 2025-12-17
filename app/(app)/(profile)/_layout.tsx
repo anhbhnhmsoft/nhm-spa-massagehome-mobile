@@ -9,9 +9,6 @@ export default function ProfileLayout() {
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="take-picture-avatar" />
 
-      {/* Location */}
-      <Stack.Screen name="location/list" />
-      <Stack.Screen name="location/save" />
     </Stack>
   );
 }

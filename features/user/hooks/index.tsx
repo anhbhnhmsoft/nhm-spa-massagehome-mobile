@@ -1,19 +1,20 @@
-import { useInfiniteListKTV } from '@/features/user/hooks/use-query';
-import { KTVListFilterPatch, ListKTVRequest } from '@/features/user/types';
+import { useInfiniteListKTV, useQueryDashboardProfile } from '@/features/user/hooks/use-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { router } from 'expo-router';
-import useUserServiceStore, { useKTVStore } from '@/features/user/stores';
+import useUserServiceStore, { useKTVSearchStore } from '@/features/user/stores';
 import { useGetServiceList } from '@/features/service/hooks';
 import { useMutationKtvDetail } from '@/features/user/hooks/use-mutation';
 import useApplicationStore from '@/lib/store';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import useAuthStore from '@/features/auth/store';
 import { _AuthStatus } from '@/features/auth/const';
+import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
+import { KTVDetail } from '@/features/user/types';
+import { useProfileQuery } from '@/features/auth/hooks/use-query';
 
-
-export const useGetListKTV = (initialParams: Omit<ListKTVRequest, 'filter'>) => {
-  const params = useKTVStore((state) => state.params);
-  const setFilter = useKTVStore((state) => state.setFilter);
+export const useGetListKTV = () => {
+  const params = useKTVSearchStore((state) => state.params);
+  const setFilter = useKTVSearchStore((state) => state.setFilter);
 
   const query = useInfiniteListKTV(params);
 
@@ -40,7 +41,7 @@ export const useGetListKTV = (initialParams: Omit<ListKTVRequest, 'filter'>) => 
 export const useSetKtv = () => {
   const setKtv = useUserServiceStore((s) => s.setKtv);
 
-  const status = useAuthStore((s) => s.status);
+  const redirect = useCheckAuthToRedirect();
 
   const setLoading = useApplicationStore((s) => s.setLoading);
 
@@ -48,27 +49,23 @@ export const useSetKtv = () => {
 
   const { mutate } = useMutationKtvDetail();
 
-  return useCallback((id: string) => {
-      if (status === _AuthStatus.UNAUTHORIZED ) {
-        router.push(`/(auth)`);
-      }else{
-        setLoading(true);
-        mutate(id, {
-          onSuccess: (res) => {
-            setKtv(res.data);
-            router.push('/(app)/(service)/masseurs-detail');
-          },
-          onError: (error) => {
-            handleError(error);
-          },
-          onSettled: () => {
-            setLoading(false);
-          }
-        });
-      }
-    },
-    [status]
-  );
+  return (id: string) => {
+    redirect(() => {
+      setLoading(true);
+      mutate(id, {
+        onSuccess: (res) => {
+          setKtv(res.data);
+          router.push('/(app)/(service)/masseurs-detail');
+        },
+        onError: (error) => {
+          handleError(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    });
+  };
 };
 
 /**
@@ -76,6 +73,10 @@ export const useSetKtv = () => {
  */
 export const useKTVDetail = () => {
   const ktv = useUserServiceStore((s) => s.ktv);
+  const setKtv = useUserServiceStore((s) => s.setKtv);
+  const { mutate } = useMutationKtvDetail();
+  const handleError = useErrorToast();
+  const setLoading = useApplicationStore((s) => s.setLoading);
 
   useEffect(() => {
     // Nếu không có massager, quay lại màn hình trước
@@ -95,11 +96,30 @@ export const useKTVDetail = () => {
     [ktv?.id]
   );
 
+  const refreshPage = useCallback(() => {
+    if (ktv) {
+      setLoading(true);
+      mutate(ktv.id, {
+        onSuccess: (res) => {
+          setKtv(res.data);
+          queryServices.refetch();
+        },
+        onError: (error) => {
+          handleError(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    }
+  }, [ktv]);
+
   const queryServices = useGetServiceList(serviceParams, !!ktv);
 
   return {
-    ktv,
+    detail: ktv as KTVDetail,
     queryServices,
+    refreshPage,
   };
 };
 
@@ -107,18 +127,56 @@ export const useKTVDetail = () => {
  * Xử lý màn hình profile
  */
 export const useProfile = () => {
-  const status = useAuthStore((state) => state.status);
   const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const checkAuth = useCheckAuth();
 
+  const queryProfile = useProfileQuery();
+
+  const queryDashboard = useQueryDashboardProfile();
+
+  // Cập nhật thông tin user khi có dữ liệu từ query
+  useEffect(() => {
+    if (queryProfile.data) {
+      setUser(queryProfile.data);
+    }
+  }, [queryProfile.data]);
 
   // Chuyển hướng đến màn hình đăng nhập nếu chưa đăng nhập
   useEffect(() => {
-    if (!user && status === _AuthStatus.UNAUTHORIZED) {
+    if (!checkAuth && !user) {
       router.push('/(auth)');
     }
-  }, [user, status]);
+  }, [checkAuth]);
+
+  const isLoading = useMemo(() => {
+    return queryProfile.isLoading ||
+      queryDashboard.isLoading ||
+      queryDashboard.isRefetching ||
+      queryProfile.isRefetching;
+  }, [
+    queryProfile.isLoading,
+    queryDashboard.isLoading,
+    queryDashboard.isRefetching,
+    queryProfile.isRefetching,
+  ]);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [
+    isLoading,
+  ]);
+
+  const refreshProfile = useCallback(() => {
+    queryProfile.refetch();
+    queryDashboard.refetch();
+  }, [queryProfile, queryDashboard]);
 
   return {
     user,
+    dashboardData: queryDashboard.data,
+    refreshProfile,
+    isLoading,
   };
 };

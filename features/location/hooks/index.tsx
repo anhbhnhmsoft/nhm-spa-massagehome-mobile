@@ -1,7 +1,9 @@
 import useDebounce from '@/features/app/hooks/use-debounce';
 import {
   useMutationDeleteAddress,
-  useMutationDetailLocation, useMutationEditAddress, useMutationSaveAddress,
+  useMutationDetailLocation,
+  useMutationEditAddress,
+  useMutationSaveAddress,
   useMutationSearchLocation,
 } from '@/features/location/hooks/use-mutation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -28,7 +30,6 @@ import { z } from 'zod';
 export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [results, setResults] = useState<SearchLocation[]>([]);
-  const setLoadingApp = useApplicationStore((s) => s.setLoading);
   const handleError = useErrorToast();
   const { location } = useLocationAddress();
 
@@ -147,7 +148,7 @@ export const useListLocation = () => {
   const { mutate: mutateDeleteAddress } = useMutationDeleteAddress();
   const checkAuth = useCheckAuth();
   const handleError = useErrorToast();
-
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
   useEffect(() => {
     // Nếu không auth, quay lại trang trước
@@ -165,8 +166,6 @@ export const useListLocation = () => {
     }
   }, [refresh_list]);
 
-
-
   // Lấy danh sách địa chỉ
   const queryList = useGetListAddress({
     filter: {},
@@ -177,14 +176,19 @@ export const useListLocation = () => {
   // Xử lý thêm
   const createHandler = () => {
     setItemAddress(null); // Clear dữ liệu cũ
-    router.push('/(app)/(profile)/location/save');
-  }
+    setShowSaveModal(true);
+  };
 
   // Xử lý sửa
   const editHandler = (item: AddressItem) => {
     setItemAddress(item); // Set dữ liệu cũ
-    router.push('/(app)/(profile)/location/save');
-  }
+    setShowSaveModal(true);
+  };
+
+  const closeSaveModal = () => {
+    setItemAddress(null); // Clear dữ liệu cũ
+    setShowSaveModal(false);
+  };
 
   // Xử lý xóa
   const deleteHandler = (item: AddressItem) => {
@@ -201,56 +205,64 @@ export const useListLocation = () => {
         },
         onSettled: () => {
           setLoading(false);
-        }
+        },
       }
     );
-  }
-
+  };
 
   return {
     queryList,
     createHandler,
     editHandler,
     deleteHandler,
+    showSaveModal,
+    closeSaveModal,
   };
 };
 
 // Hook cho trang thêm/sửa location
-export const useSaveLocation = () => {
+export const useSaveLocation = (onSuccess: () => void) => {
   const item_address = useStoreLocation((s) => s.item_address);
   const setRefreshList = useStoreLocation((s) => s.setRefreshList);
   const setItemAddress = useStoreLocation((s) => s.setItemAddress);
   const getProfile = useGetProfile();
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const setLoading = useApplicationStore((s) => s.setLoading);
   const handleError = useErrorToast();
 
   // Mutation lưu địa chỉ
-  const {mutate: mutateSaveAddress} = useMutationSaveAddress();
+  const { mutate: mutateSaveAddress } = useMutationSaveAddress();
 
   // Mutation sửa địa chỉ
-  const {mutate: mutateEditAddress} = useMutationEditAddress();
+  const { mutate: mutateEditAddress } = useMutationEditAddress();
 
   const form = useForm<SaveAddressRequest>({
-    defaultValues:{
+    defaultValues: {
       address: item_address?.address || '',
       latitude: Number(item_address?.latitude) || undefined,
       longitude: Number(item_address?.longitude) || undefined,
       desc: item_address?.desc || '',
       is_primary: item_address?.is_primary || false,
     },
-    resolver: zodResolver(z.object({
-      address: z.string({ error: t('location.error.invalid_address') })
-        .min(5, {error: t('location.error.invalid_address')})
-        .max(255, {error: t('location.error.invalid_address')}),
-      latitude: z.number({ error: t('location.error.invalid_location') })
-        .min(-90).max(90),
-      longitude: z.number({ error: t('location.error.invalid_location') })
-        .min(-180).max(180),
-      desc: z.string().optional(),
-      is_primary: z.boolean(),
-    })),
+    resolver: zodResolver(
+      z.object({
+        address: z
+          .string({ error: t('location.error.invalid_address') })
+          .min(5, { error: t('location.error.invalid_address') })
+          .max(255, { error: t('location.error.invalid_address') }),
+        latitude: z
+          .number({ error: t('location.error.invalid_location') })
+          .min(-90)
+          .max(90),
+        longitude: z
+          .number({ error: t('location.error.invalid_location') })
+          .min(-180)
+          .max(180),
+        desc: z.string().optional(),
+        is_primary: z.boolean(),
+      })
+    ),
   });
 
   useEffect(() => {
@@ -267,7 +279,7 @@ export const useSaveLocation = () => {
   const submit = (data: SaveAddressRequest) => {
     setLoading(true);
 
-    if (item_address){
+    if (item_address) {
       // Sửa địa chỉ
       mutateEditAddress(
         { id: item_address.id, ...data },
@@ -277,45 +289,40 @@ export const useSaveLocation = () => {
             setRefreshList(true);
             setItemAddress(null); // Clear dữ liệu cũ
             getProfile(); // Cập nhật lại thông tin user để luôn lấy địa chỉ mới nhất
-            router.back();
+            onSuccess();
           },
           onError: (err) => {
             handleError(err);
           },
           onSettled: () => {
             setLoading(false);
-          }
+          },
         }
       );
     } else {
       // Lưu địa chỉ
-      mutateSaveAddress(
-        data,
-        {
-          onSuccess: () => {
-            // Lưu thành công, refresh lại danh sách
-            setRefreshList(true);
-            setItemAddress(null); // Clear dữ liệu cũ
-            getProfile(); // Cập nhật lại thông tin user để luôn lấy địa chỉ mới nhất
-            router.back();
-          },
-          onError: (err) => {
-            handleError(err);
-          },
-          onSettled: () => {
-            setLoading(false);
-          }
-        }
-      );
+      mutateSaveAddress(data, {
+        onSuccess: () => {
+          // Lưu thành công, refresh lại danh sách
+          setRefreshList(true);
+          setItemAddress(null); // Clear dữ liệu cũ
+          getProfile(); // Cập nhật lại thông tin user để luôn lấy địa chỉ mới nhất
+          onSuccess();
+        },
+        onError: (err) => {
+          handleError(err);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
     }
-  }
-
+  };
 
   return {
     item_address,
     form,
     submit,
-    isEdit : Boolean(item_address),
+    isEdit: Boolean(item_address),
   };
-}
-
+};

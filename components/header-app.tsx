@@ -8,6 +8,7 @@ import { Text } from '@/components/ui/text';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import useAuthStore from '@/features/auth/store';
 import { Icon } from '@/components/ui/icon';
+import { ListLocationModal } from '@/components/app/location';
 
 
 
@@ -22,73 +23,79 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
-
+  const [showLocationModal, setShowLocationModal] = React.useState(false);
   const redirectAuth = useCheckAuthToRedirect();
 
   return (
-    <GradientBackground
-      style={{ paddingTop: insets.top + 10, paddingHorizontal: 16, paddingBottom: 20, zIndex: 10 }}
-      className="z-10 px-4 pb-6 shadow-sm">
-      {/* Top Bar: Location & Noti */}
-      <View className="mb-4 mt-2 flex-row items-center justify-between gap-8">
-        {/* Location Button */}
-        <TouchableOpacity
-          onPress={() => {
-            redirectAuth("/(app)/(profile)/location/list");
-          }}
-          activeOpacity={0.8}
-          className={'flex-1'}>
-          <Text className="text-xs font-medium text-blue-200">{t('header_app.location')}</Text>
-          <View className="mt-1 flex-row items-center gap-1">
-            <Icon as={MapPin} size={16} className="text-white" />
-            <Text className="font-inter-bold text-base text-white" numberOfLines={1}>
-              {user?.primary_location?.address || t('header_app.need_location')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        {/* Notification Button */}
-        <TouchableOpacity className="relative">
-          <Icon as={Bell} size={24} className="text-white" />
-          {/* Dấu chấm đỏ thông báo */}
-          <View className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-[#1d4ed8] bg-red-500" />
-        </TouchableOpacity>
-      </View>
-      {/* Welcome Text */}
-      <Text className="mb-1 font-inter-bold text-xl text-white">{t('header_app.hello')}</Text>
-      <Text className="mb-4 text-sm text-blue-100">{t('header_app.search_description')}</Text>
-      {showSearch && (
-        <View>
-          {/* Search Bar */}
-          <View className="h-12 flex-row items-center rounded-xl bg-white px-3 shadow-sm border border-gray-100">
-            {/* Icon Search bên trái */}
-            <Search size={20} color="#94a3b8" />
-
-            {/* Input nhập liệu */}
-            <TextInput
-              className="ml-2 flex-1 text-sm text-slate-700 h-full"
-              placeholder={
-                forSearch === "service"
-                  ? t('header_app.search_placeholder_service')
-                  : t('header_app.search_placeholder_massage')
-              }
-              placeholderTextColor="#94a3b8" // Màu placeholder nhạt giống icon
-              value={textSearch}
-              onChangeText={setTextSearch}
-              returnKeyType="search"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-
-            {/* Nút X để xóa nhanh text (chỉ hiện khi có text) */}
-            {textSearch && setTextSearch && textSearch.length > 0 && (
-              <TouchableOpacity onPress={() => setTextSearch('')} className="p-1">
-                <Icon as={X} size={18} color="#94a3b8" />
-              </TouchableOpacity>
-            )}
-          </View>
+    <>
+      <GradientBackground
+        style={{ paddingTop: insets.top + 10, paddingHorizontal: 16, paddingBottom: 10, zIndex: 10 }}
+      >
+        {/* Top Bar: Location & Noti */}
+        <View className="mb-4 mt-2 flex-row items-center justify-between gap-8">
+          {/* Location Button */}
+          <TouchableOpacity
+            onPress={() => {
+              redirectAuth(() => setShowLocationModal(true));
+            }}
+            activeOpacity={0.8}
+            className={'flex-1'}>
+            <Text className="text-xs font-medium text-blue-200">{t('header_app.location')}</Text>
+            <View className="mt-1 flex-row items-center gap-1">
+              <Icon as={MapPin} size={16} className="text-white" />
+              <Text className="font-inter-bold text-base text-white" numberOfLines={1}>
+                {user?.primary_location?.address || t('header_app.need_location')}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          {/* Notification Button */}
+          <TouchableOpacity className="relative">
+            <Icon as={Bell} size={24} className="text-white" />
+            {/* Dấu chấm đỏ thông báo */}
+            <View className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-[#1d4ed8] bg-red-500" />
+          </TouchableOpacity>
         </View>
-      )}
-    </GradientBackground>
+        {/*/!* Welcome Text *!/*/}
+        {/*<Text className="mb-1 font-inter-bold text-xl text-white">{t('header_app.hello')}</Text>*/}
+        {/*<Text className="mb-4 text-sm text-blue-100">{t('header_app.search_description')}</Text>*/}
+        {showSearch && (
+          <View>
+            {/* Search Bar */}
+            <View className="h-12 flex-row items-center rounded-xl bg-white px-3 shadow-sm border border-gray-100">
+              {/* Icon Search bên trái */}
+              <Search size={20} color="#94a3b8" />
+
+              {/* Input nhập liệu */}
+              <TextInput
+                className="ml-2 flex-1 text-sm text-slate-700 h-full"
+                placeholder={
+                  forSearch === "service"
+                    ? t('header_app.search_placeholder_service')
+                    : t('header_app.search_placeholder_massage')
+                }
+                placeholderTextColor="#94a3b8" // Màu placeholder nhạt giống icon
+                value={textSearch}
+                onChangeText={setTextSearch}
+                returnKeyType="search"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              {/* Nút X để xóa nhanh text (chỉ hiện khi có text) */}
+              {textSearch && setTextSearch && textSearch.length > 0 && (
+                <TouchableOpacity onPress={() => setTextSearch('')} className="p-1">
+                  <Icon as={X} size={18} color="#94a3b8" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
+      </GradientBackground>
+      <ListLocationModal
+        visible={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+      />
+    </>
   );
 }
 

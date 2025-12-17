@@ -2,7 +2,13 @@ const DefaultColor = {
   white: '#ffffff',
   black: '#000000',
   base: {
-
+    'base-color-1': '#001E37',
+    'base-color-2': '#FFFFFF',
+    'base-color-3': '#D6E2F3',
+    'primary-color-1': '#044984',
+    'primary-color-2': '#2B7BBE',
+    'primary-color-3': '#45556C',
+    'primary-color-4': '#90A1B9',
   },
   slate: {
     50: '#f8fafc',

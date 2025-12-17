@@ -1,6 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import userApi from '@/features/user/api';
-import { ListKTVRequest, ListKTVResponse } from '@/features/user/types';
+import { DashboardProfileResponse, ListKTVRequest, ListKTVResponse } from '@/features/user/types';
 
 
 export const useInfiniteListKTV = (
@@ -24,5 +24,16 @@ export const useInfiniteListKTV = (
       return undefined;
     },
     initialPageParam: 1,
+  });
+};
+
+
+export const useQueryDashboardProfile = () => {
+  return useQuery({
+    queryKey: ['userApi-dashboardProfile'],
+    queryFn: async () => {
+      return userApi.dashboardProfile();
+    },
+    select: res => res.data
   });
 };

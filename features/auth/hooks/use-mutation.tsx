@@ -90,5 +90,12 @@ export const useMutationEditProfile = () => useMutation({
   mutationFn: (data: EditProfileRequest) => authApi.editProfile(data),
 });
 
+/**
+ * Hook để logout user
+ */
+export const useLogoutMutation = () => useMutation({
+  mutationFn: () => authApi.logout(),
+});
+
 
 

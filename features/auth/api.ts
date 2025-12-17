@@ -112,8 +112,14 @@ const authApi = {
   editProfile: async (data: EditProfileRequest): Promise<ProfileResponse> =>  {
     const response = await client.post(`${defaultUri}/edit-profile`, data);
     return response.data;
+  },
+  /**
+   * Hàm để logout user
+   */
+  logout: async (): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/logout`);
+    return response.data;
   }
-
 };
 
 export default authApi;

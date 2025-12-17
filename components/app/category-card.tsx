@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { Bath, Medal } from 'lucide-react-native';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useKTVStore } from '@/features/user/stores';
+import { useKTVSearchStore } from '@/features/user/stores';
 import { router } from 'expo-router';
 
 
 const CategoryCard = ({ item }: { item: CategoryItem }) => {
-  const setFilter = useKTVStore((state) => state.setFilter);
+  const setFilter = useKTVSearchStore((state) => state.setFilter);
 
   const [imageError, setImageError] = useState(false);
 

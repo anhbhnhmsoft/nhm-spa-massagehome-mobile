@@ -1,24 +1,24 @@
-import { ListKTVItem, ListKTVRequest } from '@/features/user/types';
+import { KTVDetail,  ListKTVRequest } from '@/features/user/types';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 
 interface IUserServiceStore {
-  ktv: ListKTVItem | null;
+  ktv: KTVDetail | null;
 
-  setKtv: (ktv: ListKTVItem | null) => void;
+  setKtv: (ktv: KTVDetail | null) => void;
 }
 
 const useUserServiceStore = create<IUserServiceStore>((set) => ({
   ktv: null,
-
   setKtv: (ktv) => set({ ktv }),
 }));
-
 export default useUserServiceStore;
 
 
-
+/**
+ * Store quản lý trạng thái tìm kiếm KTV
+ */
 const INITIAL_PARAMS: ListKTVRequest = {
   filter: {
     keyword: '',
@@ -26,15 +26,14 @@ const INITIAL_PARAMS: ListKTVRequest = {
   page: 1,
   per_page: 10,
 };
-
-interface IKTVStore {
+interface IKTVSearchStore {
   params: ListKTVRequest;
   // Actions
   setFilter: (filterPatch: Partial<ListKTVRequest['filter']>) => void;
   setPage: (page: number) => void;
   resetParams: () => void;
 }
-export const useKTVStore = create<IKTVStore>()(
+export const useKTVSearchStore = create<IKTVSearchStore>()(
   immer((set) => ({
     params: INITIAL_PARAMS,
     setFilter: (filterPatch) =>

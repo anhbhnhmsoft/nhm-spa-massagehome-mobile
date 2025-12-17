@@ -8,7 +8,7 @@ import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
 import {
   useAuthenticateMutation,
-  useLoginMutation, useMutationDeleteAvatar, useMutationEditAvatar, useMutationEditProfile,
+  useLoginMutation, useLogoutMutation, useMutationDeleteAvatar, useMutationEditAvatar, useMutationEditProfile,
   useProfileMutation,
   useRegisterMutation,
   useResendRegisterOTPMutation,
@@ -369,15 +369,19 @@ export const useCheckAuth = () => {
 export const useCheckAuthToRedirect = () => {
   const isAuthorized = useCheckAuth();
 
-  return useCallback((redirectTo: Href) => {
+  // Kiểu dữ liệu nhận vào: Href (URL) HOẶC một hàm callback
+  return useCallback((redirectTo: Href | (() => void)) => {
     if (!isAuthorized) {
       router.push('/(auth)');
-    }else{
-      router.push(redirectTo);
+    } else {
+      if (typeof redirectTo === 'function') {
+        redirectTo();
+      } else {
+        router.push(redirectTo);
+      }
     }
   }, [isAuthorized]);
-
-}
+};
 /**
  * Hook để lấy profile user
  */
@@ -498,7 +502,6 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
               setLanguageStore(lang);
             },
             onError: (error) => {
-              console.log(error)
               errorToast({
                 message: t('common_error.failed_to_set_language'),
               });
@@ -648,6 +651,9 @@ export const useEditAvatar = () => {
 
 }
 
+/**
+ * Hook để chỉnh sửa thông tin profile
+ */
 export const useEditProfile = () => {
   const {t} = useTranslation();
   const errorHandle = useErrorToast();
@@ -733,3 +739,26 @@ export const useEditProfile = () => {
 
 
 }
+
+export const useLogout = () => {
+  const mutationLogout = useLogoutMutation();
+  const logout = useAuthStore((s) => s.logout);
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const handleError = useErrorToast();
+
+  return () => {
+    setLoading(true);
+    mutationLogout.mutate(undefined, {
+      onSuccess: () => {
+        logout();
+      },
+      onError: (error) => {
+        // Xử lý khi có lỗi xảy ra
+        handleError(error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  };
+};

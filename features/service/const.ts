@@ -21,12 +21,14 @@ export enum _BookingStatus{
   ONGOING = 3,
   COMPLETED = 4,
   CANCELED = 5,
+  PAYMENT_FAILED = 6,
 }
 
 export const _BookingStatusMap = {
-  [_BookingStatus.PENDING]: 'enum.order_status.PENDING',
-  [_BookingStatus.CONFIRMED]: 'enum.order_status.CONFIRMED',
-  [_BookingStatus.ONGOING]: 'enum.order_status.ONGOING',
-  [_BookingStatus.COMPLETED]: 'enum.order_status.COMPLETED',
-  [_BookingStatus.CANCELED]: 'enum.order_status.CANCELED',
+  [_BookingStatus.PENDING]: 'enum.booking_status.PENDING',
+  [_BookingStatus.CONFIRMED]: 'enum.booking_status.CONFIRMED',
+  [_BookingStatus.ONGOING]: 'enum.booking_status.ONGOING',
+  [_BookingStatus.COMPLETED]: 'enum.booking_status.COMPLETED',
+  [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
+  [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
 } as const

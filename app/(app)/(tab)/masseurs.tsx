@@ -6,7 +6,6 @@ import Empty from '@/components/empty';
 import { useTranslation } from 'react-i18next';
 import {  KTVServiceCard, KTVServiceCardSkeleton } from '@/components/app/ktv-card';
 import useDebounce from '@/features/app/hooks/use-debounce';
-import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
 
@@ -27,10 +26,7 @@ export default function MasseursScreen() {
     isLoading,
     setFilter,
     params
-  } = useGetListKTV({
-    page: 1,
-    per_page: 5,
-  });
+  } = useGetListKTV();
 
   const debouncedSearch = useDebounce((text: string) => {
     setFilter({ keyword: text });

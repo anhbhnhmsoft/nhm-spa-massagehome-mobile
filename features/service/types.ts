@@ -54,20 +54,28 @@ export type ServiceDetailResponse = ResponseDataSuccessType<ServiceItem>;
 export type BookingServiceRequest = {
   service_id: string;
   service_name: string;
+  option_id: string;
   duration: _ServiceDuration;
   book_time: string; // Thời gian đặt lịch
   note?: string;
+  note_address?: string;
   address: string;
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   coupon_id?: string;
 }
 
 // Pick only required fields for booking
-export type PickBookingItem = Pick<BookingServiceRequest, "service_id" | "service_name" | "duration">;
+export type PickBookingItem = {
+  service_id: string;
+  service_name: string;
+  option_id: string;
+  duration: _ServiceDuration;
+  price: string;
+};
 
 // Pick only required fields for booking requirement
-export type PickBookingRequirement = Omit<BookingServiceRequest, "service_id" | "service_name" | "duration">;
+export type PickBookingRequirement = Omit<BookingServiceRequest, "service_id" | "service_name" | "option_id" | "duration">;
 
 
 export type CouponItem = {

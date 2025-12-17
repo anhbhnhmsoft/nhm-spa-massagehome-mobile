@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { _BackendURL, _HTTPStatus } from '@/lib/const';
-import { SecureStorage } from '@/lib/storages';
+import { _BackendURL, _HTTPStatus, _LanguageCode } from '@/lib/const';
+import { SecureStorage, Storage } from '@/lib/storages';
 import { _StorageKey } from '@/lib/storages/key';
 import ErrorAPIServer, { IValidationErrors } from '@/lib/types';
 import i18next from 'i18next';
@@ -22,8 +22,16 @@ client.interceptors.request.use(
   async (config) => {
     // Add an authorization token if available
     const token = await SecureStorage.getItem<string>(_StorageKey.SECURE_AUTH_TOKEN);
+    const lang = await Storage.getItem<_LanguageCode>(_StorageKey.LANGUAGE);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Thêm tham số ngôn ngữ vào mỗi request nếu có
+    if (lang) {
+      config.params = {
+        ...config.params,
+        locate: lang,
+      };
     }
     return config;
   },

@@ -7,6 +7,7 @@ import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { formatDistance } from '@/lib/utils';
 import { useSetKtv } from '@/features/user/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
+import StarRating from '@/components/star-rating';
 
 /**
  * Card hiển thị thông tin của massager trong trang chủ
@@ -120,9 +121,7 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
             <View className="flex-row items-center mt-0.5">
               {/* 5 ngôi sao (Demo vẽ 1 cái + số) */}
               <View className="flex-row">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={10} fill={i < Math.floor(item.rating) ? "#facc15" : "#e2e8f0"} color={i < Math.floor(item.rating) ? "#facc15" : "#e2e8f0"} />
-                ))}
+                <StarRating rating={item.rating} size={10} />
               </View>
               <Text className="ml-1 text-xs font-bold text-slate-700">{item.rating}</Text>
               <Text className="text-xs text-slate-400"> ({item.review_count || 0})</Text>
@@ -154,9 +153,8 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
         <View className="mt-3 w-full flex-row items-center justify-between pt-2">
           <View/>
           <View className="rounded-md bg-emerald-500 px-4 py-2 shadow-sm">
-            <Text className="text-xs font-bold text-white">Đặt lịch</Text>
+            <Text className="text-xs font-bold text-white">{t('services.btn_booking')}</Text>
           </View>
-
         </View>
       </View>
     </TouchableOpacity>

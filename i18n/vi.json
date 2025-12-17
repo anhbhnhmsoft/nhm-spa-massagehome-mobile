@@ -121,12 +121,13 @@
     "error_save_image": "Lỗi khi lưu ảnh, vui lòng thử lại sau."
   },
   "enum": {
-    "order_status": {
+    "booking_status": {
       "PENDING": "Chờ xác nhận",
       "CONFIRMED": "Đã xác nhận",
       "ONGOING": "Đang thực hiện",
       "COMPLETED": "Hoàn thành",
-      "CANCELED": "Hủy"
+      "CANCELED": "Hủy",
+      "PAYMENT_FAILED": "Thanh toán thất bại"
     },
     "payment_type": {
       "QR_BANKING": "Chuyển khoản QR Banking",
@@ -234,17 +235,23 @@
     }
   },
   "profile": {
-    "partner_register_1": "Trở thành",
-    "partner_register_2": "Đối tác của chúng tôi",
-    "partner_commission_1": "Ưu đãi hoa hồng",
-    "partner_commission_2": "trọn đời",
-    "partner_commission_3": "Nhận ngay 30% hoàn tiền từ đơn thành công đầu tiên của người được giới thiệu",
-    "language": "Ngôn ngữ",
+    "balance": "Số dư",
+    "coupon": "Mã giảm giá",
     "wallet": "Ví của tôi",
+    "my_order": "Đơn hàng của tôi",
+    "join_partner": "Trở thành đối tác",
+    "join_partner_desc": "Cùng tạo thu nhập",
+    "partner_commission": "Ưu đãi hoa hồng",
+    "partner_commission_desc": "Kiếm tiền thưởng",
+    "common_features": "Chức năng",
+    "manage_address": "Quản lý địa chỉ",
+    "language": "Ngôn ngữ",
     "user_info": "Thông tin cá nhân",
-    "app_info": "Thông tin về ứng dụng",
+    "app_info": "Thông tin",
     "support": "Trung tâm hỗ trợ",
-    "log_out": "Đăng xuất",
+    "log_out": "Đăng xuất ",
+    "log_out_title": "Đăng xuất",
+    "log_out_desc": "Bạn có chắc muốn đăng xuất không?",
     "take_photo": "Chụp ảnh",
     "choose_from_lib": "Chọn từ thư viện",
     "delete_avatar_title": "Xóa ảnh đại diện",
@@ -288,15 +295,32 @@
       "invalid_payment_type": "Phương thức thanh toán không hợp lệ"
     }
   },
+  "masseurs_detail": {
+    "title": "Chi tiết kỹ thuật viên",
+    "display_image": "Hình ảnh hiển thị",
+    "distance": "Khoảng cách",
+    "experience": "Kinh nghiệm",
+    "gender": "Giới tính",
+    "age": "Tuổi",
+    "review_count": "Lượt đánh giá",
+    "sales_count": "Đã phục vụ {{ count }} đơn hàng",
+    "introduction": "Giới thiệu",
+    "review_disclaimer": "Tất cả các đánh giá đều đến từ người dùng thật và chúng tôi mong nhận được phản hồi của bạn.",
+    "review_by_customer": "Đánh giá của người dùng",
+    "see_all_reviews": "Xem tất cả {{ count }} bình luận",
+    "service_list": "Danh sách dịch vụ",
+    "available": "Sẵn sàng",
+    "unavailable": "Tạm ngưng",
+    "sales_count_item_service": "Đã bán {{ count }}",
+    "price_service_sub": "Chỉ từ"
+  },
   "services": {
     "total_services": "dịch vụ có sẵn",
     "total_masseurs": "thợ massage có sẵn",
     "experience": "Kinh nghiệm",
     "completed": "Hoàn thành",
-    "distance": "Khoảng cách",
-    "specialty": "Chuyên môn",
+    "desc": "Mô tả bản thân",
     "price_service": "Giá dịch vụ",
-    "price_service_sub": "Chỉ từ ",
     "available": "Sẵn sàng",
     "unavailable": "Tạm ngưng",
     "bookings": "lượt đặt",
@@ -307,9 +331,11 @@
     "book_time": "Thời gian hẹn",
     "no_coupon_available": "Không có mã giảm giá nào khả dụng",
     "note": "Ghi chú",
+    "note_address": "Ghi chú địa chỉ",
     "coupon": "Mã giảm giá",
     "btn_booking": "Đặt lịch",
     "chat_with_ktv": "Chat với kĩ thuật viên",
+    "address": "Địa chỉ",
     "error": {
       "invalid_time": "Thời gian không hợp lệ, phải sau thời gian hiện tại 1 tiếng",
       "invalid_address": "Địa chỉ không hợp lệ"

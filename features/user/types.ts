@@ -1,6 +1,7 @@
 import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
 import { _LanguageCode } from '@/lib/const';
 import { _Gender, _UserRole } from '@/features/auth/const';
+import { _BookingStatus } from '@/features/service/const';
 
 export type ListKTVItem = {
   id: string;
@@ -27,6 +28,23 @@ export type ListKTVItem = {
     bio: string;
   };
 };
+export type KTVDetail = ListKTVItem & {
+  display_image: {
+    id: string;
+    url: string;
+  }[];
+  first_review: {
+    id: string;
+    review_by: {
+      id: string;
+      name: string;
+      avatar_url: string | null;
+    };
+    comment: string| null;
+    rating: number;
+    created_at: string;
+  } | null;
+}
 
 export type ListKTVRequest = BaseSearchRequest<{
   keyword?: string;
@@ -36,8 +54,17 @@ export type ListKTVRequest = BaseSearchRequest<{
   lng?: number;
 }>;
 
-export type KTVListFilterPatch = Partial<ListKTVRequest['filter']>;
 
 export type ListKTVResponse = ResponseDataSuccessType<Paginator<ListKTVItem>>;
 
-export type DetailKTVResponse = ResponseDataSuccessType<ListKTVItem>;
+export type DetailKTVResponse = ResponseDataSuccessType<KTVDetail>;
+
+
+export type DashboardProfile = {
+  "booking_count": {
+    [key in _BookingStatus]: number;
+  },
+  "wallet_balance": string,
+  "coupon_user_count": number
+}
+export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>;
