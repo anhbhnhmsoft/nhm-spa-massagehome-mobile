@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Text } from '@/components/ui/text';
 import { Icon } from '@/components/ui/icon';
-import { ArrowLeft, ImagePlus, Trash2, MapPin, ChevronDown, Check } from 'lucide-react-native';
+import { ImagePlus, Trash2, MapPin, ChevronDown, Check } from 'lucide-react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
@@ -20,6 +20,7 @@ import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '@/features/auth/store';
 import { ListLocationModal } from '@/components/app/location';
+import HeaderBack from '@/components/header-back';
 
 type IndividualPartnerForm = {
   name: string;
@@ -209,18 +210,7 @@ export default function PartnerRegisterIndividualScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center px-4 pt-2 pb-4">
-        <TouchableOpacity
-          className="mr-3 rounded-full p-2"
-          onPress={() => {
-            router.back();
-          }}>
-          <Icon as={ArrowLeft} size={22} className="text-slate-900" />
-        </TouchableOpacity>
-        <Text className="text-lg font-inter-bold text-slate-900">
-          {t('profile.partner_form.title')}
-        </Text>
-      </View>
+      <HeaderBack title="profile.partner_form.title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
         <Text className="mb-2 text-base font-inter-bold text-slate-900">
@@ -588,16 +578,8 @@ const ProvinceModalContent: React.FC<ProvinceModalContentProps> = ({
 
   return (
     <>
-      <View
-        className="flex-row items-center border-b border-gray-200 px-4"
-        style={{ paddingTop: Math.max(insets.top, 12), paddingBottom: 12 }}>
-        <TouchableOpacity onPress={onClose} className="mr-3 rounded-full p-2">
-          <Icon as={ArrowLeft} size={22} className="text-slate-900" />
-        </TouchableOpacity>
-        <Text className="flex-1 text-lg font-inter-bold text-slate-900">
-          {t('profile.partner_form.field_city_label')}
-        </Text>
-        <View className="w-10" />
+      <View style={{ paddingTop: Math.max(insets.top, 0) }}>
+        <HeaderBack title="profile.partner_form.field_city_label" onBack={onClose} />
       </View>
 
       {isLoading ? (
