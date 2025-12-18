@@ -32,3 +32,21 @@ export const _BookingStatusMap = {
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
 } as const
+
+export const getStatusColor = (status: _BookingStatus) => {
+  switch (status) {
+    case _BookingStatus.PENDING:
+      return 'bg-yellow-100 text-yellow-700';
+    case _BookingStatus.CONFIRMED:
+      return 'bg-blue-100 text-blue-700';
+    case _BookingStatus.ONGOING:
+      return 'bg-purple-100 text-purple-700';
+    case _BookingStatus.COMPLETED:
+      return 'bg-green-100 text-green-700';
+    case _BookingStatus.CANCELED:
+    case _BookingStatus.PAYMENT_FAILED:
+      return 'bg-red-100 text-red-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};

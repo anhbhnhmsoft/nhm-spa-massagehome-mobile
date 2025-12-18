@@ -44,6 +44,7 @@ export type KTVDetail = ListKTVItem & {
     rating: number;
     created_at: string;
   } | null;
+  booking_soon: string | null; // Thời gian hẹn sớm nhất
 }
 
 export type ListKTVRequest = BaseSearchRequest<{

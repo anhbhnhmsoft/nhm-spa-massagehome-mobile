@@ -19,7 +19,7 @@ const { width: PAGE_WIDTH } = Dimensions.get('window');
 const CAROUSEL_HEIGHT = PAGE_WIDTH * 1.2; // Tỷ lệ ảnh dọc (giống hình mẫu)
 
 
-const TechnicianDetailScreen = () => {
+const MasseurDetailScreen = () => {
   const {t} = useTranslation();
   const insets = useSafeAreaInsets();
 
@@ -49,7 +49,7 @@ const TechnicianDetailScreen = () => {
     return null;
   }, [detail]);
 
-
+  console.log(detail.id)
 
   return (
     <View className={`flex-1 bg-base-color-3`}>
@@ -125,10 +125,13 @@ const TechnicianDetailScreen = () => {
                 <AvatarKTV source={detail.profile.avatar_url} />
                 <View>
                   <Text className="font-inter-bold text-2xl text-gray-800">{detail.name}</Text>
-                  {/* TODO: Lịch hẹn sớm nhất */}
-                  {/*<View className="bg-orange-100 self-start px-2 py-0.5 rounded-md mt-1.5">*/}
-                  {/*  <Text className="text-orange-600 text-[10px] font-bold">☀️ Lịch hẹn sớm nhất 15:00</Text>*/}
-                  {/*</View>*/}
+                  {detail.booking_soon && (
+                    <View className="bg-orange-100 self-start px-2 py-0.5 rounded-md mt-1.5">
+                      <Text className="text-orange-600 text-[10px] font-bold">
+                        {t('masseurs_detail.booking_soon', { time: detail.booking_soon })}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
 
@@ -271,4 +274,4 @@ const TechnicianDetailScreen = () => {
   );
 };
 
-export default TechnicianDetailScreen;
+export default MasseurDetailScreen;

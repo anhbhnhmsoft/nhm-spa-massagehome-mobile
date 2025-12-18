@@ -1,22 +1,25 @@
 import {
   useInfiniteCategoryList,
   useInfiniteServiceList,
-  useQueryListCoupon,
+  useQueryListCoupon, useQueryListCouponUser,
 } from '@/features/service/hooks/use-query';
 import {
   BookingServiceRequest,
   CategoryListFilterPatch,
-  CategoryListRequest,
+  CategoryListRequest, CouponUserListRequest,
   PickBookingItem,
   PickBookingRequirement,
   ServiceItem,
   ServiceListRequest,
 } from '@/features/service/types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useApplicationStore from '@/lib/store';
 import useServiceStore from '@/features/service/stores';
 import { router } from 'expo-router';
-import { useMutationBookingService, useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
+import {
+  useMutationBookingService,
+  useMutationServiceDetail,
+} from '@/features/service/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +31,10 @@ import useAuthStore from '@/features/auth/store';
 import { useImmer } from 'use-immer';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { useLogoutMutation } from '@/features/auth/hooks/use-mutation';
+import useToast from '@/features/app/hooks/use-toast';
+import { formatBalance } from '@/lib/utils';
+import { ListTransactionRequest } from '@/features/payment/types';
+import { useInfiniteTransactionList } from '@/features/payment/hooks/use-query';
 
 /**
  * Lấy danh sách danh mục dịch vụ
@@ -135,7 +142,7 @@ export const useSetService = () => {
         },
       });
     });
-  }
+  };
 };
 
 /**
@@ -171,39 +178,21 @@ export const useServiceBooking = () => {
   const pickServiceBooking = useServiceStore((s) => s.pick_service_booking);
   const setPickServiceBooking = useServiceStore((s) => s.setPickServiceBooking);
   const user = useAuthStore((s) => s.user);
-
+  const mutationBookingService = useMutationBookingService();
   const { t } = useTranslation();
-
-  // Lưu trữ bước hiện tại trong booking
   const setLoading = useApplicationStore((s) => s.setLoading);
-  // Lấy thông tin địa chỉ hiện tại của người dùng
   const { location: storeLocation } = useLocationAddress();
-
   const handleError = useErrorToast();
-
+  const { error: errorToast, warning: warningToast } = useToast();
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const [bookingId, setBookingId] = useState<string|null>(null);
   // Thông tin form booking
   const form = useForm<PickBookingRequirement>({
     resolver: zodResolver(
       z.object({
-        book_time: z
-          .string()
-          .refine((val) => dayjs(val).isValid(), {
-            error: t('services.error.invalid_time'),
-          })
-          .refine(
-            (val) => {
-              const inputTime = dayjs(val);
-              // Thời gian tối thiểu = Hiện tại + 1 tiếng
-              const minTime = dayjs().add(1, 'hour');
-
-              // Kiểm tra: inputTime phải LỚN HƠN hoặc BẰNG minTime (tính theo phút)
-              // 'minute' ở tham số thứ 2 giúp dayjs bỏ qua giây và mili-giây khi so sánh
-              return inputTime.isAfter(minTime, 'minute') || inputTime.isSame(minTime, 'minute');
-            },
-            {
-              error: t('services.error.invalid_time'), // "Vui lòng đặt trước ít nhất 1 tiếng"
-            }
-          ),
+        book_time: z.string().refine((val) => dayjs(val).isValid(), {
+          error: t('services.error.invalid_time'),
+        }),
         note: z.string().optional(), // Cho phép rỗng
         note_address: z.string().optional(), // Cho phép rỗng
         address: z.string().min(1, { error: t('services.error.invalid_address') }),
@@ -230,16 +219,15 @@ export const useServiceBooking = () => {
     true
   );
 
-  const mutationBookingService = useMutationBookingService();
   // Auto-fill location
   useEffect(() => {
     // Nếu có primary_location, tự động điền thông tin vào form
     if (user && user.primary_location) {
       form.setValue('address', user.primary_location.address);
-      form.setValue('latitude', user.primary_location.latitude);
-      form.setValue('longitude', user.primary_location.longitude);
+      form.setValue('latitude', Number(user.primary_location.latitude));
+      form.setValue('longitude', Number(user.primary_location.longitude));
       form.setValue('note_address', user.primary_location.desc || '');
-    }else if (storeLocation) {
+    } else if (storeLocation) {
       form.setValue('address', storeLocation.address);
       form.setValue('latitude', storeLocation.location.coords.latitude);
       form.setValue('longitude', storeLocation.location.coords.longitude);
@@ -252,9 +240,13 @@ export const useServiceBooking = () => {
     if (!pickServiceBooking) {
       router.back();
     }
+    // Nếu có, reset form khi quay lại màn hình
+    return () => {
+      form.reset();
+    };
   }, [pickServiceBooking]);
 
-  // Xử lý khi nhấn nút "Đặt lịch" ở bước FORM
+  // Xử lý khi nhấn nút "Đặt lịch"
   const handleBooking = (data: PickBookingRequirement) => {
     if (pickServiceBooking) {
       const request: BookingServiceRequest = {
@@ -262,18 +254,45 @@ export const useServiceBooking = () => {
         ...pickServiceBooking,
         book_time: dayjs(data.book_time).format('YYYY-MM-DD HH:mm:ss'),
       };
+      console.log(request);
       setLoading(true);
       mutationBookingService.mutate(request, {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          const data = res.data;
           // Xử lý khi đặt lịch thành công
-          setLoading(false);
-          setPickServiceBooking(null);
-          router.push('/(app)/(tab)/orders');
+          if (data.status && data.success) {
+            setShowSuccessModal(true);
+            setBookingId(data.success.booking_id);
+          }
+          // Xử lý khi đặt lịch thất bại
+          else {
+            if (data.failed) {
+              // Trường hợp không đủ tiền
+              if (data.failed.not_enough_money) {
+                const finalPrice = formatBalance(data.failed.final_price);
+                const balance = formatBalance(data.failed.balance_customer);
+                warningToast({
+                  message: t('services.error.not_enough_money', {
+                    total_price: finalPrice,
+                    balance: balance,
+                    currency: t('common.currency'),
+                  }),
+                });
+                // Chuyển hướng đến màn hình wallet để nạp tiền
+                router.push('/(app)/(profile)/wallet');
+              }
+            } else {
+              // trường hợp không có lỗi cụ thể
+              errorToast({ message: t('common_error.unknown_error') });
+            }
+          }
         },
         onError: (error) => {
           // Xử lý khi có lỗi xảy ra
-          setLoading(false);
           handleError(error);
+        },
+        onSettled: () => {
+          setLoading(false);
         },
       });
     }
@@ -284,5 +303,27 @@ export const useServiceBooking = () => {
     form,
     queryCoupon,
     handleBooking,
+    showSuccessModal,
+    bookingId,
+    setShowSuccessModal,
+    setPickServiceBooking
   };
 };
+
+export const useGetCouponUserList = (params: CouponUserListRequest, enabled?: boolean) => {
+  const query = useQueryListCouponUser(params, enabled);
+
+  const data = useMemo(() => {
+    return query.data?.pages.flatMap((page) => page.data.data) || [];
+  }, [query.data]);
+
+  const pagination = useMemo(() => {
+    return query.data?.pages[0].data || null;
+  }, [query.data]);
+
+  return {
+    ...query,
+    data,
+    pagination,
+  };
+}

@@ -160,7 +160,7 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
     <View className="mb-3 rounded-xl bg-white p-4 shadow-sm">
       <View className="mb-4 flex-row items-center justify-between">
         <Text className="font-inter-bold text-gray-800">{t('profile.my_order')}</Text>
-        <TouchableOpacity className="flex-row items-center">
+        <TouchableOpacity className="flex-row items-center" onPress={() => router.push('/(app)/(profile)/orders')}>
           <Text className="mr-1 text-xs text-gray-400">{t('common.see_more')}</Text>
           <Icon as={ChevronRight} size={12} className={'text-gray-400'} />
         </TouchableOpacity>
@@ -169,7 +169,16 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
         {ORDER_MENU_ITEMS.map((item) => {
           const count = dashboardData?.booking_count?.[item.status] || 0;
           return (
-            <TouchableOpacity key={item.status} className="relative flex-1 items-center">
+            <TouchableOpacity
+              onPress={() => router.push({
+                pathname: '/(app)/(profile)/orders',
+                params: {
+                  status: item.status,
+                }
+              })}
+              key={item.status}
+              className="relative flex-1 items-center"
+            >
               <View className="mb-2">
                 <Icon as={item.icon} size={24} className="text-gray-500" />
               </View>
@@ -217,7 +226,10 @@ export const RegisterPartnerOrAffiliate = () => {
       </TouchableOpacity>
 
       {/* Affiliate */}
-      <TouchableOpacity className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm">
+      <TouchableOpacity
+        onPress={() => router.push('/(app)/(profile)/affiliate')}
+        className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm"
+      >
         <View className="mr-3">
           <Icon as={HandCoins} size={24} className="text-primary-color-1" />
         </View>

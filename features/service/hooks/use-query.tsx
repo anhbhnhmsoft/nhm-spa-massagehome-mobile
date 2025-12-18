@@ -1,7 +1,7 @@
 import serviceApi from '@/features/service/api';
 import {
   CategoryListRequest,
-  CategoryListResponse,
+  CategoryListResponse, CouponUserListRequest, CouponUserListResponse,
   ListCouponRequest, ListCouponResponse,
   ServiceListRequest,
   ServiceListResponse,
@@ -89,5 +89,31 @@ export const useQueryListCoupon = (
     meta: {
       persist: false,
     },
+  });
+};
+
+// Lấy danh sách coupon user với pagination
+export const useQueryListCouponUser = (
+  params: CouponUserListRequest, enabled?: boolean
+) => {
+  return useInfiniteQuery<CouponUserListResponse>({
+    queryKey: ['serviceApi-listCouponUser', params],
+    queryFn: async ({ pageParam }) => {
+      return serviceApi.listCouponUser({
+        ...params,
+        page: pageParam as number,
+        per_page: params.per_page,
+      });
+    },
+    enabled,
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.data?.meta?.current_page ?? 1;
+      const lastPageNum = lastPage.data?.meta?.last_page ?? 1;
+      if (currentPage < lastPageNum) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
 };

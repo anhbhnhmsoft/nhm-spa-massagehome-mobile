@@ -79,31 +79,33 @@ export default function DateTimePickerInput({
           visible={show}
           onRequestClose={() => setShow(false)}
         >
-          <View className="flex-1 justify-end bg-black/50">
+          <View className="flex-1 justify-end bg-black/10">
             <View className="bg-white rounded-t-2xl pb-6">
               {/* Header Modal */}
               <View className="flex-row justify-between items-center p-4 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
                 <Pressable onPress={() => setShow(false)} className="p-2">
                   <Text className="text-slate-500 font-medium">{t('common.cancel')}</Text>
                 </Pressable>
-                <Text className="font-semibold text-slate-700 uppercase">
-                  {mode === 'date' ? 'Chọn Ngày' : 'Chọn Giờ'}
+                <Text className="font-inter-semibold text-slate-700 uppercase">
+                  {mode === 'date' ? t('common.select_date') : t('common.select_time')}
                 </Text>
                 <Pressable onPress={confirmIOSDate} className="p-2">
-                  <Text className="text-blue-600 font-bold text-lg">{t('common.select')}</Text>
+                  <Text className="text-primary-color-1 font-inter-bold text-lg">{t('common.select')}</Text>
                 </Pressable>
               </View>
 
-              {/* Picker */}
-              <DateTimePicker
-                value={tempDate}
-                mode={mode}
-                is24Hour={true}
-                display="spinner"
-                onChange={handleChange}
-                textColor="black"
-                themeVariant="light"
-              />
+              <View className="items-center">
+                {/* Picker */}
+                <DateTimePicker
+                  value={tempDate}
+                  mode={mode}
+                  is24Hour={true}
+                  display="spinner"
+                  onChange={handleChange}
+                  textColor="black"
+                  themeVariant="light"
+                />
+              </View>
             </View>
           </View>
         </Modal>

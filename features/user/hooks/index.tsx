@@ -7,7 +7,6 @@ import { useMutationKtvDetail } from '@/features/user/hooks/use-mutation';
 import useApplicationStore from '@/lib/store';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import useAuthStore from '@/features/auth/store';
-import { _AuthStatus } from '@/features/auth/const';
 import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';

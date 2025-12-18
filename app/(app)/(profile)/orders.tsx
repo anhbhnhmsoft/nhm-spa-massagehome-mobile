@@ -1,0 +1,141 @@
+import { Calendar, Clock, MapPin, X } from 'lucide-react-native';
+
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ScrollView, RefreshControl,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import GradientBackground from '@/components/styles/gradient-background';
+import React, { useEffect } from 'react';
+import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useGetBookingList } from '@/features/booking/hooks';
+import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/icon';
+import { BookingItem } from '@/features/booking/types';
+import Empty from '@/components/empty';
+import { BookingCard } from '@/components/app/booking';
+
+export default function OrdersScreen() {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+
+  const { status } = useLocalSearchParams<{ status?: string }>();
+
+  const { data,
+    pagination,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isLoading,
+    setFilter,
+    params} = useGetBookingList();
+
+  useEffect(() => {
+    if (status){
+      let statusEnum = Number(status) as _BookingStatus;
+      setFilter({
+        status: statusEnum,
+      });
+    }
+  }, [status]);
+
+
+  return (
+    <View className="flex-1 bg-base-color-3">
+      {/* --- HEADER --- */}
+      <GradientBackground
+        style={{
+          paddingTop: insets.top + 10,
+          paddingHorizontal: 16,
+          paddingBottom: 24,
+          zIndex: 10,
+        }}
+        >
+
+        <View className="flex-row items-center justify-between mb-4 mt-2">
+          {/* Title & Description */}
+          <View className="gap-2">
+            <Text className="font-inter-bold text-xl text-white">
+              {t('header_app.title_orders')}
+            </Text>
+            <Text className="font-inter-medium text-xs text-blue-100">
+              {t('header_app.orders_description')}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="rounded-full bg-white/80 p-2">
+            {/* Icon Back ở đây nếu cần */}
+            <Icon as={X} size={20} className="text-primary-color-2" />
+          </TouchableOpacity>
+        </View>
+
+        {/* --- FILTER BAR --- */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8 }}>
+          {Object.entries(_BookingStatusMap).map(([key, value]) => {
+            const checked = params?.filter?.status === Number(key);
+            return (
+              <TouchableOpacity
+                key={key}
+                onPress={() => setFilter({
+                  status: Number(key),
+                })}
+                className={cn(
+                  'flex-row items-center rounded-full border px-4 py-1.5',
+                  checked ? 'border-white bg-white' : 'border-blue-400/30 bg-blue-800/30'
+                )}>
+                <Text
+                  className={cn(
+                    'text-xs font-inter-medium',
+                    checked ? 'text-blue-700' : 'text-blue-100'
+                  )}>
+                  {t(value)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </GradientBackground>
+
+      {/* --- BODY --- */}
+      <View className="mt-4 flex-1 px-4">
+
+        {/* List */}
+        <FlatList
+          keyExtractor={(item, index) => `masseur-${item.id}-${index}`}
+          data={data}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{
+            flex: 1,
+            position: 'relative',
+          }}
+          contentContainerStyle={{
+            gap: 12,
+            paddingBottom: 100,
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={null}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+          }
+          renderItem={({ item }) => <BookingCard item={item} key={item.id} />}
+          ListEmptyComponent={<Empty />}
+        />
+      </View>
+    </View>
+  );
+}

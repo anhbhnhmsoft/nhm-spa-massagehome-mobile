@@ -85,7 +85,10 @@
     "save_image": "Lưu ảnh",
     "date_of_birth": "Ngày sinh",
     "bio": "Giới thiệu",
-    "old_password": "Mật khẩu cũ"
+    "old_password": "Mật khẩu cũ",
+    "select_date": "Chọn Ngày",
+    "select_time": "Chọn Giờ",
+    "go_to_home": "Về trang chủ"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -142,8 +145,9 @@
       "DEPOSIT_ZALO_PAY": "Nạp tiền qua Zalo Pay",
       "DEPOSIT_MOMO_PAY": "Nạp tiền qua Momo Pay",
       "WITHDRAWAL": "Rút tiền",
-      "PAYMENT": "Thanh toán",
-      "AFFILIATE": "Nhận hoa hồng"
+      "PAYMENT": "Thanh toán dịch vụ",
+      "AFFILIATE": "Nhận hoa hồng",
+      "PAYMENT_FOR_KTV": "Thanh toán cho KTV"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -325,7 +329,11 @@
     }
   },
   "wallet": {
+    "title": "Ví của tôi",
     "balance": "Số dư ví",
+    "total_earnings": "Tổng thu nhập",
+    "total_withdrawn": "Tổng tiền rút",
+    "coupons": "Mã giảm giá",
     "transactions": "Lịch sử giao dịch",
     "deposit": "Nạp tiền",
     "withdraw": "Rút tiền",
@@ -373,7 +381,8 @@
     "available": "Sẵn sàng",
     "unavailable": "Tạm ngưng",
     "sales_count_item_service": "Đã bán {{ count }}",
-    "price_service_sub": "Chỉ từ"
+    "price_service_sub": "Chỉ từ",
+    "booking_soon": "Lịch hẹn sớm nhất sau {{ time }}"
   },
   "services": {
     "total_services": "dịch vụ có sẵn",
@@ -397,9 +406,22 @@
     "btn_booking": "Đặt lịch",
     "chat_with_ktv": "Chat với kĩ thuật viên",
     "address": "Địa chỉ",
+    "booking_processing_title": "Đang xử lý yêu cầu...",
+    "booking_processing_description": "Hệ thống đang kiểm tra lịch trống và giữ chỗ cho bạn. Vui lòng không tắt màn hình.",
+    "booking_success_title": "Đặt lịch thành công!",
+    "booking_success_description": "Cảm ơn bạn đã lựa chọn dịch vụ. Kĩ thuật viên sẽ liên hệ với bạn trong thời gian sớm nhất.",
+    "booking_id": "Mã đặt lịch",
+    "booking_date": "Ngày hẹn",
+    "booking_time": "Thời gian hẹn",
+    "booking_location": "Địa chỉ hẹn",
+    "booking_technician": "Kĩ thuật viên",
+    "booking_total_price": "Tổng thanh toán",
+    "booking_failed_title": "Đặt lịch thất bại",
+    "booking_failed_message": "Đã có lỗi xảy ra trong quá trình xử lý lịch hẹn. Xin lỗi vì sự bất tiện này. Vui lòng thử lại.",
     "error": {
       "invalid_time": "Thời gian không hợp lệ, phải sau thời gian hiện tại 1 tiếng",
-      "invalid_address": "Địa chỉ không hợp lệ"
+      "invalid_address": "Địa chỉ không hợp lệ",
+      "not_enough_money": "Số dư trong ví không đủ để thanh toán, tổng giá trị là {{ total_price }} {{currency}} trong khi ví bạn đang còn {{ balance }} {{currency}}"
     }
   },
   "location": {
@@ -425,5 +447,25 @@
       "invalid_location": "Vui lòng chọn toạ độ hợp lệ"
     }
 
+  },
+  "booking": {
+    "detail_title": "Chi tiết đặt lịch",
+    "detail": "Chi tiết",
+    "inbox": "Nhắn tin",
+    "technician": "Kĩ thuật viên",
+    "service_info": "Thông tin dịch vụ",
+    "service_name": "Tên dịch vụ",
+    "duration": "Thời lượng",
+    "price": "Giá tiền",
+    "time_place": "Thời gian & Địa chỉ",
+    "booking_time": "Thời gian hẹn",
+    "note": "Ghi chú",
+    "no_desc": "Không có ghi chú",
+    "note_address": "Ghi chú địa chỉ"
+  },
+  "affiliate": {
+    "title_1": "Mời bạn bè để nhận",
+    "title_2": "{{ percent }}% hoa hồng trọn đời",
+    "referral_link": "Liên kết giới thiệu"
   }
 }

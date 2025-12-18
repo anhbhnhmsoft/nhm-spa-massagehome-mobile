@@ -20,6 +20,8 @@ import { router } from 'expo-router';
 import { useDeposit } from '@/features/payment/hooks';
 import { Controller } from 'react-hook-form';
 import { CheckQRPaymentModal } from '@/components/app/payment';
+import HeaderBack from '@/components/header-back';
+import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
 // --- CONFIG TỶ GIÁ & DATA ---
 
@@ -47,207 +49,201 @@ export default function DepositScreen() {
 
   return (
     <>
-      <View className="flex-1 bg-base-color-3">
-        <SafeAreaView className="flex-1">
-          {/* --- HEADER --- */}
-          <View className="relative z-10 flex-row items-center px-5 py-4">
-            <TouchableOpacity className="-ml-2 p-2" onPress={() => router.back()}>
-              <ArrowLeft size={24} color="#1F2937" />
-            </TouchableOpacity>
-            <Text className="mr-8 flex-1 text-center font-inter-bold text-lg text-gray-900">
-              {t('payment.deposit_title')}
-            </Text>
-          </View>
-          <KeyboardAwareScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
-            enableOnAndroid={true}
-            scrollEnabled={true}
-            bounces={false}
-            overScrollMode="never"
-            showsVerticalScrollIndicator={false}>
-            <View className="flex-1 px-5 pt-2">
-              {/* --- KHỐI NHẬP TIỀN  --- */}
-              <View className="z-10 rounded-2xl bg-white p-5 shadow-sm">
-                <Text className="mb-3 font-inter-medium text-gray-500">
-                  {t('payment.deposit_label_input')}
-                </Text>
+      <SafeAreaView className="flex-1 bg-white">
+        <FocusAwareStatusBar hidden={true} />
+        {/* --- HEADER --- */}
+        <HeaderBack title={'payment.deposit_title'} />
 
-                <View className="mb-4 flex-row items-center border-b border-gray-100 pb-2">
-                  <Controller
-                    control={control}
-                    name="amount"
-                    render={({ field: { onChange, value } }) => (
-                      <View
-                        className={cn(
-                          'flex-row items-center border-b pb-2',
-                          errors.amount ? 'border-red-500' : 'border-gray-200'
-                        )}>
-                        <TextInput
-                          className="flex-1 text-3xl font-bold text-gray-900"
-                          placeholder="0"
-                          keyboardType="numeric"
-                          value={value}
-                          onChangeText={onChange}
-                        />
-                        <Text className="font-inter-bold text-xl text-gray-400">đ</Text>
-                      </View>
-                    )}
-                  />
-                  {/* Hiển thị lỗi Amount */}
-                  {errors.amount && (
-                    <Text className="mt-2 text-xs text-red-500">{errors.amount.message}</Text>
+        {/* --- SCROLL VIEW --- */}
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+          enableOnAndroid={true}
+          scrollEnabled={true}
+          bounces={false}
+          overScrollMode="never"
+          showsVerticalScrollIndicator={false}>
+          <View className="flex-1 px-5 pt-2">
+            {/* --- KHỐI NHẬP TIỀN  --- */}
+            <View className="z-10 rounded-2xl bg-white p-5 shadow-sm">
+              <Text className="mb-3 font-inter-medium text-gray-500">
+                {t('payment.deposit_label_input')}
+              </Text>
+
+              <View className="mb-4 flex-row items-center border-b border-gray-100 pb-2">
+                <Controller
+                  control={control}
+                  name="amount"
+                  render={({ field: { onChange, value } }) => (
+                    <View
+                      className={cn(
+                        'flex-row items-center border-b pb-2',
+                        errors.amount ? 'border-red-500' : 'border-gray-200'
+                      )}>
+                      <TextInput
+                        className="flex-1 text-3xl font-bold text-gray-900"
+                        placeholder="0"
+                        keyboardType="numeric"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                      <Text className="font-inter-bold text-xl text-gray-400">đ</Text>
+                    </View>
+                  )}
+                />
+                {/* Hiển thị lỗi Amount */}
+                {errors.amount && (
+                  <Text className="mt-2 text-xs text-red-500">{errors.amount.message}</Text>
+                )}
+              </View>
+
+              {/* --- NÚT NHẬP SỐ TIỀN CÓ SẴN --- */}
+              <View className="flex-row flex-wrap gap-2">
+                {_QUICK_AMOUNTS.map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => setValue('amount', item.toString())}
+                    className="rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                    <Text className="font-inter-medium text-xs text-gray-600">
+                      {formatBalance(item)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* --- MŨI TÊN LIÊN KẾT --- */}
+            <View className="relative z-20 -my-4 items-center">
+              <View className="rounded-full bg-blue-200 p-1.5">
+                <View className="rounded-full bg-white p-1.5 shadow-sm">
+                  <ArrowDown size={20} color="#2B7BBE" strokeWidth={2.5} />
+                </View>
+              </View>
+            </View>
+
+            {/* --- KHỐI QUY ĐỔI (OUTPUT) --- */}
+            <View className="mb-8 rounded-2xl bg-primary-color-2 p-5 pt-8 shadow-sm">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="mb-1 font-medium text-green-100">
+                    {t('payment.received_points')}
+                  </Text>
+                  <View className="flex-row items-baseline gap-2">
+                    <Text className="font-inter-bold text-4xl text-white">
+                      {formatBalance(receivedPoints)}
+                    </Text>
+                    <Text className="font-inter-bold text-lg text-green-200">
+                      {t('common.currency')}
+                    </Text>
+                  </View>
+                </View>
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+                  <Zap size={20} color="white" fill="white" />
+                </View>
+              </View>
+              <Text className="mt-2 rounded bg-black/10 py-1 text-center text-xs text-green-100/60">
+                {formatBalance(configPayment?.currency_exchange_rate)}đ = 1 {t('common.currency')}
+              </Text>
+            </View>
+
+            {/* --- 3. PHƯƠNG THỨC THANH TOÁN --- */}
+            <Text className="mb-4 font-inter-bold text-lg text-gray-900">
+              {t('payment.payment_methods')}
+            </Text>
+            <Controller
+              control={control}
+              name="payment_type"
+              render={({ field: { onChange, value } }) => (
+                <View className="mb-24 gap-3">
+                  {_PAYMENT_METHODS.map((method, index) => {
+                    const isSelected = value === method.id;
+
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => onChange(method.id)}
+                        activeOpacity={0.7}
+                        style={[
+                          styles.methodContainer,
+                          isSelected ? styles.methodSelected : styles.methodUnselected,
+                        ]}>
+                        {/* ICON AREA */}
+                        <View
+                          style={[
+                            styles.iconContainer,
+                            isSelected ? styles.iconBgSelected : styles.iconBgUnselected,
+                          ]}>
+                          {method.id === _PaymentType.QR_BANKING && (
+                            <QrCode size={24} color={isSelected ? 'white' : '#6B7280'} />
+                          )}
+                          {method.id === _PaymentType.ZALO_PAY && (
+                            <Image
+                              source={require('@/assets/icon/zalopay.jpeg')}
+                              style={{ width: 24, height: 24, borderRadius: 12 }}
+                            />
+                          )}
+                          {method.id === _PaymentType.MOMO_PAY && (
+                            <Image
+                              source={require('@/assets/icon/momopay.png')}
+                              style={{ width: 24, height: 24, borderRadius: 12 }}
+                            />
+                          )}
+                        </View>
+
+                        {/* TEXT AREA */}
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Text
+                              style={[
+                                styles.methodTitle,
+                                isSelected ? styles.textSelected : styles.textUnselected,
+                              ]}>
+                              {t(method.name)}
+                            </Text>
+                          </View>
+                          <Text style={styles.methodDesc}>{t(method.desc)}</Text>
+                        </View>
+
+                        {/* CHECKBOX AREA */}
+                        {isSelected ? (
+                          <CheckCircle2 size={22} color={COLORS.primary} />
+                        ) : (
+                          <Circle size={22} color="#D1D5DB" />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                  {errors.payment_type && (
+                    <Text className="mt-2 text-red-500">{errors.payment_type.message}</Text>
                   )}
                 </View>
+              )}
+            />
+          </View>
 
-                {/* --- NÚT NHẬP SỐ TIỀN CÓ SẴN --- */}
-                <View className="flex-row flex-wrap gap-2">
-                  {_QUICK_AMOUNTS.map((item) => (
-                    <TouchableOpacity
-                      key={item}
-                      onPress={() => setValue('amount', item.toString())}
-                      className="rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
-                      <Text className="font-inter-medium text-xs text-gray-600">
-                        {formatBalance(item)}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-
-              {/* --- MŨI TÊN LIÊN KẾT --- */}
-              <View className="relative z-20 -my-4 items-center">
-                <View className="rounded-full bg-blue-200 p-1.5">
-                  <View className="rounded-full bg-white p-1.5 shadow-sm">
-                    <ArrowDown size={20} color="#2B7BBE" strokeWidth={2.5} />
-                  </View>
-                </View>
-              </View>
-
-              {/* --- KHỐI QUY ĐỔI (OUTPUT) --- */}
-              <View className="mb-8 rounded-2xl bg-primary-color-2 p-5 pt-8 shadow-sm">
-                <View className="flex-row items-center justify-between">
-                  <View>
-                    <Text className="mb-1 font-medium text-green-100">
-                      {t('payment.received_points')}
-                    </Text>
-                    <View className="flex-row items-baseline gap-2">
-                      <Text className="font-inter-bold text-4xl text-white">
-                        {formatBalance(receivedPoints)}
-                      </Text>
-                      <Text className="font-inter-bold text-lg text-green-200">
-                        {t('common.currency')}
-                      </Text>
-                    </View>
-                  </View>
-                  <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                    <Zap size={20} color="white" fill="white" />
-                  </View>
-                </View>
-                <Text className="mt-2 rounded bg-black/10 py-1 text-center text-xs text-green-100/60">
-                  {formatBalance(configPayment?.currency_exchange_rate)}đ = 1 {t('common.currency')}
-                </Text>
-              </View>
-
-              {/* --- 3. PHƯƠNG THỨC THANH TOÁN --- */}
-              <Text className="mb-4 font-inter-bold text-lg text-gray-900">
-                {t('payment.payment_methods')}
+          {/* --- BOTTOM BUTTON --- */}
+          <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
+            <View className="mb-2 flex-row justify-between">
+              <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
+              <Text className="font-inter-bold text-lg text-gray-900">
+                {watchedAmount ? formatBalance(watchedAmount) : '0'} đ
               </Text>
-              <Controller
-                control={control}
-                name="payment_type"
-                render={({ field: { onChange, value } }) => (
-                  <View className="mb-24 gap-3">
-                    {_PAYMENT_METHODS.map((method, index) => {
-                      const isSelected = value === method.id;
-
-                      return (
-                        <TouchableOpacity
-                          key={index}
-                          onPress={() => onChange(method.id)}
-                          activeOpacity={0.7}
-                          style={[
-                            styles.methodContainer,
-                            isSelected ? styles.methodSelected : styles.methodUnselected,
-                          ]}>
-                          {/* ICON AREA */}
-                          <View
-                            style={[
-                              styles.iconContainer,
-                              isSelected ? styles.iconBgSelected : styles.iconBgUnselected,
-                            ]}>
-                            {method.id === _PaymentType.QR_BANKING && (
-                              <QrCode size={24} color={isSelected ? 'white' : '#6B7280'} />
-                            )}
-                            {method.id === _PaymentType.ZALO_PAY && (
-                              <Image
-                                source={require('@/assets/icon/zalopay.jpeg')}
-                                style={{ width: 24, height: 24, borderRadius: 12 }}
-                              />
-                            )}
-                            {method.id === _PaymentType.MOMO_PAY && (
-                              <Image
-                                source={require('@/assets/icon/momopay.png')}
-                                style={{ width: 24, height: 24, borderRadius: 12 }}
-                              />
-                            )}
-                          </View>
-
-                          {/* TEXT AREA */}
-                          <View style={styles.textContainer}>
-                            <View style={styles.row}>
-                              <Text
-                                style={[
-                                  styles.methodTitle,
-                                  isSelected ? styles.textSelected : styles.textUnselected,
-                                ]}>
-                                {t(method.name)}
-                              </Text>
-                            </View>
-                            <Text style={styles.methodDesc}>{t(method.desc)}</Text>
-                          </View>
-
-                          {/* CHECKBOX AREA */}
-                          {isSelected ? (
-                            <CheckCircle2 size={22} color={COLORS.primary} />
-                          ) : (
-                            <Circle size={22} color="#D1D5DB" />
-                          )}
-                        </TouchableOpacity>
-                      );
-                    })}
-                    {errors.payment_type && (
-                      <Text className="mt-2 text-red-500">{errors.payment_type.message}</Text>
-                    )}
-                  </View>
-                )}
-              />
             </View>
-
-            {/* --- BOTTOM BUTTON --- */}
-            <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
-              <View className="mb-2 flex-row justify-between">
-                <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
-                <Text className="font-inter-bold text-lg text-gray-900">
-                  {watchedAmount ? formatBalance(watchedAmount) : '0'} đ
-                </Text>
-              </View>
-              <TouchableOpacity
-                className={`items-center justify-center rounded-full py-3.5 shadow-lg ${
-                  watchedAmount && Number(watchedAmount) > 0 && watchedPayment
-                    ? 'bg-primary-color-2'
-                    : 'bg-gray-300'
-                }`}
-                onPress={handleSubmit(submitDeposit)}
-                disabled={!watchedAmount || Number(watchedAmount) <= 0 || !watchedPayment}>
-                <Text className="font-inter-bold text-base text-white">
-                  {t('payment.confirm_payment')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </KeyboardAwareScrollView>
-        </SafeAreaView>
-      </View>
+            <TouchableOpacity
+              className={`items-center justify-center rounded-full py-3.5 ${
+                watchedAmount && Number(watchedAmount) > 0 && watchedPayment
+                  ? 'bg-primary-color-2'
+                  : 'bg-gray-300'
+              }`}
+              onPress={handleSubmit(submitDeposit)}
+              disabled={!watchedAmount || Number(watchedAmount) <= 0 || !watchedPayment}>
+              <Text className="font-inter-bold text-base text-white">
+                {t('payment.confirm_payment')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
 
       {/* --- QR PAYMENT MODAL --- */}
       <CheckQRPaymentModal />

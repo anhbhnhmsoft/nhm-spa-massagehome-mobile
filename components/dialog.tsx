@@ -86,7 +86,7 @@ const Dialog = ({
             <AlertDialogAction
               onPress={handleConfirm}
               disabled={isLoading}
-              className={cn('bg-[#10B981]',
+              className={cn('bg-primary-color-1',
                 isLoading ? 'opacity-70' : ''
               )}
             >

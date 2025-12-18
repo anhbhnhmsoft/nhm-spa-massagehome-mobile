@@ -11,10 +11,10 @@ import DefaultColor from '@/components/styles/color';
 const width = Dimensions.get('window').width;
 const carouselHeight = width / 2;
 
-export function CarouselBanner() {
+export function CarouselBanner({bannerQuery}: {bannerQuery: ReturnType<typeof useListBannerQuery>}) {
   const [activeIndex, setActiveIndex] = useState(0);
   // Lấy thêm trạng thái isFetching (hoặc isRefetching)
-  const { data: banners, isLoading, isFetching } = useListBannerQuery();
+  const { data: banners, isLoading, isFetching } = bannerQuery;
 
   // --- TRƯỜNG HỢP 1: HIỂN THỊ SKELETON KHI LOADING HOẶC REFETCHING ---
   if (isLoading || isFetching || !banners || banners.length === 0) {

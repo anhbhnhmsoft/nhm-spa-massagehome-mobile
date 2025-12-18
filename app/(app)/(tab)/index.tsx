@@ -2,7 +2,7 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
+  TouchableOpacity, RefreshControl,
 } from 'react-native';
 import {
   CheckCircle,
@@ -20,6 +20,8 @@ import { useGetCategoryList } from '@/features/service/hooks';
 import CategoryCard from '@/components/app/category-card';
 import { KTVHomePageCard } from '@/components/app/ktv-card';
 import { CarouselBanner, ScrollCommit } from '@/components/app/carousel-homepage';
+import { useListBannerQuery } from '@/features/commercial/hooks/use-query';
+import DefaultColor from '@/components/styles/color';
 
 
 export default function HomeScreen() {
@@ -31,6 +33,7 @@ export default function HomeScreen() {
     page: 1,
     per_page: 5,
   });
+  const bannerQuery = useListBannerQuery();
 
   return (
     <View className="flex-1 bg-base-color-3">
@@ -40,11 +43,23 @@ export default function HomeScreen() {
       {/* --- CONTENT --- */}
       <ScrollView
         className="flex-1 px-4"
+        refreshControl={
+          <RefreshControl
+            refreshing={queryKTV.isRefetching || queryCategory.isRefetching || bannerQuery.isRefetching}
+            onRefresh={() => {
+              queryKTV.refetch();
+              queryCategory.refetch();
+              bannerQuery.refetch();
+            }}
+            colors={[DefaultColor.base['primary-color-1']]}
+            tintColor={DefaultColor.base['primary-color-1']}
+          />
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
 
         {/* --- Carousel Banner --- */}
-        <CarouselBanner />
+        <CarouselBanner bannerQuery={bannerQuery} />
         {/* --- Các chứng thực --- */}
         <ScrollCommit />
 

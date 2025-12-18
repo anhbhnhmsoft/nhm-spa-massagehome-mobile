@@ -185,14 +185,14 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
             <Text className="text-xs text-primary-color-1 font-bold">{t('common.currency')}</Text>
           </View>
 
-          <TouchableOpacity className={cn('bg-primary-color-2 px-4 py-1.5 rounded-full', {
+          <View className={cn('bg-primary-color-2 px-4 py-1.5 rounded-full', {
             'bg-primary-color-2': item.is_active,
             'bg-red-500': !item.is_active,
           })}>
             <Text className="text-white text-xs font-inter-bold">
               {item.is_active ? t('masseurs_detail.available') : t('masseurs_detail.unavailable')}
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>

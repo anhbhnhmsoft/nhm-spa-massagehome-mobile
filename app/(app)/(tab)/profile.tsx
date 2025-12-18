@@ -40,7 +40,7 @@ const ProfileScreen = () => {
         <FeatureList />
 
         {/* Padding bottom cho scroll */}
-        <View className="h-20" />
+        <View className="h-28" />
       </ScrollView>
     </View>
   );

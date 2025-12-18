@@ -6,11 +6,12 @@ import {
   ServiceListRequest,
   ServiceListResponse,
   ListCouponRequest,
-  ListCouponResponse, BookingServiceRequest,
+  ListCouponResponse,
+  BookingServiceRequest,
+  BookingServiceResponse,
+  CouponUserListRequest,
+  CouponUserListResponse,
 } from '@/features/service/types';
-import { ResponseSuccessType } from '@/lib/types';
-
-
 
 const defaultUri = '/service';
 
@@ -35,11 +36,17 @@ const serviceApi = {
     const response = await client.get(`${defaultUri}/list-coupon`, { params });
     return response.data;
   },
+  // Lấy danh sách coupon user
+  listCouponUser: async (params: CouponUserListRequest): Promise<CouponUserListResponse> => {
+    const response = await client.get(`${defaultUri}/my-list-coupon`, { params });
+    return response.data;
+  },
   // Đặt lịch dịch vụ
-  bookingService: async (data: BookingServiceRequest): Promise<ResponseSuccessType> => {
+  bookingService: async (data: BookingServiceRequest): Promise<BookingServiceResponse> => {
     const response = await client.post(`${defaultUri}/booking`, data);
     return response.data;
   },
-}
+
+};
 
 export default serviceApi;

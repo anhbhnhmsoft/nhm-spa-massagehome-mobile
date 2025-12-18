@@ -1,13 +1,11 @@
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { _Gender } from '@/features/auth/const';
 import { router } from 'expo-router';
-import { CalendarIcon, ChevronLeft } from 'lucide-react-native';
+import {  ChevronLeft } from 'lucide-react-native';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator, Keyboard,
-  Platform,
-  ScrollView,
   TextInput,
   TouchableOpacity, TouchableWithoutFeedback,
   View,
@@ -17,7 +15,6 @@ import {Text} from '@/components/ui/text';
 import dayjs from 'dayjs';
 import { useEditProfile } from '@/features/auth/hooks';
 import { ReactNode, useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Icon } from '@/components/ui/icon';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerInput from '@/components/date-time-input';

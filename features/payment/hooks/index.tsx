@@ -1,4 +1,8 @@
-import { useInfiniteTransactionList, useTransactionPolling, useWalletQuery } from '@/features/payment/hooks/use-query';
+import {
+  useInfiniteTransactionList,
+  useTransactionPolling,
+  useWalletQuery,
+} from '@/features/payment/hooks/use-query';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -8,21 +12,27 @@ import {
 import { useWalletStore } from '@/features/payment/stores';
 import useApplicationStore from '@/lib/store';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
-import { ConfigPaymentItem, DepositRequest, ListTransactionRequest, QRBankData } from '@/features/payment/types';
+import {
+  ConfigPaymentItem,
+  DepositRequest,
+  ListTransactionRequest,
+  QRBankData,
+} from '@/features/payment/types';
 import { useForm } from 'react-hook-form';
 import { _PaymentType } from '@/features/payment/consts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
-
+import { useGetCouponUserList } from '@/features/service/hooks';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
  * @param params
+ * @param enabled
  */
-export const useGetTransactionList = (params: ListTransactionRequest) => {
-  const query = useInfiniteTransactionList(params);
+export const useGetTransactionList = (params: ListTransactionRequest, enabled?: boolean) => {
+  const query = useInfiniteTransactionList(params, enabled);
 
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
@@ -37,7 +47,7 @@ export const useGetTransactionList = (params: ListTransactionRequest) => {
     data,
     pagination,
   };
-}
+};
 
 /**
  * Hook dùng cho màn ví
@@ -45,14 +55,12 @@ export const useGetTransactionList = (params: ListTransactionRequest) => {
 export const useWallet = () => {
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
-
-  // State lưu trữ cấu hình nạp tiền
   const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
-  // State lưu trữ thông tin refresh ví
   const needRefresh = useWalletStore((state) => state.need_refresh);
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
+  const [tab, setTab] = useState<'transaction' | 'coupon'>('transaction');
 
-  // Mutate function dùng để gọi API lấy cấu hình nạp tiền
+  // Mutate function dùng để gọi API cấu hình nạp tiền
   const { mutate: mutateConfigPayment } = useConfigPaymentMutation();
 
   // Query function dùng để gọi API lấy thông tin ví
@@ -63,20 +71,14 @@ export const useWallet = () => {
     filter: {},
     page: 1,
     per_page: 10,
-  });
+  }, tab === 'transaction');
 
-
-  const refresh = async () => {
-    await queryWallet.refetch();
-    try {
-      await queryWallet.refetch();
-      await queryTransactionList.refetch();
-    } catch (error) {
-      handleError(error);
-    } finally {
-      refreshWallet(false);
-    }
-  }
+  // Query function dùng để gọi API lấy danh sách coupon user
+  const queryCouponUserList = useGetCouponUserList({
+    filter: {},
+    page: 1,
+    per_page: 10,
+  }, tab === 'coupon');
 
   useEffect(() => {
     // Nếu cần refresh ví, gọi API refresh ví
@@ -86,14 +88,27 @@ export const useWallet = () => {
   }, [needRefresh]);
 
   useEffect(() => {
-    if (queryWallet.error){
+    if (queryWallet.error) {
       handleError(queryWallet.error);
     }
-    if (queryTransactionList.error){
+    if (queryTransactionList.error) {
       handleError(queryTransactionList.error);
     }
   }, [queryWallet.error, queryTransactionList.error]);
 
+  // Hàm gọi API refresh ví và danh sách giao dịch
+  const refresh = async () => {
+    await queryWallet.refetch();
+    try {
+      await queryWallet.refetch();
+      await queryTransactionList.refetch();
+      await queryCouponUserList.refetch();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      refreshWallet(false);
+    }
+  };
 
   // Hàm điều hướng đến màn hình nạp tiền
   const goToDepositScreen = useCallback(() => {
@@ -113,9 +128,13 @@ export const useWallet = () => {
   }, []);
 
   return {
+    tab,
+    setTab,
     queryWallet,
     queryTransactionList,
+    queryCouponUserList,
     goToDepositScreen,
+    refresh
   };
 };
 
@@ -221,7 +240,7 @@ export const useCheckPaymentQRCode = () => {
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
   const { t } = useTranslation();
-  const {success} = useToast();
+  const { success } = useToast();
 
   // State lưu trữ dữ liệu QRBankData khi nạp tiền chuyển khoản
   const qrBankData = useWalletStore((state) => state.qrBankData);

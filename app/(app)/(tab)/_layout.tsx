@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { router, Tabs } from 'expo-router';
-import { Home, Briefcase, Users, ShoppingBag, User } from 'lucide-react-native';
+import { Home, Briefcase, Users, User } from 'lucide-react-native';
 import { useCheckAuth } from '@/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
@@ -80,23 +80,6 @@ export default function TabsLayout() {
           }}
         />
 
-        {/* 4. Đơn hàng */}
-        <Tabs.Screen
-          name="orders"
-          listeners={{
-            tabPress: (e) => {
-              if (!checkAuth) {
-                e.preventDefault();
-                router.push('/(auth)');
-              }
-            },
-          }}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabIcon focused={focused} icon={ShoppingBag} label={t('tab.orders')} />
-            ),
-          }}
-        />
 
         {/* 5. Của tôi */}
         <Tabs.Screen

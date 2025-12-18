@@ -11,6 +11,7 @@ export type User = {
   referral_code: string;
   language: _LanguageCode;
   referred_by_user_id: string;
+  affiliate_link: string | null;
   profile: {
     avatar_url: string | null;
     date_of_birth: string | null;
@@ -19,8 +20,8 @@ export type User = {
   };
   primary_location: {
     address: string;
-    latitude: number;
-    longitude: number;
+    latitude: string;
+    longitude: string;
     desc: string | null;
   } | null;
 };

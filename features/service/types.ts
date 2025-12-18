@@ -77,6 +77,17 @@ export type PickBookingItem = {
 // Pick only required fields for booking requirement
 export type PickBookingRequirement = Omit<BookingServiceRequest, "service_id" | "service_name" | "option_id" | "duration">;
 
+export type BookingServiceResponse = ResponseDataSuccessType<{
+  status: boolean;
+  failed?: {
+    not_enough_money: boolean;
+    final_price: string;
+    balance_customer: string;
+  },
+  success?: {
+    booking_id: string;
+  }
+}>;
 
 export type CouponItem = {
   id: string; // ID coupon
@@ -97,3 +108,14 @@ export type ListCouponRequest = BaseSearchRequest<{
 }>;
 
 export type ListCouponResponse = ResponseDataSuccessType<CouponItem[]>;
+
+export type CouponUserItem = {
+  id: string; // ID coupon user
+  coupon_id: string; // ID coupon
+  user_id: string; // ID user
+  is_used: boolean; // Có được sử dụng không
+  coupon: CouponItem
+}
+
+export type CouponUserListRequest = BaseSearchRequest<object>;
+export type CouponUserListResponse = ResponseDataSuccessType<Paginator<CouponUserItem>>;

@@ -6,6 +6,8 @@ export type WalletItem = {
   user_id: string;
   balance: string; // Số dư hiện tại dạng string để tránh lỗi tràn số khi tính toán
   is_active: boolean;
+  total_deposit: string; // Tổng số tiền nạp vào ví dạng string để tránh lỗi tràn số khi tính toán
+  total_withdrawal: string; // Tổng số tiền rút ra khỏi ví dạng string để tránh lỗi tràn số khi tính toán
 }
 
 export type WalletResponse = ResponseDataSuccessType<WalletItem>

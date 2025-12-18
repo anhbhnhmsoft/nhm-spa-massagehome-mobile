@@ -10,32 +10,32 @@ import { useTranslation } from 'react-i18next';
 import { useServiceBooking } from '@/features/service/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ChevronLeft, ChevronRight, MapPin, X } from 'lucide-react-native';
+import { ChevronRight, MapPin, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import DateTimePickerInput from '@/components/date-time-input';
 import { Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { cn, formatBalance } from '@/lib/utils';
-import { _StepFormBooking } from '@/features/service/const';
 import { CouponCardBooking } from '@/components/app/coupon-card';
 import { Icon } from '@/components/ui/icon';
 import React, { useState } from 'react';
 import { ListLocationModal } from '@/components/app/location';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
+import BookingSuccessModal from '@/components/app/booking-complete';
 
 
 export default function ServiceBooking() {
   const { t } = useTranslation();
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
 
-  const { detail: item, form, queryCoupon, handleBooking } = useServiceBooking();
+  const { detail: item, form, queryCoupon, handleBooking, showSuccessModal, setShowSuccessModal , bookingId} = useServiceBooking();
 
-  const { control, formState: {errors}, setValue, handleSubmit } = form;
+  const { control, formState: {errors}, setValue, handleSubmit} = form;
 
   return (
     <SafeAreaView className="relative flex-1 bg-white" edges={['top', 'bottom']}>
-      <FocusAwareStatusBar hidden={true}/>
+      <FocusAwareStatusBar hidden={true} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="flex-1 px-5 pb-8 pt-2">
           {/* Header */}
@@ -51,9 +51,9 @@ export default function ServiceBooking() {
                   </Text>
                   <Text
                     className="font-inter-medium text-sm text-primary-color-2"
-                    numberOfLines={1}
-                  >
-                    {formatBalance(item.price)} {t('common.currency')} - {item?.duration} {t('common.minute')}
+                    numberOfLines={1}>
+                    {formatBalance(item.price)} {t('common.currency')} - {item?.duration}{' '}
+                    {t('common.minute')}
                   </Text>
                 </>
               )}
@@ -66,20 +66,19 @@ export default function ServiceBooking() {
           </View>
 
           {/* Form */}
-          <View className={"flex-1"}>
+          <View className={'flex-1'}>
             <KeyboardAwareScrollView
               style={{ flex: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
               enableOnAndroid={true}
               scrollEnabled={true}
-              showsVerticalScrollIndicator={false}
-            >
+              showsVerticalScrollIndicator={false}>
               {/* Form */}
               <View className="flex-1 gap-4">
                 {/* Address */}
                 <Controller
                   control={control}
-                  name={"address"}
+                  name={'address'}
                   render={({ field: { value } }) => {
                     return (
                       <View className="gap-2">
@@ -93,7 +92,7 @@ export default function ServiceBooking() {
 
                           <View className="flex-1">
                             {value ? (
-                              <Text className="text-sm font-inter-medium leading-6 text-slate-800">
+                              <Text className="font-inter-medium text-sm leading-6 text-slate-800">
                                 {value}
                               </Text>
                             ) : (
@@ -115,9 +114,7 @@ export default function ServiceBooking() {
                           }}
                         />
                         {errors.address && (
-                          <Text className="text-sm text-red-500">
-                            {errors.address.message}
-                          </Text>
+                          <Text className="text-sm text-red-500">{errors.address.message}</Text>
                         )}
                         {(errors.latitude || errors.longitude) && (
                           <Text className="text-sm text-red-500">
@@ -138,7 +135,7 @@ export default function ServiceBooking() {
                       <Label htmlFor="note">{t('services.note_address')}</Label>
                       <Input
                         id="note_address"
-                        className={cn('w-full rounded-2xl h-32 bg-white overflow-hidden p-4', {
+                        className={cn('h-32 w-full overflow-hidden rounded-2xl bg-white p-4', {
                           'border-red-500': errors.note_address,
                         })}
                         placeholder={t('common.optional_note')}
@@ -150,9 +147,7 @@ export default function ServiceBooking() {
                         value={value}
                       />
                       {errors.note_address && (
-                        <Text className="text-sm text-red-500">
-                          {errors.note_address.message}
-                        </Text>
+                        <Text className="text-sm text-red-500">{errors.note_address.message}</Text>
                       )}
                     </View>
                   )}
@@ -171,7 +166,6 @@ export default function ServiceBooking() {
                       <View className="gap-2">
                         <Label htmlFor="book_time">{t('services.book_time')} *</Label>
                         <View className="gap-2">
-
                           {/* --- INPUT CHỌN NGÀY --- */}
                           <DateTimePickerInput
                             mode="date"
@@ -179,12 +173,10 @@ export default function ServiceBooking() {
                             onChange={(newDate) => {
                               // 1. Clone lại date hiện tại để không sửa trực tiếp biến state cũ (tránh side-effect)
                               const temp = new Date(dateValue);
-
                               // 2. Chỉ update Ngày/Tháng/Năm từ newDate người dùng chọn
                               temp.setFullYear(newDate.getFullYear());
                               temp.setMonth(newDate.getMonth());
                               temp.setDate(newDate.getDate());
-
                               // 3. Convert sang ISO String để lưu vào form
                               onChange(temp.toISOString());
                             }}
@@ -197,11 +189,9 @@ export default function ServiceBooking() {
                             onChange={(newTime) => {
                               // 1. Clone lại date hiện tại
                               const temp = new Date(dateValue);
-
                               // 2. Chỉ update Giờ/Phút từ newTime người dùng chọn
                               temp.setHours(newTime.getHours());
                               temp.setMinutes(newTime.getMinutes());
-
                               // 3. QUAN TRỌNG: Reset giây về 0 để tránh lỗi validate "quá khứ" do lệch giây
                               temp.setSeconds(0);
                               temp.setMilliseconds(0);
@@ -213,9 +203,7 @@ export default function ServiceBooking() {
 
                         {/* Hiển thị lỗi */}
                         {errors.book_time && (
-                          <Text className="text-sm text-red-500">
-                            {errors.book_time.message}
-                          </Text>
+                          <Text className="text-sm text-red-500">{errors.book_time.message}</Text>
                         )}
                       </View>
                     );
@@ -231,7 +219,9 @@ export default function ServiceBooking() {
                       <Label htmlFor="note">{t('services.note')}</Label>
                       <Input
                         id="note"
-                        className={cn('w-full rounded-2xl h-32 bg-white overflow-hidden p-4', { 'border-red-500': errors.note })}
+                        className={cn('h-32 w-full overflow-hidden rounded-2xl bg-white p-4', {
+                          'border-red-500': errors.note,
+                        })}
                         placeholder={t('common.optional_note')}
                         multiline
                         textAlignVertical="top"
@@ -251,20 +241,19 @@ export default function ServiceBooking() {
                   render={({ field: { value, onChange } }) => (
                     <View className="gap-2">
                       {/* Header: Label + Nút Reload */}
-                      <View className="flex-row justify-between items-center">
+                      <View className="flex-row items-center justify-between">
                         <Label>{t('common.coupon')}</Label>
 
                         {/* Nút Reload thủ công */}
                         <Pressable
                           onPress={() => queryCoupon.refetch()}
                           disabled={queryCoupon.isLoading}
-                          className="flex-row items-center gap-1 active:opacity-50"
-                        >
+                          className="flex-row items-center gap-1 active:opacity-50">
                           {queryCoupon.isRefetching ? (
                             <ActivityIndicator size="small" color="#2563EB" />
                           ) : (
                             <>
-                              <Text className="text-xs text-blue-600 font-medium">
+                              <Text className="text-xs font-medium text-blue-600">
                                 {t('common.refresh')}
                               </Text>
                               {/* Thay icon reload của bạn vào đây */}
@@ -281,12 +270,9 @@ export default function ServiceBooking() {
                           data={queryCoupon.data || []}
                           horizontal
                           showsHorizontalScrollIndicator={false}
-
                           // Quan trọng: Để scroll mượt và không bị cắt bóng đổ
                           contentContainerStyle={{ paddingRight: 20, paddingLeft: 1 }}
-
                           keyExtractor={(item) => item.id.toString()}
-
                           renderItem={({ item }) => (
                             <CouponCardBooking
                               item={item}
@@ -296,13 +282,11 @@ export default function ServiceBooking() {
                               }}
                             />
                           )}
-
                           // Component phân cách giữa các item (thay cho margin-right)
                           ItemSeparatorComponent={() => <View className="w-3" />}
-
                           // Hiển thị khi danh sách trống
                           ListEmptyComponent={() => (
-                            <Text className="text-slate-400 text-sm font-inter-italic p-2 border border-dashed border-slate-300 rounded-lg w-full text-center">
+                            <Text className="w-full rounded-lg border border-dashed border-slate-300 p-2 text-center font-inter-italic text-sm text-slate-400">
                               {t('services.no_coupon_available')}
                             </Text>
                           )}
@@ -313,9 +297,11 @@ export default function ServiceBooking() {
                 />
 
                 <View className="z-0 mt-auto pt-4">
-                  <View className={"flex-1 flex-row items-center gap-2"}>
+                  <View className={'flex-1 flex-row items-center gap-2'}>
                     {/* Nút Booking */}
-                    <TouchableOpacity className="h-14 flex-1 flex-row items-center justify-center rounded-full bg-primary-color-2 shadow-sm" onPress={handleSubmit(handleBooking)}>
+                    <TouchableOpacity
+                      className="h-14 flex-1 flex-row items-center justify-center rounded-full bg-primary-color-2 shadow-sm"
+                      onPress={handleSubmit(handleBooking)}>
                       <Text className="mr-2 text-lg font-bold text-white">
                         {t('services.btn_booking')}
                       </Text>
@@ -328,6 +314,14 @@ export default function ServiceBooking() {
           </View>
         </View>
       </TouchableWithoutFeedback>
+      {/* Modal Booking Success */}
+      <BookingSuccessModal
+        bookingId={bookingId}
+        isVisible={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+        }}
+      />
     </SafeAreaView>
   );
 }
