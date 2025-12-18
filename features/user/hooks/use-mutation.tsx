@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import userApi from '@/features/user/api';
+import { ApplyPartnerRequest, ApplyPartnerResponse } from '@/features/user/types';
 
 export const useMutationKtvDetail = () => {
   return useMutation({
@@ -7,4 +8,9 @@ export const useMutationKtvDetail = () => {
   });
 };
 
+export const useMutationApplyPartner = () => {
+  return useMutation<ApplyPartnerResponse, unknown, ApplyPartnerRequest>({
+    mutationFn: (payload: ApplyPartnerRequest) => userApi.applyPartner(payload),
+  });
+};
 

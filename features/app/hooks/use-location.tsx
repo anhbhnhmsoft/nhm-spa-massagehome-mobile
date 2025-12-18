@@ -16,8 +16,32 @@ const fetchAndFormatLocation = async (): Promise<LocationApp> => {
   let addressString = '';
   if (reverseGeocode.length > 0) {
     const place = reverseGeocode[0];
-    // Logic format địa chỉ tập trung 1 chỗ, dễ sửa đổi sau này
-    addressString = place.formattedAddress || `${place.subregion || place.district || ''}, ${place.region || place.city || ''}`;
+    if (place.formattedAddress) {
+      addressString = place.formattedAddress;
+    } else {
+      const parts: string[] = [];
+      
+      if (place.name) {
+        parts.push(place.name);
+      } else if (place.street) {
+        parts.push(place.street);
+      }
+      
+      if (place.subregion) {
+        parts.push(place.subregion);
+      } else if (place.district) {
+        parts.push(place.district);
+      }
+      
+      if (place.region) {
+        parts.push(place.region);
+      } else if (place.city) {
+        parts.push(place.city);
+      }
+      
+      addressString = parts.filter(Boolean).join(', ');
+    }
+    
     // Xử lý cleanup dấu phẩy thừa nếu dữ liệu thiếu
     addressString = addressString.replace(/^, /, '').replace(/, $/, '');
   }

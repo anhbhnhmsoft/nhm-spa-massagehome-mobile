@@ -59,3 +59,16 @@ export type DeleteAddressRequest = {
   id: string;
 }
 
+// Provinces
+export type ListProvincesRequest = {
+  keyword?: string;
+}
+
+export type ProvinceItem = {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export type ListProvincesResponse = ResponseDataSuccessType<ProvinceItem[]>;
+

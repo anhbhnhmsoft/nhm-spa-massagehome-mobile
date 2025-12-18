@@ -1,0 +1,73 @@
+import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Text } from '@/components/ui/text';
+import { Icon } from '@/components/ui/icon';
+import { Building2, ArrowLeft, User as UserIcon } from 'lucide-react-native';
+import { router } from 'expo-router';
+
+export default function PartnerRegisterTypeScreen() {
+  const { t } = useTranslation();
+
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-row items-center px-4 pt-2 pb-4">
+        <TouchableOpacity
+          className="mr-3 rounded-full p-2"
+          onPress={() => {
+            router.back();
+          }}>
+          <Icon as={ArrowLeft} size={22} className="text-slate-900" />
+        </TouchableOpacity>
+        <Text className="text-lg font-inter-bold text-slate-900">
+          {t('profile.join_partner')}
+        </Text>
+      </View>
+
+      <View className="flex-1 px-4 pt-4">
+        <Text className="mb-6 text-2xl font-inter-bold text-slate-900">
+          {t('profile.partner_register.title')}
+        </Text>
+
+        <TouchableOpacity
+          className="mb-4 flex-row items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-gray-100"
+          onPress={() => {
+            router.push('/(app)/(profile)/partner-register-individual');
+          }}>
+          <View className="flex-1 pr-3">
+            <Text className="mb-1 text-base font-inter-bold text-slate-900">
+              {t('profile.partner_register.individual_title')}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              {t('profile.partner_register.individual_desc')}
+            </Text>
+          </View>
+          <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-color-2/10">
+            <Icon as={UserIcon} size={26} className="text-primary-color-2" />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="mb-4 flex-row items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-gray-100"
+          onPress={() => {
+            router.push('/(app)/(profile)/partner-register-agency');
+          }}>
+          <View className="flex-1 pr-3">
+            <Text className="mb-1 text-base font-inter-bold text-slate-900">
+              {t('profile.partner_register.agency_title')}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              {t('profile.partner_register.agency_desc')}
+            </Text>
+          </View>
+          <View className="h-12 w-12 items-center justify-center rounded-full bg-primary-color-2/10">
+            <Icon as={Building2} size={26} className="text-primary-color-2" />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+

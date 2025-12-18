@@ -95,7 +95,7 @@ function SelectContent({
                       props.side === 'bottom' && 'slide-in-from-top-2',
                       props.side === 'top' && 'slide-in-from-bottom-2'
                     ),
-                    native: 'p-1',
+                    native: 'p-1 max-h-[400px]',
                   }),
                   position === 'popper' &&
                     Platform.select({
@@ -112,6 +112,9 @@ function SelectContent({
                 <SelectPrimitive.Viewport
                   className={cn(
                     'p-1',
+                    Platform.select({
+                      native: 'max-h-[380px]',
+                    }),
                     position === 'popper' &&
                       cn(
                         'w-full',

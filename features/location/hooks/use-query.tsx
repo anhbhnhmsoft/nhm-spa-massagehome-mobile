@@ -1,6 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import locationApi from '@/features/location/api';
-import { ListAddressRequest, ListAddressResponse } from '@/features/location/types';
+import { ListAddressRequest, ListAddressResponse, ListProvincesRequest } from '@/features/location/types';
 
 
 
@@ -25,5 +25,12 @@ export const useInfinityAddressList = (
       return undefined;
     },
     initialPageParam: 1,
+  });
+};
+
+export const useProvinces = (params?: ListProvincesRequest) => {
+  return useQuery({
+    queryKey: ['locationApi-provinces', params],
+    queryFn: () => locationApi.listProvinces(params),
   });
 };
