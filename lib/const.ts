@@ -1,4 +1,4 @@
-export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://localhost:8000";
+export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.1.39:8000";
 
 export enum _LanguageCode {
   VI = 'vi',

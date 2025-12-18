@@ -1,5 +1,12 @@
 import { client } from '@/lib/axios-client';
-import { DashboardProfileResponse, DetailKTVResponse, ListKTVRequest, ListKTVResponse } from '@/features/user/types';
+import {
+  DashboardProfileResponse,
+  DetailKTVResponse,
+  ListKTVRequest,
+  ListKTVResponse,
+  ApplyPartnerRequest,
+  ApplyPartnerResponse,
+} from '@/features/user/types';
 
 const defaultUri = '/user';
 
@@ -17,6 +24,12 @@ const userApi = {
   // Lấy thông tin dashboard profile
   dashboardProfile: async (): Promise<DashboardProfileResponse> => {
     const response = await client.get(`${defaultUri}/dashboard-profile`);
+    return response.data;
+  },
+
+  // User hiện tại đăng ký làm đối tác
+  applyPartner: async (payload: ApplyPartnerRequest): Promise<ApplyPartnerResponse> => {
+    const response = await client.post(`${defaultUri}/apply-partner`, payload);
     return response.data;
   },
 };

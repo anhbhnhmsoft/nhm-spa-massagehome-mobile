@@ -68,3 +68,20 @@ export type DashboardProfile = {
   "coupon_user_count": number
 }
 export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>;
+
+export type ApplyPartnerRequest = {
+  name?: string;
+  apply_role?: string;
+  reviewApplication?: {
+    agency_id?: string;
+    province_code?: string;
+    address?: string;
+    bio?: string;
+  };
+  files?: {
+    type?: number;
+    file_path: string;
+  }[];
+};
+
+export type ApplyPartnerResponse = ResponseDataSuccessType<unknown>;

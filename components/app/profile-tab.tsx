@@ -14,7 +14,7 @@ import {
   MapPin,
   Headphones,
   Info,
-  LogOut
+  LogOut,
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
@@ -198,7 +198,11 @@ export const RegisterPartnerOrAffiliate = () => {
   return (
     <View className="flex-row flex-wrap justify-between">
       {/* Đăng ký làm đối tác */}
-      <TouchableOpacity className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm">
+      <TouchableOpacity
+        className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm"
+        onPress={() => {
+          router.push('/(app)/(profile)/partner-register-type');
+        }}>
         <View className="mr-3">
           <Icon as={Building2} size={24} className="text-primary-color-1" />
         </View>

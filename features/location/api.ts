@@ -7,6 +7,8 @@ import {
   ListAddressRequest,
   ListAddressResponse,
   SaveAddressRequest, EditAddressRequest, DeleteAddressRequest,
+  ListProvincesRequest,
+  ListProvincesResponse,
 } from '@/features/location/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -41,6 +43,11 @@ const locationApi = {
   // Xóa địa chỉ
   deleteAddress: async (params: DeleteAddressRequest): Promise<ResponseSuccessType> => {
     const response = await client.delete(`${defaultUri}/delete/${params.id}`);
+    return response.data;
+  },
+  // Lấy danh sách tỉnh/thành
+  listProvinces: async (params?: ListProvincesRequest): Promise<ListProvincesResponse> => {
+    const response = await client.get(`${defaultUri}/provinces`, { params });
     return response.data;
   },
 };
