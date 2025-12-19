@@ -1,13 +1,15 @@
 import { ListKTVItem } from '@/features/user/types';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image,  TouchableOpacity, View } from 'react-native';
 import { Award, Briefcase, CheckCircle, TrendingUp, MapPin, ShieldCheck, Star, User } from 'lucide-react-native';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { formatDistance } from '@/lib/utils';
 import { useSetKtv } from '@/features/user/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import StarRating from '@/components/star-rating';
+import DefaultColor from '@/components/styles/color';
+import { Text } from '@/components/ui/text';
 
 /**
  * Card hiển thị thông tin của massager trong trang chủ
@@ -23,7 +25,7 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
   const setKtv = useSetKtv();
 
   return (
-    <TouchableOpacity className="mr-4 w-44 rounded-xl border border-slate-100 bg-white p-3 shadow-sm" onPress={() => setKtv(item.id)}>
+    <TouchableOpacity className="w-full flex-1 rounded-xl border border-slate-100 bg-white p-3 shadow-sm" onPress={() => setKtv(item.id)}>
       {/* --- PHẦN AVATAR --- */}
       <View className="relative mb-2">
         {item.profile?.avatar_url && !imageError ? (
@@ -42,27 +44,28 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
         )}
 
         {/* Icon Verified */}
-        <View className="absolute right-2 top-2 rounded-full border border-white bg-blue-500 p-1">
+        <View className="absolute right-2 top-2 rounded-full bg-primary-color-2 p-1">
           <CheckCircle size={10} color="white" />
         </View>
       </View>
 
       {/* --- INFO --- */}
-      <Text className="text-base font-bold text-slate-800" numberOfLines={1}>
+      <Text className="text-base font-inter-bold text-slate-800" numberOfLines={1}>
         {item.name}
       </Text>
 
       {/* Rating */}
       <View className="mb-3 mt-1 flex-row items-center">
-        <Star size={14} color="#eab308" fill="#eab308" />
-        <Text className="ml-1 text-xs font-bold text-slate-700">{item.rating || 0}</Text>
+        <Star size={14} color={DefaultColor.yellow[500]} fill={DefaultColor.yellow[500]} />
+
+        <Text className="ml-1 text-xs font-inter-bold text-slate-700">{item.rating || 0}</Text>
         <Text className="ml-1 text-xs text-slate-400">({item.review_count || 0})</Text>
       </View>
 
       {/* Services Count */}
       <View className="flex-row items-center justify-center gap-1 rounded-lg bg-blue-50 py-2">
         <Briefcase size={14} color="#2563eb" />
-        <Text className="text-xs font-medium text-blue-600">
+        <Text className="text-xs font-inter-medium text-blue-600">
           {item.service_count} {t('common.service')}
         </Text>
       </View>
@@ -105,7 +108,7 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
         )}
         {/* Icon Verified/Status ở góc dưới */}
         <View className="absolute bottom-0 right-0 rounded-full bg-white p-0.5">
-          <View className="bg-emerald-500 p-1 rounded-full">
+          <View className="bg-primary-color-2 p-1 rounded-full">
             <ShieldCheck size={10} color="white" />
           </View>
         </View>
@@ -152,8 +155,8 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
         {/* Nút Đặt lịch */}
         <View className="mt-3 w-full flex-row items-center justify-between pt-2">
           <View/>
-          <View className="rounded-md bg-emerald-500 px-4 py-2 shadow-sm">
-            <Text className="text-xs font-bold text-white">{t('services.btn_booking')}</Text>
+          <View className="rounded-md bg-primary-color-2 px-4 py-2 shadow-sm">
+            <Text className="text-xs font-inter-bold text-white">{t('services.btn_booking')}</Text>
           </View>
         </View>
       </View>

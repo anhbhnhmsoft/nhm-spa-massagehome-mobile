@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode, forwardRef, useCallback, useRef, useMemo } from 'react';
+import React, { FC, useState,  forwardRef, useCallback, useRef, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import {
   ChevronRight,
@@ -15,6 +15,7 @@ import {
   Headphones,
   Info,
   LogOut,
+  Bell
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,8 @@ import { _LanguagesMap } from '@/lib/const';
 import SelectLanguage from '@/components/select-language';
 import { useLogout } from '@/features/auth/hooks';
 import Dialog from '@/components/dialog';
+import SupportModal from '@/components/app/support-modal';
+import { useGetSupport } from '@/features/config/hooks';
 
 // Header Profile Card
 type UserProfileCardProps = {
@@ -79,7 +82,7 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({
             />
           ) : (
             // Fallback UI khi không có ảnh hoặc ảnh lỗi
-            <View className="h-14 w-14 rounded-full border-2 border-white bg-slate-200">
+            <View className="h-14 w-14 rounded-full border-2 border-white bg-slate-200 justify-center items-center">
               <Icon as={UserIcon} size={24} className={'text-slate-400'} />
             </View>
           )}
@@ -246,11 +249,17 @@ export const RegisterPartnerOrAffiliate = () => {
   );
 };
 
+/**
+ * Hiển thị danh sách các tính năng nổi bật
+ */
 export const FeatureList = () => {
   const { t } = useTranslation();
 
   // Quản lý địa chỉ
   const [visibleLocation, setVisibleLocation] = useState(false);
+
+  // Hỗ trợ
+  const { visible: visibleSupport, openSupportModal, closeSupportModal, supportChanel } = useGetSupport();
 
   // Xử lý ngôn ngữ
   const selectedLang = useApplicationStore((state) => state.language);
@@ -310,11 +319,22 @@ export const FeatureList = () => {
         {/* Hỗ trợ khách hàng */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
+          onPress={() => openSupportModal()}
         >
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Headphones} size={24} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.support')}</Text>
+        </TouchableOpacity>
+
+        {/* Thông báo */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+        >
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={Bell} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
         </TouchableOpacity>
 
         {/* Đăng xuất */}
@@ -335,6 +355,14 @@ export const FeatureList = () => {
       {/* Ngôn ngữ */}
       <SelectLanguage ref={languageSheetRef} />
 
+      {/* Hỗ trợ khách hàng */}
+      <SupportModal
+        isVisible={visibleSupport}
+        onClose={closeSupportModal}
+        supportChanel={supportChanel}
+      />
+
+      {/* Đăng xuất */}
       <Dialog
         isOpen={isLogoutModalOpen}
         onClose={() => setLogoutModalOpen(false)} // Đóng khi bấm Hủy hoặc bấm ra ngoài

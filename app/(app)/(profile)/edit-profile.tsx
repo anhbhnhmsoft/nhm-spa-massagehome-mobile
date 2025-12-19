@@ -14,17 +14,15 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text} from '@/components/ui/text';
 import dayjs from 'dayjs';
 import { useEditProfile } from '@/features/auth/hooks';
-import { ReactNode, useState } from 'react';
-import { Icon } from '@/components/ui/icon';
+import React, { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerInput from '@/components/date-time-input';
 import { cn } from '@/lib/utils';
+import HeaderBack from '@/components/header-back';
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
 
-  // State cho DatePicker
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const {
     form,
@@ -40,16 +38,11 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <FocusAwareStatusBar  />
-
+      <FocusAwareStatusBar hidden={true} />
       {/* Header */}
-      <View className="flex-row items-center justify-between border-b border-gray-100 px-4 py-3">
-        <TouchableOpacity className="p-1" onPress={() => router.back()}>
-          <Icon as={ChevronLeft} size={24} className="text-slate-800" />
-        </TouchableOpacity>
-        <Text className="text-lg font-bold text-slate-800">{t('profile.edit_info')}</Text>
-        <View className="w-8" />
-      </View>
+      <HeaderBack title={t('profile.edit_info')} />
+
+      {/* Form Container */}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAwareScrollView
           style={{ flex: 1, padding: 16 }}

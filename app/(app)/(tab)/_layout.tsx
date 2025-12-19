@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { NotificationPermissionModal } from '@/components/notification-permission-modal';
 import { TabIcon } from '@/components/app/tab-icon';
+import PromoModal from '@/components/app/promo-modal';
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -44,6 +45,10 @@ export default function TabsLayout() {
       <FocusAwareStatusBar />
       {/* --- NOTIFICATION PERMISSION MODAL --- */}
       <NotificationPermissionModal />
+
+      {/*Modal promo */}
+      <PromoModal />
+
       <Tabs
         screenOptions={{
           tabBarStyle: styles.tabBar,

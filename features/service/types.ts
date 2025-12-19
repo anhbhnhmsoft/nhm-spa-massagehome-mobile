@@ -101,7 +101,9 @@ export type CouponItem = {
   start_at: string; // Thời gian bắt đầu áp dụng
   end_at: string; // Thời gian kết thúc áp dụng
   usage_limit: number; // Số lần sử dụng tối đa
-  used_count: number; // Số lần sử dụng hiện tại
+  used_count: number; // Số lần sử dụng hiện tại.
+  display_ads: boolean; // Có hiển thị trong quảng cáo không
+  banners: string | null; // Banner hiển thị khi áp dụng coupon (null nếu không có)
 };
 export type ListCouponRequest = BaseSearchRequest<{
   for_service_id?: string; // Dịch vụ áp dụng (null nếu áp dụng cho tất cả dịch vụ)

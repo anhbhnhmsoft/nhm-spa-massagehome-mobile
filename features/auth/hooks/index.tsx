@@ -545,22 +545,19 @@ export const useChangeAvatar = () => {
 
   // Xử lý khi nhấn nút chụp ảnh
   const takePictureCamera = useCallback(async () => {
+
     if (!permission?.granted) {
       const res = await requestPermission();
       if (!res.granted) {
-        Alert.alert(
-          t('permission.camera.title'),
-          t('permission.camera.message')
-        );
+        Alert.alert(t('permission.camera.title'), t('permission.camera.message'));
         return false;
       }
-    }else{
+    } else {
       // Nếu có quyền chụp ảnh thì chuyển sang màn hình chụp ảnh
-      router.push("/(app)/(profile)/take-picture-avatar")
+      router.push('/(app)/(profile)/take-picture-avatar');
       return true;
     }
-
-  },[permission?.granted, t])
+  }, [permission?.granted, t]);
 
   // Xử lý khi nhấn nút chọn ảnh từ thư viện
   const chooseImageFormLib = useCallback(async () => {
@@ -571,7 +568,7 @@ export const useChangeAvatar = () => {
         t('permission.picture_lib.message')
       );
       return false;
-    }else{
+    } else {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.5,

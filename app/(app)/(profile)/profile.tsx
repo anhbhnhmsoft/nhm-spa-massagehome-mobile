@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import useAuthStore from '@/features/auth/store';
 import { _Gender, _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
+import HeaderBack from '@/components/header-back';
 
 export default function UserProfile() {
   const { t } = useTranslation();
@@ -27,14 +28,8 @@ export default function UserProfile() {
       <SafeAreaView className="flex-1 bg-white">
         <FocusAwareStatusBar hidden={true} />
         {/* Header */}
-        <View className="z-10 flex-row items-center justify-between  px-4 py-3">
-          <TouchableOpacity className="p-1" onPress={() => router.back()}>
-            <Icon as={ChevronLeft} size={24} className={'text-slate-800'} />
-          </TouchableOpacity>
-          <Text className="mr-8 flex-1 text-center text-lg font-bold text-slate-800">
-            {t('profile.user_info_title')}
-          </Text>
-        </View>
+        <HeaderBack title={t('profile.user_info_title')} />
+
 
         {/* Scrollable Content */}
         {user && (

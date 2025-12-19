@@ -1,16 +1,19 @@
 import { CategoryItem } from '@/features/service/types';
 import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { Bath, Medal } from 'lucide-react-native';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useKTVSearchStore } from '@/features/user/stores';
 import { router } from 'expo-router';
-
+import {Text} from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 const CategoryCard = ({ item }: { item: CategoryItem }) => {
   const setFilter = useKTVSearchStore((state) => state.setFilter);
 
   const [imageError, setImageError] = useState(false);
+
+  const {t} = useTranslation();
 
   return(
     <TouchableOpacity
@@ -48,11 +51,16 @@ const CategoryCard = ({ item }: { item: CategoryItem }) => {
       </View>
 
       {/* --- PHẦN THÔNG TIN --- */}
-      <View className="flex-1 justify-center">
-        <Text className="mb-2 text-base font-bold text-slate-800">{item.name}</Text>
-        <Text className="text-xs leading-4 text-slate-600" numberOfLines={3}>
+      <View className="flex-1 justify-start">
+        <Text className="mb-2 font-inter-bold text-primary-color-1">{item.name}</Text>
+        <Text className="text-xs leading-4 text-slate-600" numberOfLines={2}>
           {item.description}
         </Text>
+        <View className={"flex-row justify-end mt-4"}>
+          <View className="px-3 py-1.5 rounded-lg bg-primary-color-2">
+            <Text className="text-white text-xs font-inter-bold">{t('common.book_now')}</Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   )

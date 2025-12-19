@@ -88,7 +88,9 @@
     "old_password": "Mật khẩu cũ",
     "select_date": "Chọn Ngày",
     "select_time": "Chọn Giờ",
-    "go_to_home": "Về trang chủ"
+    "go_to_home": "Về trang chủ",
+    "book_now": "Đặt ngay",
+    "open": "Mở"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -124,7 +126,8 @@
     "file_already_exist": "File này đã tồn tại trong máy của bạn",
     "linking_not_support": "Điện thoại của bạn không hỗ trợ Linking nhanh",
     "failed_to_set_language": "Lỗi khi set ngôn ngữ, vui lòng thử lại sau.",
-    "error_save_image": "Lỗi khi lưu ảnh, vui lòng thử lại sau."
+    "error_save_image": "Lỗi khi lưu ảnh, vui lòng thử lại sau.",
+    "error_alert_linking_message": "Không thể mở được liên kết này."
   },
   "enum": {
     "booking_status": {
@@ -157,6 +160,12 @@
     "gender": {
       "MALE": "Nam",
       "FEMALE": "Nữ"
+    },
+    "config": {
+      "SP_ZALO": "Zalo",
+      "SP_FACEBOOK": "Facebook",
+      "SP_PHONE": "Số điện thoại",
+      "SP_WECHAT": "WeChat"
     }
   },
   "tab": {
@@ -229,10 +238,11 @@
     "hero_title": "Massage tại nhà",
     "hero_description": "Xem & chọn kỹ thuật viên\nphục vụ tận nhà",
     "technician_suggest": "Kĩ thuật viên được đề xuất",
-    "services": "Các dịch vụ massage",
+    "services": "Dịch vụ nổi bật",
+    "features_trust": "Cam kết của chúng tôi",
     "features": {
       "verify": "Xác thực danh tính",
-      "verify_sub": "Tất cả các kĩ thuật viên đều được xác minh",
+      "verify_sub": "Tất cả các KTV đều được xác minh",
       "service": "Đảm bảo dịch vụ",
       "service_sub": "Chúng tôi cam kết cung cấp dịch vụ tốt nhất cho bạn",
       "cancel": "Dễ dàng hủy bỏ",
@@ -264,6 +274,7 @@
     "delete_avatar_title": "Xóa ảnh đại diện",
     "user_info_title": "Thông tin tài khoản",
     "edit_info": "Sửa thông tin",
+    "notification": "Thông báo",
     "error": {
         "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
         "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
@@ -467,5 +478,9 @@
     "title_1": "Mời bạn bè để nhận",
     "title_2": "{{ percent }}% hoa hồng trọn đời",
     "referral_link": "Liên kết giới thiệu"
+  },
+  "support": {
+    "title": "Hỗ trợ khách hàng",
+    "description": "Chúng tôi luôn sẵn sàng giúp đỡ bạn"
   }
 }
