@@ -72,7 +72,7 @@ export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>
 
 export type ApplyPartnerRequest = {
   name?: string;
-  apply_role?: string;
+  role?: _UserRole;
   reviewApplication?: {
     agency_id?: string;
     province_code?: string;

@@ -11,9 +11,9 @@ import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
 
-/**
- *  Hook để lấy danh sách massager.
- */
+export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
+export { useFileUpload } from '@/features/user/hooks/use-file-upload';
+
 export const useGetListKTV = () => {
   const params = useKTVSearchStore((state) => state.params);
   const setFilter = useKTVSearchStore((state) => state.setFilter);
