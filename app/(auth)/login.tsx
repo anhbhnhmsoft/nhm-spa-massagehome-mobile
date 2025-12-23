@@ -4,7 +4,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -14,7 +13,6 @@ import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import React, { useState } from 'react';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Icon } from '@/components/ui/icon';
 import { Eye, EyeOff } from 'lucide-react-native';
@@ -103,7 +101,7 @@ export default function LoginScreen() {
                     : "bg-gray-300"
                 )}
               >
-                <Text className="text-white text-lg font-bold">
+                <Text className="text-white text-lg font-inter-bold">
                   {loading ? t('common.loading') : t('common.continue')}
                 </Text>
               </TouchableOpacity>

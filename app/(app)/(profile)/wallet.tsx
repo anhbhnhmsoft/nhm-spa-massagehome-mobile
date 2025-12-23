@@ -255,7 +255,7 @@ const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
       <View className="items-end">
         <Text
           style={{ color: _TransactionStatusColor[item.status] }}
-          className={'mb-1 text-sm font-medium'}>
+          className={'mb-1 text-sm font-inter-medium'}>
           {t(_TransactionStatusMap[item.status])}
         </Text>
         <Text className="text-[10px] text-gray-400">
@@ -289,7 +289,7 @@ const CouponItem = ({ item }: { item: CouponUserItem }) => {
           </Text>
         </View>
         <View className="mt-2 flex-row items-end justify-between">
-          <Text className="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-primary-color-1">
+          <Text className="rounded bg-blue-100 px-2 py-0.5 text-xs font-inter-medium text-primary-color-1">
             {item.coupon.code}
           </Text>
         </View>

@@ -1,14 +1,17 @@
 import {
-  useInfiniteCategoryList,
+  useInfiniteCategoryList, useInfiniteListReview,
   useInfiniteServiceList,
-  useQueryListCoupon, useQueryListCouponUser,
+  useQueryListCoupon,
+  useQueryListCouponUser,
 } from '@/features/service/hooks/use-query';
 import {
   BookingServiceRequest,
   CategoryListFilterPatch,
-  CategoryListRequest, CouponUserListRequest,
+  CategoryListRequest,
+  CouponUserListRequest, ListReviewRequest,
   PickBookingItem,
   PickBookingRequirement,
+  SendReviewRequest,
   ServiceItem,
   ServiceListRequest,
 } from '@/features/service/types';
@@ -18,6 +21,7 @@ import useServiceStore from '@/features/service/stores';
 import { router } from 'expo-router';
 import {
   useMutationBookingService,
+  useMutationSendReview,
   useMutationServiceDetail,
 } from '@/features/service/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
@@ -30,25 +34,23 @@ import { useLocationAddress } from '@/features/app/hooks/use-location';
 import useAuthStore from '@/features/auth/store';
 import { useImmer } from 'use-immer';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
-import { useLogoutMutation } from '@/features/auth/hooks/use-mutation';
 import useToast from '@/features/app/hooks/use-toast';
-import { formatBalance } from '@/lib/utils';
-import { ListTransactionRequest } from '@/features/payment/types';
-import { useInfiniteTransactionList } from '@/features/payment/hooks/use-query';
+import { formatBalance, getMessageError } from '@/lib/utils';
 
 /**
  * Lấy danh sách danh mục dịch vụ
  * @param initialParams
+ * @param isFeature
  */
-export const useGetCategoryList = (initialParams: Omit<CategoryListRequest, 'filter'>) => {
+export const useGetCategoryList = (initialParams: Omit<CategoryListRequest, 'filter'>, isFeature?: boolean) => {
   // Sử dụng useImmer để quản lý params (chứa filter)
   const [params, setParams] = useImmer<CategoryListRequest>({
     ...initialParams,
     filter: {
       keyword: '',
+      is_featured: isFeature === true ? true : undefined,
     },
   });
-
   // Hàm setFilter
   const setFilter = useCallback(
     (filterPatch: CategoryListFilterPatch) => {
@@ -185,7 +187,7 @@ export const useServiceBooking = () => {
   const handleError = useErrorToast();
   const { error: errorToast, warning: warningToast } = useToast();
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-  const [bookingId, setBookingId] = useState<string|null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   // Thông tin form booking
   const form = useForm<PickBookingRequirement>({
     resolver: zodResolver(
@@ -254,7 +256,6 @@ export const useServiceBooking = () => {
         ...pickServiceBooking,
         book_time: dayjs(data.book_time).format('YYYY-MM-DD HH:mm:ss'),
       };
-      console.log(request);
       setLoading(true);
       mutationBookingService.mutate(request, {
         onSuccess: (res) => {
@@ -306,10 +307,15 @@ export const useServiceBooking = () => {
     showSuccessModal,
     bookingId,
     setShowSuccessModal,
-    setPickServiceBooking
+    setPickServiceBooking,
   };
 };
 
+/**
+ * Lấy danh sách coupon đã sử dụng của user
+ * @param params
+ * @param enabled
+ */
 export const useGetCouponUserList = (params: CouponUserListRequest, enabled?: boolean) => {
   const query = useQueryListCouponUser(params, enabled);
 
@@ -326,4 +332,92 @@ export const useGetCouponUserList = (params: CouponUserListRequest, enabled?: bo
     data,
     pagination,
   };
-}
+};
+
+/**
+ * hook dùng cho modal đánh giá dịch vụ
+ * @param serviceBookingId ID của dịch vụ cần đánh giá
+ * @param onSuccess Callback khi đánh giá thành công
+ */
+export const useReviewModal = (serviceBookingId: string, onSuccess: () => void) => {
+  const { t } = useTranslation();
+  const { success } = useToast();
+
+  const { mutate: sendReview, isPending } = useMutationSendReview();
+
+  const form = useForm<SendReviewRequest>({
+    resolver: zodResolver(
+      z.object({
+        service_booking_id: z.string(),
+        rating: z
+          .number()
+          .min(1, { error: t('services.error.rating_invalid') })
+          .max(5, { error: t('services.error.rating_invalid') }),
+        comment: z.string().max(1000).optional().or(z.literal('')),
+        hidden: z.boolean().default(false),
+      })
+    ),
+    defaultValues: {
+      service_booking_id: serviceBookingId || '',
+      rating: 5,
+      comment: '',
+      hidden: false,
+    },
+  });
+
+  useEffect(() => {
+    if (serviceBookingId) {
+      form.setValue('service_booking_id', serviceBookingId);
+    }
+  }, [serviceBookingId]);
+
+  const onSubmit =  (data: SendReviewRequest) => {
+    sendReview(data, {
+      onSuccess: () => {
+        success({ message: t('services.success.review_success') });
+        onSuccess();
+        form.reset();
+      },
+      onError: (error) => {
+        const message = getMessageError(error, t);
+        if (message) {
+          form.setError('comment', {message: message});
+        }
+      }
+    });
+  };
+
+  return {
+    form,
+    loading: isPending,
+    onSubmit,
+  };
+};
+
+/**
+ * Lấy danh sách review của user
+ * @param user_id
+ */
+export const useGetReviewList = (user_id: string) => {
+  const query = useInfiniteListReview({
+    filter: {
+      user_id: user_id,
+    },
+    page: 1,
+    per_page: 10
+  });
+
+  const data = useMemo(() => {
+    return query.data?.pages.flatMap((page) => page.data.data) || [];
+  }, [query.data]);
+
+  const pagination = useMemo(() => {
+    return query.data?.pages[0].data || null;
+  }, [query.data]);
+
+  return {
+    ...query,
+    data,
+    pagination,
+  };
+};

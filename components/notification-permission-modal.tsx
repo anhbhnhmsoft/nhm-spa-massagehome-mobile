@@ -1,26 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, Linking, Modal, Pressable, Text, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import useAuthStore from '@/features/auth/store';
 import { BellRing } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { useCheckNotificationPermission } from '@/features/app/hooks/use-notification';
-import { _AuthStatus } from '@/features/auth/const'; // Nếu có icon
+import { useCheckNotificationPermission, useSyncTokenToServer } from '@/features/app/hooks/use-notification';
+import { useCheckAuth } from '@/features/auth/hooks'; // Nếu có icon
 
 export function NotificationPermissionModal() {
   const {t} = useTranslation();
-  const status = useAuthStore(state => state.status); // Lấy trạng thái login
+  const status = useCheckAuth(); // Lấy trạng thái login
 
   const [visible, setVisible] = useState(false);
 
   const appState = useRef(AppState.currentState);
   const checkGranted =  useCheckNotificationPermission();
-  // const syncTokenToServer = useSyncTokenToServer();
+  const syncTokenToServer = useSyncTokenToServer();
 
   // Hàm kiểm tra quyền
   const checkPermission = async () => {
     // Chỉ kiểm tra khi user đã login
-    if (status === _AuthStatus.AUTHORIZED){
+    if (status){
       const isGranted = await checkGranted();
       if (!isGranted) {
         setVisible(true);
@@ -55,7 +54,7 @@ export function NotificationPermissionModal() {
     if (status === 'undetermined') {
       const { status: newStatus } = await Notifications.requestPermissionsAsync();
       // Đồng bộ token lên server khi bật thông báo thành công
-      // await syncTokenToServer();
+      await syncTokenToServer();
 
       if (newStatus === 'granted') {
         setVisible(false);
@@ -92,7 +91,7 @@ export function NotificationPermissionModal() {
             <BellRing size={32} color="#007AFF" />
           </View>
 
-          <Text className="text-xl font-bold text-slate-800 text-center mb-2">
+          <Text className="text-xl font-inter-bold text-slate-800 text-center mb-2">
             {t('request_notification.title')}
           </Text>
 
@@ -106,7 +105,7 @@ export function NotificationPermissionModal() {
               onPress={handleRequestPermission}
               className="w-full bg-blue-600 py-4 rounded-xl items-center active:bg-blue-700"
             >
-              <Text className="text-white font-bold text-base">
+              <Text className="text-white font-inter-bold text-base">
                 {t('request_notification.allow')}
               </Text>
             </Pressable>
@@ -115,7 +114,7 @@ export function NotificationPermissionModal() {
               onPress={handleDismiss}
               className="w-full py-3 items-center"
             >
-              <Text className="text-slate-400 font-medium">
+              <Text className="text-slate-400 font-inter-medium">
                 {t('request_notification.later')}
               </Text>
             </Pressable>

@@ -13,6 +13,10 @@
       "android": { "buildType": "apk" }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_BACKEND_URL": "https://massagehome.com.vn",
+        "EXPO_PUBLIC_SOCKET_URL": "https://massagehome.vn"
+      },
       "autoIncrement": true
     }
   },

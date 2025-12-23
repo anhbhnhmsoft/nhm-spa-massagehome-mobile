@@ -8,6 +8,7 @@ import { useGetCategoryList } from '@/features/service/hooks';
 import CategoryCard, { CategorySkeletonCard } from '@/components/app/category-card';
 import { Text } from '@/components/ui/text';
 import useDebounce from '@/features/app/hooks/use-debounce';
+import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
 
 export default function ServicesScreen() {
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ export default function ServicesScreen() {
               }}
               contentContainerStyle={{
                 gap: 12,
-                paddingBottom: 100,
+                paddingBottom: getTabBarHeight() + 20,
               }}
               onEndReachedThreshold={0.5}
               ListFooterComponent={null}

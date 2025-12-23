@@ -5,6 +5,8 @@ import { useHeartbeat } from '@/features/auth/hooks';
 import useApplicationStore from '@/lib/store';
 import FullScreenLoading from '@/components/full-screen-loading';
 import { useNotification } from '@/features/app/hooks/use-notification';
+import { NotificationPermissionModal } from '@/components/notification-permission-modal';
+import RequestLocationModal from '@/components/app/request-location';
 
 
 export default function AppLayout() {
@@ -18,6 +20,10 @@ export default function AppLayout() {
   return (
     <>
       <FullScreenLoading loading={loading} />
+      {/* --- NOTIFICATION PERMISSION MODAL --- */}
+      <NotificationPermissionModal />
+      {/* --- REQUEST LOCATION MODAL --- */}
+      <RequestLocationModal />
       <Stack
         screenOptions={{
           headerShown: false,

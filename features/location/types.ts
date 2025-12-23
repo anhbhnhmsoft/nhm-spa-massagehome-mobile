@@ -72,3 +72,8 @@ export type ProvinceItem = {
 
 export type ListProvincesResponse = ResponseDataSuccessType<ProvinceItem[]>;
 
+export type LocationPrimaryUser = {
+  lat: number,
+  lng: number,
+  address: string
+}

@@ -107,7 +107,7 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
                   />
 
                   <View className="flex-1">
-                    <Text className="text-base font-bold text-slate-700">{info.label}</Text>
+                    <Text className="text-base font-inter-bold text-slate-700">{info.label}</Text>
                     <Text className="text-slate-400 text-xs" numberOfLines={1}>
                       {item.value}
                     </Text>

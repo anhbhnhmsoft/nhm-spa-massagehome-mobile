@@ -7,6 +7,7 @@ import { useKTVSearchStore } from '@/features/user/stores';
 import { router } from 'expo-router';
 import {Text} from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
+import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 
 const CategoryCard = ({ item }: { item: CategoryItem }) => {
   const setFilter = useKTVSearchStore((state) => state.setFilter);
@@ -15,18 +16,19 @@ const CategoryCard = ({ item }: { item: CategoryItem }) => {
 
   const {t} = useTranslation();
 
+  const handlePress = useSingleTouch(() => {
+    setFilter({
+      category_id: item.id,
+      category_name: item.name,
+    });
+    router.push('/(app)/(tab)/masseurs');
+  });
+
   return(
     <TouchableOpacity
       className="flex-row rounded-xl border border-slate-100 bg-white p-3 shadow-sm"
-      onPress={() => {
-        setFilter({
-          category_id: item.id,
-          category_name: item.name,
-        });
-        router.push('/(app)/(tab)/masseurs');
-      }}
+      onPress={handlePress}
     >
-
       {/* --- PHẦN ẢNH --- */}
       <View className={"relative"}>
         {item.image_url && !imageError ? (

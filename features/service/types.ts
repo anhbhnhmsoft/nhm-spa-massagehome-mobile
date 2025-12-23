@@ -14,6 +14,7 @@ export type CategoryListFilterPatch = Partial<CategoryListRequest['filter']>;
 
 export type CategoryListRequest = BaseSearchRequest<{
   keyword?: string;
+  is_featured?: boolean; // Dịch vụ nổi bật
 }>;
 
 export type CategoryListResponse = ResponseDataSuccessType<Paginator<CategoryItem>>;
@@ -121,3 +122,34 @@ export type CouponUserItem = {
 
 export type CouponUserListRequest = BaseSearchRequest<object>;
 export type CouponUserListResponse = ResponseDataSuccessType<Paginator<CouponUserItem>>;
+
+
+export type SendReviewRequest = {
+  service_booking_id: string;
+  rating: number;
+  comment?: string;
+  hidden?: boolean;
+}
+
+export type ReviewItem = {
+  id: string; // ID đánh giá
+  user_id: string; // ID user
+  review_by: string; // ID user đánh giá
+  service_booking_id: string; // ID dịch vụ
+  rating: number; // Đánh giá
+  comment?: string; // Bình luận
+  hidden: boolean; // Có ẩn không
+  review_at: string; // Thời gian đánh giá
+  reviewer: {
+    id: string; // ID user đánh giá
+    avatar: string | null; // Hình ảnh user đánh giá
+    name: string; // Tên user đánh giá
+  } | null; // Thông tin user đánh giá
+}
+
+
+export type ListReviewRequest = BaseSearchRequest<{
+  user_id: string; // bắt buộc, ID của ktv cần lấy đánh giá
+}>
+
+export type ListReviewResponse = ResponseDataSuccessType<Paginator<ReviewItem>>

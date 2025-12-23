@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import {HeaderApp} from '@/components/header-app';
 import { useGetListKTV } from '@/features/user/hooks';
@@ -8,13 +8,18 @@ import {  KTVServiceCard, KTVServiceCardSkeleton } from '@/components/app/ktv-ca
 import useDebounce from '@/features/app/hooks/use-debounce';
 import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
+import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
+import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
 
 
 export default function MasseursScreen() {
   const {t} = useTranslation();
-  // 1. State lưu text hiển thị trên Header (để input không bị lag/giật)
+  // State lưu text hiển thị trên Header (để input không bị lag/giật)
   const [keyword, setKeyword] = useState('');
-  // 2. Lấy danh sách masseur với hook
+
+  const locationUser = useLocationUser();
+
+  // Lấy danh sách masseur với hook
   const {
     data,
     pagination,
@@ -27,6 +32,17 @@ export default function MasseursScreen() {
     setFilter,
     params
   } = useGetListKTV();
+
+  useEffect(() => {
+    if (locationUser) {
+      setFilter(
+        {
+          lat: locationUser.lat,
+          lng: locationUser.lng,
+        }
+      )
+    }
+  }, [locationUser]);
 
   const debouncedSearch = useDebounce((text: string) => {
     setFilter({ keyword: text });
@@ -71,7 +87,7 @@ export default function MasseursScreen() {
             }}
             contentContainerStyle={{
               gap: 12,
-              paddingBottom: 100,
+              paddingBottom: getTabBarHeight() + 20,
             }}
             onEndReachedThreshold={0.5}
             ListFooterComponent={null}

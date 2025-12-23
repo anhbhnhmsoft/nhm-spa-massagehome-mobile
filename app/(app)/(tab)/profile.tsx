@@ -7,6 +7,7 @@ import {
   UserProfileCard,
 } from '@/components/app/profile-tab';
 import DefaultColor from '@/components/styles/color';
+import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
 
 const ProfileScreen = () => {
   const { user, dashboardData, refreshProfile, isLoading } = useProfile();
@@ -40,7 +41,7 @@ const ProfileScreen = () => {
         <FeatureList />
 
         {/* Padding bottom cho scroll */}
-        <View className="h-28" />
+        <View style={{ height: getTabBarHeight() + 20 }} />
       </ScrollView>
     </View>
   );

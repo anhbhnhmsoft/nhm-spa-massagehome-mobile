@@ -195,7 +195,7 @@ export default function RegisterScreen() {
                         >
                           <View className={"flex-row gap-2 items-center"}>
                             <Image source={langConfig?.icon} className="mr-2 h-6 w-6" />
-                            <Text className="mr-1 font-medium">{langConfig?.label}</Text>
+                            <Text className="mr-1 font-inter-medium">{langConfig?.label}</Text>
                           </View>
                           <ChevronDown color="gray" size={16} />
                         </TouchableOpacity>
@@ -225,7 +225,7 @@ export default function RegisterScreen() {
                     : "bg-[#E0E0E0]"
                 )}
               >
-                <Text className="text-white text-lg font-bold">
+                <Text className="text-white text-lg font-inter-bold">
                   {t('common.continue')}
                 </Text>
               </TouchableOpacity>
@@ -273,7 +273,7 @@ const GenderCard = ({
       </View>
 
       <Text className={cn(
-        "text-lg font-medium",
+        "text-lg font-inter-medium",
         isActive ? "text-gray-900" : "text-gray-500"
       )}>
         {label}

@@ -30,7 +30,7 @@ const Processing = ({ t }: { t: TFunction }) => (
       <ActivityIndicator size="large" color={DefaultColor.base['primary-color-1']} />
     </View>
 
-    <Text className="mb-2 text-center text-xl font-bold text-gray-800">
+    <Text className="mb-2 text-center text-xl font-inter-bold text-gray-800">
       {t('services.booking_processing_title')}
     </Text>
     <Text className="text-center leading-5 text-gray-500">

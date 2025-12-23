@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { useGetListKTV } from '@/features/user/hooks';
+import { useGetListKTVHomepage } from '@/features/user/hooks';
 import { router } from 'expo-router';
 import { KTVHomePageCard } from '@/components/app/ktv-card';
 import Empty from '@/components/empty';
@@ -32,7 +32,7 @@ export function CarouselBanner({
   // --- TRƯỜNG HỢP 1: HIỂN THỊ SKELETON KHI LOADING HOẶC REFETCHING ---
   if (isLoading || isFetching || !banners || banners.length === 0) {
     return (
-      <View className="p-0">
+      <View className="p-0 items-center justify-center">
         {/* Skeleton phải có kích thước cố định bằng Carousel để giữ layout */}
         <Skeleton
           style={{ width: width - 32, height: carouselHeight }} // Trừ 32px nếu bạn có padding-x-4
@@ -108,7 +108,7 @@ export const VerifyFeatureSection = () => {
   const { t } = useTranslation();
   return (
     <View className="mx-4 mt-6 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-      <Text className="mb-3 text-base font-bold text-slate-800">
+      <Text className="mb-3 text-base font-inter-bold text-slate-800">
         {t('homepage.features_trust')}
       </Text>
       <View className="flex-row flex-wrap">
@@ -141,7 +141,7 @@ export const VerifyFeatureSection = () => {
 };
 
 // Carousel hiển thị KTV trong trang chủ
-export const HomePageKTVSection = ({ queryKTV }: { queryKTV: ReturnType<typeof useGetListKTV> }) => { // Giả sử tên component cha là thế này
+export const HomePageKTVSection = ({ queryKTV }: { queryKTV: ReturnType<typeof useGetListKTVHomepage> }) => { // Giả sử tên component cha là thế này
   const { t } = useTranslation();
 
   // --- LOGIC CHIA NHÓM DỮ LIỆU (QUAN TRỌNG) ---

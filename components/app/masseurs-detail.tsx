@@ -172,7 +172,7 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
       <View className="flex-1 ml-3 justify-between">
         <View>
           <View className="flex-row justify-between">
-            <Text className="text-base font-bold text-gray-800 flex-1 pr-2" numberOfLines={1}>{item.name}</Text>
+            <Text className="text-base font-inter-bold text-gray-800 flex-1 pr-2" numberOfLines={1}>{item.name}</Text>
           </View>
           <Text className="text-xs text-gray-500 mt-1" numberOfLines={2}>{item.description}</Text>
           <Text className="text-[10px] text-orange-500 mt-1"> {t('masseurs_detail.sales_count_item_service', { count: item.bookings_count })}</Text>
@@ -180,9 +180,9 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
         {/* Giá và Nút */}
         <View className="flex-row justify-between items-end mt-2">
           <View className="flex-row items-baseline gap-1">
-            <Text className="text-xs text-primary-color-1 font-bold">{t('masseurs_detail.price_service_sub')}</Text>
-            <Text className="text-lg text-primary-color-1 font-bold">{formatBalance(minPrice)}</Text>
-            <Text className="text-xs text-primary-color-1 font-bold">{t('common.currency')}</Text>
+            <Text className="text-xs text-primary-color-1 font-inter-bold">{t('masseurs_detail.price_service_sub')}</Text>
+            <Text className="text-lg text-primary-color-1 font-inter-bold">{formatBalance(minPrice)}</Text>
+            <Text className="text-xs text-primary-color-1 font-inter-bold">{t('common.currency')}</Text>
           </View>
 
           <View className={cn('bg-primary-color-2 px-4 py-1.5 rounded-full', {

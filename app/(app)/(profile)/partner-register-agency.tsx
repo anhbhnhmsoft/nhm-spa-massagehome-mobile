@@ -165,7 +165,6 @@ export default function PartnerRegisterAgencyScreen() {
       );
       router.back();
     } catch (error: any) {
-      console.error('apply partner error', error);
       Alert.alert(
         t('profile.partner_form.alert_error_title'),
         t('profile.partner_form.alert_error_message')

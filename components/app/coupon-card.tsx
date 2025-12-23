@@ -54,7 +54,7 @@ export const CouponCardBooking: FC<CouponCardBookingProps> = ({ item, isSelected
         {/* Label & Code */}
         <View className="flex-row justify-between items-start mb-1">
           <View className="flex-1 mr-2">
-            <Text className="font-bold text-slate-800 text-sm" numberOfLines={1}>
+            <Text className="font-inter-bold text-slate-800 text-sm" numberOfLines={1}>
               {item.label}
             </Text>
             <View className="self-start bg-slate-100 px-1.5 py-0.5 rounded mt-1">
@@ -69,7 +69,7 @@ export const CouponCardBooking: FC<CouponCardBookingProps> = ({ item, isSelected
             "w-5 h-5 rounded-full border items-center justify-center",
             isSelected ? "border-blue-500 bg-blue-500" : "border-slate-300"
           )}>
-            {isSelected && <Text className="text-white text-[10px] font-bold">✓</Text>}
+            {isSelected && <Text className="text-white text-[10px] font-inter-bold">✓</Text>}
           </View>
         </View>
 

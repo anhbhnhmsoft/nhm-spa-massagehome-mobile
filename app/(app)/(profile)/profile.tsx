@@ -90,7 +90,7 @@ export default function UserProfile() {
                 className="w-full items-center rounded-lg bg-primary-color-2/20 py-3"
                 onPress={() => router.push('/(app)/(profile)/edit-profile')}
               >
-                <Text className="font-bold text-primary-color-2">{t('profile.edit_info')}</Text>
+                <Text className="font-inter-bold text-primary-color-2">{t('profile.edit_info')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

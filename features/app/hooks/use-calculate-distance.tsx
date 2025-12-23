@@ -1,25 +1,24 @@
-import useApplicationStore from '@/lib/store';
 import { useCallback } from 'react';
 import { getDistanceFromLatLonInKm } from '@/lib/utils';
-import useAuthStore from '@/features/auth/store';
+import { useGetUserLocation, useLocationUser } from '@/features/app/hooks/use-get-user-location';
 
 const useCalculateDistance = () => {
-  const user = useAuthStore((state) => state.user);
-
-  return useCallback((latProvider: number, lonProvider: number) => {
-    if (!user || !user.primary_location) {
-      return null;
-    }
-    const locationUser = user.primary_location;
-
-    return getDistanceFromLatLonInKm(
-      locationUser.latitude,
-      locationUser.longitude,
-      latProvider,
-      lonProvider
-    );
-
-  }, [location]);
+  const userLocation = useLocationUser();
+  return useCallback(
+    (latProvider: number, lonProvider: number) => {
+      if (userLocation) {
+        return getDistanceFromLatLonInKm(
+          userLocation.lat,
+          userLocation.lng,
+          latProvider,
+          lonProvider
+        );
+      } else {
+        return 0;
+      }
+    },
+    [userLocation]
+  );
 };
 
 export default useCalculateDistance;

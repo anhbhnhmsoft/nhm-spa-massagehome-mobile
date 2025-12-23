@@ -3,13 +3,14 @@ import { twMerge } from 'tailwind-merge';
 import { _LanguageCode } from '@/lib/const';
 import { SecureStorage } from '@/lib/storages';
 import { _StorageKey } from '@/lib/storages/key';
-import { IDeviceInfo } from '@/lib/types';
+import ErrorAPIServer, { IDeviceInfo } from '@/lib/types';
 import * as Application from 'expo-application';
 import * as Device from 'expo-device';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { v4 } from 'uuid';
-import 'react-native-get-random-values'; // Cần cho uuid
+import 'react-native-get-random-values';
+import { TFunction } from 'i18next'; // Cần cho uuid
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -131,4 +132,21 @@ export const generateQRCodeImageUrl = (config: {
   desc: string,
 }) => {
   return `https://img.vietqr.io/image/${config.bin}-${config.numberCode}-qr_only.png?amount=${config.money}&addInfo=${config.desc}&accountName=${encodeURIComponent(config.name)}`;
+}
+
+export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction) => {
+  if (err){
+    if (err instanceof ErrorAPIServer) {
+      if (err.validateError) {
+        const validationErrors = err.validateError;
+        const firstKey = Object.keys(validationErrors)[0];
+        const firstValue = validationErrors[firstKey];
+        return firstValue[0];
+      } else if (err.message) {
+        return err.message;
+      }
+    } else {
+      return t('common_error.unknown_error');
+    }
+  }
 }

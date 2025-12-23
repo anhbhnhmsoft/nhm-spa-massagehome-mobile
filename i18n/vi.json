@@ -90,7 +90,8 @@
     "select_time": "Chọn Giờ",
     "go_to_home": "Về trang chủ",
     "book_now": "Đặt ngay",
-    "open": "Mở"
+    "open": "Mở",
+    "jobs_received_count": "lượt nhận"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -429,10 +430,22 @@
     "booking_total_price": "Tổng thanh toán",
     "booking_failed_title": "Đặt lịch thất bại",
     "booking_failed_message": "Đã có lỗi xảy ra trong quá trình xử lý lịch hẹn. Xin lỗi vì sự bất tiện này. Vui lòng thử lại.",
+    "review": {
+      "title": "Đánh giá dịch vụ",
+      "rating": "Mức độ hài lòng",
+      "comment": "Bình luận",
+      "submit": "Gửi đánh giá",
+      "hidden": "Đánh giá ẩn danh",
+      "hidden_description": "Không hiển thị tên của bạn công khai"
+    },
     "error": {
+      "rating_invalid": "Đánh giá phải từ 1 đến 5",
       "invalid_time": "Thời gian không hợp lệ, phải sau thời gian hiện tại 1 tiếng",
       "invalid_address": "Địa chỉ không hợp lệ",
       "not_enough_money": "Số dư trong ví không đủ để thanh toán, tổng giá trị là {{ total_price }} {{currency}} trong khi ví bạn đang còn {{ balance }} {{currency}}"
+    },
+    "success": {
+      "review_success": "Cảm ơn bạn đã đánh giá dịch vụ này!"
     }
   },
   "location": {
@@ -472,7 +485,9 @@
     "booking_time": "Thời gian hẹn",
     "note": "Ghi chú",
     "no_desc": "Không có ghi chú",
-    "note_address": "Ghi chú địa chỉ"
+    "note_address": "Ghi chú địa chỉ",
+    "reviews": "Đánh giá",
+    "has_reviews": "Đã đánh giá"
   },
   "affiliate": {
     "title_1": "Mời bạn bè để nhận",
@@ -482,5 +497,19 @@
   "support": {
     "title": "Hỗ trợ khách hàng",
     "description": "Chúng tôi luôn sẵn sàng giúp đỡ bạn"
+  },
+  "chat": {
+    "connecting": "Kết nối...",
+    "error_join_room": "Lỗi khi tham gia phòng chat",
+    "online": "Online",
+    "offline": "Offline",
+    "placeholder": "Gửi tin nhắn..."
+  },
+  "review": {
+    "all_reviews": "Tất cả đánh giá",
+    "total_reviews": "Tổng cộng {{ count }} nhận xét",
+    "no_reviews": "Chưa có đánh giá nào.",
+    "hidden_user": "Người dùng ẩn danh",
+    "no_comment": "Không có bình luận."
   }
 }

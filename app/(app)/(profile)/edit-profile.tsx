@@ -156,7 +156,7 @@ export default function EditProfileScreen() {
           </FormInput>
 
           <View className="my-4 h-[1px] bg-gray-200" />
-          <Text className="mb-4 text-lg font-bold text-slate-800">Bảo mật</Text>
+          <Text className="mb-4 text-lg font-inter-bold text-slate-800">Bảo mật</Text>
 
           {/* Old Password */}
           <FormInput label={t('common.old_password')} error={errors.old_password?.message}>

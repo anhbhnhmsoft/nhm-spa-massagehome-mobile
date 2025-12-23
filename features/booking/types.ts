@@ -44,7 +44,8 @@ export type BookingItem = {
   "note": string | null,
   "duration": _ServiceDuration,
   "status": _BookingStatus,
-  "price": string
+  "price": string,
+  "has_reviews": boolean
 }
 
 

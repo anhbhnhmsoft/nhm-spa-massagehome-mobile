@@ -1,8 +1,17 @@
 import { ListKTVItem } from '@/features/user/types';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import { Image,  TouchableOpacity, View } from 'react-native';
-import { Award, Briefcase, CheckCircle, TrendingUp, MapPin, ShieldCheck, Star, User } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
+import {
+  Award,
+  Briefcase,
+  CheckCircle,
+  TrendingUp,
+  MapPin,
+  ShieldCheck,
+  Star,
+  User,
+} from 'lucide-react-native';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { formatDistance } from '@/lib/utils';
 import { useSetKtv } from '@/features/user/hooks';
@@ -10,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import StarRating from '@/components/star-rating';
 import DefaultColor from '@/components/styles/color';
 import { Text } from '@/components/ui/text';
+import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 
 /**
  * Card hiển thị thông tin của massager trong trang chủ
@@ -25,7 +35,9 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
   const setKtv = useSetKtv();
 
   return (
-    <TouchableOpacity className="w-full flex-1 rounded-xl border border-slate-100 bg-white p-3 shadow-sm" onPress={() => setKtv(item.id)}>
+    <TouchableOpacity
+      className="w-full flex-1 rounded-xl border border-slate-100 bg-white p-3 shadow-sm"
+      onPress={() => setKtv(item.id)}>
       {/* --- PHẦN AVATAR --- */}
       <View className="relative mb-2">
         {item.profile?.avatar_url && !imageError ? (
@@ -50,7 +62,7 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
       </View>
 
       {/* --- INFO --- */}
-      <Text className="text-base font-inter-bold text-slate-800" numberOfLines={1}>
+      <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
         {item.name}
       </Text>
 
@@ -58,14 +70,14 @@ export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
       <View className="mb-3 mt-1 flex-row items-center">
         <Star size={14} color={DefaultColor.yellow[500]} fill={DefaultColor.yellow[500]} />
 
-        <Text className="ml-1 text-xs font-inter-bold text-slate-700">{item.rating || 0}</Text>
+        <Text className="ml-1 font-inter-bold text-xs text-slate-700">{item.rating || 0}</Text>
         <Text className="ml-1 text-xs text-slate-400">({item.review_count || 0})</Text>
       </View>
 
       {/* Services Count */}
       <View className="flex-row items-center justify-center gap-1 rounded-lg bg-blue-50 py-2">
         <Briefcase size={14} color="#2563eb" />
-        <Text className="text-xs font-inter-medium text-blue-600">
+        <Text className="font-inter-medium text-xs text-blue-600">
           {item.service_count} {t('common.service')}
         </Text>
       </View>
@@ -89,56 +101,48 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
   const setKtv = useSetKtv();
 
   return (
-    <TouchableOpacity activeOpacity={0.8} className="mb-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm flex-row" onPress={() => setKtv(item.id)}>
-      {/* --- CỘT TRÁI: AVATAR --- */}
-      <View className="relative mr-3 w-20 h-20">
+    <TouchableOpacity
+      activeOpacity={0.8}
+      className="mb-3 flex-row rounded-2xl border border-slate-100 bg-white p-3 shadow-sm"
+      onPress={() => setKtv(item.id)}>
+      <View className="relative mr-3 h-20 w-20">
         {item.profile?.avatar_url && !imageError ? (
           <Image
             source={{ uri: item.profile.avatar_url }}
             className="h-20 w-20 rounded-full bg-slate-200"
             resizeMode="cover"
-            // Khi lỗi -> Set state -> React render lại -> Chạy xuống dòng fallback dưới
             onError={() => setImageError(true)}
           />
         ) : (
-          // Fallback UI khi không có ảnh hoặc ảnh lỗi
           <View className="h-20 w-20 items-center justify-center rounded-full bg-slate-200">
             <User size={32} color="#94a3b8" />
           </View>
         )}
-        {/* Icon Verified/Status ở góc dưới */}
         <View className="absolute bottom-0 right-0 rounded-full bg-white p-0.5">
-          <View className="bg-primary-color-2 p-1 rounded-full">
+          <View className="rounded-full bg-primary-color-2 p-1">
             <ShieldCheck size={10} color="white" />
           </View>
         </View>
       </View>
 
-      {/* --- CỘT PHẢI: INFO --- */}
       <View className="flex-1 justify-between">
-        {/* Header */}
         <View className="flex-row items-start justify-between">
           <View>
-            <Text className="text-base font-bold text-slate-800">{item.name}</Text>
-            {/* Rating */}
-            <View className="flex-row items-center mt-0.5">
-              {/* 5 ngôi sao (Demo vẽ 1 cái + số) */}
-              <View className="flex-row">
-                <StarRating rating={item.rating} size={10} />
-              </View>
-              <Text className="ml-1 text-xs font-bold text-slate-700">{item.rating}</Text>
+            <Text className="font-inter-bold text-base text-slate-800">{item.name}</Text>
+            <View className="mt-0.5 flex-row items-center">
+              <StarRating rating={item.rating} size={10} />
+              <Text className="ml-1 font-inter-bold text-xs text-slate-700">{item.rating}</Text>
               <Text className="text-xs text-slate-400"> ({item.review_count || 0})</Text>
             </View>
           </View>
         </View>
 
-
-        {/* Stats: Năm, Km, Jobs */}
         <View className="mt-2 flex-row items-center gap-3">
-          {/* Năm kinh nghiệm */}
           <View className="flex-row items-center gap-1">
             <Award size={10} color="#64748b" />
-            <Text className="text-[10px] text-slate-500">{item.review_application.experience} {t('common.year')}</Text>
+            <Text className="text-[10px] text-slate-500">
+              {item.review_application.experience} {t('common.year')}
+            </Text>
           </View>
           {distance && (
             <View className="flex-row items-center gap-1">
@@ -148,15 +152,14 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
           )}
           <View className="flex-row items-center gap-1">
             <TrendingUp size={10} color="#64748b" />
-            <Text className="text-[10px] text-slate-500">{item.jobs_received_count}</Text>
+            <Text className="text-[10px] text-slate-500">{item.jobs_received_count} {t('common.jobs_received_count')}</Text>
           </View>
         </View>
 
-        {/* Nút Đặt lịch */}
         <View className="mt-3 w-full flex-row items-center justify-between pt-2">
-          <View/>
+          <View />
           <View className="rounded-md bg-primary-color-2 px-4 py-2 shadow-sm">
-            <Text className="text-xs font-inter-bold text-white">{t('services.btn_booking')}</Text>
+            <Text className="font-inter-bold text-xs text-white">{t('services.btn_booking')}</Text>
           </View>
         </View>
       </View>
@@ -164,41 +167,35 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
   );
 };
 
-
 /** * Card Skeleton hiển thị thông tin của massager trong trang dịch vụ
  * @constructor
  */
 export const KTVServiceCardSkeleton = () => {
   return (
-    <View className="mb-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm flex-row">
-      {/* --- CỘT TRÁI: AVATAR --- */}
-      <View className="mr-3 w-20 h-20">
+    <View className="mb-3 flex-row rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+      <View className="mr-3 h-20 w-20">
         <Skeleton className="h-20 w-20 rounded-full bg-slate-200" />
       </View>
 
-      {/* --- CỘT PHẢI: INFO --- */}
       <View className="flex-1 justify-between">
-        {/* Header */}
         <View className="flex-row items-start justify-between">
           <View>
-            <Skeleton className="h-5 w-32 rounded-lg bg-slate-200 mb-2" />
+            <Skeleton className="mb-2 h-5 w-32 rounded-lg bg-slate-200" />
             <Skeleton className="h-4 w-20 rounded-lg bg-slate-200" />
           </View>
         </View>
 
-        {/* Stats: Năm, Km, Jobs */}
         <View className="mt-2 flex-row items-center gap-3">
           <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
           <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
           <Skeleton className="h-4 w-16 rounded-lg bg-slate-200" />
         </View>
 
-        {/* Nút Đặt lịch */}
         <View className="mt-3 w-full flex-row items-center justify-between pt-2">
-          <View/>
+          <View />
           <Skeleton className="h-8 w-20 rounded-md bg-slate-200" />
         </View>
       </View>
     </View>
   );
-}
+};

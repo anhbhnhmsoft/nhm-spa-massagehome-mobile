@@ -77,19 +77,19 @@ const ReferralScreen = () => {
               }}
 
             >
-              <Text className="text-white text-lg font-bold">Mời ngay</Text>
+              <Text className="text-white text-lg font-inter-bold">Mời ngay</Text>
             </TouchableOpacity>
           </View>
           {/* Thẻ "Danh sách giới thiệu" */}
           <View className="bg-white p-4 rounded-2xl shadow-sm">
-            <Text className="text-lg font-bold text-gray-800 mb-4">Danh sách giới thiệu</Text>
+            <Text className="text-lg font-inter-bold text-gray-800 mb-4">Danh sách giới thiệu</Text>
             <View className="flex-row justify-between mb-2 border-b border-gray-100 pb-2">
-              <Text className="text-gray-500 font-medium">Số điện thoại</Text>
-              <Text className="text-gray-500 font-medium">Ngày</Text>
+              <Text className="text-gray-500 font-inter-medium">Số điện thoại</Text>
+              <Text className="text-gray-500 font-inter-medium">Ngày</Text>
             </View>
             {referralList.map((item) => (
               <View key={item.id} className="flex-row justify-between py-3 border-b border-gray-100">
-                <Text className="text-gray-800 font-bold">{item.phone}</Text>
+                <Text className="text-gray-800 font-inter-bold">{item.phone}</Text>
                 <Text className="text-gray-600">{item.date}</Text>
               </View>
             ))}

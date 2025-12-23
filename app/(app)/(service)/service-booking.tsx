@@ -253,7 +253,7 @@ export default function ServiceBooking() {
                             <ActivityIndicator size="small" color="#2563EB" />
                           ) : (
                             <>
-                              <Text className="text-xs font-medium text-blue-600">
+                              <Text className="text-xs font-inter-medium text-blue-600">
                                 {t('common.refresh')}
                               </Text>
                               {/* Thay icon reload của bạn vào đây */}
@@ -302,7 +302,7 @@ export default function ServiceBooking() {
                     <TouchableOpacity
                       className="h-14 flex-1 flex-row items-center justify-center rounded-full bg-primary-color-2 shadow-sm"
                       onPress={handleSubmit(handleBooking)}>
-                      <Text className="mr-2 text-lg font-bold text-white">
+                      <Text className="mr-2 text-lg font-inter-bold text-white">
                         {t('services.btn_booking')}
                       </Text>
                       <ChevronRight size={24} color="white" />

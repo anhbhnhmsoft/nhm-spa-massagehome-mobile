@@ -10,7 +10,6 @@ import { useSetLanguageUser } from '@/features/auth/hooks';
 
 const SelectLanguage = forwardRef<BottomSheetModal, any>((props, ref) => {
   const { setLanguage, selectedLang } = useSetLanguageUser(ref);
-
   return (
     <SelectLanguageModal ref={ref} value={selectedLang} onChange={(value) => setLanguage(value)} />
   );
@@ -54,7 +53,7 @@ export const SelectLanguageModal = forwardRef<
           </TouchableOpacity>
 
           {/* Tiêu đề */}
-          <Text className="absolute left-0 right-0 z-[-1] text-center text-lg font-bold text-gray-900">
+          <Text className="absolute left-0 right-0 z-[-1] text-center text-lg font-inter-bold text-gray-900">
             {t('common.select_language')}
           </Text>
 
@@ -82,7 +81,7 @@ export const SelectLanguageModal = forwardRef<
                   <Image source={lang.icon} className="mr-2 h-6 w-6" />
                   <Text
                     className={cn(
-                      'text-base font-medium',
+                      'text-base font-inter-medium',
                       isSelected ? 'text-primary-color-1' : 'text-gray-700'
                     )}>
                     {lang.label}

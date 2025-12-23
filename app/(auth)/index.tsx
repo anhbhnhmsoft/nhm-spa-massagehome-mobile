@@ -1,21 +1,15 @@
 import React, { useMemo, useRef } from 'react';
-import { View, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 import { X, ChevronDown } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import useApplicationStore from '@/lib/store';
-import { _LanguagesMap } from '@/lib/const';
+import { _APP_NAME, _LanguagesMap } from '@/lib/const';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import SelectLanguage from '@/components/select-language';
 import { router } from 'expo-router';
 
-const ASSETS = {
-  // Ảnh nền phòng spa mờ mờ
-  background: {
-    uri: require('@/assets/images/bg-index.png'),
-  },
-};
 
 export default function Index() {
   const { t } = useTranslation();
@@ -61,7 +55,7 @@ export default function Index() {
           {/* Center: Logo & Slogan */}
           <View className="mt-10 items-center px-4">
             <Text className="text-4xl font-inter-bold tracking-wider text-white mb-4">
-              Massage Home
+              {_APP_NAME}
             </Text>
 
             <Text className="text-center text-lg font-inter-medium leading-7 text-white">

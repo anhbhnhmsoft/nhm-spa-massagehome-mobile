@@ -37,6 +37,7 @@ import { useLogout } from '@/features/auth/hooks';
 import Dialog from '@/components/dialog';
 import SupportModal from '@/components/app/support-modal';
 import { useGetSupport } from '@/features/config/hooks';
+import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 
 // Header Profile Card
 type UserProfileCardProps = {
@@ -106,14 +107,14 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({
       <View className="mt-6 flex-row gap-4 px-2">
         <View className="flex-1 flex-row items-center justify-between">
           <View className="items-center">
-            <Text className="text-base font-bold text-white">
+            <Text className="text-base font-inter-bold text-white">
               {dashboardData?.wallet_balance ? formatBalance(dashboardData?.wallet_balance) : '-'}{' '}
               {t('common.currency')}{' '}
             </Text>
             <Text className="text-xs text-teal-100">{t('profile.balance')}</Text>
           </View>
           <View className="items-center">
-            <Text className="text-base font-bold text-white">
+            <Text className="text-base font-inter-bold text-white">
               {dashboardData?.coupon_user_count ? dashboardData?.coupon_user_count : '0'}{' '}
             </Text>
             <Text className="text-xs text-teal-100">{t('profile.coupon')}</Text>
@@ -173,12 +174,12 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
           const count = dashboardData?.booking_count?.[item.status] || 0;
           return (
             <TouchableOpacity
-              onPress={() => router.push({
+              onPress={useSingleTouch(() => router.push({
                 pathname: '/(app)/(profile)/orders',
                 params: {
                   status: item.status,
                 }
-              })}
+              }))}
               key={item.status}
               className="relative flex-1 items-center"
             >
@@ -219,7 +220,7 @@ export const RegisterPartnerOrAffiliate = () => {
           <Icon as={Building2} size={24} className="text-primary-color-1" />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>
+          <Text className="text-sm font-inter-bold text-gray-800" numberOfLines={1}>
             {t('profile.join_partner')}
           </Text>
           <Text className="text-[10px] text-gray-400" numberOfLines={1}>
@@ -237,7 +238,7 @@ export const RegisterPartnerOrAffiliate = () => {
           <Icon as={HandCoins} size={24} className="text-primary-color-1" />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>
+          <Text className="text-sm font-inter-bold text-gray-800" numberOfLines={1}>
             {t('profile.partner_commission')}
           </Text>
           <Text className="text-[10px] text-gray-400" numberOfLines={1}>
@@ -278,7 +279,7 @@ export const FeatureList = () => {
     <>
       <View className="mt-3 flex-row flex-wrap justify-start rounded-xl bg-white p-4">
         <View className="mb-3 w-full">
-          <Text className="font-bold text-gray-800">{t('profile.common_features')}</Text>
+          <Text className="font-inter-bold text-gray-800">{t('profile.common_features')}</Text>
         </View>
         {/* Quản lý địa chỉ */}
         <TouchableOpacity

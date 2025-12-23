@@ -110,7 +110,7 @@ export default function VerifyOTPScreen() {
                             isFocused ? "border-primary-color-2 border-[1.5px]" : "border-gray-300"
                           )}
                         >
-                          <Text className="text-2xl font-medium text-black">
+                          <Text className="text-2xl font-inter-medium text-black">
                             {symbol || (isFocused ? <Cursor /> : null)}
                           </Text>
                         </View>
@@ -130,7 +130,7 @@ export default function VerifyOTPScreen() {
                 className="items-center mb-6"
               >
                 <Text className={cn(
-                  "text-base font-medium",
+                  "text-base font-inter-medium",
                   timer > 0 ? "text-primary-color-2" : "text-gray-500"
                 )}>
                   {timer > 0 ? `${t('auth.resend_otp')} (${timer})` : t('auth.resend_otp')}
@@ -148,7 +148,7 @@ export default function VerifyOTPScreen() {
                     : "bg-[#E0E0E0]"
                 )}
               >
-                <Text className="text-white text-lg font-bold">
+                <Text className="text-white text-lg font-inter-bold">
                   {t('common.continue')}
                 </Text>
               </TouchableOpacity>

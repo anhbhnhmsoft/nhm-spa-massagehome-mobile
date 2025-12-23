@@ -27,13 +27,11 @@ export default function OrdersScreen() {
   const { status } = useLocalSearchParams<{ status?: string }>();
 
   const { data,
-    pagination,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch,
     isRefetching,
-    isLoading,
     setFilter,
     params} = useGetBookingList();
 
@@ -132,7 +130,7 @@ export default function OrdersScreen() {
           refreshControl={
             <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
           }
-          renderItem={({ item }) => <BookingCard item={item} key={item.id} />}
+          renderItem={({ item }) => <BookingCard item={item} key={item.id} onRefresh={() => refetch()} />}
           ListEmptyComponent={<Empty />}
         />
       </View>

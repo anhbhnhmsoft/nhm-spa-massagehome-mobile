@@ -33,10 +33,10 @@ export const TabIcon = ({
       {/* Label */}
       <Text
         numberOfLines={1}
+        className={"font-inter-bold"}
         style={{
           fontSize: 10,
-          fontWeight: focused ? '700' : '500',
-          color: focused ? '#2563eb' : DefaultColor.gray['400'],
+          color: focused ? DefaultColor.base['primary-color-2'] : DefaultColor.gray['400'],
           textAlign: 'center',
           width: 70,
         }}>

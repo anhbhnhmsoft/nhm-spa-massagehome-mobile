@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { AppState, AppStateStatus } from 'react-native';
 
-const fetchAndFormatLocation = async (): Promise<LocationApp> => {
+export const fetchAndFormatLocation = async (): Promise<LocationApp> => {
   const location = await Location.getCurrentPositionAsync({
     accuracy: Location.LocationAccuracy.Balanced,
   });
@@ -20,28 +20,28 @@ const fetchAndFormatLocation = async (): Promise<LocationApp> => {
       addressString = place.formattedAddress;
     } else {
       const parts: string[] = [];
-      
+
       if (place.name) {
         parts.push(place.name);
       } else if (place.street) {
         parts.push(place.street);
       }
-      
+
       if (place.subregion) {
         parts.push(place.subregion);
       } else if (place.district) {
         parts.push(place.district);
       }
-      
+
       if (place.region) {
         parts.push(place.region);
       } else if (place.city) {
         parts.push(place.city);
       }
-      
+
       addressString = parts.filter(Boolean).join(', ');
     }
-    
+
     // Xử lý cleanup dấu phẩy thừa nếu dữ liệu thiếu
     addressString = addressString.replace(/^, /, '').replace(/, $/, '');
   }

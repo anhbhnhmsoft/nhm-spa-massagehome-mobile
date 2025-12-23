@@ -11,7 +11,11 @@ import {
   BookingServiceResponse,
   CouponUserListRequest,
   CouponUserListResponse,
+  SendReviewRequest,
+  ListReviewRequest,
+  ListReviewResponse,
 } from '@/features/service/types';
+import { ResponseSuccessType } from '@/lib/types';
 
 const defaultUri = '/service';
 
@@ -46,7 +50,16 @@ const serviceApi = {
     const response = await client.post(`${defaultUri}/booking`, data);
     return response.data;
   },
-
+  // Gửi đánh giá dịch vụ
+  sendReview: async (data: SendReviewRequest): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/review`, data);
+    return response.data;
+  },
+  // Lấy danh sách đánh giá dịch vụ
+  listReview: async (params: ListReviewRequest): Promise<ListReviewResponse> => {
+    const response = await client.get(`${defaultUri}/list-review`, { params });
+    return response.data;
+  },
 };
 
 export default serviceApi;

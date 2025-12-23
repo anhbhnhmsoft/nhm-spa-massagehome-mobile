@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
 import { HeaderApp } from '@/components/header-app';
-import { useGetListKTV } from '@/features/user/hooks';
+import {  useGetListKTVHomepage } from '@/features/user/hooks';
 import { useGetCategoryList } from '@/features/service/hooks';
 import { useListBannerQuery } from '@/features/commercial/hooks/use-query';
 import DefaultColor from '@/components/styles/color';
@@ -11,20 +11,19 @@ import {
   HomePageKTVSection,
   VerifyFeatureSection,
 } from '@/components/app/carousel-homepage';
+import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
 
 
 export default function UserDashboard() {
 
-
-  const queryKTV = useGetListKTV();
+  const queryKTV = useGetListKTVHomepage();
 
   const queryCategory = useGetCategoryList({
     page: 1,
     per_page: 5,
-  });
+  }, true);
 
   const bannerQuery = useListBannerQuery();
-
 
   return (
     <View className="flex-1 bg-base-color-3">
@@ -32,7 +31,8 @@ export default function UserDashboard() {
       <HeaderApp />
 
       <ScrollView
-        className="pb-20 flex-1"
+        className="flex-1"
+        style={{ paddingBottom: getTabBarHeight() + 20 }}
         refreshControl={
           <RefreshControl
             refreshing={

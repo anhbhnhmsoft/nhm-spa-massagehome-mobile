@@ -59,7 +59,7 @@ export default function AuthScreen() {
                     >
                       {/* Text Input */}
                       <TextInput
-                        className="flex-1 h-full px-4 text-lg text-gray-900 font-medium items-center"
+                        className="flex-1 h-full px-4 text-lg text-gray-900 font-inter-medium items-center"
                         placeholder={t('auth.placeholder_phone')}
                         placeholderTextColor="#9CA3AF"
                         keyboardType="number-pad"
@@ -93,7 +93,7 @@ export default function AuthScreen() {
                     : "bg-gray-300" // Màu xám (Disabled)
                 )}
               >
-                <Text className="text-white text-lg font-bold">
+                <Text className="text-white text-lg font-inter-bold">
                   {loading ? t('common.loading') : t('common.continue')}
                 </Text>
               </TouchableOpacity>

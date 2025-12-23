@@ -2,7 +2,7 @@ import serviceApi from '@/features/service/api';
 import {
   CategoryListRequest,
   CategoryListResponse, CouponUserListRequest, CouponUserListResponse,
-  ListCouponRequest, ListCouponResponse,
+  ListCouponRequest, ListCouponResponse, ListReviewRequest, ListReviewResponse,
   ServiceListRequest,
   ServiceListResponse,
 } from '@/features/service/types';
@@ -106,6 +106,32 @@ export const useQueryListCouponUser = (
       });
     },
     enabled,
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.data?.meta?.current_page ?? 1;
+      const lastPageNum = lastPage.data?.meta?.last_page ?? 1;
+      if (currentPage < lastPageNum) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+  });
+};
+
+
+export const useInfiniteListReview = (
+  params: ListReviewRequest
+) => {
+  return useInfiniteQuery<ListReviewResponse>({
+    queryKey: ['serviceApi-listReview', params],
+    queryFn: async ({ pageParam }) => {
+      return serviceApi.listReview({
+        ...params,
+        page: pageParam as number,
+        per_page: params.per_page,
+      });
+    },
+    enabled: !!params?.filter?.user_id,
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage.data?.meta?.current_page ?? 1;
       const lastPageNum = lastPage.data?.meta?.last_page ?? 1;

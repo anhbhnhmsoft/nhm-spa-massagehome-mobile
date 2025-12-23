@@ -7,14 +7,20 @@ import { Image } from 'expo-image';
 import DefaultColor from '@/components/styles/color';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { formatBalance } from '@/lib/utils';
+import { cn, formatBalance } from '@/lib/utils';
 import dayjs from 'dayjs';
-import { _BookingStatusMap, getStatusColor } from '@/features/service/const';
+import { _BookingStatus, _BookingStatusMap, getStatusColor } from '@/features/service/const';
+import { useGetRoomChat } from '@/features/chat/hooks';
+import { ReviewModal } from '@/components/app/review-modal';
 
-export const BookingCard = ({ item }: { item: BookingItem }) => {
+export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh: () => void }) => {
   const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
+
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const getRoomChat = useGetRoomChat();
+
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   return (
     <>
@@ -52,8 +58,10 @@ export const BookingCard = ({ item }: { item: BookingItem }) => {
 
           {/* Detail */}
           <View className="flex-1">
-            <Text className="text-base font-bold text-slate-800">{item.ktv_user.name}</Text>
-            <Text className="text-xs text-slate-500">{item.service.name}</Text>
+            <Text className="text-base font-inter-bold text-slate-800">{item.ktv_user.name}</Text>
+            <Text className="text-xs text-slate-500" numberOfLines={1}>
+              {item.service.name}
+            </Text>
           </View>
 
           {/* Price */}
@@ -85,22 +93,53 @@ export const BookingCard = ({ item }: { item: BookingItem }) => {
 
         {/* 4. Action Buttons (3 nút dưới cùng) */}
         <View className="flex-row gap-2">
+          {/* Detail Button */}
           <TouchableOpacity
             onPress={() => setShowDetailModal(true)}
-            className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2"
-          >
-            <Text className="text-xs font-bold text-slate-600">{t('booking.detail')}</Text>
+            className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
+            <Text className="text-xs font-inter-bold text-slate-600">{t('booking.detail')}</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
-            <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
-          </TouchableOpacity>
+          {/* Reviews Button */}
+          {item.status === _BookingStatus.COMPLETED ? (
+            <>
+              <TouchableOpacity
+                disabled={item.has_reviews}
+                onPress={() => setShowReviewModal(true)}
+                className={cn(
+                  'flex-1 items-center justify-center rounded-lg bg-orange-500 py-2',
+                  item.has_reviews && 'bg-slate-400 cursor-not-allowed'
+                )}
+              >
+                <Text className="font-inter-bold text-xs text-white">{ item.has_reviews ? t('booking.has_reviews') : t('booking.reviews')}</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {/* Inbox Button */}
+              <TouchableOpacity
+                onPress={() => getRoomChat({ user_id: item.ktv_user.id })}
+                className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
+                <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
+      {/* Booking Detail Modal */}
       <BookingDetailModal
         isVisible={showDetailModal}
         onClose={() => setShowDetailModal(false)}
         item={item}
+      />
+      {/* Review Modal */}
+      <ReviewModal
+        isVisible={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        serviceBookingId={item.id}
+        onSuccess={() => {
+          setShowReviewModal(false);
+          onRefresh();
+        }}
       />
     </>
   );
@@ -123,7 +162,7 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
         <View className="h-[85%] w-full rounded-t-3xl bg-white">
           {/* Header */}
           <View className="flex-row items-center justify-between border-b border-slate-100 p-4">
-            <Text className="text-lg font-inter-bold text-slate-800">
+            <Text className="font-inter-bold text-lg text-slate-800">
               {t('booking.detail_title')}
             </Text>
             <TouchableOpacity onPress={onClose} className="rounded-full bg-slate-100 p-2">
@@ -142,7 +181,7 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
 
             {/* 2. KTV Info */}
             <View className="mb-6">
-              <Text className="mb-3 text-sm font-inter-bold uppercase text-slate-500">
+              <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
                 {t('booking.technician')}
               </Text>
               <View className="flex-row items-center rounded-xl border border-slate-100 bg-slate-50 p-3">
@@ -174,31 +213,35 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                   </View>
                 )}
                 <View>
-                  <Text className="text-base font-inter-bold text-slate-800">{item.ktv_user.name}</Text>
-                  <Text className="text-xs font-inter-bold text-slate-500">ID: {item.ktv_user.id}</Text>
+                  <Text className="font-inter-bold text-base text-slate-800">
+                    {item.ktv_user.name}
+                  </Text>
+                  <Text className="font-inter-bold text-xs text-slate-500">
+                    ID: {item.ktv_user.id}
+                  </Text>
                 </View>
               </View>
             </View>
 
             {/* 3. Service Info */}
             <View className="mb-6">
-              <Text className="mb-3 text-sm font-inter-bold uppercase text-slate-500">
+              <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
                 {t('booking.service_info')}
               </Text>
               <View className="gap-3 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                <View className="flex-row justify-between">
+                <View className="flex-row flex-wrap justify-between gap-2">
                   <Text className="text-slate-600">{t('booking.service_name')}</Text>
                   <Text className="font-inter-semibold text-slate-800">{item.service.name}</Text>
                 </View>
                 <View className="h-[1px] bg-slate-100" />
-                <View className="flex-row justify-between">
+                <View className="flex-row flex-wrap justify-between gap-2">
                   <Text className="text-slate-600">{t('booking.duration')}</Text>
                   <Text className="font-inter-semibold text-slate-800">
                     {item.duration} {t('common.minute')}
                   </Text>
                 </View>
                 <View className="h-[1px] bg-slate-100" />
-                <View className="flex-row justify-between">
+                <View className="flex-row flex-wrap justify-between gap-2">
                   <Text className="text-slate-600">{t('booking.price')}</Text>
                   <Text className="font-inter-semibold text-base text-primary-color-1">
                     {formatBalance(item.price)} {t('common.currency')}
@@ -209,7 +252,7 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
 
             {/* 4. Time & Location */}
             <View className="mb-6">
-              <Text className="mb-3 text-sm font-inter-bold uppercase text-slate-500">
+              <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
                 {t('booking.time_place')}
               </Text>
 
@@ -220,9 +263,7 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                   <Text className="text-sm font-semibold text-slate-800">
                     {dayjs(item.booking_time).format('HH:mm - DD/MM/YYYY')}
                   </Text>
-                  <Text className="mt-1 text-xs text-slate-500">
-                    {t('booking.booking_time')}
-                  </Text>
+                  <Text className="mt-1 text-xs text-slate-500">{t('booking.booking_time')}</Text>
                 </View>
               </View>
 
@@ -231,7 +272,7 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                 <Icon as={Clock} size={18} className="mr-3 mt-0.5 text-slate-400" />
                 <View className="flex-1">
                   <Text className="text-xs text-slate-600">
-                    {item.start_time ?dayjs(item.start_time).format('HH:mm') : '-'}
+                    {item.start_time ? dayjs(item.start_time).format('HH:mm') : '-'}
                     {item.end_time ? `- ${dayjs(item.end_time).format('HH:mm')}` : '-'}
                   </Text>
                 </View>
@@ -241,9 +282,9 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
               <View className="flex-row items-start">
                 <Icon as={MapPin} size={18} className="mr-3 mt-0.5 text-slate-400" />
                 <View className="flex-1">
-                  <Text className="text-sm font-inter-semibold text-slate-800">{item.address}</Text>
+                  <Text className="font-inter-semibold text-sm text-slate-800">{item.address}</Text>
                   {item.note_address && (
-                    <Text className="mt-1 text-xs font-inter-italic text-slate-500">
+                    <Text className="mt-1 font-inter-italic text-xs text-slate-500">
                       ({t('booking.note_address')}: {item.note_address})
                     </Text>
                   )}
@@ -253,11 +294,13 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
 
             {/* 5. Note */}
             <View className="mb-8">
-              <Text className="mb-3 text-sm font-inter-bold uppercase text-slate-500">
+              <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
                 {t('booking.note')}
               </Text>
               <View className="p-3">
-                <Text className="text-sm text-slate-700">{item.note ? item.note : t('booking.no_desc')}</Text>
+                <Text className="text-sm text-slate-700">
+                  {item.note ? item.note : t('booking.no_desc')}
+                </Text>
               </View>
             </View>
 

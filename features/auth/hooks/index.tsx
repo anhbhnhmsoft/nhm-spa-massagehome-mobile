@@ -8,7 +8,11 @@ import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
 import {
   useAuthenticateMutation,
-  useLoginMutation, useLogoutMutation, useMutationDeleteAvatar, useMutationEditAvatar, useMutationEditProfile,
+  useLoginMutation,
+  useLogoutMutation,
+  useMutationDeleteAvatar,
+  useMutationEditAvatar,
+  useMutationEditProfile,
   useProfileMutation,
   useRegisterMutation,
   useResendRegisterOTPMutation,
@@ -28,11 +32,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Href, router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
-import {useCameraPermissions} from "expo-camera";
+import { useCameraPermissions } from 'expo-camera';
 import { Alert } from 'react-native';
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
-
+import * as Updates from 'expo-updates';
+import { queryClient } from '@/lib/provider/query-provider';
 
 /**
  * Hàm để xác thực user xem là login hay register
@@ -117,7 +122,8 @@ export const useHandleLogin = () => {
           .regex(/^[0-9]+$/, { error: t('auth.error.phone_invalid') })
           .min(9, { error: t('auth.error.phone_min') })
           .max(12, { error: t('auth.error.phone_max') }),
-        password: z.string()
+        password: z
+          .string()
           .min(1, { message: t('auth.error.password_invalid') })
           .min(8, { message: t('auth.error.password_invalid') })
           .regex(/[a-z]/, { message: t('auth.error.password_invalid') })
@@ -137,18 +143,20 @@ export const useHandleLogin = () => {
     mutate(data, {
       onSuccess: (res) => {
         // Sau khi đăng ký thành công thì login user
-        login(res.data).then(() => {
-          success({
-            message: t('auth.success.login_success'),
-          });
-          // Sau khi login thành công thì redirect về màn hình home
+        login(res.data)
+          .then(() => {
+            success({
+              message: t('auth.success.login_success'),
+            });
+            // Sau khi login thành công thì redirect về màn hình home
 
-          router.push('/(app)/(tab)');
-        }).catch((err) => {
-          error({
-            message: t('auth.error.register_failed'),
+            router.push('/(app)/(tab)');
+          })
+          .catch((err) => {
+            error({
+              message: t('auth.error.register_failed'),
+            });
           });
-        });
       },
       onError: (err) => {
         handleError(err);
@@ -161,7 +169,7 @@ export const useHandleLogin = () => {
     onSubmit,
     loading: isPending,
   };
-}
+};
 
 /**
  * Hàm để xác thực OTP đăng ký
@@ -171,7 +179,7 @@ export const useHandleVerifyRegisterOtp = () => {
   // handle error toast khi gọi API thất bại
   const handleError = useErrorToast();
   // handle success toast khi gọi API thành công
-  const {success} = useToast();
+  const { success } = useToast();
 
   // set phone_authen vào auth store khi submit form
   const phoneAuthen = useAuthStore((state) => state.phone_authen);
@@ -233,7 +241,7 @@ export const useHandleVerifyRegisterOtp = () => {
   /**
    * ---------- Resend OTP Logic ----------
    */
-    // mutate function để gọi API resend OTP register
+  // mutate function để gọi API resend OTP register
   const mutationResendRegisterOTP = useResendRegisterOTPMutation();
   // Timer để đếm ngược thời gian resend OTP
   const [timer, setTimer] = useState(60);
@@ -250,32 +258,34 @@ export const useHandleVerifyRegisterOtp = () => {
   // handle resend OTP
   const resendOTP = () => {
     if (phoneAuthen && timer === 0) {
-      mutationResendRegisterOTP.mutate({
-        phone: phoneAuthen,
-      }, {
-        onSuccess: () => {
-          success({
-            message: t('auth.success.resend_otp'),
-          });
-          setTimer(60);
+      mutationResendRegisterOTP.mutate(
+        {
+          phone: phoneAuthen,
         },
-        onError: (err) => {
-          handleError(err);
-        },
-      });
+        {
+          onSuccess: () => {
+            success({
+              message: t('auth.success.resend_otp'),
+            });
+            setTimer(60);
+          },
+          onError: (err) => {
+            handleError(err);
+          },
+        }
+      );
     }
   };
 
-
-  return{
+  return {
     phoneAuthen,
     timer,
     form,
     onSubmit,
     resendOTP,
     loading: mutationVerifyRegisterOTP.isPending || mutationResendRegisterOTP.isPending,
-  }
-}
+  };
+};
 
 /**
  * Hàm để đăng ký user
@@ -300,7 +310,8 @@ export const useHandleRegister = () => {
       z.object({
         token: z.string().min(1),
         name: z.string().min(1, { error: t('auth.error.name_required') }),
-        password: z.string()
+        password: z
+          .string()
           .min(1, { message: t('auth.error.password_invalid') })
           .min(8, { message: t('auth.error.password_invalid') })
           .regex(/[a-z]/, { message: t('auth.error.password_invalid') })
@@ -313,7 +324,6 @@ export const useHandleRegister = () => {
         language: z.enum(_LanguageCode, {
           error: t('auth.error.language_invalid'),
         }),
-
       })
     ),
     defaultValues: {
@@ -330,17 +340,19 @@ export const useHandleRegister = () => {
     mutationRegister.mutate(data, {
       onSuccess: (res) => {
         // Sau khi đăng ký thành công thì login user
-        login(res.data).then(() => {
-          success({
-            message: t('auth.success.register_success'),
+        login(res.data)
+          .then(() => {
+            success({
+              message: t('auth.success.register_success'),
+            });
+            // Sau khi login thành công thì redirect về màn hình home
+            router.push('/(app)/(tab)');
+          })
+          .catch((err) => {
+            error({
+              message: t('auth.error.register_failed'),
+            });
           });
-          // Sau khi login thành công thì redirect về màn hình home
-          router.push('/(app)/(tab)');
-        }).catch((err) => {
-          error({
-            message: t('auth.error.register_failed'),
-          });
-        });
       },
       onError: (err) => {
         handleError(err);
@@ -348,12 +360,12 @@ export const useHandleRegister = () => {
     });
   }, []);
 
-  return{
+  return {
     form,
     onSubmit,
     loading: mutationRegister.isPending,
-  }
-}
+  };
+};
 
 /**
  * Hook để kiểm tra xem user có đang được xác thực hay không
@@ -370,17 +382,20 @@ export const useCheckAuthToRedirect = () => {
   const isAuthorized = useCheckAuth();
 
   // Kiểu dữ liệu nhận vào: Href (URL) HOẶC một hàm callback
-  return useCallback((redirectTo: Href | (() => void)) => {
-    if (!isAuthorized) {
-      router.push('/(auth)');
-    } else {
-      if (typeof redirectTo === 'function') {
-        redirectTo();
+  return useCallback(
+    (redirectTo: Href | (() => void)) => {
+      if (!isAuthorized) {
+        router.push('/(auth)');
       } else {
-        router.push(redirectTo);
+        if (typeof redirectTo === 'function') {
+          redirectTo();
+        } else {
+          router.push(redirectTo);
+        }
       }
-    }
-  }, [isAuthorized]);
+    },
+    [isAuthorized]
+  );
 };
 /**
  * Hook để lấy profile user
@@ -406,14 +421,12 @@ export const useGetProfile = () => {
       },
     });
   }, []);
-
-}
+};
 
 /**
  * Hook để hydrate auth state từ local storage
  */
 export const useHydrateAuth = () => {
-
   const _hydrated = useAuthStore((state) => state._hydrated);
   const hydrate = useAuthStore((state) => state.hydrate);
   const status = useAuthStore((state) => state.status);
@@ -459,7 +472,6 @@ export const useHydrateAuth = () => {
     };
 
     initAuth();
-
   }, [_hydrated]);
 
   return complete;
@@ -482,10 +494,25 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
   const { error: errorToast } = useToast();
 
   // loading state
-  const [loading, setLoading] = useState(false);
+  const setLoading = useApplicationStore((state) => state.setLoading);
 
   // Kiểm tra xem user đăng nhập chưa
   const isAuthenticated = useCheckAuth();
+
+  const syncLanguage = useCallback(async (lang: _LanguageCode) => {
+    try {
+      // Sau khi set ngôn ngữ thành công thì set ngôn ngữ vào store
+      await setLanguageStore(lang);
+      // Sau khi set ngôn ngữ thành công thì clear cache
+      queryClient.clear();
+      // Sau khi set ngôn ngữ thành công thì reset lại các query để cập nhật ngôn ngữ mới
+      await queryClient.resetQueries();
+      // Sau khi set ngôn ngữ thành công thì reload lại app
+      await Updates.reloadAsync();
+    } catch {
+      // do nothing
+    }
+  }, []);
 
   // Hook để set ngôn ngữ user
   const setLanguage = useCallback(
@@ -497,20 +524,21 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
         mutate(
           { lang },
           {
-            onSuccess: (data) => {
-              // Sau khi set ngôn ngữ thành công thì set ngôn ngữ vào store
-              setLanguageStore(lang);
+            onSuccess: async () => {
+              await syncLanguage(lang);
             },
-            onError: (error) => {
+            onError: () => {
               errorToast({
                 message: t('common_error.failed_to_set_language'),
               });
             },
+            onSettled: () => {
+              setLoading(false);
+            },
           }
         );
-        setLoading(false);
       } else {
-        await setLanguageStore(lang);
+        await syncLanguage(lang);
       }
       // Đóng bottom sheet
       (ref as any).current?.dismiss();
@@ -520,7 +548,6 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
 
   return {
     setLanguage,
-    loading,
     selectedLang,
   };
 };
@@ -531,13 +558,13 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
 export const useHeartbeat = () => {
   const status = useAuthStore((state) => state.status);
   useHeartbeatQuery(status === _AuthStatus.AUTHORIZED);
-}
+};
 
 /**
  * Xử lý thay đổi avatar
  */
 export const useChangeAvatar = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -545,7 +572,6 @@ export const useChangeAvatar = () => {
 
   // Xử lý khi nhấn nút chụp ảnh
   const takePictureCamera = useCallback(async () => {
-
     if (!permission?.granted) {
       const res = await requestPermission();
       if (!res.granted) {
@@ -562,11 +588,8 @@ export const useChangeAvatar = () => {
   // Xử lý khi nhấn nút chọn ảnh từ thư viện
   const chooseImageFormLib = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        t('permission.picture_lib.title'),
-        t('permission.picture_lib.message')
-      );
+    if (status !== 'granted') {
+      Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
       return false;
     } else {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -575,90 +598,90 @@ export const useChangeAvatar = () => {
       });
       if (!result.canceled) {
         const form = new FormData();
-        form.append('file',{
+        form.append('file', {
           uri: result.assets[0].uri,
-          name: "avatar.jpg",
-          type: "image/jpg"
+          name: 'avatar.jpg',
+          type: 'image/jpg',
         } as any);
         editAvatar(form, false);
       }
     }
-  },[t]);
+  }, [t]);
 
   // Trả về hàm xử lý xoóa avatar và thay đổi avatar
   const deleteAvatar = useCallback(() => {
     editAvatar(undefined, false, true);
-  },[editAvatar]);
+  }, [editAvatar]);
 
   return {
     takePictureCamera,
     chooseImageFormLib,
     deleteAvatar,
-  }
-
-}
+  };
+};
 
 /**
  * Hook để chỉnh sửa avatar
  */
 export const useEditAvatar = () => {
-  const {mutate: editAvatar} = useMutationEditAvatar();
-  const {mutate: deleteAvatar} = useMutationDeleteAvatar();
+  const { mutate: editAvatar } = useMutationEditAvatar();
+  const { mutate: deleteAvatar } = useMutationDeleteAvatar();
   const errorHandle = useErrorToast();
-  const setUser = useAuthStore(state => state.setUser);
-  const setLoading = useApplicationStore(state => state.setLoading);
+  const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useApplicationStore((state) => state.setLoading);
 
-  return useCallback((data: FormData | undefined, routerBack: boolean = true, isDelete: boolean = false) => {
-    setLoading(true);
-    // Xử lý khi xóa avatar
-    if (isDelete) {
-      deleteAvatar(undefined, {
-        onSuccess: (res) => {
-          setUser(res.data.user);
-          if (routerBack) {
-            router.back();
-          }
-        },
-        onError: (error) => {
-          errorHandle(error);
-        },
-        onSettled: () => {
-          setLoading(false);
-        },
-      });
-    }
-    else if (data) {
-      // Xử lý khi chỉnh sửa avatar
-      editAvatar(data, {
-        onSuccess: (res) => {
-          setUser(res.data.user);
-          if (routerBack) {
-            router.back();
-          }
-        },
-        onError: (error) => {
-          errorHandle(error);
-        },
-        onSettled: () => {
-          setLoading(false);
-        },
-      });
-    }
-  }, []);
-
-}
+  return useCallback(
+    (data: FormData | undefined, routerBack: boolean = true, isDelete: boolean = false) => {
+      setLoading(true);
+      // Xử lý khi xóa avatar
+      if (isDelete) {
+        deleteAvatar(undefined, {
+          onSuccess: (res) => {
+            setUser(res.data.user);
+            if (routerBack) {
+              router.back();
+            }
+          },
+          onError: (error) => {
+            errorHandle(error);
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        });
+      } else if (data) {
+        // Xử lý khi chỉnh sửa avatar
+        editAvatar(data, {
+          onSuccess: (res) => {
+            setUser(res.data.user);
+            if (routerBack) {
+              router.back();
+            }
+          },
+          onError: (error) => {
+            errorHandle(error);
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        });
+      }
+    },
+    []
+  );
+};
 
 /**
  * Hook để chỉnh sửa thông tin profile
  */
 export const useEditProfile = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const errorHandle = useErrorToast();
-  const setUser = useAuthStore(state => state.setUser);
-  const user = useAuthStore(state => state.user);
-  const setLoading = useApplicationStore(state => state.setLoading);
+  const setUser = useAuthStore((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
+  const setLoading = useApplicationStore((state) => state.setLoading);
 
-  const {mutate: editProfile} = useMutationEditProfile();
+  const { mutate: editProfile } = useMutationEditProfile();
 
   const form = useForm<EditProfileRequest>({
     defaultValues: {
@@ -667,37 +690,60 @@ export const useEditProfile = () => {
       gender: user?.profile.gender || undefined,
       bio: user?.profile.bio || undefined,
     },
-    resolver: zodResolver(z.object({
-      name: z.string().min(4, t('profile.error.invalid_name')).max(255).optional().or(z.literal('')),
+    resolver: zodResolver(
+      z
+        .object({
+          name: z
+            .string()
+            .min(4, t('profile.error.invalid_name'))
+            .max(255)
+            .optional()
+            .or(z.literal('')),
 
-      // Lưu ý: Form dùng Date object để DatePicker hoạt động
-      date_of_birth:  z.string()
-        .optional()
-        .refine((val) => dayjs(val).isValid(), {
-          error: t('profile.error.invalid_date_of_birth')
+          // Lưu ý: Form dùng Date object để DatePicker hoạt động
+          date_of_birth: z
+            .string()
+            .optional()
+            .refine((val) => dayjs(val).isValid(), {
+              error: t('profile.error.invalid_date_of_birth'),
+            })
+            .refine(
+              (val) => {
+                const inputTime = dayjs(val);
+                // Ngày sinh phải trước ngày hiện tại
+                return inputTime.isBefore(dayjs());
+              },
+              {
+                error: t('profile.error.invalid_date_of_birth'), // "Ngày sinh phải trước ngày hiện tại"
+              }
+            ),
+
+          gender: z.enum(_Gender).optional(),
+          bio: z.string().optional(),
+
+          // Thêm password vào schema
+          old_password: z
+            .string()
+            .min(8, 'Mật khẩu cũ tối thiểu 8 ký tự')
+            .optional()
+            .or(z.literal('')),
+          new_password: z
+            .string()
+            .min(8, 'Mật khẩu mới tối thiểu 8 ký tự')
+            .optional()
+            .or(z.literal('')),
         })
-        .refine((val) => {
-          const inputTime = dayjs(val);
-          // Ngày sinh phải trước ngày hiện tại
-          return inputTime.isBefore(dayjs());
-        }, {
-          error: t('profile.error.invalid_date_of_birth'), // "Ngày sinh phải trước ngày hiện tại"
-        }),
-
-      gender: z.enum(_Gender).optional(),
-      bio: z.string().optional(),
-
-      // Thêm password vào schema
-      old_password: z.string().min(8, 'Mật khẩu cũ tối thiểu 8 ký tự').optional().or(z.literal('')),
-      new_password: z.string().min(8, 'Mật khẩu mới tối thiểu 8 ký tự').optional().or(z.literal('')),
-    })
-      // Validate logic chéo: Nếu nhập mật khẩu mới thì bắt buộc nhập mật khẩu cũ
-      .refine((data) => {
-        return !(data.new_password && !data.old_password);
-      }, {
-        message: t('profile.error.old_password_required'),
-        path: ["old_password"], // Hiển thị lỗi ở trường old_password
-      })),
+        // Validate logic chéo: Nếu nhập mật khẩu mới thì bắt buộc nhập mật khẩu cũ
+        .refine(
+          (data) => {
+            return !(data.new_password && !data.old_password);
+          },
+          {
+            message: t('profile.error.old_password_required'),
+            path: ['old_password'], // Hiển thị lỗi ở trường old_password
+          }
+        )
+    ),
   });
 
   useEffect(() => {
@@ -728,14 +774,11 @@ export const useEditProfile = () => {
     });
   }, []);
 
-
   return {
     form,
-    onSubmit
-  }
-
-
-}
+    onSubmit,
+  };
+};
 
 export const useLogout = () => {
   const mutationLogout = useLogoutMutation();

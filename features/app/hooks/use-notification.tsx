@@ -55,14 +55,18 @@ export const useSyncTokenToServer =  () => {
   const user = useAuthStore((state) => state.user);
   return useCallback(async () => {
     if (!user) return; // Chưa login thì không gửi
-    const data = await useGetExpoPushToken();
-    if (data) {
-      await authApi.setDeviceInfo({
-        platform: data.deviceInfo.platform,
-        device_id: data.deviceInfo.deviceId,
-        device_name: data.deviceInfo.deviceName,
-        token: data.token,
-      });
+    try {
+      const data = await useGetExpoPushToken();
+      if (data) {
+        await authApi.setDeviceInfo({
+          platform: data.deviceInfo.platform,
+          device_id: data.deviceInfo.deviceId,
+          device_name: data.deviceInfo.deviceName,
+          token: data.token,
+        });
+      }
+    } catch {
+      // do nothing
     }
   }, [user])
 };

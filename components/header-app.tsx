@@ -9,6 +9,7 @@ import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import useAuthStore from '@/features/auth/store';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
+import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 
 
 
@@ -25,6 +26,7 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
   const user = useAuthStore((state) => state.user);
   const [showLocationModal, setShowLocationModal] = React.useState(false);
   const redirectAuth = useCheckAuthToRedirect();
+  const locationUser = useLocationUser();
 
   return (
     <>
@@ -40,11 +42,11 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
             }}
             activeOpacity={0.8}
             className={'flex-1'}>
-            <Text className="text-xs font-medium text-blue-200">{t('header_app.location')}</Text>
+            <Text className="text-xs font-inter-medium text-blue-200">{t('header_app.location')}</Text>
             <View className="mt-1 flex-row items-center gap-1">
               <Icon as={MapPin} size={16} className="text-white" />
               <Text className="font-inter-bold text-base text-white" numberOfLines={1}>
-                {user?.primary_location?.address || t('header_app.need_location')}
+                {locationUser?.address || t('header_app.need_location')}
               </Text>
             </View>
           </TouchableOpacity>
@@ -55,9 +57,6 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
             <View className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-[#1d4ed8] bg-red-500" />
           </TouchableOpacity>
         </View>
-        {/*/!* Welcome Text *!/*/}
-        {/*<Text className="mb-1 font-inter-bold text-xl text-white">{t('header_app.hello')}</Text>*/}
-        {/*<Text className="mb-4 text-sm text-blue-100">{t('header_app.search_description')}</Text>*/}
         {showSearch && (
           <View>
             {/* Search Bar */}
@@ -73,7 +72,7 @@ export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSe
                     ? t('header_app.search_placeholder_service')
                     : t('header_app.search_placeholder_massage')
                 }
-                placeholderTextColor="#94a3b8" // Màu placeholder nhạt giống icon
+                placeholderTextColor="#94a3b8"
                 value={textSearch}
                 onChangeText={setTextSearch}
                 returnKeyType="search"

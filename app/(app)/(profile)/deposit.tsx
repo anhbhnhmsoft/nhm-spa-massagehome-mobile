@@ -81,7 +81,7 @@ export default function DepositScreen() {
                         errors.amount ? 'border-red-500' : 'border-gray-200'
                       )}>
                       <TextInput
-                        className="flex-1 text-3xl font-bold text-gray-900"
+                        className="flex-1 text-3xl font-inter-bold text-gray-900"
                         placeholder="0"
                         keyboardType="numeric"
                         value={value}
@@ -125,7 +125,7 @@ export default function DepositScreen() {
             <View className="mb-8 rounded-2xl bg-primary-color-2 p-5 pt-8 shadow-sm">
               <View className="flex-row items-center justify-between">
                 <View>
-                  <Text className="mb-1 font-medium text-green-100">
+                  <Text className="mb-1 font-inter-medium text-green-100">
                     {t('payment.received_points')}
                   </Text>
                   <View className="flex-row items-baseline gap-2">

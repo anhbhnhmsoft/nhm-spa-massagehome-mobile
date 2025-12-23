@@ -1,4 +1,7 @@
-export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.1.39:8000";
+export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+export const _SocketURL = process.env.EXPO_PUBLIC_SOCKET_URL || "http://127.0.0.1:3000";
+
+export const _APP_NAME = "Massage Home"
 
 export enum _LanguageCode {
   VI = 'vi',

@@ -17,8 +17,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Ứng dụng cần truy cập vị trí để tìm kiếm các Spa và Kỹ thuật viên gần bạn nhất."
-      }
+        "NSLocationWhenInUseUsageDescription": "Ứng dụng cần truy cập vị trí để tìm kiếm các Spa và Kỹ thuật viên gần bạn nhất.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
     },
     "android": {
       "edgeToEdgeEnabled": true,

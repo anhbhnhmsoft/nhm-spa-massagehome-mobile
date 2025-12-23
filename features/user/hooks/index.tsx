@@ -11,6 +11,9 @@ import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
 
+/**
+ *  Hook để lấy danh sách massager.
+ */
 export const useGetListKTV = () => {
   const params = useKTVSearchStore((state) => state.params);
   const setFilter = useKTVSearchStore((state) => state.setFilter);
@@ -33,6 +36,33 @@ export const useGetListKTV = () => {
     params,
   };
 };
+
+export const useGetListKTVHomepage = () => {
+
+  const query = useInfiniteListKTV({
+    filter: {},
+    // Sắp xếp theo đánh giá trung bình giảm dần
+    sort_by: 'reviews_received_avg_rating',
+    direction: 'asc',
+    page: 1,
+    per_page: 6,
+  });
+  const data = useMemo(() => {
+    return query.data?.pages.flatMap((page) => page.data.data) || [];
+  }, [query.data]);
+
+  const pagination = useMemo(() => {
+    return query.data?.pages[0].data || null;
+  }, [query.data]);
+
+  return {
+    ...query,
+    data,
+    pagination,
+  };
+};
+
+
 
 /**
  * Lưu thông tin massager vào store và chuyển hướng đến màn hình chi tiết massager

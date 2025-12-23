@@ -74,7 +74,7 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                     onPress={createHandler}
                     className="flex-row items-center justify-center rounded-xl border border-dashed border-primary-color-2 bg-blue-50/50 py-4 active:bg-blue-100">
                     <Icon as={PlusCircle} size={20} className="mr-2 text-primary-color-2" />
-                    <Text className="font-medium text-primary-color-2">
+                    <Text className="font-inter-medium text-primary-color-2">
                       {t('location.add_new_address')}
                     </Text>
                   </TouchableOpacity>
@@ -180,7 +180,7 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                 className="flex-row items-center rounded-full bg-base-color-3 px-6 py-3 active:bg-blue-100">
                 {/* Sử dụng màu xanh dương nhạt tương tự trong ảnh (ví dụ: #0ea5e9 - cyan-500 hoặc text-blue-500) */}
                 <Icon as={PlusCircle} size={20} className="mr-2 text-primary-color-2" />
-                <Text className="text-base font-medium text-primary-color-2">
+                <Text className="text-base font-inter-medium text-primary-color-2">
                   {t('location.add_new_address')}
                 </Text>
               </TouchableOpacity>
@@ -331,7 +331,7 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
           <TouchableOpacity
             onPress={handleSubmit(submit)}
             className={`flex-row items-center justify-center rounded-full bg-primary-color-2 py-4`}>
-            <Text className="text-lg font-bold text-white">{t('location.save_address')}</Text>
+            <Text className="text-lg font-inter-bold text-white">{t('location.save_address')}</Text>
           </TouchableOpacity>
         </View>
 

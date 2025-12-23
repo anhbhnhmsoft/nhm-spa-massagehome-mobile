@@ -50,7 +50,7 @@ export default function DateTimePickerInput({
         onPress={handlePressInput}
         className="w-full border border-slate-300 rounded-2xl p-4 flex-row justify-between items-center active:bg-slate-100 active:border-blue-500 transition-colors"
       >
-        <Text className="text-slate-800 text-base font-medium">
+        <Text className="text-slate-800 text-base font-inter-medium">
           {dayjs(value).format(displayFormat)}
         </Text>
         <Text className="text-slate-400">{icon}</Text>
@@ -84,7 +84,7 @@ export default function DateTimePickerInput({
               {/* Header Modal */}
               <View className="flex-row justify-between items-center p-4 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
                 <Pressable onPress={() => setShow(false)} className="p-2">
-                  <Text className="text-slate-500 font-medium">{t('common.cancel')}</Text>
+                  <Text className="text-slate-500 font-inter-medium">{t('common.cancel')}</Text>
                 </Pressable>
                 <Text className="font-inter-semibold text-slate-700 uppercase">
                   {mode === 'date' ? t('common.select_date') : t('common.select_time')}
