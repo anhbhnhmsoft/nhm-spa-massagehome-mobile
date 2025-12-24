@@ -31,6 +31,13 @@ export const LocationSelector = <T extends FieldValues = FieldValues>({
     const hasPermission = await getPermission();
     if (hasPermission && currentLocation?.address) {
       setValue(name, currentLocation.address as any);
+      // Set latitude and longitude
+      if (currentLocation?.location?.coords?.latitude !== undefined && currentLocation?.location?.coords?.latitude !== null) {
+        setValue('latitude' as any, currentLocation.location.coords.latitude as any);
+      }
+      if (currentLocation?.location?.coords?.longitude !== undefined && currentLocation?.location?.coords?.longitude !== null) {
+        setValue('longitude' as any, currentLocation.location.coords.longitude as any);
+      }
     } else if (!hasPermission) {
       Alert.alert(
         t('profile.partner_form.alert_location_permission_title'),
@@ -84,6 +91,16 @@ export const LocationSelector = <T extends FieldValues = FieldValues>({
               onSelect={(location: AddressItem) => {
                 onChange(location.address);
                 setValue(name, location.address as any);
+                // Set latitude and longitude
+                const lat = location.latitude ? parseFloat(location.latitude) : undefined;
+                const lng = location.longitude ? parseFloat(location.longitude) : undefined;
+
+                if (lat !== undefined && lat !== null && !isNaN(lat)) {
+                  setValue('latitude' as any, lat as any);
+                }
+                if (lng !== undefined && lng !== null && !isNaN(lng)) {
+                  setValue('longitude' as any, lng as any);
+                }
                 setShowLocationModal(false);
               }}
             />

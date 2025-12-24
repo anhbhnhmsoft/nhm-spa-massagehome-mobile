@@ -18,6 +18,7 @@ type UsePartnerRegisterFormOptions = {
   validateImages?: (galleryImages: string[]) => boolean;
   validateIdImages?: (idFront: string | null, idBack: string | null) => boolean;
   validateDegreeImages?: (degreeImages: string[]) => boolean;
+  validateAgencyId?: (agencyId: string | undefined) => Promise<boolean> | boolean;
   prepareFiles: (
     uploadFile: (uri: string, options?: { type?: number; isPublic?: boolean }) => Promise<{ file_path: string; is_public: boolean }>,
     galleryImages: string[],
@@ -34,6 +35,7 @@ export const usePartnerRegisterForm = (options: UsePartnerRegisterFormOptions) =
     validateImages,
     validateIdImages,
     validateDegreeImages,
+    validateAgencyId,
     prepareFiles,
   } = options;
 
@@ -49,7 +51,10 @@ export const usePartnerRegisterForm = (options: UsePartnerRegisterFormOptions) =
       name: '',
       city: '',
       location: '',
+      latitude: undefined,
+      longitude: undefined,
       bio: '',
+      agency_id: '',
     },
   });
 
@@ -73,6 +78,16 @@ export const usePartnerRegisterForm = (options: UsePartnerRegisterFormOptions) =
         return;
       }
 
+      // Validate agency_id if provided
+      if (role === _UserRole.KTV && data.agency_id && data.agency_id.trim() !== '') {
+        if (validateAgencyId) {
+          const isValid = await validateAgencyId(data.agency_id.trim());
+          if (!isValid) {
+            return;
+          }
+        }
+      }
+
       try {
         setLoading(true);
 
@@ -89,11 +104,13 @@ export const usePartnerRegisterForm = (options: UsePartnerRegisterFormOptions) =
           role,
           reviewApplication: {
             agency_id:
-              role === _UserRole.KTV && user?.referred_by_user_id
-                ? user.referred_by_user_id
+              role === _UserRole.KTV && data.agency_id && data.agency_id.trim() !== ''
+                ? data.agency_id.trim()
                 : undefined,
             province_code: data.city,
             address: data.location,
+            latitude: data.latitude,
+            longitude: data.longitude,
             bio: data.bio,
           },
           files,
@@ -108,9 +125,14 @@ export const usePartnerRegisterForm = (options: UsePartnerRegisterFormOptions) =
         router.back();
       } catch (error: any) {
         console.error('apply partner error', error);
+        // Hiển thị lỗi từ backend nếu có
+        const errorMessage = error?.response?.data?.errors?.reviewApplication?.agency_id?.[0] 
+          || error?.response?.data?.message 
+          || error?.message 
+          || t('profile.partner_form.alert_error_message');
         Alert.alert(
           t('profile.partner_form.alert_error_title'),
-          t('profile.partner_form.alert_error_message')
+          errorMessage
         );
       } finally {
         setLoading(false);

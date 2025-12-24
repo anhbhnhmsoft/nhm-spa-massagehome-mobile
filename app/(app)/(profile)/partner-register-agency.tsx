@@ -29,6 +29,8 @@ export default function PartnerRegisterAgencyScreen() {
         name: z.string().min(1, t('profile.partner_form.error_branch_name_required')),
         city: z.string().min(1, t('profile.partner_form.error_city_required')),
         location: z.string().min(1, t('profile.partner_form.error_location_required')),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
         bio: z.string().optional(),
       }),
     [t]
@@ -36,35 +38,37 @@ export default function PartnerRegisterAgencyScreen() {
 
   const {
     form,
-    galleryImages,
-    setGalleryImages,
+    idFront,
+    setIdFront,
+    idBack,
+    setIdBack,
     handleSubmit,
   } = usePartnerRegisterForm({
     role: _UserRole.AGENCY,
     schema,
-    validateImages: (images) => {
-      if (images.length < 3) {
+    validateIdImages: (idFront, idBack) => {
+      if (!idFront || !idBack) {
         Alert.alert(
-          t('profile.partner_form.alert_missing_images_title'),
-          t('profile.partner_form.alert_missing_images_message')
-        );
-        return false;
-      }
-      if (images.length > 5) {
-        Alert.alert(
-          t('profile.partner_form.alert_max_images_title'),
-          t('profile.partner_form.alert_max_images_message')
+          t('profile.partner_form.alert_missing_id_title'),
+          t('profile.partner_form.alert_missing_id_message')
         );
         return false;
       }
       return true;
     },
-    prepareFiles: async (uploadFile, galleryImages) => {
+    prepareFiles: async (uploadFile, galleryImages, idFront, idBack) => {
       const files: Array<{ type: number; file_path: string; is_public: boolean }> = [];
-      for (const uri of galleryImages) {
-        const result = await uploadFile(uri, { type: 5, isPublic: true });
-        files.push({ type: 5, file_path: result.file_path, is_public: result.is_public });
+
+      if (idFront) {
+        const result = await uploadFile(idFront, { type: 1, isPublic: false });
+        files.push({ type: 1, file_path: result.file_path, is_public: result.is_public });
       }
+
+      if (idBack) {
+        const result = await uploadFile(idBack, { type: 2, isPublic: false });
+        files.push({ type: 2, file_path: result.file_path, is_public: result.is_public });
+      }
+
       return files;
     },
   });
@@ -74,6 +78,13 @@ export default function PartnerRegisterAgencyScreen() {
   useEffect(() => {
     if (user?.primary_location) {
       setValue('location', user.primary_location.address);
+      // Set latitude and longitude cho địa chỉ mặc định
+      if (user.primary_location.latitude) {
+        setValue('latitude', Number(user.primary_location.latitude));
+      }
+      if (user.primary_location.longitude) {
+        setValue('longitude', Number(user.primary_location.longitude));
+      }
     }
   }, [user, setValue]);
 
@@ -82,29 +93,21 @@ export default function PartnerRegisterAgencyScreen() {
       <HeaderBack title="profile.partner_register.agency_title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 mt-4 text-base font-inter-bold text-slate-900">
           {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
         </Text>
-        <View className="mb-2 flex-row flex-wrap gap-3">
-          {galleryImages.map((uri, index) => (
-            <ImageSlot
-              key={uri + index}
-              uri={uri}
-              label={t('common.photo')}
-              onAdd={() => pickImage((newUri) => {
-                const copy = [...galleryImages];
-                copy[index] = newUri;
-                setGalleryImages(copy);
-              })}
-              onRemove={() => {
-                setGalleryImages(galleryImages.filter((_, i) => i !== index));
-              }}
-            />
-          ))}
+        <View className="mb-4 flex-row flex-wrap gap-3">
           <ImageSlot
-            uri={null}
-            label={t('profile.partner_form.add_photo')}
-            onAdd={() => pickImage((uri) => setGalleryImages([...galleryImages, uri]))}
+            uri={idFront}
+            label={t('profile.partner_form.id_front')}
+            onAdd={() => pickImage((uri) => setIdFront(uri))}
+            onRemove={() => setIdFront(null)}
+          />
+          <ImageSlot
+            uri={idBack}
+            label={t('profile.partner_form.id_back')}
+            onAdd={() => pickImage((uri) => setIdBack(uri))}
+            onRemove={() => setIdBack(null)}
           />
         </View>
 

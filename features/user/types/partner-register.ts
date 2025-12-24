@@ -4,7 +4,10 @@ export type PartnerRegisterForm = {
   name: string;
   city: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   bio?: string;
+  agency_id?: string;
 };
 
 export type PartnerRegisterIndividualForm = PartnerRegisterForm;
@@ -24,6 +27,8 @@ export type PartnerRegisterSubmitData = {
     agency_id?: string;
     province_code?: string;
     address?: string;
+    latitude?: number;
+    longitude?: number;
     bio?: string;
   };
   files: PartnerFileUpload[];

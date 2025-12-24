@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView, View, TouchableOpacity, TextInput, Switch } from 'react-native';
+import { ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,6 @@ export default function PartnerRegisterIndividualScreen() {
   const user = useAuthStore((state) => state.user);
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
-  const [followAgency, setFollowAgency] = useState(true);
 
   const schema = useMemo(
     () =>
@@ -30,7 +29,21 @@ export default function PartnerRegisterIndividualScreen() {
         name: z.string().min(1, t('profile.partner_form.error_name_required')),
         city: z.string().min(1, t('profile.partner_form.error_city_required')),
         location: z.string().min(1, t('profile.partner_form.error_location_required')),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
         bio: z.string().optional(),
+        agency_id: z
+          .string()
+          .optional()
+          .refine(
+            (val) => {
+              if (!val || val.trim() === '') return true; // Optional, nếu không nhập thì OK
+              return /^\d+$/.test(val.trim()); // Chỉ chấp nhận số
+            },
+            {
+              message: t('profile.partner_form.error_agency_id_invalid'),
+            }
+          ),
       }),
     [t]
   );
@@ -86,6 +99,12 @@ export default function PartnerRegisterIndividualScreen() {
       }
       return true;
     },
+    validateAgencyId: async (agencyId: string | undefined) => {
+      if (!agencyId || agencyId.trim() === '') {
+        return true;
+      }
+      return true;
+    },
     prepareFiles: async (uploadFile, galleryImages, idFront, idBack, degreeImages) => {
       const files: Array<{ type: number; file_path: string; is_public: boolean }> = [];
 
@@ -120,6 +139,13 @@ export default function PartnerRegisterIndividualScreen() {
   useEffect(() => {
     if (user?.primary_location) {
       setValue('location', user.primary_location.address);
+      // Set latitude and longitude cho địa chỉ mặc định
+      if (user.primary_location.latitude) {
+        setValue('latitude', Number(user.primary_location.latitude));
+      }
+      if (user.primary_location.longitude) {
+        setValue('longitude', Number(user.primary_location.longitude));
+      }
     }
   }, [user, setValue]);
 
@@ -128,7 +154,7 @@ export default function PartnerRegisterIndividualScreen() {
       <HeaderBack title="profile.partner_form.title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 mt-4 text-base font-inter-bold text-slate-900">
           {t('profile.partner_form.images_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-2 flex-row flex-wrap gap-3">
@@ -204,26 +230,21 @@ export default function PartnerRegisterIndividualScreen() {
           />
         </View>
 
-        {user?.referred_by_user_id && (
-          <View className="mb-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-            <View className="flex-row items-center justify-between">
-              <View className="mr-4 flex-1">
-                <Text className="font-inter-bold text-base text-slate-900">
-                  {t('profile.partner_form.follow_agency_label')}
-                </Text>
-                <Text className="mt-1 text-sm text-gray-500">
-                  {t('profile.partner_form.follow_agency_desc')}
-                </Text>
-              </View>
-              <Switch
-                value={followAgency}
-                onValueChange={setFollowAgency}
-                trackColor={{ false: '#e2e8f0', true: '#bae6fd' }}
-                thumbColor={followAgency ? '#0ea5e9' : '#f4f4f5'}
-              />
-            </View>
-          </View>
-        )}
+        <View className="mb-4">
+          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+            {t('profile.partner_form.follow_agency_label')}
+          </Text>
+          {/* <Text className="mb-2 text-xs text-gray-500">
+            {t('profile.partner_form.follow_agency_desc')}
+          </Text> */}
+          <InputField
+            control={control as any}
+            name="agency_id"
+            placeholder={t('profile.partner_form.follow_agency_placeholder')}
+            keyboardType="numeric"
+            error={errors.agency_id?.message}
+          />
+        </View>
 
         <View className="mb-4">
           <Text className="mb-1 text-base font-inter-bold text-slate-900">

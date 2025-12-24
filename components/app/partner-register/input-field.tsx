@@ -10,6 +10,7 @@ type InputFieldProps<T extends FieldValues = any> = {
   error?: string;
   multiline?: boolean;
   numberOfLines?: number;
+  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
 };
 
 export const InputField = <T extends FieldValues = any>({
@@ -19,6 +20,7 @@ export const InputField = <T extends FieldValues = any>({
   error,
   multiline = false,
   numberOfLines,
+  keyboardType = 'default',
 }: InputFieldProps<T>) => {
   return (
     <View>
@@ -38,6 +40,7 @@ export const InputField = <T extends FieldValues = any>({
             multiline={multiline}
             numberOfLines={numberOfLines}
             textAlignVertical={multiline ? 'top' : 'center'}
+            keyboardType={keyboardType}
           />
         )}
       />
