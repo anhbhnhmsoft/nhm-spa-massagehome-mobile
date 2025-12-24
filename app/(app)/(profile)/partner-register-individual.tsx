@@ -1,218 +1,160 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScrollView, View, TouchableOpacity, Alert, Modal, FlatList, ActivityIndicator, TextInput, Switch } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useMemo, useEffect, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
+import { Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Text } from '@/components/ui/text';
-import { Icon } from '@/components/ui/icon';
-import { ImagePlus, Trash2, MapPin, ChevronDown, Check } from 'lucide-react-native';
-import { router } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'expo-image';
-import { useGetLocation, useLocationAddress } from '@/features/app/hooks/use-location';
-import { useProvinces } from '@/features/location/hooks/use-query';
-import { ProvinceItem, AddressItem } from '@/features/location/types';
-import { useMutationApplyPartner } from '@/features/user/hooks/use-mutation';
-import { client } from '@/lib/axios-client';
-import useApplicationStore from '@/lib/store';
-import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { useTranslation } from 'react-i18next';
-import useAuthStore from '@/features/auth/store';
-import { ListLocationModal } from '@/components/app/location';
+import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
-
-type IndividualPartnerForm = {
-  name: string;
-  city: string;
-  location: string;
-  bio?: string;
-};
+import { _UserRole } from '@/features/auth/const';
+import { useProvinces } from '@/features/location/hooks/use-query';
+import useAuthStore from '@/features/auth/store';
+import { useImagePicker } from '@/features/app/hooks/use-image-picker';
+import { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
+import { ImageSlot } from '@/components/app/partner-register/image-slot';
+import { InputField } from '@/components/app/partner-register/input-field';
+import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
+import { LocationSelector } from '@/components/app/partner-register/location-selector';
+import { Alert } from 'react-native';
 
 export default function PartnerRegisterIndividualScreen() {
-  const [idFront, setIdFront] = useState<string | null>(null);
-  const [idBack, setIdBack] = useState<string | null>(null);
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [degreeImages, setDegreeImages] = useState<string[]>([]);
-  const [provinceModalVisible, setProvinceModalVisible] = useState(false);
-  const [showLocationModal, setShowLocationModal] = useState(false);
-
-  const { getPermission } = useGetLocation();
-  const { location: currentLocation } = useLocationAddress();
-  const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
-  const applyPartnerMutation = useMutationApplyPartner();
-  const setLoading = useApplicationStore((s) => s.setLoading);
-  const [followAgency, setFollowAgency] = useState(true);
+  const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
+  const { pickImage } = useImagePicker();
 
   const schema = useMemo(
     () =>
       z.object({
         name: z.string().min(1, t('profile.partner_form.error_name_required')),
         city: z.string().min(1, t('profile.partner_form.error_city_required')),
-        location: z
-          .string()
-          .min(1, t('profile.partner_form.error_location_required')),
+        location: z.string().min(1, t('profile.partner_form.error_location_required')),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
         bio: z.string().optional(),
+        agency_id: z
+          .string()
+          .optional()
+          .refine(
+            (val) => {
+              if (!val || val.trim() === '') return true; // Optional, nếu không nhập thì OK
+              return /^\d+$/.test(val.trim()); // Chỉ chấp nhận số
+            },
+            {
+              message: t('profile.partner_form.error_agency_id_invalid'),
+            }
+          ),
       }),
     [t]
   );
 
   const {
-    control,
+    form,
+    galleryImages,
+    setGalleryImages,
+    idFront,
+    setIdFront,
+    idBack,
+    setIdBack,
+    degreeImages,
+    setDegreeImages,
     handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<IndividualPartnerForm>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      name: '',
-      city: '',
-      location: '',
-      bio: '',
+  } = usePartnerRegisterForm({
+    role: _UserRole.KTV,
+    schema,
+    validateImages: (images) => {
+      if (images.length < 3) {
+        Alert.alert(
+          t('profile.partner_form.alert_missing_images_title'),
+          t('profile.partner_form.alert_missing_images_message')
+        );
+        return false;
+      }
+      if (images.length > 5) {
+        Alert.alert(
+          t('profile.partner_form.alert_max_images_title'),
+          t('profile.partner_form.alert_max_images_message')
+        );
+        return false;
+      }
+      return true;
+    },
+    validateIdImages: (idFront, idBack) => {
+      if (!idFront || !idBack) {
+        Alert.alert(
+          t('profile.partner_form.alert_missing_id_title'),
+          t('profile.partner_form.alert_missing_id_message')
+        );
+        return false;
+      }
+      return true;
+    },
+    validateDegreeImages: (degreeImages) => {
+      if (degreeImages.length === 0) {
+        Alert.alert(
+          t('profile.partner_form.alert_missing_degrees_title'),
+          t('profile.partner_form.alert_missing_degrees_message')
+        );
+        return false;
+      }
+      return true;
+    },
+    validateAgencyId: async (agencyId: string | undefined) => {
+      if (!agencyId || agencyId.trim() === '') {
+        return true;
+      }
+      return true;
+    },
+    prepareFiles: async (uploadFile, galleryImages, idFront, idBack, degreeImages) => {
+      const files: Array<{ type: number; file_path: string; is_public: boolean }> = [];
+
+      if (idFront) {
+        const result = await uploadFile(idFront, { type: 1, isPublic: false });
+        files.push({ type: 1, file_path: result.file_path, is_public: result.is_public });
+      }
+
+      if (idBack) {
+        const result = await uploadFile(idBack, { type: 2, isPublic: false });
+        files.push({ type: 2, file_path: result.file_path, is_public: result.is_public });
+      }
+
+      if (degreeImages) {
+        for (const uri of degreeImages) {
+          const result = await uploadFile(uri, { type: 3, isPublic: false });
+          files.push({ type: 3, file_path: result.file_path, is_public: result.is_public });
+        }
+      }
+
+      for (const uri of galleryImages) {
+        const result = await uploadFile(uri, { type: 5, isPublic: true });
+        files.push({ type: 5, file_path: result.file_path, is_public: result.is_public });
+      }
+
+      return files;
     },
   });
+
+  const { control, formState: { errors }, setValue } = form;
 
   useEffect(() => {
     if (user?.primary_location) {
       setValue('location', user.primary_location.address);
+      // Set latitude and longitude cho địa chỉ mặc định
+      if (user.primary_location.latitude) {
+        setValue('latitude', Number(user.primary_location.latitude));
+      }
+      if (user.primary_location.longitude) {
+        setValue('longitude', Number(user.primary_location.longitude));
+      }
     }
   }, [user, setValue]);
-
-  // Lấy vị trí hiện tại
-  const handleGetCurrentLocation = async () => {
-    const hasPermission = await getPermission();
-    if (hasPermission && currentLocation?.address) {
-      setValue('location', currentLocation.address);
-    } else if (!hasPermission) {
-      Alert.alert(
-        t('profile.partner_form.alert_location_permission_title'),
-        t('profile.partner_form.alert_location_permission_message')
-      );
-    }
-  };
-
-  const pickImage = async (onPicked: (uri: string) => void) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        t('profile.partner_form.alert_photo_permission_title'),
-        t('profile.partner_form.alert_photo_permission_message')
-      );
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
-    });
-    if (!result.canceled) {
-      onPicked(result.assets[0].uri);
-    }
-  };
-
-  const onSubmit = async (data: IndividualPartnerForm) => {
-    // Validate ảnh: CCCD/CMND trước/sau, ít nhất 3 ảnh gallery
-    if (!idFront || !idBack) {
-      Alert.alert(
-        t('profile.partner_form.alert_missing_id_title'),
-        t('profile.partner_form.alert_missing_id_message')
-      );
-      return;
-    }
-    if (galleryImages.length < 3) {
-      Alert.alert(
-        t('profile.partner_form.alert_missing_images_title'),
-        t('profile.partner_form.alert_missing_images_message')
-      );
-      return;
-    }
-    if (galleryImages.length > 5) {
-      Alert.alert(
-        t('profile.partner_form.alert_max_images_title'),
-        t('profile.partner_form.alert_max_images_message')
-      );
-      return;
-    }
-    if (degreeImages.length === 0) {
-      Alert.alert(
-        t('profile.partner_form.alert_missing_degrees_title'),
-        t('profile.partner_form.alert_missing_degrees_message')
-      );
-      return;
-    }
-
-    try {
-      setLoading(true);
-      // 1. Upload tất cả file lên backend /api/file/upload để lấy file_path
-      const uploadSingle = async (uri: string, type?: number) => {
-        const formData = new FormData();
-        // @ts-ignore: React Native File type
-        formData.append('file', {
-          uri,
-          name: 'upload.jpg',
-          type: 'image/jpeg',
-        });
-        if (typeof type === 'number') {
-          formData.append('type', String(type));
-        }
-        const response = await client.post('/file/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return response.data.data.file_path as string;
-      };
-
-      const filesPayload: { type?: number; file_path: string }[] = [];
-
-      const idFrontPath = await uploadSingle(idFront, 1);
-      filesPayload.push({ type: 1, file_path: idFrontPath });
-
-      const idBackPath = await uploadSingle(idBack, 2);
-      filesPayload.push({ type: 2, file_path: idBackPath });
-
-      for (const uri of degreeImages) {
-        const path = await uploadSingle(uri, 3);
-        filesPayload.push({ type: 3, file_path: path });
-      }
-
-      for (const uri of galleryImages) {
-        const path = await uploadSingle(uri, 5);
-        filesPayload.push({ type: 5, file_path: path });
-      }
-
-      await applyPartnerMutation.mutateAsync({
-        name: data.name,
-        apply_role: 'ktv',
-        reviewApplication: {
-          agency_id: followAgency && user?.referred_by_user_id ? user.referred_by_user_id : undefined,
-          province_code: data.city,
-          address: data.location,
-          bio: data.bio,
-        },
-        files: filesPayload,
-      });
-
-      Alert.alert(
-        t('profile.partner_form.alert_success_title'),
-        t('profile.partner_form.alert_success_message')
-      );
-      router.back();
-    } catch (error: any) {
-      Alert.alert(
-        t('profile.partner_form.alert_error_title'),
-        t('profile.partner_form.alert_error_message')
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <HeaderBack title="profile.partner_form.title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 mt-4 text-base font-inter-bold text-slate-900">
           {t('profile.partner_form.images_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-2 flex-row flex-wrap gap-3">
@@ -288,34 +230,28 @@ export default function PartnerRegisterIndividualScreen() {
           />
         </View>
 
-        {/* Theo Agency (nếu user có referred_by_user_id) */}
-        {user?.referred_by_user_id && (
-          <View className="mb-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-            <View className="flex-row items-center justify-between">
-              <View className="mr-4 flex-1">
-                <Text className="font-inter-bold text-base text-slate-900">
-                  {t('profile.partner_form.follow_agency_label')}
-                </Text>
-                <Text className="mt-1 text-sm text-gray-500">
-                  {t('profile.partner_form.follow_agency_desc')}
-                </Text>
-              </View>
-              <Switch
-                value={followAgency}
-                onValueChange={setFollowAgency}
-                trackColor={{ false: '#e2e8f0', true: '#bae6fd' }}
-                thumbColor={followAgency ? '#0ea5e9' : '#f4f4f5'}
-              />
-            </View>
-          </View>
-        )}
+        <View className="mb-4">
+          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+            {t('profile.partner_form.follow_agency_label')}
+          </Text>
+          {/* <Text className="mb-2 text-xs text-gray-500">
+            {t('profile.partner_form.follow_agency_desc')}
+          </Text> */}
+          <InputField
+            control={control as any}
+            name="agency_id"
+            placeholder={t('profile.partner_form.follow_agency_placeholder')}
+            keyboardType="numeric"
+            error={errors.agency_id?.message}
+          />
+        </View>
 
         <View className="mb-4">
           <Text className="mb-1 text-base font-inter-bold text-slate-900">
             {t('profile.partner_form.field_name_label')} <Text className="text-red-500">*</Text>
           </Text>
           <InputField
-            control={control}
+            control={control as any}
             name="name"
             placeholder={t('profile.partner_form.field_name_placeholder')}
             error={errors.name?.message}
@@ -343,117 +279,32 @@ export default function PartnerRegisterIndividualScreen() {
             )}
           />
         </View>
+
         <View className="mb-6">
-            <Text className="mb-1 text-base font-inter-bold text-slate-900">
-                {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
-            </Text>
-            <Controller
-                control={control}
-                name="city"
-                render={({ field: { onChange, value } }) => {
-                const provinces = provincesData?.data || [];
-                const selectedProvince = provinces.find((p) => p.code === value);
-
-                return (
-                <>
-                  <TouchableOpacity
-                    onPress={() => setProvinceModalVisible(true)}
-                    className="h-12 flex-row items-center justify-between rounded-xl bg-gray-100 px-4">
-                    <Text
-                      className={`text-base ${selectedProvince ? 'text-slate-900' : 'text-gray-400'}`}>
-                      {selectedProvince
-                        ? selectedProvince.name
-                        : t('profile.partner_form.field_city_placeholder')}
-                    </Text>
-                    <Icon as={ChevronDown} size={20} className="text-gray-400" />
-                  </TouchableOpacity>
-
-                  <Modal
-                    visible={provinceModalVisible}
-                    animationType="slide"
-                    onRequestClose={() => setProvinceModalVisible(false)}>
-                    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-                      <FocusAwareStatusBar hidden={false} />
-                      <ProvinceModalContent
-                        provinces={provinces}
-                        isLoading={isLoadingProvinces}
-                        selectedValue={value}
-                        onSelect={(code) => {
-                          onChange(code);
-                          setProvinceModalVisible(false);
-                        }}
-                        onClose={() => setProvinceModalVisible(false)}
-                      />
-                    </SafeAreaView>
-                  </Modal>
-                </>
-              );
-            }}
+          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+            {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
+          </Text>
+          <ProvinceSelector
+            control={control as any}
+            name="city"
+            provinces={provincesData?.data || []}
+            isLoading={isLoadingProvinces}
+            error={errors.city?.message}
           />
-          {errors.city?.message && (
-            <Text className="mt-1 text-xs text-red-500">{errors.city.message}</Text>
-          )}
         </View>
+
         <View className="mb-4">
-          <View className="mb-1 flex-row items-center justify-between">
-            <Text className="text-base font-inter-bold text-slate-900">
-              {t('profile.partner_form.field_location_label')}{' '}
-              <Text className="text-red-500">*</Text>
-            </Text>
-            <TouchableOpacity
-              onPress={handleGetCurrentLocation}
-              className="flex-row items-center rounded-lg bg-primary-color-2/10 px-3 py-1.5">
-              <Icon as={MapPin} size={16} className="mr-1 text-primary-color-2" />
-              <Text className="text-xs font-inter-medium text-primary-color-2">
-                {t('profile.partner_form.field_location_button')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Controller
-            control={control}
+          <LocationSelector
+            control={control as any}
             name="location"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <TouchableOpacity
-                  onPress={() => setShowLocationModal(true)}
-                  className="h-12 flex-row items-center rounded-xl bg-gray-100 px-4">
-                  <View className="mr-3 rounded-full bg-blue-100 p-2">
-                    <Icon as={MapPin} size={20} className="text-blue-600" />
-                  </View>
-                  <View className="flex-1">
-                    {value ? (
-                      <Text className="text-base font-inter-medium text-slate-800" numberOfLines={1}>
-                        {value}
-                      </Text>
-                    ) : (
-                      <Text className="text-base text-gray-400">
-                        {t('profile.partner_form.field_location_placeholder')}
-                      </Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
-                {errors.location && (
-                  <Text className="mt-1 text-xs text-red-500">{errors.location.message}</Text>
-                )}
-              </>
-            )}
-          />
-          <ListLocationModal
-            visible={showLocationModal}
-            onClose={() => setShowLocationModal(false)}
-            onSelect={(location: AddressItem) => {
-              setValue('location', location.address);
-              setShowLocationModal(false);
-            }}
+            setValue={setValue as any}
+            error={errors.location?.message}
           />
         </View>
 
-        
-
-        {/* Submit */}
         <TouchableOpacity
           className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
-          onPress={handleSubmit(onSubmit)}>
+          onPress={handleSubmit}>
           <Text className="text-base font-inter-bold text-white">
             {t('profile.partner_form.button_submit')}
           </Text>
@@ -462,153 +313,3 @@ export default function PartnerRegisterIndividualScreen() {
     </SafeAreaView>
   );
 }
-
-type ImageSlotProps = {
-  uri: string | null;
-  label: string;
-  onAdd: () => void;
-  onRemove?: () => void;
-};
-
-const ImageSlot: React.FC<ImageSlotProps> = ({ uri, label, onAdd, onRemove }) => {
-  return (
-    <TouchableOpacity
-      onPress={onAdd}
-      className="relative h-32 w-28 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 overflow-hidden">
-      {uri ? (
-        <>
-          <Image
-            source={{ uri }}
-            style={{ width: '100%', height: '100%' }}
-            contentFit="cover"
-            className="rounded-xl"
-          />
-          {onRemove && (
-            <TouchableOpacity
-              onPress={(e) => {
-                e.stopPropagation();
-                onRemove();
-              }}
-              className="absolute right-1 top-1 rounded-full bg-red-500 p-1.5 z-10"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Icon as={Trash2} size={14} className="text-white" />
-            </TouchableOpacity>
-          )}
-        </>
-      ) : (
-        <View className="items-center justify-center">
-          <Icon as={ImagePlus} size={24} className="text-gray-400" />
-          <Text className="mt-1 text-xs text-gray-400">{label}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-};
-
-type InputFieldProps = {
-  control: any;
-  name: string;
-  placeholder: string;
-  error?: string;
-};
-
-const InputField: React.FC<InputFieldProps> = ({ control, name, placeholder, error }) => {
-  return (
-    <View>
-      <Controller
-        control={control}
-        name={name as any}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            className="rounded-xl bg-gray-100 px-4 py-3 text-base text-slate-900"
-            placeholder={placeholder}
-            placeholderTextColor="#9CA3AF"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-      />
-      {error && <Text className="mt-1 text-xs text-red-500">{error}</Text>}
-    </View>
-  );
-};
-
-type GenderChipProps = {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-};
-
-const GenderChip: React.FC<GenderChipProps> = ({ label, selected, onPress }) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      className={`flex-1 items-center rounded-full border py-3 ${
-        selected ? 'border-primary-color-2 bg-primary-color-2/10' : 'border-gray-300 bg-white'
-      }`}>
-      <Text
-        className={`text-base font-inter-medium ${
-          selected ? 'text-primary-color-2' : 'text-gray-700'
-        }`}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
-type ProvinceModalContentProps = {
-  provinces: ProvinceItem[];
-  isLoading: boolean;
-  selectedValue: string;
-  onSelect: (code: string) => void;
-  onClose: () => void;
-};
-
-const ProvinceModalContent: React.FC<ProvinceModalContentProps> = ({
-  provinces,
-  isLoading,
-  selectedValue,
-  onSelect,
-  onClose,
-}) => {
-  const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <View style={{ paddingTop: Math.max(insets.top, 0) }}>
-        <HeaderBack title="profile.partner_form.field_city_label" onBack={onClose} />
-      </View>
-
-      {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#0ea5e9" />
-          <Text className="mt-4 text-sm text-gray-500">{t('common.loading_data')}</Text>
-        </View>
-      ) : provinces.length > 0 ? (
-        <FlatList
-          data={provinces}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => onSelect(item.code)}
-              className="flex-row items-center justify-between border-b border-gray-100 px-4 py-4 active:bg-gray-50">
-              <Text className="flex-1 text-base text-slate-900">{item.name}</Text>
-              {selectedValue === item.code && (
-                <Icon as={Check} size={20} className="text-primary-color-2" />
-              )}
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 20) }}
-        />
-      ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-sm text-gray-500">{t('common.no_data')}</Text>
-        </View>
-      )}
-    </>
-  );
-};
-
-
