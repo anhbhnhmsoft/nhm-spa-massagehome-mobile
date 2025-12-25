@@ -24,13 +24,18 @@ interface ReviewListModalProps {
 }
 
 const Review = React.memo(({ item, t }: { item: ReviewItem, t: TFunction }) => {
+  const [imageError, setImageError] = React.useState<boolean>(false);
   return (
     <View className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-100">
       <View className="flex-row items-center mb-3">
         {/* Avatar xử lý hidden */}
         <View className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-          {item.reviewer?.avatar && !item.hidden ? (
-            <Image source={{ uri: item.reviewer.avatar }} style={{ width: '100%', height: '100%' }} />
+          {(item.reviewer?.avatar && !item.hidden && !imageError) ? (
+            <Image
+              source={{ uri: item.reviewer.avatar }}
+              style={{ width: '100%', height: '100%' }}
+              onError={() => setImageError(true)}
+            />
           ) : (
             <View className="w-full h-full items-center justify-center bg-blue-100">
               <Text className="text-primary-color-2 font-inter-bold">

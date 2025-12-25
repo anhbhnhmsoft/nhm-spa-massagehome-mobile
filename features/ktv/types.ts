@@ -9,5 +9,5 @@ export type DashboardKtvResponse = ResponseDataSuccessType<{
   total_revenue_yesterday: number;
   total_booking_completed_today: number;
   total_booking_pending_today: number;
-  review_today: ReviewItem | null;
+  review_today: ReviewItem[];
 }>

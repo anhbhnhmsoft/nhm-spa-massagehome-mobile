@@ -95,7 +95,8 @@
     "select_title": "Vui lòng chọn",
     "search_placeholder": "Tìm kiếm...",
     "no_results": "Không tìm thấy kết quả nào",
-    "view_detail": "Xem chi tiết"
+    "view_detail": "Xem chi tiết",
+    "booking": "Đơn"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -560,7 +561,12 @@
     "index": {
       "upcoming": "Đơn sắp tới",
       "no_upcoming_booking": "Chưa có đơn sắp tới",
-      "earnings_today": "Doanh thu hôm nay"
+      "earnings_today": "Doanh thu hôm nay",
+      "earnings_change": "so với hôm qua",
+      "completed": "Đã hoàn thành",
+      "waiting": "Đang chờ",
+      "new_reviews": "Đánh giá mới hôm nay",
+      "no_review_new_today": "Chưa có đánh giá mới hôm nay"
     }
   }
 }
