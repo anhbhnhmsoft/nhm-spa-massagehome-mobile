@@ -7,7 +7,7 @@ import {
   useMutationSearchLocation,
 } from '@/features/location/hooks/use-mutation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocationAddress } from '@/features/app/hooks/use-location';
+import { fetchAndFormatLocation, useLocationAddress } from '@/features/app/hooks/use-location';
 import {
   AddressItem,
   DetailLocation,
@@ -25,6 +25,8 @@ import useStoreLocation from '@/features/location/stores';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Alert } from 'react-native';
+import { getMessageError } from '@/lib/utils';
 
 // Hook quản lý tìm kiếm location
 export const useSearchLocation = () => {
@@ -228,14 +230,12 @@ export const useSaveLocation = (onSuccess: () => void) => {
   const getProfile = useGetProfile();
 
   const { t } = useTranslation();
-  const setLoading = useApplicationStore((s) => s.setLoading);
-  const handleError = useErrorToast();
 
   // Mutation lưu địa chỉ
-  const { mutate: mutateSaveAddress } = useMutationSaveAddress();
+  const { mutate: mutateSaveAddress, isPending: isSaving } = useMutationSaveAddress();
 
   // Mutation sửa địa chỉ
-  const { mutate: mutateEditAddress } = useMutationEditAddress();
+  const { mutate: mutateEditAddress, isPending: isEditing } = useMutationEditAddress();
 
   const form = useForm<SaveAddressRequest>({
     defaultValues: {
@@ -277,8 +277,6 @@ export const useSaveLocation = (onSuccess: () => void) => {
   }, [item_address]);
 
   const submit = (data: SaveAddressRequest) => {
-    setLoading(true);
-
     if (item_address) {
       // Sửa địa chỉ
       mutateEditAddress(
@@ -292,10 +290,13 @@ export const useSaveLocation = (onSuccess: () => void) => {
             onSuccess();
           },
           onError: (err) => {
-            handleError(err);
-          },
-          onSettled: () => {
-            setLoading(false);
+            const message = getMessageError(err, t);
+            if (message){
+              Alert.alert(
+                t('location.error.title'),
+                message
+              );
+            }
           },
         }
       );
@@ -310,19 +311,40 @@ export const useSaveLocation = (onSuccess: () => void) => {
           onSuccess();
         },
         onError: (err) => {
-          handleError(err);
-        },
-        onSettled: () => {
-          setLoading(false);
+          const message = getMessageError(err, t);
+          if (message){
+            Alert.alert(
+              t('location.error.title'),
+              message
+            );
+          }
         },
       });
     }
   };
+
+  const setLocationCurrent = async () => {
+    try {
+      const location = await fetchAndFormatLocation();
+      if (location) {
+        form.setValue('address', location.address);
+        form.setValue('latitude', location.location.coords.latitude);
+        form.setValue('longitude', location.location.coords.longitude);
+      }
+    } catch  {
+      Alert.alert(
+        t('location.error.title'),
+        t('location.error.current_location_failed')
+      );
+    }
+  }
 
   return {
     item_address,
     form,
     submit,
     isEdit: Boolean(item_address),
+    setLocationCurrent,
+    loading: isSaving || isEditing,
   };
 };

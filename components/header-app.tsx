@@ -6,7 +6,6 @@ import GradientBackground from '@/components/styles/gradient-background';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
-import useAuthStore from '@/features/auth/store';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
 import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
@@ -23,7 +22,6 @@ type HeaderAppProps = {
 export function HeaderApp({ showSearch = false, forSearch, setTextSearch, textSearch }: HeaderAppProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const user = useAuthStore((state) => state.user);
   const [showLocationModal, setShowLocationModal] = React.useState(false);
   const redirectAuth = useCheckAuthToRedirect();
   const locationUser = useLocationUser();

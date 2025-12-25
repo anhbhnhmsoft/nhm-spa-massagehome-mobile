@@ -55,7 +55,7 @@ const Dialog = ({
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent className="w-[90%] p-0 max-w-[400px] bg-transparent border-0">
-        <GradientBackground className="w-full p-6" style={{borderRadius: 16}}>
+        <GradientBackground style={{borderRadius: 16, width: '100%', padding: 16}}>
           {/* --- HEADER --- */}
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-inter-bold text-white">

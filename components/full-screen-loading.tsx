@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { MotiView } from 'moti';
 import { Easing } from 'react-native-reanimated';
+import DefaultColor from '@/components/styles/color';
 
 const styles = StyleSheet.create({
   overlay: {
@@ -60,11 +61,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const FullScreenLoading = ({ loading }: { loading: boolean }) => {
+const FullScreenLoading = ({ loading, whiteBg }: { loading: boolean, whiteBg?: boolean }) => {
   if (!loading) return null;
 
   return (
-    <View style={styles.overlay}>
+    <View style={[styles.overlay, whiteBg && { backgroundColor: DefaultColor.white }]}>
       {/* Vòng tròn ngoài cùng */}
       <MotiView
         from={{ rotate: '0deg' }}

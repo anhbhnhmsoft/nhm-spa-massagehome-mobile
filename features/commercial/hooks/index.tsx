@@ -29,7 +29,12 @@ export const useCommercialCoupon = () => {
           router.push('/(auth)');
         }else{
           // không thì chuyển hướng đến trang ví
-          router.push('/(app)/(profile)/wallet');
+          router.push({
+            pathname: '/(app)/(profile)/wallet',
+            params: {
+              toTabWallet: 'coupon',
+            }
+          });
         }
       },
       onError: (err) => {

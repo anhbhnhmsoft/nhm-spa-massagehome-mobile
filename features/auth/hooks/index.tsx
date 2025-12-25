@@ -149,7 +149,6 @@ export const useHandleLogin = () => {
               message: t('auth.success.login_success'),
             });
             // Sau khi login thành công thì redirect về màn hình home
-
             router.push('/(app)/(tab)');
           })
           .catch((err) => {
@@ -375,6 +374,7 @@ export const useCheckAuth = () => {
   return status === _AuthStatus.AUTHORIZED;
 };
 
+
 /**
  * Hook để kiểm tra xem user có đang được xác thực hay không, nếu không thì push về màn hình auth
  */
@@ -537,7 +537,8 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
             },
           }
         );
-      } else {
+      }
+      else {
         await syncLanguage(lang);
       }
       // Đóng bottom sheet

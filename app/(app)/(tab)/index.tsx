@@ -11,7 +11,7 @@ import {
   HomePageKTVSection,
   VerifyFeatureSection,
 } from '@/components/app/carousel-homepage';
-import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
+import { getTabBarHeight } from '@/components/styles/style';
 
 
 export default function UserDashboard() {

@@ -74,3 +74,24 @@ export const useInfiniteTransactionList = (
     initialPageParam: 1,
   });
 };
+
+/**
+ * Lấy thông tin tài khoản rút tiền
+ */
+export const useQueryInfoWithdraw = (enabled?: boolean) => {
+  return useQuery({
+    queryKey: ['paymentApi-infoWithdraw'],
+    queryFn: () => paymentApi.infoWithdraw(),
+    select: res => res.data,
+    enabled,
+  });
+}
+
+export const useQueryListBankInfo = (enabled?: boolean) => {
+  return useQuery({
+    queryKey: ['paymentApi-listBankInfo'],
+    queryFn: () => paymentApi.listBankInfo(),
+    select: res => res.data,
+    enabled,
+  });
+}

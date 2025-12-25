@@ -4,7 +4,7 @@ import useToast from '@/features/app/hooks/use-toast';
 import { getMessageError } from '@/lib/utils';
 
 const useErrorToast = () => {
-  const {error} = useToast();
+  const {error} = useToast(false);
   const {t} = useTranslation();
   return (err: Error | ErrorAPIServer | any) => {
     const message = getMessageError(err, t);

@@ -280,7 +280,7 @@ const MasseurDetailScreen = () => {
               </View>
             );
           }}
-          ListEmptyComponent={<Empty />}
+          ListEmptyComponent={<Empty className={"bg-white"} />}
           ListFooterComponent={
             <View
               style={{

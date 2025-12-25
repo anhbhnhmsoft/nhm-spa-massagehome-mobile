@@ -4,9 +4,13 @@ import * as Location from 'expo-location';
 import { AppState, AppStateStatus } from 'react-native';
 
 export const fetchAndFormatLocation = async (): Promise<LocationApp> => {
-  const location = await Location.getCurrentPositionAsync({
-    accuracy: Location.LocationAccuracy.Balanced,
-  });
+  let location = await Location.getLastKnownPositionAsync();
+
+  if (!location) {
+    location = await Location.getCurrentPositionAsync({
+      accuracy: Location.LocationAccuracy.Balanced, // Dùng Balanced để đỡ nhảy hơn High
+    });
+  }
 
   const reverseGeocode = await Location.reverseGeocodeAsync({
     latitude: location.coords.latitude,

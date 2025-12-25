@@ -334,10 +334,10 @@
     },
     "partner_register": {
       "title": "What do you want to register as?",
-      "individual_title": "Individual Freelancer",
+      "individual_title": "Technician",
       "individual_desc": "Massage, Spa technicians looking to find additional income sources",
-      "agency_title": "Spa Partner",
-      "agency_desc": "We help spa partners reach millions of customers."
+      "agency_title": "Partner",
+      "agency_desc": "We help partners reach millions of customers."
     }
   },
   "wallet": {
@@ -466,9 +466,13 @@
     "save_address": "Save Address",
     "primary": "Default",
     "no_desc": "No note",
+    "get_current_location": "Get Current Location",
+    "loading": "Saving...",
     "error": {
+      "title": "Address Error",
       "invalid_address": "Please select valid address from suggestions",
-      "invalid_location": "Please select valid coordinates"
+      "invalid_location": "Please select valid coordinates",
+      "current_location_failed": "Failed to get current location. Please try again."
     }
   },
   "booking": {

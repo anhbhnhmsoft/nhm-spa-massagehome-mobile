@@ -65,10 +65,10 @@ export default function RootLayout() {
             <BottomSheetModalProvider>
               {/* Stack Navigator */}
               <AppContainer />
-              {/* Toast Manager */}
-              <ToastManager />
               {/* Portal Host */}
               <PortalHost />
+              {/* Toast Manager */}
+              <ToastManager />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </ThemeProvider>

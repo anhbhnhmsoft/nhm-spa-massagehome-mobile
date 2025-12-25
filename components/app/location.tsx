@@ -120,15 +120,6 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                   <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
                     {item.address.split(',')[0]}
                   </Text>
-
-                  {/* Badge Mặc định */}
-                  {item.is_primary && (
-                    <View className="rounded bg-orange-100 px-2 py-0.5">
-                      <Text className="font-inter-bold text-[10px] text-orange-600">
-                        {t('location.primary')}
-                      </Text>
-                    </View>
-                  )}
                 </View>
 
                 {/* Địa chỉ chi tiết */}
@@ -202,7 +193,8 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
   const { t } = useTranslation();
   const [showSearch, setShowSearch] = useState(false);
 
-  const { form, submit, isEdit } = useSaveLocation(onClose);
+  const { form, submit, isEdit, setLocationCurrent, loading } = useSaveLocation(onClose);
+
 
   // Setup Form
   const {
@@ -237,9 +229,22 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
           <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
             {/* 1. SECTION CHỌN ĐỊA CHỈ  */}
             <View className="mb-6">
-              <Text className="font-inter-semibold-semibold mb-2 text-sm text-gray-700">
-                {t('location.label_address')} *
-              </Text>
+              <View className="flex-row items-center justify-between gap-2 mb-2">
+                <Text className="font-inter-semibold-semibold text-sm text-gray-700">
+                  {t('location.label_address')} *
+                </Text>
+                {/* Nút Lấy Vị Trí Hiện Tại */}
+                <TouchableOpacity
+                  onPress={setLocationCurrent}
+                  className="flex-row items-center rounded-lg bg-primary-color-2/10 px-3 py-1.5">
+                  <Icon as={MapPin} size={16} className="mr-1 text-primary-color-2" />
+                  <Text className="text-xs font-inter-medium text-primary-color-2">
+                    {t('location.get_current_location')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+
 
               <TouchableOpacity
                 onPress={() => setShowSearch(true)}
@@ -330,8 +335,11 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
         <View className="border-t border-gray-100 bg-white p-4">
           <TouchableOpacity
             onPress={handleSubmit(submit)}
+            disabled={loading}
             className={`flex-row items-center justify-center rounded-full bg-primary-color-2 py-4`}>
-            <Text className="text-lg font-inter-bold text-white">{t('location.save_address')}</Text>
+            <Text className="text-lg font-inter-bold text-white">
+              {loading ? t('location.loading') : t('location.save_address')}
+            </Text>
           </TouchableOpacity>
         </View>
 

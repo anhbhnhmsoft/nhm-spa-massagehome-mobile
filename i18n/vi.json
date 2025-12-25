@@ -91,7 +91,11 @@
     "go_to_home": "Về trang chủ",
     "book_now": "Đặt ngay",
     "open": "Mở",
-    "jobs_received_count": "lượt nhận"
+    "jobs_received_count": "lượt nhận",
+    "select_title": "Vui lòng chọn",
+    "search_placeholder": "Tìm kiếm...",
+    "no_results": "Không tìm thấy kết quả nào",
+    "view_detail": "Xem chi tiết"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -175,6 +179,13 @@
     "masseurs": "Thợ massage",
     "profile": "Hồ sơ",
     "orders": "Đơn hàng"
+  },
+  "tab_ktv": {
+    "home": "Trang chủ",
+    "services": "Dịch vụ",
+    "schedule": "Lịch hẹn",
+    "chat": "Tin nhắn",
+    "profile": "Hồ sơ"
   },
   "auth": {
     "index_label": "Tập luyện, massage, spa theo cách bạn muốn",
@@ -336,10 +347,10 @@
     },
     "partner_register": {
         "title": "Bạn muốn đăng ký làm gì?",
-        "individual_title": "Cá nhân làm việc thời vụ",
+        "individual_title": "Kỹ thuật viên",
         "individual_desc": "Kỹ thuật viên Massage, Spa đang mong muốn tìm kiếm thêm nguồn thu nhập mới",
-        "agency_title": "Đối tác spa",
-        "agency_desc": "Chúng tôi giúp các Đối tác spa tiếp cận với hàng triệu khách hàng."
+        "agency_title": "Đại lý",
+        "agency_desc": "Chúng tôi giúp các Đại lý tiếp cận với hàng triệu khách hàng."
     }
   },
   "wallet": {
@@ -368,14 +379,41 @@
     "description_qr_bank_note": "*Bắt buộc ghi đúng nội dung này",
     "waiting_payment": "Đang chờ thanh toán...",
     "scan_qr_in_bank_app": "Quét mã QR trong ứng dụng Ngân hàng",
+    "bank": "Ngân hàng",
+    "bank_account": "Số tài khoản",
+    "bank_holder": "Tên chủ tài khoản",
+    "add_new_withdraw_info": "Liên kết tài khoản mới",
+    "request_withdraw": "Yêu cầu rút tiền",
+    "withdraw": {
+      "title_modal": "Chọn tài khoản rút tiền",
+      "add_new_account": "Liên kết tài khoản mới",
+      "no_account": "Chưa có tài khoản nào",
+      "title_modal_request": "Yêu cầu rút tiền",
+      "enter_withdraw_money": "Nhập số point muốn rút"
+    },
+    "confirm": {
+      "delete_withdraw_info": "Bạn có chắc chắn muốn xóa",
+      "delete_withdraw_info_message": "Bạn có chắc chắn muốn xóa thông tin rút tiền này không?"
+    },
     "success": {
-      "deposit": "Nạp tiền thành công, cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!"
+      "deposit": "Nạp tiền thành công, cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!",
+      "create_withdraw_info": "Tạo thông tin rút tiền thành công!",
+      "delete_withdraw_info": "Xóa thông tin rút tiền thành công!",
+      "request_withdraw": "Yêu cầu rút tiền thành công!, Hệ thống sẽ xử lý trong thời gian ngắn nhất cho bạn."
     },
     "error": {
       "empty_amount": "Vui lòng nhập số tiền nạp",
       "min_amount": "Số tiền nạp tối thiểu là 10.000 đ",
       "max_amount": "Số tiền nạp tối đa là 50.000.000 đ",
-      "invalid_payment_type": "Phương thức thanh toán không hợp lệ"
+      "invalid_payment_type": "Phương thức thanh toán không hợp lệ",
+      "get_info_withdraw": "Lấy thông tin rút tiền thất bại, vui lòng thử lại sau.",
+      "bank_name_empty": "Vui lòng nhập tên ngân hàng",
+      "bank_account_empty": "Vui lòng nhập số tài khoản",
+      "bank_holder_empty": "Vui lòng nhập tên chủ tài khoản",
+      "get_bank_info": "Lấy thông tin ngân hàng thất bại, vui lòng thử lại sau.",
+      "bank_bin_or_name": "Vui lòng chọn ngân hàng hợp lệ",
+      "amount_withdraw_empty": "Vui lòng nhập số tiền rút",
+      "amount_withdraw_min": "Số tiền rút tối thiểu là 50 point"
     }
   },
   "masseurs_detail": {
@@ -468,9 +506,13 @@
     "save_address": "Lưu địa chỉ",
     "primary": "Mặc định",
     "no_desc": "Không có ghi chú",
+    "get_current_location": "Lấy vị trí hiện tại",
+    "loading": "Đang lưu...",
     "error": {
+      "title": "Lỗi địa chỉ",
       "invalid_address": "Vui lòng chọn địa chỉ hợp lệ từ gợi ý",
-      "invalid_location": "Vui lòng chọn toạ độ hợp lệ"
+      "invalid_location": "Vui lòng chọn toạ độ hợp lệ",
+      "current_location_failed": "Không thể lấy vị trí hiện tại, vui lòng thử lại sau."
     }
 
   },
@@ -513,5 +555,12 @@
     "no_reviews": "Chưa có đánh giá nào.",
     "hidden_user": "Người dùng ẩn danh",
     "no_comment": "Không có bình luận."
+  },
+  "ktv": {
+    "index": {
+      "upcoming": "Đơn sắp tới",
+      "no_upcoming_booking": "Chưa có đơn sắp tới",
+      "earnings_today": "Doanh thu hôm nay"
+    }
   }
 }

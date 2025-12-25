@@ -334,10 +334,10 @@
     },
     "partner_register": {
       "title": "您想注册成为什么?",
-      "individual_title": "个人自由职业者",
+      "individual_title": "技术员",
       "individual_desc": "按摩、水疗技师寻找额外收入来源",
-      "agency_title": "水疗合作伙伴",
-      "agency_desc": "我们帮助水疗合作伙伴接触数百万客户。"
+      "agency_title": "合作伙伴",
+      "agency_desc": "我们帮助合作伙伴接触数百万客户。"
     }
   },
   "wallet": {
@@ -466,9 +466,13 @@
     "save_address": "保存地址",
     "primary": "默认",
     "no_desc": "无备注",
+    "get_current_location": "获取当前位置",
+    "loading": "保存中...",
     "error": {
+      "title": "地址错误",
       "invalid_address": "请从建议中选择有效地址",
-      "invalid_location": "请选择有效坐标"
+      "invalid_location": "请选择有效坐标",
+      "current_location_failed": "获取当前位置失败。请稍后重试。"
     }
   },
   "booking": {

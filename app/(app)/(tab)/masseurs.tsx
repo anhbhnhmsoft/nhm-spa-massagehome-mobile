@@ -9,7 +9,7 @@ import useDebounce from '@/features/app/hooks/use-debounce';
 import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
 import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
-import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
+import { getTabBarHeight } from '@/components/styles/style';
 
 
 export default function MasseursScreen() {
@@ -19,6 +19,7 @@ export default function MasseursScreen() {
 
   const locationUser = useLocationUser();
 
+  const bottomPadding = getTabBarHeight() + 20;
   // Lấy danh sách masseur với hook
   const {
     data,
@@ -87,7 +88,7 @@ export default function MasseursScreen() {
             }}
             contentContainerStyle={{
               gap: 12,
-              paddingBottom: getTabBarHeight() + 20,
+              paddingBottom: bottomPadding,
             }}
             onEndReachedThreshold={0.5}
             ListFooterComponent={null}

@@ -1,5 +1,5 @@
 import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
-import { _PaymentType, _TransactionStatus, _TransactionType } from '@/features/payment/consts';
+import { _PaymentType, _TransactionStatus, _TransactionType, _UserWithdrawInfoType } from '@/features/payment/consts';
 
 export type WalletItem = {
   id: string;
@@ -64,3 +64,52 @@ export type CheckTransactionRequest = {
 export type CheckTransactionResponse = ResponseDataSuccessType<{
   is_completed: boolean;
 }>
+
+type InfoWithdrawConfigBank = {
+  bank_bin: string;
+  bank_name: string;
+  bank_account: string;
+  bank_holder: string;
+}
+
+export type InfoWithdrawItem = {
+  id: string;
+  user_id: string;
+  type: _UserWithdrawInfoType;
+  config: InfoWithdrawConfigBank
+}
+
+export type InfoWithdrawResponse = ResponseDataSuccessType<InfoWithdrawItem[]>
+
+
+export type CreateWithdrawInfoRequest = {
+  type: _UserWithdrawInfoType.BANK;
+  config: {
+    bank_bin: string;
+    bank_name: string;
+    bank_account: string;
+    bank_holder: string;
+  }
+}
+
+export type DeleteWithdrawInfoRequest = {
+  id: string;
+}
+
+
+export type BankInfo = {
+  "id": number,
+  "name": string,
+  "code": string,
+  "bin": string,
+  "short_name": string,
+  "logo": string | null,
+}
+
+export type ListBankInfoResponse = ResponseDataSuccessType<BankInfo[]>
+
+export type RequestWithdrawRequest = {
+  user_withdraw_info_id: string;
+  amount: string;
+  note?: string;
+}

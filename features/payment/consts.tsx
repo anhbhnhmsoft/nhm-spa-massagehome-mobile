@@ -2,6 +2,8 @@ import DefaultColor from '@/components/styles/color';
 
 export const _QUICK_AMOUNTS = [100000, 200000, 500000, 1000000, 2000000, 5000000];
 
+export const _QUICK_WITHDRAW_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
+
 export enum _PaymentType{
   QR_BANKING= 1,
   ZALO_PAY = 2,
@@ -77,3 +79,9 @@ export const _TransactionOutType = [
   _TransactionType.WITHDRAWAL,
   _TransactionType.PAYMENT,
 ] as readonly _TransactionType[]
+
+
+// Các loại thông tin rút tiền
+export enum _UserWithdrawInfoType  {
+  BANK = 1, // Thông tin tài khoản ngân hàng
+}

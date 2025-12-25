@@ -8,7 +8,7 @@ import { useGetCategoryList } from '@/features/service/hooks';
 import CategoryCard, { CategorySkeletonCard } from '@/components/app/category-card';
 import { Text } from '@/components/ui/text';
 import useDebounce from '@/features/app/hooks/use-debounce';
-import { getTabBarHeight } from '@/app/(app)/(tab)/_layout';
+import { getTabBarHeight } from '@/components/styles/style';
 
 export default function ServicesScreen() {
   const { t } = useTranslation();
@@ -33,6 +33,8 @@ export default function ServicesScreen() {
   const debouncedSearch = useDebounce((text: string) => {
     setFilter({ keyword: text });
   }, 500, []);
+
+  const bottomPadding = getTabBarHeight() + 20;
 
   return (
     <View className="flex-1 bg-base-color-3">
@@ -73,7 +75,7 @@ export default function ServicesScreen() {
               }}
               contentContainerStyle={{
                 gap: 12,
-                paddingBottom: getTabBarHeight() + 20,
+                paddingBottom: bottomPadding,
               }}
               onEndReachedThreshold={0.5}
               ListFooterComponent={null}

@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TextInput, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 import {
-  ArrowLeft,
   QrCode,
-  CreditCard,
-  Building2,
   CheckCircle2,
   Circle,
   ArrowDown,
@@ -16,14 +13,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { _PAYMENT_METHODS, _PaymentType, _QUICK_AMOUNTS } from '@/features/payment/consts';
 import { cn, formatBalance } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
-import { router } from 'expo-router';
 import { useDeposit } from '@/features/payment/hooks';
 import { Controller } from 'react-hook-form';
 import { CheckQRPaymentModal } from '@/components/app/payment';
 import HeaderBack from '@/components/header-back';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
-
-// --- CONFIG TỶ GIÁ & DATA ---
+import DefaultColor from '@/components/styles/color';
 
 export default function DepositScreen() {
   const { t } = useTranslation();
@@ -206,9 +201,9 @@ export default function DepositScreen() {
 
                         {/* CHECKBOX AREA */}
                         {isSelected ? (
-                          <CheckCircle2 size={22} color={COLORS.primary} />
+                          <CheckCircle2 size={22} color={DefaultColor.base['primary-color-1']} />
                         ) : (
-                          <Circle size={22} color="#D1D5DB" />
+                          <Circle size={22} color={DefaultColor.gray['300']} />
                         )}
                       </TouchableOpacity>
                     );
@@ -251,17 +246,6 @@ export default function DepositScreen() {
   );
 }
 
-// Định nghĩa màu sắc (lấy theo mã màu bạn đang dùng)
-const COLORS = {
-  primary: '#2B7BBE', // primary-color-1
-  blue100: '#DBEAFE', // blue-100 (màu nền khi chọn)
-  gray100: '#F3F4F6',
-  gray200: '#E5E7EB',
-  gray500: '#6B7280',
-  gray900: '#111827',
-  white: '#FFFFFF',
-};
-
 const styles = StyleSheet.create({
   // Container tổng của từng dòng phương thức
   methodContainer: {
@@ -270,21 +254,21 @@ const styles = StyleSheet.create({
     borderRadius: 12, // rounded-xl
     borderWidth: 1,
     padding: 16, // p-4
-    backgroundColor: COLORS.white,
+    backgroundColor: DefaultColor.white,
     marginBottom: 12, // gap-3 (khoảng cách giữa các item)
   },
   // Trạng thái được chọn
   methodSelected: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.blue100,
+    borderColor: DefaultColor.base['primary-color-1'],
+    backgroundColor: DefaultColor.base['primary-color-2'],
   },
   // Trạng thái không chọn (có shadow nhẹ)
   methodUnselected: {
-    borderColor: COLORS.white,
+    borderColor: DefaultColor.white,
     // Shadow-sm implementation
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: DefaultColor.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -305,10 +289,10 @@ const styles = StyleSheet.create({
     borderRadius: 999, // rounded-full
   },
   iconBgSelected: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: DefaultColor.base['primary-color-1'],
   },
   iconBgUnselected: {
-    backgroundColor: COLORS.gray100,
+    backgroundColor: DefaultColor.gray['100'],
   },
 
   // Phần text ở giữa
@@ -326,14 +310,14 @@ const styles = StyleSheet.create({
     fontWeight: '700', // Fallback nếu font chưa load
   },
   textSelected: {
-    color: COLORS.primary,
+    color: DefaultColor.base['primary-color-1'],
   },
   textUnselected: {
-    color: COLORS.gray900,
+    color: DefaultColor.gray['900'],
   },
   methodDesc: {
     marginTop: 2, // mt-0.5
     fontSize: 12, // text-xs
-    color: COLORS.gray500,
+    color: DefaultColor.gray['500'],
   },
 });

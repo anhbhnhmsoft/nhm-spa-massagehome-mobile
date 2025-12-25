@@ -21,8 +21,16 @@ import { ListTransactionItem } from '@/features/payment/types';
 import dayjs from 'dayjs';
 import Empty from '@/components/empty';
 import { CouponUserItem } from '@/features/service/types';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { WithdrawModal } from '@/components/app/wallet';
+import { TFunction } from 'i18next';
 
 export default function WalletScreen() {
+  const { t } = useTranslation();
+  const [visibleWithdraw, setVisibleWithdraw] = useState(false);
+  const { toTabWallet } = useLocalSearchParams<{ toTabWallet?: string }>();
+
   const {
     tab,
     setTab,
@@ -33,194 +41,244 @@ export default function WalletScreen() {
     refresh,
   } = useWallet();
 
-  const { t } = useTranslation();
+  useEffect(() => {
+    if (toTabWallet) {
+      setTab('coupon');
+      router.setParams({ toTabWallet: undefined });
+    }
+  }, [toTabWallet]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <FocusAwareStatusBar hidden={true} />
-      <HeaderBack title="wallet.title" />
+    <>
+      <SafeAreaView className="flex-1 bg-white">
+        <FocusAwareStatusBar hidden={true} />
+        <HeaderBack title="wallet.title" />
 
-      {/* HEADER & Tab Switcher */}
-      <View className="p-4">
-        {/* HEADER & CARD */}
-        <GradientBackground
-          style={{
-            padding: 20,
-            borderRadius: 16,
-          }}
-          direction={'vertical'}>
-          {/* BALANCE */}
-          <View className="flex-row items-start justify-between">
-            <View>
-              <Text className="mb-1 text-sm text-white">{t('wallet.balance')}</Text>
-              <View className="flex-row items-end gap-1">
-                {queryWallet.isLoading || queryWallet.isRefetching ? (
-                  <Skeleton className="h-8 w-2/3" />
-                ) : (
-                  <Text className="font-inter-bold text-3xl text-white">
-                    {formatBalance(queryWallet.data?.balance || 0)}
-                  </Text>
-                )}
-                <Text className="font-inter-bold text-sm text-white">{t('common.currency')}</Text>
-              </View>
-            </View>
-          </View>
-          {/* TOTAL EARNINGS & WITHDRAWN */}
-          <View className="mt-4 flex-row justify-between border-t border-white pt-4">
-            <View className="flex-wrap items-start">
-              {/* TOTAL EARNINGS */}
-              <Text className="text-xs text-teal-100">{t('wallet.total_earnings')}</Text>
+        {/* === LIST TRANSACTION === */}
+        {tab === 'transaction' && (
+          <FlatList
+            keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
+            data={queryTransactionList.data || []}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            ListHeaderComponent={
+              <HeaderWallet
+                queryWallet={queryWallet}
+                setTab={setTab}
+                tab={tab}
+                t={t}
+                goToDepositScreen={goToDepositScreen}
+                setVisibleWithdraw={setVisibleWithdraw}
+              />
+            }
+            style={{
+              flex: 1,
+              position: 'relative',
+            }}
+            contentContainerStyle={{
+              gap: 12,
+              paddingHorizontal: 16,
+              paddingBottom: 100,
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={null}
+            onEndReached={() => {
+              if (queryTransactionList.hasNextPage && !queryTransactionList.isFetchingNextPage)
+                queryTransactionList.fetchNextPage();
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={queryTransactionList.isRefetching}
+                onRefresh={() => refresh()}
+              />
+            }
+            renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
+            ListEmptyComponent={<Empty />}
+          />
+        )}
+
+        {/* === LIST COUPON === */}
+        {tab === 'coupon' && (
+          <FlatList
+            keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
+            data={queryCouponUserList.data || []}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            ListHeaderComponent={
+              <HeaderWallet
+                queryWallet={queryWallet}
+                setTab={setTab}
+                tab={tab}
+                t={t}
+                goToDepositScreen={goToDepositScreen}
+                setVisibleWithdraw={setVisibleWithdraw}
+              />
+            }
+            style={{
+              flex: 1,
+              position: 'relative',
+            }}
+            contentContainerStyle={{
+              gap: 12,
+              paddingHorizontal: 16,
+              paddingBottom: 100,
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={null}
+            onEndReached={() => {
+              if (queryCouponUserList.hasNextPage && !queryCouponUserList.isFetchingNextPage)
+                queryCouponUserList.fetchNextPage();
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={queryCouponUserList.isRefetching}
+                onRefresh={() => refresh()}
+              />
+            }
+            renderItem={({ item }) => <CouponItem item={item} key={item.id} />}
+            ListEmptyComponent={<Empty />}
+          />
+        )}
+      </SafeAreaView>
+
+      <WithdrawModal isVisible={visibleWithdraw} onClose={() => setVisibleWithdraw(false)} />
+    </>
+  );
+}
+// Header Wallet
+type HeaderWalletProps = {
+  queryWallet: ReturnType<typeof useWallet>['queryWallet'];
+  setTab: ReturnType<typeof useWallet>['setTab'];
+  tab: ReturnType<typeof useWallet>['tab'];
+  t: TFunction;
+  goToDepositScreen: ReturnType<typeof useWallet>['goToDepositScreen'];
+  setVisibleWithdraw: (visibleWithdraw: boolean) => void;
+};
+
+const HeaderWallet = ({
+  queryWallet,
+  setTab,
+  tab,
+  t,
+  goToDepositScreen,
+  setVisibleWithdraw,
+}: HeaderWalletProps) => {
+  return (
+    <View>
+      {/* HEADER WALLET */}
+      <GradientBackground
+        style={{
+          padding: 20,
+          borderRadius: 16,
+        }}
+        direction={'vertical'}>
+        {/* BALANCE */}
+        <View className="flex-row items-start justify-between">
+          <View>
+            <Text className="mb-1 text-sm text-white">{t('wallet.balance')}</Text>
+            <View className="flex-row items-end gap-1">
               {queryWallet.isLoading || queryWallet.isRefetching ? (
                 <Skeleton className="h-8 w-2/3" />
               ) : (
-                <Text className="mt-0.5 font-inter-bold text-sm text-white">
-                  {formatBalance(queryWallet.data?.total_deposit || 0)} {t('common.currency')}
+                <Text className="font-inter-bold text-3xl text-white">
+                  {formatBalance(queryWallet.data?.balance || 0)}
                 </Text>
               )}
-            </View>
-
-            <View className={'flex-wrap items-end'}>
-              <Text className="text-xs text-teal-100">{t('wallet.total_withdrawn')}</Text>
-              {queryWallet.isLoading || queryWallet.isRefetching ? (
-                <Skeleton className="h-8 w-2/3" />
-              ) : (
-                <Text className="mt-0.5 font-inter-bold text-sm text-white">
-                  {formatBalance(queryWallet.data?.total_withdrawal || 0)} {t('common.currency')}
-                </Text>
-              )}
+              <Text className="font-inter-bold text-sm text-white">{t('common.currency')}</Text>
             </View>
           </View>
-          {/* Nạp Tiền & Rút Tiền */}
-          <View className="mt-4 flex-row items-center gap-2">
-            <TouchableOpacity
-              className="flex-1 rounded-xl bg-white/30 px-4 py-2"
-              onPress={() => goToDepositScreen()}
-            >
-              <Text className="text-center font-inter-bold text-white">{t('wallet.deposit')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-1 rounded-xl bg-white/30 px-4 py-2">
-              <Text className="text-center font-inter-bold text-white">{t('wallet.withdraw')}</Text>
-            </TouchableOpacity>
+        </View>
+        {/* TOTAL EARNINGS & WITHDRAWN */}
+        <View className="mt-4 flex-row justify-between border-t border-white pt-4">
+          <View className="flex-wrap items-start">
+            {/* TOTAL EARNINGS */}
+            <Text className="text-xs text-teal-100">{t('wallet.total_earnings')}</Text>
+            {queryWallet.isLoading || queryWallet.isRefetching ? (
+              <Skeleton className="h-8 w-2/3" />
+            ) : (
+              <Text className="mt-0.5 font-inter-bold text-sm text-white">
+                {formatBalance(queryWallet.data?.total_deposit || 0)} {t('common.currency')}
+              </Text>
+            )}
           </View>
-        </GradientBackground>
 
-        {/* TAB SWITCHER */}
-        <View className="mt-4 flex-row gap-2 p-2">
+          <View className={'flex-wrap items-end'}>
+            <Text className="text-xs text-teal-100">{t('wallet.total_withdrawn')}</Text>
+            {queryWallet.isLoading || queryWallet.isRefetching ? (
+              <Skeleton className="h-8 w-2/3" />
+            ) : (
+              <Text className="mt-0.5 font-inter-bold text-sm text-white">
+                {formatBalance(queryWallet.data?.total_withdrawal || 0)} {t('common.currency')}
+              </Text>
+            )}
+          </View>
+        </View>
+        {/* Nạp Tiền & Rút Tiền */}
+        <View className="mt-4 flex-row items-center gap-2">
+          {/* Nạp Tiền */}
           <TouchableOpacity
-            onPress={() => setTab('transaction')}
+            className="flex-1 rounded-xl bg-white/30 px-4 py-2"
+            onPress={() => goToDepositScreen()}>
+            <Text className="text-center font-inter-bold text-white">{t('wallet.deposit')}</Text>
+          </TouchableOpacity>
+          {/* Rút Tiền */}
+          <TouchableOpacity
+            className="flex-1 rounded-xl bg-white/30 px-4 py-2"
+            onPress={() => setVisibleWithdraw(true)}>
+            <Text className="text-center font-inter-bold text-white">{t('wallet.withdraw')}</Text>
+          </TouchableOpacity>
+        </View>
+      </GradientBackground>
+
+      {/* TRANSACTION & COUPON */}
+      <View className="mt-4 flex-row gap-2 p-2">
+        <TouchableOpacity
+          onPress={() => setTab('transaction')}
+          className={cn(
+            'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
+            tab === 'transaction' ? 'bg-primary-color-2' : 'bg-slate-200'
+          )}>
+          <Icon
+            as={History}
+            size={18}
+            className={cn(tab === 'transaction' ? 'text-white' : 'text-slate-500')}
+          />
+          <Text
             className={cn(
-              'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
-              tab === 'transaction' ? 'bg-primary-color-2' : 'bg-slate-200'
+              'font-inter-bold text-sm',
+              tab === 'transaction' ? 'text-white' : 'text-slate-500'
             )}>
+            {t('wallet.transactions')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setTab('coupon')}
+          className={cn(
+            'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
+            tab === 'coupon' ? 'bg-primary-color-2' : 'bg-slate-200'
+          )}>
+          <View className="flex-row items-center gap-2">
             <Icon
-              as={History}
+              as={Ticket}
               size={18}
-              className={cn(tab === 'transaction' ? 'text-white' : 'text-slate-500')}
+              className={cn(tab === 'coupon' ? 'text-white' : 'text-slate-500')}
             />
             <Text
               className={cn(
                 'font-inter-bold text-sm',
-                tab === 'transaction' ? 'text-white' : 'text-slate-500'
+                tab === 'coupon' ? 'text-white' : 'text-slate-500'
               )}>
-              {t('wallet.transactions')}
+              {t('wallet.coupons')}
             </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setTab('coupon')}
-            className={cn(
-              'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
-              tab === 'coupon' ? 'bg-primary-color-2' : 'bg-slate-200'
-            )}>
-            <View className="flex-row items-center gap-2">
-              <Icon
-                as={Ticket}
-                size={18}
-                className={cn(tab === 'coupon' ? 'text-white' : 'text-slate-500')}
-              />
-              <Text
-                className={cn(
-                  'font-inter-bold text-sm',
-                  tab === 'coupon' ? 'text-white' : 'text-slate-500'
-                )}>
-                {t('wallet.coupons')}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
-
-      {/* 3. CONTENT LIST */}
-      {/* === LIST TRANSACTION === */}
-      {tab === 'transaction' && (
-        <FlatList
-          keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
-          data={queryTransactionList.data || []}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{
-            flex: 1,
-            position: 'relative',
-          }}
-          contentContainerStyle={{
-            gap: 12,
-            paddingHorizontal: 16,
-            paddingBottom: 100,
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={null}
-          onEndReached={() => {
-            if (queryTransactionList.hasNextPage && !queryTransactionList.isFetchingNextPage)
-              queryTransactionList.fetchNextPage();
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={queryTransactionList.isRefetching}
-              onRefresh={() => refresh()}
-            />
-          }
-          renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
-          ListEmptyComponent={<Empty />}
-        />
-      )}
-
-      {/* === LIST COUPON === */}
-      {tab === 'coupon' && (
-        <FlatList
-          keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
-          data={queryCouponUserList.data || []}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{
-            flex: 1,
-            position: 'relative',
-          }}
-          contentContainerStyle={{
-            gap: 12,
-            paddingHorizontal: 16,
-            paddingBottom: 100,
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={null}
-          onEndReached={() => {
-            if (queryCouponUserList.hasNextPage && !queryCouponUserList.isFetchingNextPage)
-              queryCouponUserList.fetchNextPage();
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={queryCouponUserList.isRefetching}
-              onRefresh={() => refresh()}
-            />
-          }
-          renderItem={({ item }) => <CouponItem item={item} key={item.id} />}
-          ListEmptyComponent={<Empty />}
-        />
-      )}
-    </SafeAreaView>
+    </View>
   );
-}
+};
 
-// 1. Transaction Item
+// Transaction Item
 const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
   const { t } = useTranslation();
 
@@ -255,7 +313,7 @@ const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
       <View className="items-end">
         <Text
           style={{ color: _TransactionStatusColor[item.status] }}
-          className={'mb-1 text-sm font-inter-medium'}>
+          className={'mb-1 font-inter-medium text-sm'}>
           {t(_TransactionStatusMap[item.status])}
         </Text>
         <Text className="text-[10px] text-gray-400">
@@ -266,7 +324,7 @@ const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
   );
 };
 
-// 2. Coupon Item
+// Coupon Item
 const CouponItem = ({ item }: { item: CouponUserItem }) => {
   const { t } = useTranslation();
 
@@ -289,7 +347,7 @@ const CouponItem = ({ item }: { item: CouponUserItem }) => {
           </Text>
         </View>
         <View className="mt-2 flex-row items-end justify-between">
-          <Text className="rounded bg-blue-100 px-2 py-0.5 text-xs font-inter-medium text-primary-color-1">
+          <Text className="rounded bg-blue-100 px-2 py-0.5 font-inter-medium text-xs text-primary-color-1">
             {item.coupon.code}
           </Text>
         </View>
