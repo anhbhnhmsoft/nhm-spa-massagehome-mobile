@@ -1,10 +1,13 @@
 import { ListBookingRequest } from '@/features/booking/types';
 import { _BookingStatus } from '@/features/service/const';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 import { useInfiniteBookingList } from './use-query';
+import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
 export const useSchedule = () => {
+  const refreshed = useBookingStore((s) => s.refreshed);
+  const setRefreshed = useBookingStore((s) => s.setRefreshed);
   const [params, setParams] = useImmer<ListBookingRequest>({
     filter: {
       status: undefined,
@@ -29,6 +32,12 @@ export const useSchedule = () => {
 
   const query = useInfiniteBookingList(params);
 
+  useEffect(() => {
+    if (refreshed) {
+      query.refetch?.();
+      setRefreshed(false);
+    }
+  }, [refreshed, query, setRefreshed]);
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
   }, [query.data]);

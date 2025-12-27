@@ -1,15 +1,23 @@
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
-import {  Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { getTabBarHeight, tabBarStyle } from '@/components/styles/style';
 import { TabIcon } from '@/components/app/tab-icon';
 import { Briefcase, Home, User, CalendarDays, MessageCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useBookingStore } from '@/lib/ktv/useBookingStore';
+import { useEffect } from 'react';
 
 export default function TabsKTVLayout() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets(); // Lấy thông tin vùng an toàn
   const TAB_BAR_HEIGHT = getTabBarHeight();
+  const hydrate = useBookingStore((s) => s.hydrate);
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
   return (
     <>
       <FocusAwareStatusBar />
@@ -19,8 +27,8 @@ export default function TabsKTVLayout() {
             tabBarStyle.tabBar,
             {
               height: TAB_BAR_HEIGHT,
-              paddingBottom: insets.bottom > 0 ? insets.bottom : 10
-            }
+              paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+            },
           ],
           headerShown: false,
           tabBarShowLabel: false,

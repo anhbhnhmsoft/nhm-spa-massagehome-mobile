@@ -7,11 +7,10 @@ import ErrorAPIServer, { IDeviceInfo } from '@/lib/types';
 import * as Application from 'expo-application';
 import * as Device from 'expo-device';
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { v4 } from 'uuid';
 import 'react-native-get-random-values';
 import { TFunction } from 'i18next'; // Cần cho uuid
-
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,7 +58,7 @@ export const getDistanceFromLatLonInKm = (
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-   // Khoảng cách theo km
+  // Khoảng cách theo km
   return R * c;
 };
 
@@ -125,17 +124,17 @@ export async function getPersistentDeviceId(): Promise<string> {
  * @returns URL hình ảnh QR Code
  */
 export const generateQRCodeImageUrl = (config: {
-  bin: string,
-  numberCode: string,
-  name: string,
-  money: string,
-  desc: string,
+  bin: string;
+  numberCode: string;
+  name: string;
+  money: string;
+  desc: string;
 }) => {
   return `https://img.vietqr.io/image/${config.bin}-${config.numberCode}-qr_only.png?amount=${config.money}&addInfo=${config.desc}&accountName=${encodeURIComponent(config.name)}`;
-}
+};
 
 export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction) => {
-  if (err){
+  if (err) {
     if (err instanceof ErrorAPIServer) {
       if (err.validateError) {
         const validationErrors = err.validateError;
@@ -149,4 +148,9 @@ export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction)
       return t('common_error.unknown_error');
     }
   }
-}
+};
+
+export const openMap = (lat: number, lng: number) => {
+  const url = `https://www.google.com/maps?q=${lat},${lng}`;
+  Linking.openURL(url);
+};

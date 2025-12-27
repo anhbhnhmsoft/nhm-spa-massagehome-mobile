@@ -31,3 +31,11 @@ export const useInfiniteBookingList = (params: ListBookingRequest) => {
     initialPageParam: 1,
   });
 };
+
+export const useBookingDetailsQuery = (id: string) => {
+  return useQuery({
+    queryKey: ['bookingApi-details-ktv', id],
+    queryFn: () => ktvApi.bookingDetails(id),
+    select: (res) => res.data,
+  });
+};

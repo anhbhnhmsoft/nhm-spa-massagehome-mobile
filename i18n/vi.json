@@ -95,7 +95,8 @@
     "select_title": "Vui lòng chọn",
     "search_placeholder": "Tìm kiếm...",
     "no_results": "Không tìm thấy kết quả nào",
-    "view_detail": "Xem chi tiết"
+    "view_detail": "Xem chi tiết",
+    "all": "Tất cả"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -531,7 +532,15 @@
     "no_desc": "Không có ghi chú",
     "note_address": "Ghi chú địa chỉ",
     "reviews": "Đánh giá",
-    "has_reviews": "Đã đánh giá"
+    "has_reviews": "Đã đánh giá",
+    "location":"Địa điểm",
+    "see_directions":"Xem đường đi",
+    "remaining_time": "Thời gian còn lại: {{time}}",
+    "service_running": "Dịch vụ đang diễn ra",
+    "service_finished": "Dịch vụ đã kết thúc",
+    "start_service": "Bắt đầu dịch vụ",
+    
+    "start_service_blocked": "Dịch vụ khác đang diễn ra. Vui lòng chờ kết thúc."
   },
   "affiliate": {
     "title_1": "Mời bạn bè để nhận",

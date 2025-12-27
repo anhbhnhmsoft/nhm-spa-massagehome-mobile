@@ -1,5 +1,9 @@
 import { client } from '@/lib/axios-client';
-import { DashboardKtvResponse } from '@/features/ktv/types';
+import {
+  BookingDetailsResponse,
+  DashboardKtvResponse,
+  StartBookingResponse,
+} from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 
 const defaultUri = '/ktv';
@@ -10,9 +14,17 @@ const ktvApi = {
     return response.data;
   },
   bookings: async (params: ListBookingRequest): Promise<ListBookingResponse> => {
-    console.log('params', params);
     const response = await client.get(`${defaultUri}/list-booking`, { params });
-    console.log('res');
+    return response.data;
+  },
+  bookingDetails: async (id: string): Promise<BookingDetailsResponse> => {
+    const response = await client.get<BookingDetailsResponse>(`/booking/detail/${id}`);
+    return response.data;
+  },
+  startBooking: async (id: string): Promise<StartBookingResponse> => {
+    const response = await client.post(`${defaultUri}/start-booking`, {
+      booking_id: id,
+    });
     return response.data;
   },
 };

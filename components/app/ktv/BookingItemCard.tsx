@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
 import { router } from 'expo-router';
+import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
+import { openMap } from '@/lib/utils';
 
 export interface BookingItemProps {
   item: BookingItem;
@@ -23,7 +25,7 @@ export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
 
   return (
     <Pressable
-      onPress={() => onPress?.(item)}
+      onPress={useSingleTouch(() => onPress?.(item))}
       className="shadow-sd overflow-hidden rounded-xl border border-blue-100 bg-white p-4">
       {/* Badge top-right */}
       <View
@@ -35,19 +37,18 @@ export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
 
       <View className="flex-row">
         {/* LEFT: date + time column */}
-        <View className="w- items-center">
-          <View className="rounded-sm bg-slate-100 px-2 py-1">
-            <Text className="font-inter-semibold text-xs text-primary-color-2">
-              {dayjs(item.booking_time).format(' DD/MM')}
-            </Text>
-          </View>
-
+        <View className="w-16 items-center">
           <Text className="mt-3 font-inter-extrabold text-xl text-primary-color-2">
             {item.start_time ? dayjs(item.start_time).format('HH:mm') : '--:--'}
           </Text>
           <Text className="text-xs text-gray-400">
             {item.end_time ? dayjs(item.end_time).format('HH:mm') : '--:--'}
           </Text>
+          <View className="mt-4 rounded-sm bg-slate-100 px-2 py-1">
+            <Text className="font-inter-semibold text-xs text-primary-color-2">
+              {dayjs(item.booking_time).format(' DD/MM')}
+            </Text>
+          </View>
 
           {/* vertical line */}
           <View className="mt-3 h-24 w-0.5 bg-gray-200" />
@@ -71,9 +72,18 @@ export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
             <Text className="flex-1 text-sm text-primary-color-3">{item.address}</Text>
           </View>
 
-          <Pressable className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2">
+          <Pressable
+            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
+            onPress={() => {
+              if (!item?.lat && !item?.lng) {
+                return;
+              }
+              openMap(item?.lat, item?.lng);
+            }}>
             <Icon as={Navigation2} size={14} className="mr-2 text-white" />
-            <Text className="font-inter-medium text-sm text-white">Xem đường đi</Text>
+            <Text className="font-inter-medium text-sm text-white">
+              {t('booking.see_directions')}
+            </Text>
           </Pressable>
 
           {/* bottom row: avatar + name + chevron */}
