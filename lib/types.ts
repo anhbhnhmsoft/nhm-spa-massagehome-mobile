@@ -1,3 +1,5 @@
+import { _LanguageCode } from '@/lib/const';
+
 export interface IValidationErrors {
   [field: string]: string[];
 }
@@ -76,3 +78,14 @@ export interface IDeviceInfo {
   deviceName: string;
 }
 
+export interface IMultiLangField {
+  [_LanguageCode.VI]: string;
+  [_LanguageCode.EN]?: string;
+  [_LanguageCode.CN]?: string;
+}
+
+export interface IFileUpload {
+  uri: string;
+  type: string; // vd: 'image/jpeg'
+  name: string; // vd: 'photo.jpg'
+}

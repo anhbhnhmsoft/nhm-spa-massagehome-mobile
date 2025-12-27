@@ -22,6 +22,7 @@
     "search": "Tìm kiếm",
     "account": "Tài khoản",
     "cancel": "Hủy",
+    "go_to_settings": "Đi tới Cài đặt",
     "delete": "Xóa",
     "accept": "Đồng ý",
     "send": "Gửi",
@@ -96,7 +97,11 @@
     "search_placeholder": "Tìm kiếm...",
     "no_results": "Không tìm thấy kết quả nào",
     "view_detail": "Xem chi tiết",
-    "booking": "Đơn"
+    "booking": "Đơn",
+    "active": "Đang hoạt động",
+    "inactive": "Tạm ngưng",
+    "description": "Mô tả",
+    "no_description": "Chưa có mô tả"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -105,7 +110,8 @@
   "permission": {
     "picture_lib": {
       "title": "Cần cấp quyền truy cập vào thư viện ảnh",
-      "message": "Vui lòng cấp quyền truy cập vào thư viện ảnh để lưu trữ ảnh."
+      "message": "Vui lòng cấp quyền truy cập vào thư viện ảnh để lưu trữ ảnh.",
+      "error": "Lỗi khi truy cập vào thư viện ảnh, vui lòng thử lại sau."
     },
     "camera": {
       "title": "Cần cấp quyền truy cập vào camera",
@@ -567,6 +573,53 @@
       "waiting": "Đang chờ",
       "new_reviews": "Đánh giá mới hôm nay",
       "no_review_new_today": "Chưa có đánh giá mới hôm nay"
+    },
+    "services": {
+      "add_new_service": "Thêm dịch vụ mới",
+      "edit_service": "Chỉnh sửa dịch vụ",
+      "delete_service": "Xóa dịch vụ",
+      "detail_title": "Chi tiết dịch vụ",
+      "bookings_count": "lượt nhận",
+      "see_reviews": "Xem đánh giá",
+      "no_service": "Chưa có dịch vụ nào",
+      "options": "Tùy chọn dịch vụ",
+      "delete": {
+        "confirm": {
+          "title": "Xác nhận xóa dịch vụ",
+          "message": "Bạn có chắc chắn muốn xóa dịch vụ này không?",
+          "cancel": "Hủy",
+          "confirm": "Xóa"
+        },
+        "success": "Dịch vụ đã được xóa"
+      },
+      "form": {
+        "image": "Hình ảnh dịch vụ",
+        "change_image": "Thay đổi ảnh",
+        "service_name": "Tên dịch vụ",
+        "description": "Mô tả dịch vụ",
+        "service_name_placeholder": "Nhập tên dịch vụ...",
+        "category": "Danh mục dịch vụ",
+        "select_category": "Chọn danh mục dịch vụ",
+        "is_active": "Dịch vụ có sẵn",
+        "is_active_help": "Bật để khách hàng có thể đặt dịch vụ, tắt để ngăn không cho đặt",
+        "options": "Các gói dịch vụ",
+        "add_option": "Thêm gói",
+        "option": "Gói",
+        "duration": "Thời lượng (phút)",
+        "price": "Giá tiền",
+        "save": "Lưu thay đổi",
+        "success": "Dịch vụ đã được lưu",
+        "error": {
+          "name": "Vui lòng nhập tên dịch vụ",
+          "description": "Vui lòng nhập mô tả dịch vụ",
+          "category": "Vui lòng chọn danh mục dịch vụ",
+          "image": "Vui lòng chọn ảnh dịch vụ",
+          "options": "Vui lòng thêm ít nhất 1 gói dịch vụ",
+          "options_duration": "Vui lòng nhập thời lượng gói dịch vụ (ít nhất 15 phút)",
+          "options_price": "Vui lòng nhập giá tiền gói dịch vụ",
+          "options_min": "Vui lòng thêm ít nhất 1 gói dịch vụ"
+        }
+      }
     }
   }
 }

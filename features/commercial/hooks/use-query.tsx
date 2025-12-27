@@ -18,12 +18,13 @@ export const useListBannerQuery = () => {
 /**
  * Hook để lấy danh sách coupon quảng cáo
  */
-export const useListCommercialCouponQuery = () => {
+export const useListCommercialCouponQuery = (enabled: boolean = false) => {
   return useQuery({
     queryKey: ['commercialApi-listCoupons'],
     queryFn: commercialApi.listCoupons,
     select: (res) => res.data,
     staleTime: 1000 * 60 * 10, // 10 phút - để tránh gọi lại API quá thường xuyên
     gcTime: 1000 * 60 * 60 * 24, // 1 ngày - để tránh chiếm bộ nhớ quá nhiều
+    enabled,
   })
 }

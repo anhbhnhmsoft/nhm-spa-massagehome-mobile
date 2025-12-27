@@ -1,6 +1,8 @@
 export const _BackendURL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 export const _SocketURL = process.env.EXPO_PUBLIC_SOCKET_URL || "http://127.0.0.1:3000";
 
+export const _TIME_OUT_LOADING_SCREEN_LAYOUT = 2000; // time out loading screen layout
+
 export const _APP_NAME = "Massage Home"
 
 export enum _LanguageCode {
@@ -13,7 +15,7 @@ export const _LanguagesMap = [
   { code: _LanguageCode.VI, label: 'Tiếng Việt', icon: require('@/assets/icon/vietnam-flag.png') },
   { code: _LanguageCode.EN, label: 'English', icon: require('@/assets/icon/eng-flag.png') },
   { code: _LanguageCode.CN, label: '中国语', icon: require('@/assets/icon/china-flag.png') },
-] as const;
+] as ReadonlyArray<{ code: _LanguageCode, label: string, icon: any }>;
 
 export enum _HTTPStatus {
   CONTINUE = 100,

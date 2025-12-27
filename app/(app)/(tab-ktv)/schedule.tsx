@@ -1,20 +1,18 @@
 import BookingItemKtv from '@/components/app/ktv/BookingItemCard';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import Empty from '@/components/empty';
-import GradientBackground from '@/components/styles/gradient-background';
 import { Text } from '@/components/ui/text';
-import { BookingItem, ListBookingRequest } from '@/features/booking/types';
-import { useSchedule } from '@/features/ktv/hooks/use-schedule';
-import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
+import { BookingItem } from '@/features/booking/types';
+import { useListSchedules } from '@/features/ktv/hooks/use-list';
+import { _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
 import { t } from 'i18next';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   FlatList,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -29,7 +27,7 @@ export default function ScheduleScreen() {
     isRefetching,
     setFilter,
     params,
-  } = useSchedule();
+  } = useListSchedules();
 
   const handleGoDetails = useCallback((item: BookingItem) => {
     router.push({

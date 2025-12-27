@@ -12,12 +12,15 @@ import { X } from 'lucide-react-native';
 import { useCommercialCoupon } from '@/features/commercial/hooks';
 import { Image } from 'expo-image';
 import { cn } from '@/lib/utils';
+import useAuthStore from '@/features/auth/store';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // Component hiển thị modal khuyến mãi
 const PromoModal = () => {
   const { isVisible, collectCoupon, isPending, data, setIsVisible } = useCommercialCoupon();
+
+
 
   const [activeIndex, setActiveIndex] = useState(0);
 
