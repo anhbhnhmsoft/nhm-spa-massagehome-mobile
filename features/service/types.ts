@@ -1,5 +1,4 @@
 import { BaseSearchRequest, ResponseDataSuccessType, Paginator } from '@/lib/types';
-import { _ServiceDuration } from '@/features/service/const';
 
 export type CategoryItem = {
   id: string;
@@ -23,7 +22,8 @@ export type ServiceItem = {
   id: string;
   name: string;
   category_id: string;
-  bookings_count: number; // Số lần đặt lịch đã hoàn thành
+  bookings_count: number; // Số lần đặt lịch
+  avg_rating: number; // Đánh giá trung bình
   is_active: boolean;
   image_url: string | null;
   description: string | null;
@@ -38,7 +38,7 @@ export type ServiceItem = {
   options: {
     id: string;
     price: string;
-    duration: _ServiceDuration;
+    duration: number;
   }[];
 };
 
@@ -56,7 +56,7 @@ export type BookingServiceRequest = {
   service_id: string;
   service_name: string;
   option_id: string;
-  duration: _ServiceDuration;
+  duration: number;
   book_time: string; // Thời gian đặt lịch
   note?: string;
   note_address?: string;
@@ -71,7 +71,7 @@ export type PickBookingItem = {
   service_id: string;
   service_name: string;
   option_id: string;
-  duration: _ServiceDuration;
+  duration: number;
   price: string;
 };
 

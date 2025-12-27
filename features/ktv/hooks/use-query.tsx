@@ -1,7 +1,10 @@
 import { ListBookingRequest, ListBookingResponse } from '@/features/booking/types';
 import ktvApi from '@/features/ktv/api';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { ListServiceRequest, ListServiceResponse } from '@/features/ktv/types';
 
+
+// lấy thông tin dashboard ktv
 export const useDashboardKtvQuery = () => {
   return useQuery({
     queryKey: ['ktvApi-dashboard'],
@@ -10,11 +13,44 @@ export const useDashboardKtvQuery = () => {
   });
 };
 
+// lấy tất cả các category
+export const useAllCategoriesQuery = () => {
+  return useQuery({
+    queryKey: ['ktvApi-allCategories'],
+    queryFn: () => ktvApi.allCategories(),
+    select: (res) => res.data,
+  });
+};
+
+// Lấy danh sách booking theo page
 export const useInfiniteBookingList = (params: ListBookingRequest) => {
   return useInfiniteQuery<ListBookingResponse>({
-    queryKey: ['bookingApi-listBookings-ktv', params],
+    queryKey: ['ktvApi-bookings', params],
     queryFn: async ({ pageParam }) => {
       return ktvApi.bookings({
+        ...params,
+        page: pageParam as number,
+        per_page: params.per_page,
+      });
+    },
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.data?.meta?.current_page ?? 1;
+      const lastPageNum = lastPage.data?.meta?.last_page ?? 1;
+      if (currentPage < lastPageNum) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+  });
+};
+
+// Lấy danh sách dịch vụ theo page
+export const useInfiniteServiceList = (params: ListServiceRequest) => {
+  return useInfiniteQuery<ListServiceResponse>({
+    queryKey: ['ktvApi-listServices', params],
+    queryFn: async ({ pageParam }) => {
+      return ktvApi.listServices({
         ...params,
         page: pageParam as number,
         per_page: params.per_page,

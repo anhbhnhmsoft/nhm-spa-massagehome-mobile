@@ -133,6 +133,12 @@ export const generateQRCodeImageUrl = (config: {
   return `https://img.vietqr.io/image/${config.bin}-${config.numberCode}-qr_only.png?amount=${config.money}&addInfo=${config.desc}&accountName=${encodeURIComponent(config.name)}`;
 };
 
+/**
+ * Lấy thông báo lỗi từ server
+ * @param err Đối tượng lỗi
+ * @param t Hàm dịch chuỗi
+ * @returns Thông báo lỗi
+ */
 export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction) => {
   if (err) {
     if (err instanceof ErrorAPIServer) {
@@ -148,7 +154,23 @@ export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction)
       return t('common_error.unknown_error');
     }
   }
-};
+}
+/**
+ * Xử lý thay đổi giá trị số
+ * @param value Giá trị nhập vào
+ * @param onChange Hàm thay đổi giá trị
+ */
+export const handleSetChangeNumber = (value: string, onChange: (value: number) => void) => {
+  if (value === '' || value.trim() === '') {
+    onChange(0);
+    return;
+  }
+  if (isNaN(Number(value))) {
+    onChange(0);
+    return;
+  }
+  onChange(Number(value));
+}
 
 export const openMap = (lat: number, lng: number) => {
   const url = `https://www.google.com/maps?q=${lat},${lng}`;

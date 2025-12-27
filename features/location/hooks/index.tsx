@@ -142,7 +142,6 @@ export const useGetListAddress = (params: ListAddressRequest) => {
 
 // Hook cho trang danh sách location
 export const useListLocation = () => {
-  const { t } = useTranslation();
   const setItemAddress = useStoreLocation((s) => s.setItemAddress);
   const refresh_list = useStoreLocation((s) => s.refresh_list);
   const setRefreshList = useStoreLocation((s) => s.setRefreshList);

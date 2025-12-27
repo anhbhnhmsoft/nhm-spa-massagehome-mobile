@@ -1,5 +1,5 @@
 import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
-import { _BookingStatus, _ServiceDuration } from '@/features/service/const';
+import { _BookingStatus } from '@/features/service/const';
 
 export type BookingCheckItem = {
   booking_id: string;
@@ -42,7 +42,7 @@ export type BookingItem = {
   start_time: string | null;
   end_time: string | null;
   note: string | null;
-  duration: _ServiceDuration;
+  duration: number;
   status: _BookingStatus;
   price: string;
   has_reviews: boolean;

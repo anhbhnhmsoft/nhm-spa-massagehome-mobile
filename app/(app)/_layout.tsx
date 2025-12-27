@@ -8,6 +8,7 @@ import { useNotification } from '@/features/app/hooks/use-notification';
 import { NotificationPermissionModal } from '@/components/notification-permission-modal';
 import RequestLocationModal from '@/components/app/request-location';
 import { useEffect, useState } from 'react';
+import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
@@ -17,10 +18,10 @@ export default function AppLayout() {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    // Chờ 2000ms để đảm bảo rằng checkAuth đã có giá trị
+    // Chờ _TIME_OUT_LOADING_SCREEN_LAYOUT để đảm bảo rằng checkAuth đã có giá trị
     const timeout = setTimeout(() => {
       setNotReady(false);
-    }, 2000);
+    }, _TIME_OUT_LOADING_SCREEN_LAYOUT);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -44,6 +45,7 @@ export default function AppLayout() {
         {/* --- TAB KTV SCREEN --- */}
         <Stack.Protected guard={checkAuth && user?.role === _UserRole.KTV}>
           <Stack.Screen name="(tab-ktv)" />
+          <Stack.Screen name="(service-ktv)" />
         </Stack.Protected>
 
         {/* --- TAB CUSTOMER SCREEN --- */}
