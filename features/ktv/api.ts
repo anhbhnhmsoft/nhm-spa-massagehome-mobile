@@ -6,6 +6,8 @@ import {
   ListServiceResponse,
   DetailServiceRequest,
   ServiceDetailResponse,
+  BookingDetailsResponse,
+  StartBookingResponse,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
@@ -59,6 +61,16 @@ const ktvApi = {
   // api cho màn hình list-booking
   bookings: async (params: ListBookingRequest): Promise<ListBookingResponse> => {
     const response = await client.get(`${defaultUri}/list-booking`, { params });
+    return response.data;
+  },
+  bookingDetails: async (id: string): Promise<BookingDetailsResponse> => {
+    const response = await client.get<BookingDetailsResponse>(`/booking/detail/${id}`);
+    return response.data;
+  },
+  startBooking: async (id: string): Promise<StartBookingResponse> => {
+    const response = await client.post(`${defaultUri}/start-booking`, {
+      booking_id: id,
+    });
     return response.data;
   },
 };

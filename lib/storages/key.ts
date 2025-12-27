@@ -7,5 +7,5 @@ export enum _StorageKey {
   LANGUAGE = 'LANGUAGE',
   USER_LOGIN = 'USER_LOGIN',
   LOCATION_PERMISSION = 'LOCATION_PERMISSION',
-
+  BOOKING_TIME_KEY = '@booking_end_time',
 }

@@ -3,7 +3,6 @@ import { BookingItem } from '@/features/booking/types';
 import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types';
 import { _LanguageCode } from '@/lib/const';
 
-
 export type DashboardKtvResponse = ResponseDataSuccessType<{
   booking: BookingItem | null;
   total_revenue_today: number;
@@ -11,7 +10,14 @@ export type DashboardKtvResponse = ResponseDataSuccessType<{
   total_booking_completed_today: number;
   total_booking_pending_today: number;
   review_today: ReviewItem[];
-}>
+}>;
+export type StartBookingResponse = ResponseDataSuccessType<{
+  status: number;
+  start_time: string;
+  duration: number;
+  booking: BookingItem;
+}>;
+export type BookingDetailsResponse = ResponseDataSuccessType<{ data: BookingItem }>;
 
 export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>
 

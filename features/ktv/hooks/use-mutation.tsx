@@ -28,3 +28,9 @@ export const useDetailServiceMutation = () => {
     mutationFn: (params: DetailServiceRequest) => ktvApi.detailService(params),
   });
 };
+
+export const useStartBookingMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => ktvApi.startBooking(id),
+  });
+};
