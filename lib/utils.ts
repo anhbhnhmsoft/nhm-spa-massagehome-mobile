@@ -172,7 +172,7 @@ export const handleSetChangeNumber = (value: string, onChange: (value: number) =
   onChange(Number(value));
 }
 
-export const openMap = (lat: number, lng: number) => {
+export const openMap = async (lat: number, lng: number) => {
   const url = `https://www.google.com/maps?q=${lat},${lng}`;
-  Linking.openURL(url);
+  await Linking.openURL(url);
 };

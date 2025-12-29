@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View, Image, Pressable, GestureResponderEvent } from 'react-native';
+import React from 'react';
+import { View, Image, Pressable } from 'react-native';
 import { Icon } from '@/components/ui/icon';
 import { MapPin, Navigation2, ChevronRight, Timer, User } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
@@ -8,7 +8,6 @@ import { _BookingStatusMap, getStatusColor } from '@/features/service/const';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
-import { router } from 'expo-router';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { openMap } from '@/lib/utils';
 
