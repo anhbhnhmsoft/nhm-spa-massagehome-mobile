@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import ktvApi from '@/features/ktv/api';
-import { DetailServiceRequest } from '@/features/ktv/types';
+import { CancelBookingRequet, DetailServiceRequest } from '@/features/ktv/types';
 
 // Thêm dịch vụ
 export const useAddServiceMutation = () => {
@@ -32,5 +32,19 @@ export const useDetailServiceMutation = () => {
 export const useStartBookingMutation = () => {
   return useMutation({
     mutationFn: (id: string) => ktvApi.startBooking(id),
+  });
+};
+
+//  hủy booking
+export const useCancelBookingMutation = () => {
+  return useMutation({
+    mutationFn: (data: CancelBookingRequet) => ktvApi.cancelBooking(data),
+  });
+};
+
+//  hoàn thành booking
+export const useFinishBookingMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => ktvApi.finishBooking(id),
   });
 };

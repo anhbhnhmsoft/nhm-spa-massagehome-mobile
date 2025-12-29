@@ -4,9 +4,11 @@ import { useImmer } from 'use-immer';
 import { ListServiceRequest } from '@/features/ktv/types';
 import { useInfiniteBookingList, useInfiniteServiceList } from '@/features/ktv/hooks/use-query';
 import { useKtvStore } from '@/features/ktv/stores';
+import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
-// Lấy danh sách lịch hẹn
-export const useListSchedules = () => {
+export const useSchedule = () => {
+  const refreshed = useBookingStore((s) => s.refreshed);
+  const setRefreshed = useBookingStore((s) => s.setRefreshed);
   const [params, setParams] = useImmer<ListBookingRequest>({
     filter: {
       status: undefined,
@@ -31,6 +33,12 @@ export const useListSchedules = () => {
 
   const query = useInfiniteBookingList(params);
 
+  useEffect(() => {
+    if (refreshed) {
+      query.refetch?.();
+      setRefreshed(false);
+    }
+  }, [refreshed, query, setRefreshed]);
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
   }, [query.data]);
@@ -88,8 +96,6 @@ export const useListServices = () => {
     }
   }, [reloadListService, setReloadListService]);
 
-
-
   return {
     ...query,
     params,
@@ -97,4 +103,3 @@ export const useListServices = () => {
     data,
   };
 };
-

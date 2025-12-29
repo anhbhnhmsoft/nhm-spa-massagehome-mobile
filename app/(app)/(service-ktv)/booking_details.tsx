@@ -1,5 +1,5 @@
 import { Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
@@ -13,13 +13,18 @@ import { formatTime, useBookingDetails } from '@/features/ktv/hooks/use-booking-
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 import useToast from '@/features/app/hooks/use-toast';
 import { openMap } from '@/lib/utils';
+import { CancellationModal } from '@/components/app/ktv/cancel-booking-modal';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function BookingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { booking, handleStartBooking, remainingMs } = useBookingDetails(id);
+  const [showModal, setShowModal] = useState(false);
+  const { booking, handleStartBooking, remainingMs, refetch, isFetching, handleCancelBooking } =
+    useBookingDetails(id);
   const { t } = useTranslation();
   const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
   const activeBookingId = useBookingStore((s) => s.bookingId);
+
   const { warning } = useToast();
   const { isRunning, isFinished, isBlockedByOther } = useMemo(() => {
     const isThisBookingActive = activeBookingId === id;
@@ -56,7 +61,17 @@ export default function BookingDetails() {
     <View className="flex-1 bg-white">
       <HeaderBack title="Chi tiết Booking" />
 
-      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-4 pt-4"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={refetch}
+            colors={[DefaultColor.base['primary-color-1']]}
+            tintColor={DefaultColor.base['primary-color-1']}
+          />
+        }>
         {/* Status Badge */}
 
         <View className="mb-4 items-center">
@@ -269,10 +284,8 @@ export default function BookingDetails() {
           {/* Cancel Button - chỉ hiển thị khi chưa start */}
           {!isRunning && !isFinished && (
             <TouchableOpacity
-              onPress={() => {
-                // Hàm hủy booking của bạn
-              }}
-              className="flex-row items-center justify-center rounded-2xl bg-slate-300 py-3 shadow-md">
+              onPress={() => setShowModal(true)}
+              className="flex-row items-center justify-center rounded-2xl bg-slate-300 py-3">
               <Text className="ml-2 font-inter-semibold text-lg text-blue-950">
                 {t('common.cancel')}
               </Text>
@@ -280,6 +293,11 @@ export default function BookingDetails() {
           )}
         </View>
       )}
+      <CancellationModal
+        isVisible={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleCancelBooking}
+      />
     </View>
   );
 }

@@ -278,6 +278,8 @@
     "my_order": "Đơn hàng của tôi",
     "join_partner": "Trở thành đối tác",
     "join_partner_desc": "Cùng tạo thu nhập",
+    "statistics": "Xem thống kê",
+"statistics_desc": "Theo dõi dữ liệu",
     "partner_commission": "Ưu đãi hoa hồng",
     "partner_commission_desc": "Kiếm tiền thưởng",
     "common_features": "Chức năng",
@@ -546,8 +548,13 @@
     "service_running": "Dịch vụ đang diễn ra",
     "service_finished": "Dịch vụ đã kết thúc",
     "start_service": "Bắt đầu dịch vụ",
-
-    "start_service_blocked": "Dịch vụ khác đang diễn ra. Vui lòng chờ kết thúc."
+    "cancel_reasons" : "Lý do hủy dịch vụ",
+    "start_service_blocked": "Dịch vụ khác đang diễn ra. Vui lòng chờ kết thúc.",
+    "confirm_cancel": "Xác nhận hủy",
+     "booking_failed_message": "Đã có lỗi xảy ra trong quá trình xử lý lịch hẹn. Xin lỗi vì sự bất tiện này. Vui lòng thử lại.",
+  "booking_cancel_confirm_title": "Xác nhận huỷ lịch hẹn",
+  "booking_cancel_confirm_message": "Bạn có chắc chắn muốn huỷ lịch hẹn này không?",
+  "booking_cancel_reason_required": "Vui lòng nhập lý do huỷ lịch hẹn",
   },
   "affiliate": {
     "title_1": "Mời bạn bè để nhận",

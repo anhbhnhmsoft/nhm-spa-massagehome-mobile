@@ -3,6 +3,7 @@ import * as Notifications from 'expo-notifications';
 import { Storage } from '../storages';
 import { _StorageKey } from '../storages/key';
 import { BookingItem } from '@/features/booking/types';
+import ktvApi from '@/features/ktv/api';
 
 interface BookingPersisted {
   bookingId: string;
@@ -52,7 +53,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
   startBooking: async (booking) => {
     const endTime = calcEndTime(booking);
     let notificationId: string | null = null;
-
+    console.log('end time', endTime);
     // huỷ notification cũ
     const prevNotif = get().notificationId;
     if (prevNotif) {
@@ -120,18 +121,29 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     const data = await Storage.getItem<BookingPersisted>(_StorageKey.BOOKING_TIME_KEY);
 
     if (!data) return;
-
-    // booking đã hết hạn
     if (data.endTime <= Date.now()) {
-      if (data.notificationId) {
-        try {
-          await Notifications.cancelScheduledNotificationAsync(data.notificationId);
-        } catch {}
-      }
-      await Storage.removeItem(_StorageKey.BOOKING_TIME_KEY);
+      ktvApi
+        .finishBooking(data.bookingId)
+        .then(() => {
+          set({ refreshed: true });
+        })
+        .catch((err) => {
+          console.log('finish booking failed', err);
+        })
+        .finally(async () => {
+          if (data.notificationId) {
+            try {
+              await Notifications.cancelScheduledNotificationAsync(data.notificationId);
+            } catch {}
+          }
+
+          await Storage.removeItem(_StorageKey.BOOKING_TIME_KEY);
+        });
+
       return;
     }
 
+    // booking còn hiệu lực
     set({
       bookingId: data.bookingId,
       endTime: data.endTime,

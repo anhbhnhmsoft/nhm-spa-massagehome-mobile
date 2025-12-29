@@ -4,7 +4,7 @@ import Empty from '@/components/empty';
 import { getTabBarHeight } from '@/components/styles/style';
 import { Text } from '@/components/ui/text';
 import { BookingItem, ListBookingRequest } from '@/features/booking/types';
-import { useSchedule } from '@/features/ktv/hooks/use-schedule';
+import { useSchedule } from '@/features/ktv/hooks/use-list';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
