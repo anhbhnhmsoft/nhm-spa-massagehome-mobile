@@ -9,8 +9,10 @@ class SocketService {
    * Connect to Socket Server
    * @param token
    */
-  public connect(token?: string) {
-    if (this.socket?.connected) return;
+  connect(token?: string) {
+    if (this.socket?.connected) {
+      return this.socket;
+    }
 
     this.socket = io(_SocketURL, {
       transports: ['websocket'], // Bắt buộc với React Native để tránh lỗi polling
@@ -18,7 +20,9 @@ class SocketService {
         token: token,
       },
     });
+    return this.socket;
   }
+
 
   /**
    * Chờ đợi kết nối thành công
@@ -102,6 +106,9 @@ class SocketService {
     }
   }
 
+  /**
+   * Ngắt kết nối với server
+   */
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();

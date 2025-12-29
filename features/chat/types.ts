@@ -26,6 +26,7 @@ export type PayloadNewMessage = {
   content: string; // Nội dung tin nhắn
   sender_id: string; // ID người gửi
   sender_name: string; // Tên người gửi
+  sender_avatar?: string; // URL avatar người gửi (có thể null)
   created_at: string; // Thời gian tạo tin nhắn (ISO string)
   temp_id?: string; // ID tạm thời (nếu có)
   status_sent?: 'pending' | 'sent' | 'failed'; // Trạng thái gửi (nếu là tin tạm thời) (ko có trong response)
@@ -35,3 +36,24 @@ export type PayloadNewMessage = {
 export type ListMessageRequest = BaseSearchRequest<object>
 
 export type ListMessageResponse = ResponseDataSuccessType<Paginator<PayloadNewMessage>>
+
+
+export type KTVConversationRequest = BaseSearchRequest<object>
+
+
+export type KTVConversationItem = {
+  id: string; // ID của phòng chat
+  customer: {
+    id: string; // ID của khách hàng
+    name: string; // Tên của khách hàng
+    avatar: string | null; // URL avatar của khách hàng (có thể null)
+  };
+  unread_count: number; // Số tin nhắn chưa đọc
+  latest_message: {
+    id: string; // ID của tin nhắn mới nhất
+    content: string; // Nội dung tin nhắn mới nhất
+    created_at: string; // Thời gian tạo tin nhắn mới nhất (ISO string)
+  } | null; // Tin nhắn mới nhất (có thể null)
+}
+
+export type KTVConversationResponse = ResponseDataSuccessType<Paginator<KTVConversationItem>>

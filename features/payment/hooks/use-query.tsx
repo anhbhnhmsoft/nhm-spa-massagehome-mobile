@@ -1,7 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import paymentApi from '@/features/payment/api';
-import { ServiceListRequest, ServiceListResponse } from '@/features/service/types';
-import serviceApi from '@/features/service/api';
 import { ListTransactionRequest, ListTransactionResponse } from '@/features/payment/types';
 
 
