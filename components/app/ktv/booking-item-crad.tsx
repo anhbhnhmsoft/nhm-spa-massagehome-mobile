@@ -28,8 +28,7 @@ export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
       onPress={useSingleTouch(() => onPress?.(item))}
       className="shadow-sd overflow-hidden rounded-xl border border-blue-100 bg-white p-4">
       {/* Badge top-right */}
-      <View
-        className={`absolute right-0 top-0 rounded-bl-md ${statusStyle.split(' ')[0]} px-3 py-1`}>
+      <View className={`absolute right-0 top-0 rounded-bl-lg bg-blue-100 px-3 py-1`}>
         <Text className={`font-inter-bold ${statusStyle.split(' ')[1]}`}>
           {t(_BookingStatusMap[item.status])}
         </Text>

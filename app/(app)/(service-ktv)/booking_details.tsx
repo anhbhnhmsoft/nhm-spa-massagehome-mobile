@@ -1,5 +1,5 @@
 import { Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
@@ -10,48 +10,30 @@ import { User } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTime, useBookingDetails } from '@/features/ktv/hooks/use-booking-details';
-import { useBookingStore } from '@/lib/ktv/useBookingStore';
-import useToast from '@/features/app/hooks/use-toast';
+import { queryClient } from '@/lib/provider/query-provider';
 import { openMap } from '@/lib/utils';
 import { CancellationModal } from '@/components/app/ktv/cancel-booking-modal';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function BookingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [showModal, setShowModal] = useState(false);
-  const { booking, handleStartBooking, remainingMs, refetch, isFetching, handleCancelBooking } =
-    useBookingDetails(id);
+  const {
+    booking,
+    handleStart,
+    remainingMs,
+    isFetching,
+    handleCancelBooking,
+    showModal,
+    setShowModal,
+    isRunning,
+    isFinished,
+    isBlockedByOther,
+    cancelReason,
+    setCancelReason,
+    handleConfirmCancel,
+  } = useBookingDetails(id);
   const { t } = useTranslation();
   const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
-  const activeBookingId = useBookingStore((s) => s.bookingId);
-
-  const { warning } = useToast();
-  const { isRunning, isFinished, isBlockedByOther } = useMemo(() => {
-    const isThisBookingActive = activeBookingId === id;
-    const otherBookingActive = activeBookingId != null && !isThisBookingActive;
-
-    const isRunning = isThisBookingActive && remainingMs != null && remainingMs > 0;
-    const isFinished = isThisBookingActive && remainingMs != null && remainingMs <= 0;
-    const isBlockedByOther = otherBookingActive;
-
-    return { isRunning, isFinished, isBlockedByOther };
-  }, [activeBookingId, id, remainingMs]);
-  const handleStart = useCallback(() => {
-    if (isRunning) {
-      warning({ message: t('booking.start_service_blocked') });
-      return;
-    }
-    if (isBlockedByOther) {
-      warning({
-        message: t('booking.start_blocked_by_other', {
-          defaultValue: 'Đã có dịch vụ khác đang chạy',
-        }),
-      });
-      return;
-    }
-
-    handleStartBooking?.();
-  }, [isRunning, isBlockedByOther, handleStartBooking, t, warning]);
 
   const showActions =
     (booking?.status === _BookingStatus.CONFIRMED || booking?.status === _BookingStatus.ONGOING) &&
@@ -67,7 +49,9 @@ export default function BookingDetails() {
         refreshControl={
           <RefreshControl
             refreshing={isFetching}
-            onRefresh={refetch}
+            onRefresh={() =>
+              queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', id] })
+            }
             colors={[DefaultColor.base['primary-color-1']]}
             tintColor={DefaultColor.base['primary-color-1']}
           />
@@ -76,8 +60,7 @@ export default function BookingDetails() {
 
         <View className="mb-4 items-center">
           {booking?.status ? (
-            <View
-              className={`flex-row items-center rounded-full ${statusStyle.split(' ')[0]} px-4 py-2`}>
+            <View className={`flex-row items-center rounded-full bg-blue-100 px-4 py-2`}>
               <Ionicons name="calendar-outline" size={16} color="#3b82f6" />
               <Text className={`ml-2 font-inter-medium ${statusStyle.split(' ')[1]}`}>
                 {t(_BookingStatusMap[booking.status])}
@@ -296,7 +279,9 @@ export default function BookingDetails() {
       <CancellationModal
         isVisible={showModal}
         onClose={() => setShowModal(false)}
-        onSubmit={handleCancelBooking}
+        reason={cancelReason}
+        setReason={setCancelReason}
+        onConfirm={handleConfirmCancel}
       />
     </View>
   );

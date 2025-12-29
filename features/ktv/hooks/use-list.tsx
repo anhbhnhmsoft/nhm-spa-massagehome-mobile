@@ -7,8 +7,7 @@ import { useKtvStore } from '@/features/ktv/stores';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
 export const useSchedule = () => {
-  const refreshed = useBookingStore((s) => s.refreshed);
-  const setRefreshed = useBookingStore((s) => s.setRefreshed);
+  // React Query handles invalidation; no local `refreshed` flag needed here.
   const [params, setParams] = useImmer<ListBookingRequest>({
     filter: {
       status: undefined,
@@ -33,12 +32,7 @@ export const useSchedule = () => {
 
   const query = useInfiniteBookingList(params);
 
-  useEffect(() => {
-    if (refreshed) {
-      query.refetch?.();
-      setRefreshed(false);
-    }
-  }, [refreshed, query, setRefreshed]);
+  // react-query will refetch when the bookings query is invalidated elsewhere
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
   }, [query.data]);

@@ -1,4 +1,4 @@
-import BookingItemKtv from '@/components/app/ktv/BookingItemCard';
+import BookingItemKtv from '@/components/app/ktv/booking-item-crad';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import Empty from '@/components/empty';
 import { getTabBarHeight } from '@/components/styles/style';
@@ -26,6 +26,7 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
     <View className="mb-4 mt-4">
       <ScrollView
         horizontal
+        className="bg-white py-2"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,

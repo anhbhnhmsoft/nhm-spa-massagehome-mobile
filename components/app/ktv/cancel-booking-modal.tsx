@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   View,
@@ -10,45 +10,25 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 
 interface CancelModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onSubmit: (reason: string) => void;
+  reason: string;
+  setReason: (v: string) => void;
+  onConfirm: () => void;
 }
 
-export const CancellationModal = ({ isVisible, onClose, onSubmit }: CancelModalProps) => {
+export const CancellationModal = ({
+  isVisible,
+  onClose,
+  reason,
+  setReason,
+  onConfirm,
+}: CancelModalProps) => {
   const { t } = useTranslation();
-  const [reason, setReason] = useState<string>('');
 
-  const handleConfirm = useCallback(() => {
-    if (reason.trim().length === 0) {
-      Alert.alert(t('statistics_desc.notification'), 'Vui lòng nhập lý do huỷ');
-      return;
-    }
-
-    Alert.alert(
-      t('booking.booking_cancel_confirm_title'),
-      t('booking.booking_cancel_confirm_message'),
-      [
-        {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('common.accept'),
-          style: 'destructive',
-          onPress: () => {
-            onSubmit(reason);
-            setReason('');
-            onClose();
-          },
-        },
-      ]
-    );
-  }, [reason, onSubmit, onClose]);
   return (
     <Modal
       visible={isVisible}
@@ -95,7 +75,7 @@ export const CancellationModal = ({ isVisible, onClose, onSubmit }: CancelModalP
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={handleConfirm}
+                  onPress={onConfirm}
                   disabled={reason.trim().length === 0}
                   activeOpacity={0.8}
                   className={`flex-1 items-center rounded-md py-4 ${
