@@ -16,4 +16,11 @@ export const useMutationGetRoomId = () => {
   });
 }
 
+// Mutation để đánh dấu tin nhắn đọc trong phòng chat
+export const useMutationSeenMessages = () => {
+  return useMutation({
+    mutationFn: (roomId: string) => chatApi.seenMessages(roomId),
+  });
+}
+
 

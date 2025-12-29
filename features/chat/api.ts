@@ -1,7 +1,7 @@
 import { client } from '@/lib/axios-client';
 import {
   JoinRoomRequest,
-  JoinRoomResponse,
+  JoinRoomResponse, KTVConversationRequest, KTVConversationResponse,
   ListMessageRequest,
   ListMessageResponse,
   SendMessageRequest,
@@ -23,15 +23,27 @@ const chatApi = {
     return response.data;
   },
   // Lấy danh sách tin nhắn trong phòng chat
-  listMessages: async (roomId: string, params: ListMessageRequest): Promise<ListMessageResponse> => {
+  listMessages: async (
+    roomId: string,
+    params: ListMessageRequest
+  ): Promise<ListMessageResponse> => {
     const response = await client.get(`${defaultUri}/messages/${roomId}`, { params });
     return response.data;
   },
   // Đánh dấu tin nhắn đọc trong phòng chat
-  seenMessages: async (roomId: string, params: ListMessageRequest): Promise<ListMessageResponse> => {
-    const response = await client.post(`${defaultUri}/messages/${roomId}/seen`, params);
+  seenMessages: async (roomId: string): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/seen`, { room_id: roomId });
     return response.data;
   },
-}
+
+  // Lấy danh sách cuộc trò chuyện KTV
+  listKTVConversations: async (
+    params: KTVConversationRequest
+  ): Promise<KTVConversationResponse> => {
+    const response = await client.get(`${defaultUri}/ktv-conversations`, { params });
+    return response.data;
+  },
+
+};
 
 export default chatApi;

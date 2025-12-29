@@ -33,7 +33,7 @@ export default function OrdersScreen() {
     refetch,
     isRefetching,
     setFilter,
-    params} = useGetBookingList();
+    params } = useGetBookingList();
 
   useEffect(() => {
     if (status){
