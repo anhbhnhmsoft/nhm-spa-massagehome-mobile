@@ -1,4 +1,10 @@
-import { BaseSearchRequest, IFileUpload, IMultiLangField, Paginator, ResponseDataSuccessType } from '@/lib/types';
+import {
+  BaseSearchRequest,
+  IFileUpload,
+  IMultiLangField,
+  Paginator,
+  ResponseDataSuccessType,
+} from '@/lib/types';
 import { BookingItem } from '@/features/booking/types';
 import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types';
 import { _LanguageCode } from '@/lib/const';
@@ -19,7 +25,7 @@ export type StartBookingResponse = ResponseDataSuccessType<{
 }>;
 export type BookingDetailsResponse = ResponseDataSuccessType<{ data: BookingItem }>;
 
-export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>
+export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>;
 
 export type ServiceForm = {
   category_id: string;
@@ -34,16 +40,19 @@ export type ServiceForm = {
     price: number;
     duration: number;
   }[];
-}
+};
 
-export type ListServiceRequest = BaseSearchRequest<object>
+export type ListServiceRequest = BaseSearchRequest<object>;
 
-export type ListServiceResponse = ResponseDataSuccessType<Paginator<ServiceItem>>
+export type ListServiceResponse = ResponseDataSuccessType<Paginator<ServiceItem>>;
 
 export type DetailServiceRequest = {
   id: string;
-}
-
+};
+export type CancelBookingRequet = {
+  booking_id: string;
+  reason: string;
+};
 export type ServiceDetailItem = {
   id: string;
   name: Record<_LanguageCode, string>;
@@ -57,5 +66,5 @@ export type ServiceDetailItem = {
     duration: number;
     price: number;
   }[];
-}
-export type ServiceDetailResponse = ResponseDataSuccessType<ServiceDetailItem>
+};
+export type ServiceDetailResponse = ResponseDataSuccessType<ServiceDetailItem>;

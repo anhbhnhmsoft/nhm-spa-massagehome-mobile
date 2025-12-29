@@ -1,10 +1,10 @@
-import BookingItemKtv from '@/components/app/ktv/BookingItemCard';
+import BookingItemKtv from '@/components/app/ktv/booking-item-crad';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import Empty from '@/components/empty';
 import { getTabBarHeight } from '@/components/styles/style';
 import { Text } from '@/components/ui/text';
 import { BookingItem, ListBookingRequest } from '@/features/booking/types';
-import { useSchedule } from '@/features/ktv/hooks/use-schedule';
+import { useSchedule } from '@/features/ktv/hooks/use-list';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
@@ -26,6 +26,7 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
     <View className="mb-4 mt-4">
       <ScrollView
         horizontal
+        className="bg-white py-2"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,

@@ -7,16 +7,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 import { useEffect } from 'react';
+import { useHydrateBooking } from '@/features/ktv/hooks';
 
 export default function TabsKTVLayout() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets(); // Lấy thông tin vùng an toàn
   const TAB_BAR_HEIGHT = getTabBarHeight();
-  const hydrate = useBookingStore((s) => s.hydrate);
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+  const complete = useHydrateBooking();
 
   return (
     <>

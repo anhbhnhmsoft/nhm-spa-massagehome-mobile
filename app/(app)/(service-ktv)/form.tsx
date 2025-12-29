@@ -30,7 +30,7 @@ export default function FormScreen() {
 
   const { t } = useTranslation();
 
-  const { optionsCategory, form, handleSetImage, resetImage, submit, isEdit } = useFormService();
+  const { optionsCategory, form, handleSetImage, resetImage, submit, isEdit, loading } = useFormService();
 
   const {
     control,
@@ -44,8 +44,6 @@ export default function FormScreen() {
     control,
     name: 'options',
   });
-  // Lấy giá trị ảnh đã chọn
-  const selectedImage = watch('image');
 
   const categoryId = watch('category_id');
 
@@ -56,7 +54,6 @@ export default function FormScreen() {
     },
     [optionsCategory]
   );
-
   return (
     <View className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
@@ -86,9 +83,9 @@ export default function FormScreen() {
                         'border-red-500': errors.image,
                       }
                     )}>
-                    {selectedImage && selectedImage.uri ? (
+                    {value && value.uri ? (
                       <Image
-                        source={{ uri: selectedImage.uri }}
+                        source={{ uri: value.uri }}
                         style={{ width: '100%', height: '100%' }}
                         contentFit="cover"
                       />
@@ -98,7 +95,7 @@ export default function FormScreen() {
                       </View>
                     )}
                     {/* Remove Image Button */}
-                    {selectedImage && selectedImage.uri && (
+                    {value && value.uri && (
                       <TouchableOpacity
                         onPress={resetImage}
                         className="absolute left-3 top-3 flex-row items-center rounded-lg bg-white/90 px-3 py-1.5 shadow-sm">
@@ -162,12 +159,15 @@ export default function FormScreen() {
             />
 
             {/* --- Service Name --- */}
-            <Controller
-              name={`name.${langName}`}
-              control={control}
-              render={({ field: { value, onChange, onBlur } }) => {
-                return (
-                  <View className="mb-5">
+            {Object.values(_LanguageCode).map((lang) => (
+              <Controller
+                key={`name-${lang}`}
+                name={`name.${lang}`}
+                control={control}
+                render={({ field: { value, onChange, onBlur } }) => {
+                  if (lang !== langName) return <></>;
+                  return (
+                    <View className="mb-5">
                     <View className="mb-2 flex-row items-center justify-between">
                       <Text className="font-inter-bold text-sm text-gray-800">
                         {t('ktv.services.form.service_name')}
@@ -182,7 +182,7 @@ export default function FormScreen() {
                         className="h-full text-gray-900"
                         placeholder={t('ktv.services.form.service_name_placeholder')}
                         value={value || ''}
-                        onChangeText={onChange}
+                        onChangeText={(text) => onChange(text)}
                         onBlur={onBlur}
                       />
                     </View>
@@ -195,43 +195,50 @@ export default function FormScreen() {
                   </View>
                 );
               }}
-            />
+            />))}
 
             {/* --- Description --- */}
-            <Controller
-              name={`description.${langDesc}`}
-              control={control}
-              render={({ field: { value, onChange, onBlur } }) => (
-                <View className="mb-5">
-                  <View className="mb-2 flex-row items-center justify-between">
-                    <Text className="font-inter-bold text-sm text-gray-800">
-                      {t('ktv.services.form.description')}
-                    </Text>
-                    <LanguageTabs selected={langDesc} onSelect={setLangDesc} />
-                  </View>
-                  <View
-                    className={cn('rounded-xl border border-gray-200 bg-white px-4', {
-                      'border-red-500': errors.description?.[langDesc],
-                    })}>
-                    <TextInput
-                      className="h-24 text-sm leading-5 text-gray-700"
-                      placeholder="Nhập mô tả dịch vụ..."
-                      multiline
-                      textAlignVertical="top"
-                      defaultValue={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                    />
-                  </View>
-                  {/*Error*/}
-                  {errors.description?.[langName] && (
-                    <Text className="mt-2 text-red-500 text-sm">
-                      {errors.description?.[langName].message}
-                    </Text>
-                  )}
-                </View>
-              )}
-            />
+            {Object.values(_LanguageCode).map((lang) => (
+              <Controller
+                key={`description-${lang}`}
+                name={`description.${lang}`}
+                control={control}
+                render={({ field: { value, onChange, onBlur } }) => {
+                  if (lang !== langDesc) return <></>;
+                  return (
+                    <View className="mb-5">
+                      <View className="mb-2 flex-row items-center justify-between">
+                        <Text className="font-inter-bold text-sm text-gray-800">
+                          {t('ktv.services.form.description')}
+                        </Text>
+                        <LanguageTabs selected={langDesc} onSelect={setLangDesc} />
+                      </View>
+                      <View
+                        className={cn('rounded-xl border border-gray-200 bg-white px-4', {
+                          'border-red-500': errors.description?.[langDesc],
+                        })}>
+                        <TextInput
+                          className="h-24 text-sm leading-5 text-gray-700"
+                          placeholder="Nhập mô tả dịch vụ..."
+                          multiline
+                          textAlignVertical="top"
+                          defaultValue={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                        />
+                      </View>
+                      {/*Error*/}
+                      {errors.description?.[langName] && (
+                        <Text className="mt-2 text-red-500 text-sm">
+                          {errors.description?.[langName].message}
+                        </Text>
+                      )}
+                    </View>
+                  )
+                }}
+              />
+            ))}
+
 
             {/* --- Service Active --- */}
             <Controller
@@ -353,11 +360,12 @@ export default function FormScreen() {
         {/* --- Sticky Footer Button --- */}
         <View className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white p-4">
           <TouchableOpacity
+            disabled={loading}
             onPress={submit}
             className="items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200"
           >
             <Text className="text-base font-inter-bold text-white">
-              {t('ktv.services.form.save')}
+              {loading ? t('common.loading') : t('ktv.services.form.save')}
             </Text>
           </TouchableOpacity>
         </View>

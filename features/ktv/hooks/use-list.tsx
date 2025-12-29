@@ -4,9 +4,10 @@ import { useImmer } from 'use-immer';
 import { ListServiceRequest } from '@/features/ktv/types';
 import { useInfiniteBookingList, useInfiniteServiceList } from '@/features/ktv/hooks/use-query';
 import { useKtvStore } from '@/features/ktv/stores';
+import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
-// Lấy danh sách lịch hẹn
-export const useListSchedules = () => {
+export const useSchedule = () => {
+  // React Query handles invalidation; no local `refreshed` flag needed here.
   const [params, setParams] = useImmer<ListBookingRequest>({
     filter: {
       status: undefined,
@@ -31,6 +32,7 @@ export const useListSchedules = () => {
 
   const query = useInfiniteBookingList(params);
 
+  // react-query will refetch when the bookings query is invalidated elsewhere
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
   }, [query.data]);
@@ -88,8 +90,6 @@ export const useListServices = () => {
     }
   }, [reloadListService, setReloadListService]);
 
-
-
   return {
     ...query,
     params,
@@ -97,4 +97,3 @@ export const useListServices = () => {
     data,
   };
 };
-
