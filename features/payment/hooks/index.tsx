@@ -9,8 +9,10 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useConfigPaymentMutation,
-  useCreateWithdrawInfoMutation, useDeleteWithdrawInfoMutation,
-  useDepositMutation, useRequestWithdrawMutation,
+  useCreateWithdrawInfoMutation,
+  useDeleteWithdrawInfoMutation,
+  useDepositMutation,
+  useRequestWithdrawMutation,
 } from '@/features/payment/hooks/use-mutation';
 import { useWalletStore } from '@/features/payment/stores';
 import useApplicationStore from '@/lib/store';
@@ -20,7 +22,8 @@ import {
   CreateWithdrawInfoRequest,
   DepositRequest,
   ListTransactionRequest,
-  QRBankData, RequestWithdrawRequest,
+  QRBankData,
+  RequestWithdrawRequest,
 } from '@/features/payment/types';
 import { useForm } from 'react-hook-form';
 import { _PaymentType, _UserWithdrawInfoType } from '@/features/payment/consts';
@@ -127,9 +130,10 @@ export const useWallet = () => {
     mutateConfigPayment(undefined, {
       onSuccess: (res) => {
         setConfigPayment(res.data);
-        router.push('/(app)/(profile)/deposit');
+        router.push('/(app)/(service-ktv)/deposit');
       },
       onError: (err) => {
+        console.log(err);
         handleError(err);
       },
       onSettled: () => {
@@ -325,27 +329,30 @@ export const useWithdrawInfo = (openModal: boolean, onClose: () => void) => {
           text: t('common.accept'),
           style: 'destructive',
           onPress: () => {
-            deleteWithdrawInfo({ id }, {
-              onSuccess: () => {
-                successToast({
-                  message: t('payment.success.delete_withdraw_info'),
-                });
-                queryListInfoWithdraw.refetch();
-              },
-              onError: (err) => {
-                const message = getMessageError(err, t);
-                if (message){
-                  errorToast({
-                    message,
+            deleteWithdrawInfo(
+              { id },
+              {
+                onSuccess: () => {
+                  successToast({
+                    message: t('payment.success.delete_withdraw_info'),
                   });
-                }
-              },
-            });
+                  queryListInfoWithdraw.refetch();
+                },
+                onError: (err) => {
+                  const message = getMessageError(err, t);
+                  if (message) {
+                    errorToast({
+                      message,
+                    });
+                  }
+                },
+              }
+            );
           },
         },
       ]
     );
-  },[]);
+  }, []);
 
   return {
     queryListInfoWithdraw,
@@ -357,7 +364,11 @@ export const useWithdrawInfo = (openModal: boolean, onClose: () => void) => {
 /**
  * Hook dùng cho màn tạo thông tin rút tiền ngân hàng
  */
-export const useCreateInfoWithdraw = (openModal: boolean, onClose: () => void, onSuccess: () => void) => {
+export const useCreateInfoWithdraw = (
+  openModal: boolean,
+  onClose: () => void,
+  onSuccess: () => void
+) => {
   const { t } = useTranslation();
 
   const { error: errorToast, success: successToast } = useToast(true);
@@ -422,8 +433,8 @@ export const useCreateInfoWithdraw = (openModal: boolean, onClose: () => void, o
     [queryListBankInfo.data]
   );
 
-  const submitCreateWithdrawInfo =  form.handleSubmit((values) => {
-    mutateCreateWithdrawInfo(values,{
+  const submitCreateWithdrawInfo = form.handleSubmit((values) => {
+    mutateCreateWithdrawInfo(values, {
       onSuccess: () => {
         successToast({
           message: t('payment.success.create_withdraw_info'),
@@ -432,7 +443,7 @@ export const useCreateInfoWithdraw = (openModal: boolean, onClose: () => void, o
       },
       onError: (err) => {
         const message = getMessageError(err, t);
-        if (message){
+        if (message) {
           errorToast({
             message,
           });
@@ -441,12 +452,11 @@ export const useCreateInfoWithdraw = (openModal: boolean, onClose: () => void, o
     });
   });
 
-
   return {
     form,
     loading: queryListBankInfo.isLoading || isPending,
     optionSelectBank,
-    submitCreateWithdrawInfo
+    submitCreateWithdrawInfo,
   };
 };
 
@@ -455,7 +465,7 @@ export const useCreateInfoWithdraw = (openModal: boolean, onClose: () => void, o
  */
 export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
   const { t } = useTranslation();
-  const { error: errorToast , success: successToast } = useToast(true);
+  const { error: errorToast, success: successToast } = useToast(true);
 
   const configPayment = useWalletStore((state) => state.configPayment);
   const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
@@ -463,29 +473,34 @@ export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
 
   // config payment
-  const { mutate: mutateConfigPayment, isPending: isConfigPaymentPending } = useConfigPaymentMutation();
+  const { mutate: mutateConfigPayment, isPending: isConfigPaymentPending } =
+    useConfigPaymentMutation();
 
   // mutate function để gọi API yêu cầu rút tiền ngân hàng
-  const { mutate: mutateRequestWithdraw, isPending: isRequestWithdrawPending } = useRequestWithdrawMutation();
+  const { mutate: mutateRequestWithdraw, isPending: isRequestWithdrawPending } =
+    useRequestWithdrawMutation();
 
   // form validate
   const form = useForm<RequestWithdrawRequest>({
-    resolver: zodResolver(z.object({
-      user_withdraw_info_id: z.string().min(1),
-      amount: z.string()
-        .min(1, t('payment.error.amount_withdraw_empty'))
-        .transform((val) => val.replace(/,/g, '')) // Xóa dấu phẩy trước khi check số
-        .refine((val) => !isNaN(Number(val)) && Number(val) >= 50, {
-          message: t('payment.error.amount_withdraw_min'),
-        }),
-      note: z.string().optional(),
-    })),
+    resolver: zodResolver(
+      z.object({
+        user_withdraw_info_id: z.string().min(1),
+        amount: z
+          .string()
+          .min(1, t('payment.error.amount_withdraw_empty'))
+          .transform((val) => val.replace(/,/g, '')) // Xóa dấu phẩy trước khi check số
+          .refine((val) => !isNaN(Number(val)) && Number(val) >= 50, {
+            message: t('payment.error.amount_withdraw_min'),
+          }),
+        note: z.string().optional(),
+      })
+    ),
     defaultValues: {
       user_withdraw_info_id: id,
       amount: '',
       note: '',
-    }
-  })
+    },
+  });
 
   useEffect(() => {
     // Gọi API config payment khi mở modal
@@ -498,7 +513,7 @@ export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
         onError: (err) => {
           setId('');
           const message = getMessageError(err, t);
-          if (message){
+          if (message) {
             errorToast({
               message,
             });
@@ -510,7 +525,7 @@ export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
 
   // submit form yêu cầu rút tiền ngân hàng
   const submitRequestWithdraw = form.handleSubmit((values) => {
-    mutateRequestWithdraw(values,{
+    mutateRequestWithdraw(values, {
       onSuccess: () => {
         successToast({
           message: t('payment.success.request_withdraw'),
@@ -520,7 +535,7 @@ export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
       },
       onError: (err) => {
         const message = getMessageError(err, t);
-        if (message){
+        if (message) {
           errorToast({
             message,
           });
@@ -534,6 +549,5 @@ export const useRequestWithdraw = (id: string, setId: (id: string) => void) => {
     submitRequestWithdraw,
     loading: isConfigPaymentPending || isRequestWithdrawPending,
     configPayment,
-  }
-
-}
+  };
+};

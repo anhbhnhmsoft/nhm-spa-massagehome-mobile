@@ -1,6 +1,6 @@
 import { Modal, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Text } from '@/components/ui/text';
-import React, { FC, useMemo,  useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetSupport } from '@/features/config/hooks';
 import useApplicationStore from '@/lib/store';
@@ -21,7 +21,7 @@ type ModalInfoProps = {
 };
 export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
   return (
-    <Modal animationType={"slide"} transparent={true} visible={isVisible} onRequestClose={onClose}>
+    <Modal animationType={'slide'} transparent={true} visible={isVisible} onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View className="flex-1 justify-end bg-black/50">
           <TouchableWithoutFeedback>
@@ -35,8 +35,7 @@ export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
   );
 };
 
-
-export const FeatureList = ({onClose}: {onClose: () => void}) => {
+export const FeatureList = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation();
 
   // Quản lý địa chỉ
@@ -70,10 +69,12 @@ export const FeatureList = ({onClose}: {onClose: () => void}) => {
         </View>
 
         {/* Edit info */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => {
-          onClose();
-          router.push('/(app)/(service-ktv)/edit-info')
-        }}>
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(service-ktv)/edit-info');
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={UserPen} size={24} className="text-primary-color-1" />
           </View>
@@ -81,7 +82,12 @@ export const FeatureList = ({onClose}: {onClose: () => void}) => {
         </TouchableOpacity>
 
         {/* Wallet */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center">
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(service-ktv)/wallet');
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Wallet} size={24} className="text-primary-color-1" />
           </View>
@@ -143,10 +149,7 @@ export const FeatureList = ({onClose}: {onClose: () => void}) => {
       <ListLocationModal visible={visibleLocation} onClose={() => setVisibleLocation(false)} />
 
       {/* Ngôn ngữ */}
-      <SelectLanguage
-        visible={modalLangVisible}
-        onClose={() => setModalLangVisible(false)}
-      />
+      <SelectLanguage visible={modalLangVisible} onClose={() => setModalLangVisible(false)} />
 
       {/* Hỗ trợ khách hàng */}
       <SupportModal
