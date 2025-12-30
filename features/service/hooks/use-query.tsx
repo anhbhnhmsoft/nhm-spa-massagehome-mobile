@@ -120,7 +120,8 @@ export const useQueryListCouponUser = (
 
 
 export const useInfiniteListReview = (
-  params: ListReviewRequest
+  params: ListReviewRequest,
+  enabled?: boolean
 ) => {
   return useInfiniteQuery<ListReviewResponse>({
     queryKey: ['serviceApi-listReview', params],
@@ -131,7 +132,7 @@ export const useInfiniteListReview = (
         per_page: params.per_page,
       });
     },
-    enabled: !!params?.filter?.user_id,
+    enabled: enabled,
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage.data?.meta?.current_page ?? 1;
       const lastPageNum = lastPage.data?.meta?.last_page ?? 1;

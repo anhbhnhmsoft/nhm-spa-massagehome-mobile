@@ -9,9 +9,7 @@ import {
   Ticket,
   User as UserIcon,
   Wallet,
-  Building2,
   HandCoins,
-  MapPin,
   Headphones,
   Info,
   LogOut,
@@ -21,8 +19,7 @@ import {
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import { cn, formatBalance } from '@/lib/utils';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useChangeAvatar } from '@/features/auth/hooks';
+import {  BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Icon } from '@/components/ui/icon';
 import { Image } from 'expo-image';
 import GradientBackground from '@/components/styles/gradient-background';
@@ -280,6 +277,9 @@ export const FeatureList = () => {
 
   // Xử lý đăng xuất
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+  // modal lang
+  const [modalLangVisible, setModalLangVisible] = useState(false);
+
   const logout = useLogout();
 
   return (
@@ -344,7 +344,10 @@ export const FeatureList = () => {
       <ListLocationModal visible={visibleLocation} onClose={() => setVisibleLocation(false)} />
 
       {/* Ngôn ngữ */}
-      <SelectLanguage ref={languageSheetRef} />
+      <SelectLanguage
+        visible={modalLangVisible}
+        onClose={() => setModalLangVisible(false)}
+      />
 
       {/* Hỗ trợ khách hàng */}
       <SupportModal
@@ -365,74 +368,4 @@ export const FeatureList = () => {
   );
 };
 
-// Bottom Edit image
-export const BottomEditAvatar = forwardRef<
-  BottomSheetModal,
-  {
-    canDelete?: boolean;
-  }
->(({ canDelete }, ref) => {
-  const { t } = useTranslation();
 
-  const { takePictureCamera, chooseImageFormLib, deleteAvatar } = useChangeAvatar();
-
-  // Cấu hình Backdrop (Lớp nền mờ đen phía sau)
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} />
-    ),
-    []
-  );
-
-  return (
-    <BottomSheetModal
-      ref={ref}
-      index={0} // Mở ở snap point đầu tiên (50%)
-      snapPoints={[]}
-      enableDynamicSizing={true}
-      backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: '#f5f5f5' }}
-      handleIndicatorStyle={{ backgroundColor: 'white' }} // Màu cái thanh ngang nhỏ ở trên
-    >
-      <BottomSheetView className="flex-1 pb-5">
-        <TouchableOpacity
-          className={'flex-row items-center border-b border-gray-100 px-5 py-2 pb-4'}
-          onPress={() => {
-            takePictureCamera().finally(() => {
-              (ref as any)?.current?.dismiss();
-            });
-          }}>
-          <Text className="font-inter-medium text-lg text-slate-800">
-            {t('profile.take_photo')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={'flex-row items-center border-b border-gray-100 px-5 py-2 pb-4'}
-          onPress={() => {
-            chooseImageFormLib().finally(() => {
-              (ref as any)?.current?.dismiss();
-            });
-          }}>
-          <Text className="font-inter-medium text-lg text-slate-800">
-            {t('profile.choose_from_lib')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={'flex-row items-center px-5 py-2 pb-4'}
-          onPress={() => {
-            deleteAvatar();
-            (ref as any)?.current?.dismiss();
-          }}
-          disabled={!canDelete}>
-          <Text
-            className={cn(
-              'font-inter-medium text-lg text-red-500',
-              !canDelete ? 'opacity-50' : ''
-            )}>
-            {t('profile.delete_avatar_title')}
-          </Text>
-        </TouchableOpacity>
-      </BottomSheetView>
-    </BottomSheetModal>
-  );
-});

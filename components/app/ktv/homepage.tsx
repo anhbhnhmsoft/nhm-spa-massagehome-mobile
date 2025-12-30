@@ -19,6 +19,8 @@ import { DashboardKtvResponse } from '@/features/ktv/types';
 import { ReviewItem } from '@/features/service/types';
 import { TFunction } from 'i18next';
 import { Image } from 'expo-image';
+import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
+import { router } from 'expo-router';
 
 // Component: Thẻ lịch hẹn
 interface AppointmentCardProps {
@@ -27,7 +29,14 @@ interface AppointmentCardProps {
 export const AppointmentCard = ({ item }: AppointmentCardProps) => {
   const {t} = useTranslation();
   return (
-    <View className="bg-white rounded-2xl shadow-sm border border-gray-100 flex-row overflow-hidden">
+    <TouchableOpacity
+      onPress={useSingleTouch(() => {
+        router.push({
+          pathname: '/(app)/(service-ktv)/booking-details',
+          params: { id: item.id },
+        });
+      })}
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 flex-row overflow-hidden">
 
       {/* 1. DẢI MÀU XANH BÊN TRÁI (THEO DESIGN) */}
       <View className="w-1.5 bg-[#2B7BBE]" />
@@ -86,7 +95,7 @@ export const AppointmentCard = ({ item }: AppointmentCardProps) => {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -1,7 +1,6 @@
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { _Gender } from '@/features/auth/const';
 import { router } from 'expo-router';
-import {  ChevronLeft } from 'lucide-react-native';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,7 +21,6 @@ import HeaderBack from '@/components/header-back';
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
-
 
   const {
     form,
@@ -156,7 +154,7 @@ export default function EditProfileScreen() {
           </FormInput>
 
           <View className="my-4 h-[1px] bg-gray-200" />
-          <Text className="mb-4 text-lg font-inter-bold text-slate-800">Bảo mật</Text>
+          <Text className="mb-4 text-lg font-inter-bold text-slate-800">{t('common.security')}</Text>
 
           {/* Old Password */}
           <FormInput label={t('common.old_password')} error={errors.old_password?.message}>
@@ -188,7 +186,7 @@ export default function EditProfileScreen() {
                   onChangeText={onChange}
                   value={value}
                   secureTextEntry
-                  placeholder="Nhập mật khẩu mới"
+                  placeholder={t('common.new_password_placeholder')}
                 />
               )}
             />

@@ -9,11 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { useSetService } from '@/features/ktv/hooks';
 
 
-export const ServiceCard = ({ item, onEdit, onDelete, onDetail }: {
+export const ServiceCard = ({ item, onEdit, onDelete, onDetail, onReview }: {
   item: ServiceItem;
   onEdit: ReturnType<typeof useSetService>['editService'];
   onDelete: ReturnType<typeof useSetService>['deleteService'];
   onDetail: ReturnType<typeof useSetService>['detailService'];
+  onReview: (item: ServiceItem) => void;
 }) => {
   const {t} = useTranslation();
   return (
@@ -86,12 +87,12 @@ export const ServiceCard = ({ item, onEdit, onDelete, onDetail }: {
               fill={item.avg_rating > 0 ? DefaultColor.yellow[400] : 'transparent'}
             />
             <Text className="text-xs font-inter-medium text-gray-600">
-              {item.avg_rating > 0 ? item.avg_rating : '-'} ({item.avg_rating || 0})
+              {item.avg_rating > 0 ? item.avg_rating : '-'}
             </Text>
           </View>
 
           {/* View Review Link */}
-          <TouchableOpacity className="flex-row items-center gap-0.5">
+          <TouchableOpacity className="flex-row items-center gap-0.5" onPress={() => onReview(item)}>
             <Text className="text-xs font-inter-medium text-primary-color-2">{t('ktv.services.see_reviews')}</Text>
             <ArrowRight size={12} color="#2563EB" />
           </TouchableOpacity>

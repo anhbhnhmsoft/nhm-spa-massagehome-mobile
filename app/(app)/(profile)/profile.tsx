@@ -1,10 +1,9 @@
 import {
-  ChevronLeft,
   Camera,
   User as UserIcon,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';

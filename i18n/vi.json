@@ -102,7 +102,9 @@
     "inactive": "Tạm ngưng",
     "description": "Mô tả",
     "no_description": "Chưa có mô tả",
-    "all": "Tất cả"
+    "all": "Tất cả",
+    "security": "Bảo mật",
+    "new_password_placeholder": "Nhập mật khẩu mới"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -279,7 +281,7 @@
     "join_partner": "Trở thành đối tác",
     "join_partner_desc": "Cùng tạo thu nhập",
     "statistics": "Xem thống kê",
-"statistics_desc": "Theo dõi dữ liệu",
+    "statistics_desc": "Theo dõi dữ liệu",
     "partner_commission": "Ưu đãi hoa hồng",
     "partner_commission_desc": "Kiếm tiền thưởng",
     "common_features": "Chức năng",
@@ -557,7 +559,8 @@
     "booking_cancel_reason_required": "Vui lòng nhập lý do huỷ lịch hẹn"
   },
   "affiliate": {
-    "title_1": "Mời bạn bè để nhận",
+    "title": "Giới thiệu bạn bè",
+    "title_1": "Mời bạn bè để nhận đến",
     "title_2": "{{ percent }}% hoa hồng trọn đời",
     "referral_link": "Liên kết giới thiệu"
   },

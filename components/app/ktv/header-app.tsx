@@ -6,9 +6,10 @@ import { TouchableOpacity, View } from 'react-native';
 import {Text} from '@/components/ui/text';
 import { Image } from 'expo-image';
 import DefaultColor from '@/components/styles/color';
-import { Bell, User } from 'lucide-react-native';
+import { Bolt, User } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
+import { ModalInfo } from '@/components/app/ktv/modal-info';
 
 
 export function HeaderAppKTV() {
@@ -16,7 +17,7 @@ export function HeaderAppKTV() {
   const insets = useSafeAreaInsets();
   const user = useAuthStore((state) => state.user);
   const [imageError, setImageError] = useState(false);
-
+  const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
 
   return (
     <>
@@ -59,13 +60,15 @@ export function HeaderAppKTV() {
             </View>
           </View>
           {/* Hiển thị biểu tượng thông báo */}
-          <TouchableOpacity className="relative">
-            <Icon as={Bell} size={24} className="text-white" />
-            {/* Dấu chấm đỏ thông báo */}
-            <View className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-[#1d4ed8] bg-red-500" />
+          <TouchableOpacity className="relative" onPress={() => setModalInfoVisible(true)}>
+            <Icon as={Bolt} size={24} className="text-white" />
           </TouchableOpacity>
         </View>
       </GradientBackground>
+      <ModalInfo
+        isVisible={modalInfoVisible}
+        onClose={() => setModalInfoVisible(false)}
+      />
     </>
   );
 }

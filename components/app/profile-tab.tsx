@@ -272,6 +272,10 @@ export const FeatureList = () => {
 
   // Xử lý đăng xuất
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+
+  // modal lang
+  const [modalLangVisible, setModalLangVisible] = useState(false);
+
   const logout = useLogout();
 
 
@@ -354,7 +358,10 @@ export const FeatureList = () => {
       <ListLocationModal visible={visibleLocation} onClose={() => setVisibleLocation(false)} />
 
       {/* Ngôn ngữ */}
-      <SelectLanguage ref={languageSheetRef} />
+      <SelectLanguage
+        visible={modalLangVisible}
+        onClose={() => setModalLangVisible(false)}
+      />
 
       {/* Hỗ trợ khách hàng */}
       <SupportModal

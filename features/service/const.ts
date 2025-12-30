@@ -42,7 +42,7 @@ export const getStatusColor = (status: _BookingStatus) => {
     case _BookingStatus.ONGOING:
       return 'bg-purple-100 text-purple-700';
     case _BookingStatus.COMPLETED:
-      return 'bg-green-100 text-green-700';
+      return 'bg-green-100 text-green-500';
     case _BookingStatus.CANCELED:
     case _BookingStatus.PAYMENT_FAILED:
       return 'bg-red-100 text-red-700';

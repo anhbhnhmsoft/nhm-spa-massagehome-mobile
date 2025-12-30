@@ -26,11 +26,12 @@ import { _DefaultValueFormService } from '@/features/ktv/consts';
 import { useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
 import { ServiceItem } from '@/features/service/types';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
-import { fi } from 'zod/v4/locales';
-import { Storage } from '../../../lib/storages';
-import { _StorageKey } from '../../../lib/storages/key';
+import { Storage } from '@/lib/storages';
+import { _StorageKey } from '@/lib/storages/key';
 import * as Notifications from 'expo-notifications';
 import { queryClient } from '@/lib/provider/query-provider';
+
+
 // Hook cho sửa - xóa - chi tiết dịch vụ
 export const useSetService = () => {
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
@@ -340,6 +341,8 @@ export const useServiceDetail = () => {
     detail: serviceDetail as ServiceItem,
   };
 };
+
+// Hook cho hydrate booking
 export const useHydrateBooking = () => {
   // hydrate state
   const _hydrated = useBookingStore((s) => s._hydrated);
@@ -422,3 +425,7 @@ export const useHydrateBooking = () => {
 
   return complete;
 };
+
+export const editProfileKTV = () => {
+
+}

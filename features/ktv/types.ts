@@ -8,6 +8,7 @@ import {
 import { BookingItem } from '@/features/booking/types';
 import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types';
 import { _LanguageCode } from '@/lib/const';
+import { _Gender } from '@/features/auth/const';
 
 export type DashboardKtvResponse = ResponseDataSuccessType<{
   booking: BookingItem | null;
@@ -68,3 +69,22 @@ export type ServiceDetailItem = {
   }[];
 };
 export type ServiceDetailResponse = ResponseDataSuccessType<ServiceDetailItem>;
+
+
+export type DetailInfoKTV = {
+  id: string;
+  name: string;
+  bio: IMultiLangField;
+  avatar_url: string | null;
+  list_images: {
+    id: string;
+    image_url: string | null;
+  }[];
+  gender: _Gender;
+  dob: string | null;
+  lat: string;
+  lng: string;
+  address: string;
+};
+
+export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;

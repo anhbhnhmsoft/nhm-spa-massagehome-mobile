@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import {
   Star,
@@ -16,6 +16,7 @@ import HeaderBack from '@/components/header-back';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
 import { cn, formatBalance } from '@/lib/utils';
+import ReviewListModal from '@/components/app/list-review';
 
 export const SERVICE_DETAIL = {
   id: '1',
@@ -60,6 +61,8 @@ export default function ServiceDetailScreen() {
   const { editService, deleteService } = useSetService();
 
   const { t } = useTranslation();
+
+  const [showReviewList, setShowReviewList] = useState(false);
 
   return (
     <View className="flex-1 bg-white">
@@ -125,7 +128,7 @@ export default function ServiceDetailScreen() {
               </Text>
               {/*Xem tất cả đánh giá*/}
               <TouchableOpacity>
-                <Text className={'ml-2 font-inter-semibold text-sm text-primary-color-2'}>
+                <Text className={'ml-2 font-inter-semibold text-sm text-primary-color-2'} onPress={() => setShowReviewList(true)}>
                   ({t('ktv.services.see_reviews')})
                 </Text>
               </TouchableOpacity>
@@ -199,6 +202,17 @@ export default function ServiceDetailScreen() {
           ))}
         </View>
       </ScrollView>
+
+      {/* Review List Modal */}
+      <ReviewListModal
+        isVisible={showReviewList}
+        onClose={() => {
+          setShowReviewList(false);
+        }}
+        params={{
+          service_id: detail.id || '',
+        }}
+      />
     </View>
   );
 }

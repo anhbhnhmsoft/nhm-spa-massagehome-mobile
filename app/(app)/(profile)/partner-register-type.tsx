@@ -7,12 +7,14 @@ import { Icon } from '@/components/ui/icon';
 import { Building2, User as UserIcon } from 'lucide-react-native';
 import { router } from 'expo-router';
 import HeaderBack from '@/components/header-back';
+import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
 export default function PartnerRegisterTypeScreen() {
   const { t } = useTranslation();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <FocusAwareStatusBar hidden={true} />
       <HeaderBack title="profile.join_partner" />
 
       <View className="flex-1 px-4 pt-4">

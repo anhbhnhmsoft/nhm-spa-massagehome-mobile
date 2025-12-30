@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { useListServices } from '@/features/ktv/hooks/use-list';
 import { KTVServiceCardSkeleton } from '@/components/app/ktv-card';
 import { ServiceCard } from '@/components/app/ktv/service';
 import { useSetService } from '@/features/ktv/hooks';
+import ReviewListModal from '@/components/app/list-review';
+import { ServiceItem } from '@/features/service/types';
 
 
 // --- Main Screen ---
@@ -34,6 +36,10 @@ export default function ServiceListScreen() {
   const { editService, deleteService, detailService } = useSetService();
 
   const bottomPadding = getTabBarHeight() + 20;
+
+  const [showReviewList, setShowReviewList] = useState(false);
+
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
   return (
     <View className="flex-1 bg-base-color-3">
@@ -81,7 +87,10 @@ export default function ServiceListScreen() {
               </View>
             )}
             renderItem={({ item }) => (
-              <ServiceCard item={item} onEdit={editService} onDelete={deleteService} onDetail={detailService} />
+              <ServiceCard item={item} onEdit={editService} onDelete={deleteService} onDetail={detailService} onReview={() => {
+                setSelectedService(item);
+                setShowReviewList(true);
+              }} />
             )}
             refreshControl={
               <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
@@ -96,6 +105,18 @@ export default function ServiceListScreen() {
           />
         )}
       </View>
+
+      {/* Review List Modal */}
+      <ReviewListModal
+        isVisible={showReviewList}
+        onClose={() => {
+          setShowReviewList(false);
+          setSelectedService(null);
+        }}
+        params={{
+          service_id: selectedService?.id || '',
+        }}
+      />
     </View>
   );
 }

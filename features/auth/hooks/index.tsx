@@ -19,7 +19,6 @@ import {
   useSetLanguageMutation,
   useVerifyRegisterOTPMutation,
 } from '@/features/auth/hooks/use-mutation';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import {
   AuthenticateRequest,
   EditProfileRequest,
@@ -480,7 +479,7 @@ export const useHydrateAuth = () => {
 /**
  * Hook để set ngôn ngữ user
  */
-export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
+export const useSetLanguageUser = (onClose?: () => void) => {
   const { t } = useTranslation();
   // Lấy ngôn ngữ hiện tại từ store
   const selectedLang = useApplicationStore((state) => state.language);
@@ -489,12 +488,11 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
   const setLanguageStore = useApplicationStore((state) => state.setLanguage);
 
   // Lấy hàm set ngôn ngữ từ API
-  const { mutate } = useSetLanguageMutation();
+  const { mutate, isPending } = useSetLanguageMutation();
 
-  const { error: errorToast } = useToast();
+  const { error: errorToast } = useToast(!!onClose);
 
   // loading state
-  const setLoading = useApplicationStore((state) => state.setLoading);
 
   // Kiểm tra xem user đăng nhập chưa
   const isAuthenticated = useCheckAuth();
@@ -519,7 +517,6 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
     async (lang: _LanguageCode) => {
       // Nếu user đã đăng nhập thì gọi API để set ngôn ngữ
       if (isAuthenticated) {
-        setLoading(true);
         // Gọi API để set ngôn ngữ
         mutate(
           { lang },
@@ -532,9 +529,6 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
                 message: t('common_error.failed_to_set_language'),
               });
             },
-            onSettled: () => {
-              setLoading(false);
-            },
           }
         );
       }
@@ -542,14 +536,17 @@ export const useSetLanguageUser = (ref: ForwardedRef<BottomSheetModal>) => {
         await syncLanguage(lang);
       }
       // Đóng bottom sheet
-      (ref as any).current?.dismiss();
+      if (onClose){
+        onClose();
+      }
     },
-    [isAuthenticated]
+    [isAuthenticated, onClose]
   );
 
   return {
     setLanguage,
     selectedLang,
+    isPending,
   };
 };
 

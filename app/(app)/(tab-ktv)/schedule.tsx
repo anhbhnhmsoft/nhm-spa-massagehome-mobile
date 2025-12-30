@@ -23,10 +23,10 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
   const currentStatus = params.filter?.status;
 
   return (
-    <View className="mb-4 mt-4">
+    <View className="mb-4 mt-4 px-4">
       <ScrollView
         horizontal
-        className="bg-white py-2"
+        className="bg-white py-2 rounded-lg"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -92,9 +92,10 @@ export default function ScheduleScreen() {
     params,
   } = useSchedule();
   const TAB_BAR_HEIGHT = getTabBarHeight();
+
   const handleGoDetails = useCallback((item: BookingItem) => {
     router.push({
-      pathname: '/(app)/(service-ktv)/booking_details',
+      pathname: '/(app)/(service-ktv)/booking-details',
       params: { id: item.id },
     });
   }, []);
@@ -107,7 +108,7 @@ export default function ScheduleScreen() {
           data={data}
           keyExtractor={(item) => `schedule-${item.id}`}
           renderItem={({ item }) => (
-            <View className="px-4">
+            <View className="px-4" key={item.id}>
               <BookingItemKtv item={item} onPress={handleGoDetails} />
             </View>
           )}
