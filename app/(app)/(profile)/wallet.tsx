@@ -279,7 +279,7 @@ const HeaderWallet = ({
 };
 
 // Transaction Item
-const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
+export const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
   const { t } = useTranslation();
 
   return (

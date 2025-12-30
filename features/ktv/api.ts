@@ -9,6 +9,8 @@ import {
   BookingDetailsResponse,
   StartBookingResponse,
   CancelBookingRequet,
+  TotalIncomeResponse,
+  DashboardQueryParams,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
@@ -82,6 +84,10 @@ const ktvApi = {
     const response = await client.post(`/booking/finish`, {
       booking_id: id,
     });
+    return response.data;
+  },
+  totalIncome: async (params: DashboardQueryParams): Promise<TotalIncomeResponse> => {
+    const response = await client.get(`${defaultUri}/total-income`, { params });
     return response.data;
   },
 };

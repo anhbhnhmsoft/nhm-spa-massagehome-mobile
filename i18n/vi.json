@@ -181,6 +181,21 @@
       "SP_FACEBOOK": "Facebook",
       "SP_PHONE": "Số điện thoại",
       "SP_WECHAT": "WeChat"
+    },
+    "dashboard_tab": {
+      "DAY": "Ngày",
+      "WEEK": "Tuần",
+      "MONTH": "Tháng",
+      "YEAR": "Năm"
+    },
+    "week_day": {
+      "monday": "T2",
+      "tuesday": "T3",
+      "wednesday": "T4",
+      "thursday": "T5",
+      "friday": "T6",
+      "saturday": "T7",
+      "sunday": "CN"
     }
   },
   "tab": {
@@ -195,7 +210,31 @@
     "services": "Dịch vụ",
     "schedule": "Lịch hẹn",
     "chat": "Tin nhắn",
-    "profile": "Hồ sơ"
+    "dashboard": "Thống kê"
+  },
+  "dashboard": {
+    "total_income_label": "Tổng doanh thu",
+    "change_vs_last_week": "+5% so với tuần trước",
+    "recent_transactions": "Giao dịch gần đây",
+    "no_chart_data": "Chưa có dữ liệu thống kê",
+    "view_all": "Xem tất cả",
+    "stats": {
+      "customers": "Số khách",
+      "received_income": "Doanh thu nhận được",
+      "affiliate": "Hoa hồng",
+      "reviews": "Lượt đánh giá"
+    },
+     "percent_change": {
+      "zero": "0% so với {{compare}}",
+      "new": "Mới so với {{compare}}",
+      "compare": "% so với {{compare}}"
+    },
+    "compare": {
+      "yesterday": "hôm trước",
+      "last_week": "tuần trước",
+      "last_month": "tháng trước",
+      "previous": "trước đó"
+    }
   },
   "auth": {
     "index_label": "Tập luyện, massage, spa theo cách bạn muốn",

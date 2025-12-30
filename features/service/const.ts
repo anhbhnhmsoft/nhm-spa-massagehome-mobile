@@ -9,13 +9,12 @@ export enum _ServiceDuration {
   FOUR_HOUR = 240,
 }
 
-
 export enum _StepFormBooking {
   MAP = 0,
   FORM = 1,
 }
 
-export enum _BookingStatus{
+export enum _BookingStatus {
   PENDING = 1,
   CONFIRMED = 2,
   ONGOING = 3,
@@ -31,7 +30,7 @@ export const _BookingStatusMap = {
   [_BookingStatus.COMPLETED]: 'enum.booking_status.COMPLETED',
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
-} as const
+} as const;
 
 export const getStatusColor = (status: _BookingStatus) => {
   switch (status) {
@@ -50,3 +49,46 @@ export const getStatusColor = (status: _BookingStatus) => {
       return 'bg-gray-100 text-gray-700';
   }
 };
+
+export enum DashboardTab {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year',
+}
+
+export const _DashboardTabMap = {
+  [DashboardTab.DAY]: 'enum.dashboard_tab.DAY',
+  [DashboardTab.WEEK]: 'enum.dashboard_tab.WEEK',
+  [DashboardTab.MONTH]: 'enum.dashboard_tab.MONTH',
+  [DashboardTab.YEAR]: 'enum.dashboard_tab.YEAR',
+} as const;
+export const DASHBOARD_TABS = Object.values(DashboardTab);
+
+export enum WeekDay {
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+}
+export const _WeekDayMap = {
+  [WeekDay.MONDAY]: 'enum.week_day.monday',
+  [WeekDay.TUESDAY]: 'enum.week_day.tuesday',
+  [WeekDay.WEDNESDAY]: 'enum.week_day.wednesday',
+  [WeekDay.THURSDAY]: 'enum.week_day.thursday',
+  [WeekDay.FRIDAY]: 'enum.week_day.friday',
+  [WeekDay.SATURDAY]: 'enum.week_day.saturday',
+  [WeekDay.SUNDAY]: 'enum.week_day.sunday',
+} as const;
+export const WEEK_DAYS: readonly WeekDay[] = [
+  WeekDay.MONDAY,
+  WeekDay.TUESDAY,
+  WeekDay.WEDNESDAY,
+  WeekDay.THURSDAY,
+  WeekDay.FRIDAY,
+  WeekDay.SATURDAY,
+  WeekDay.SUNDAY,
+];

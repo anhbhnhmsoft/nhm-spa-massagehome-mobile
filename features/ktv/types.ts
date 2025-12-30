@@ -9,6 +9,7 @@ import { BookingItem } from '@/features/booking/types';
 import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types';
 import { _LanguageCode } from '@/lib/const';
 import { _Gender } from '@/features/auth/const';
+import { DashboardTab } from '../service/const';
 
 export type DashboardKtvResponse = ResponseDataSuccessType<{
   booking: BookingItem | null;
@@ -68,7 +69,33 @@ export type ServiceDetailItem = {
     price: number;
   }[];
 };
+export interface DashboardStats {
+  total_income: string;
+  received_income: string;
+  total_customers: number;
+  affiliate_income: number;
+  total_reviews: number;
+  chart_data: ChartDataItem[];
+}
+
+export interface ChartDataItem {
+  date: string; // YYYY-MM-DD
+  total: string;
+}
+
+export interface DashboardQueryParams {
+  type: DashboardTab;
+}
+
+export type PercentChangeResult = {
+  percent: number | null;
+  isIncrease: boolean | null;
+  currentTotal: number;
+  previousTotal: number;
+};
+
 export type ServiceDetailResponse = ResponseDataSuccessType<ServiceDetailItem>;
+export type TotalIncomeResponse = ResponseDataSuccessType<DashboardStats>;
 
 
 export type DetailInfoKTV = {

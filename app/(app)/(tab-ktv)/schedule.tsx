@@ -1,4 +1,4 @@
-import BookingItemKtv from '@/components/app/ktv/booking-item-crad';
+import BookingItemKtv from '@/components/app/ktv/booking-item-card';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import Empty from '@/components/empty';
 import { getTabBarHeight } from '@/components/styles/style';
