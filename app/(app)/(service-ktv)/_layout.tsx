@@ -11,6 +11,8 @@ export default function ServiceKtvLayout() {
         <Stack.Screen name="chat" />
         <Stack.Screen name="booking-details" />
         <Stack.Screen name="edit-info" />
+        <Stack.Screen name="wallet" />
+        <Stack.Screen name="deposit" />
       </Stack>
     </>
   );

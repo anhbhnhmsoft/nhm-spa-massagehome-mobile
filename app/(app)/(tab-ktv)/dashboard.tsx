@@ -18,6 +18,7 @@ import { _DashboardTabMap, _WeekDayMap, DASHBOARD_TABS } from '@/features/servic
 import DashboardChart from '@/components/app/ktv/dashboard_chart';
 import { TransactionItem } from '../(profile)/wallet';
 import Empty from '@/components/empty';
+import { router } from 'expo-router';
 interface StatCardProps {
   icon: ComponentType<{
     size?: number;
@@ -149,7 +150,10 @@ const DashboardScreen = () => {
             <Text className="font-inter-extrabold text-xl text-primary-color-1">
               {t('dashboard.recent_transactions')}
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                router.push('/(app)/(service-ktv)/wallet');
+              }}>
               <Text className="font-inter-bold text-[13px] text-primary-color-2">
                 {t('common.see_all')}
               </Text>
