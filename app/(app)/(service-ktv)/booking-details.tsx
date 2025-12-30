@@ -1,5 +1,5 @@
 import { Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
@@ -11,18 +11,18 @@ import dayjs from 'dayjs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTime, useBookingDetails } from '@/features/ktv/hooks/use-booking-details';
 import { queryClient } from '@/lib/provider/query-provider';
-import { openMap } from '@/lib/utils';
+import { formatBalance, openMap } from '@/lib/utils';
 import { CancellationModal } from '@/components/app/ktv/cancel-booking-modal';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function BookingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const {
+    refetch,
     booking,
     handleStart,
     remainingMs,
     isFetching,
-    handleCancelBooking,
     showModal,
     setShowModal,
     isRunning,
@@ -35,9 +35,12 @@ export default function BookingDetails() {
   const { t } = useTranslation();
   const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
 
-  const showActions =
-    (booking?.status === _BookingStatus.CONFIRMED || booking?.status === _BookingStatus.ONGOING) &&
-    !isFinished;
+  const showActions = useMemo(() => {
+    return (
+      booking?.status === _BookingStatus.CONFIRMED ||
+      booking?.status === _BookingStatus.ONGOING
+    ) && !isFinished;
+  }, [booking?.status, isFinished]);
 
   return (
     <View className="flex-1 bg-white">
@@ -49,11 +52,9 @@ export default function BookingDetails() {
         refreshControl={
           <RefreshControl
             refreshing={isFetching}
-            onRefresh={() =>
-              queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', id] })
-            }
-            colors={[DefaultColor.base['primary-color-1']]}
-            tintColor={DefaultColor.base['primary-color-1']}
+            onRefresh={() => refetch()}
+            colors={[DefaultColor.base['primary-color-2']]}
+            tintColor={DefaultColor.base['primary-color-2']}
           />
         }>
         {/* Status Badge */}
@@ -136,7 +137,7 @@ export default function BookingDetails() {
                   <Ionicons
                     name="navigate-circle"
                     size={16}
-                    color={DefaultColor.base['primary-color-1']}
+                    color={DefaultColor.base['primary-color-2']}
                   />
                   <Text className="ml-1 font-inter-semibold text-base text-primary-color-2">
                     {t('booking.see_directions')}
@@ -207,7 +208,7 @@ export default function BookingDetails() {
                   />
                   <Text className="ml-2 text-xs text-slate-400">{t('services.price_service')}</Text>
                 </View>
-                <Text className="font-inter-bold text-slate-800">{booking?.price} VND</Text>
+                <Text className="font-inter-bold text-slate-800">{formatBalance(booking?.price || 0)} {t('common.currency')}</Text>
               </View>
             </View>
           </View>
@@ -221,7 +222,7 @@ export default function BookingDetails() {
           {isRunning && remainingMs != null && (
             <View className="mb-4 items-center">
               <View className="flex-row items-center rounded-full bg-primary-color-1/10 px-5 py-2">
-                <Ionicons name="time-outline" size={18} color="#2563eb" />
+                <Ionicons name="time-outline" size={18} color={DefaultColor.base['primary-color-2']} />
                 <Text className="ml-2 font-inter-bold text-primary-color-2">
                   {t('booking.remaining_time', { time: formatTime(remainingMs) })}
                 </Text>
@@ -248,7 +249,7 @@ export default function BookingDetails() {
             className={`mb-2 flex-row items-center justify-center rounded-2xl py-3 ${
               isRunning || isFinished || isBlockedByOther
                 ? 'bg-slate-300'
-                : 'bg-primary-color-2 shadow-lg shadow-blue-300'
+                : 'bg-primary-color-2'
             }`}>
             <Ionicons
               name={isRunning ? 'checkmark-circle' : isFinished ? 'close-circle' : 'play-circle'}

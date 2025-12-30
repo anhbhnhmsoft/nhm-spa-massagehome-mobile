@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   View,
@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import dayjs from 'dayjs';
 import StarRating from '@/components/star-rating';
-import { ReviewItem } from '@/features/service/types';
+import { ListReviewRequest, ReviewItem } from '@/features/service/types';
 import { useTranslation } from 'react-i18next';
 import {Text} from "@/components/ui/text"
 import { TFunction } from 'i18next';
@@ -20,7 +20,7 @@ import { TFunction } from 'i18next';
 interface ReviewListModalProps {
   isVisible: boolean;
   onClose: () => void;
-  ktv_id: string;
+  params: ListReviewRequest['filter'];
 }
 
 const Review = React.memo(({ item, t }: { item: ReviewItem, t: TFunction }) => {
@@ -67,9 +67,8 @@ const Review = React.memo(({ item, t }: { item: ReviewItem, t: TFunction }) => {
   );
 });
 
-const ReviewListModal = ({ isVisible, onClose, ktv_id }: ReviewListModalProps) => {
+const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) => {
   const {t} = useTranslation();
-
   const {
     data,
     fetchNextPage,
@@ -77,8 +76,18 @@ const ReviewListModal = ({ isVisible, onClose, ktv_id }: ReviewListModalProps) =
     isFetchingNextPage,
     isLoading,
     refetch,
-    pagination
-  } = useGetReviewList(ktv_id);
+    isRefetching,
+    pagination,
+    setFilter
+  } = useGetReviewList(isVisible);
+
+
+  useEffect(() => {
+    if (isVisible) {
+      setFilter(params);
+      refetch();
+    }
+  }, [isVisible, params]);
 
   return (
     <Modal
@@ -105,7 +114,7 @@ const ReviewListModal = ({ isVisible, onClose, ktv_id }: ReviewListModalProps) =
         </View>
 
         {/* --- List Body --- */}
-        {isLoading ? (
+        {isLoading || isRefetching ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#3B82F6" />
           </View>

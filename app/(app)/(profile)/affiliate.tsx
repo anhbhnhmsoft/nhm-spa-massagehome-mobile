@@ -25,7 +25,7 @@ const ReferralScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
-      <HeaderBack />
+      <HeaderBack title="affiliate.title" />
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         {/* Main Content Section - lấy cảm hứng từ image_2.png */}
         <View className="p-4">

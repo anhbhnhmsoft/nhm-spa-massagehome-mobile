@@ -291,7 +291,7 @@ const MasseurDetailScreen = () => {
           }
         />
       </View>
-      <ReviewListModal isVisible={showReviewList} onClose={() => setShowReviewList(false)} ktv_id={detail.id} />
+      <ReviewListModal isVisible={showReviewList} onClose={() => setShowReviewList(false)} params={{user_id: detail.id}} />
     </>
   );
 };

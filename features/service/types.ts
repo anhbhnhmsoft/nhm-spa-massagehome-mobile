@@ -149,7 +149,8 @@ export type ReviewItem = {
 
 
 export type ListReviewRequest = BaseSearchRequest<{
-  user_id: string; // bắt buộc, ID của ktv cần lấy đánh giá
+  user_id?: string; // tùy chọn, ID của ktv cần lấy đánh giá
+  service_id?: string; // tùy chọn, ID của dịch vụ cần lấy đánh giá
 }>
 
 export type ListReviewResponse = ResponseDataSuccessType<Paginator<ReviewItem>>

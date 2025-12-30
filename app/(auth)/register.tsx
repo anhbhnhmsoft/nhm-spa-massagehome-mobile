@@ -1,18 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { TouchableWithoutFeedback, Keyboard, View, TouchableOpacity, Image, TextInput } from 'react-native';
+import { TouchableWithoutFeedback, Keyboard, View, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { useHandleRegister } from '@/features/auth/hooks';
 import { Controller } from 'react-hook-form';
 import {Input} from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import React, { useRef, useState } from 'react';
+import React, {  useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import { Check, Eye, EyeOff, Mars, Venus, ChevronDown } from 'lucide-react-native';
 import { _Gender } from '@/features/auth/const';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { _LanguagesMap } from '@/lib/const';
 import { SelectLanguageModal } from '@/components/select-language';
 
@@ -24,7 +23,7 @@ export default function RegisterScreen() {
 
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
-  const languageSheetRef = useRef<BottomSheetModal>(null);
+  const [modalLangVisible, setModalLangVisible] = useState<boolean>(false);
 
   const {
     control,
@@ -191,7 +190,7 @@ export default function RegisterScreen() {
                         <Label htmlFor="language">{t('common.language')} *</Label>
                         <TouchableOpacity
                           className="flex-row h-12 items-center justify-between rounded-2xl border border-gray-300 bg-white px-3 py-1.5 backdrop-blur-md"
-                          onPress={() => languageSheetRef.current?.present()}
+                          onPress={() => setModalLangVisible(true)}
                         >
                           <View className={"flex-row gap-2 items-center"}>
                             <Image source={langConfig?.icon} className="mr-2 h-6 w-6" />
@@ -200,7 +199,13 @@ export default function RegisterScreen() {
                           <ChevronDown color="gray" size={16} />
                         </TouchableOpacity>
 
-                        <SelectLanguageModal ref={languageSheetRef} onChange={onChange} value={value} closeOnSelect={true} />
+                        <SelectLanguageModal
+                          onClose={() => setModalLangVisible(false)}
+                          visible={modalLangVisible}
+                          onChange={onChange}
+                          value={value}
+                          closeOnSelect={true}
+                        />
 
                         {errors.language && (
                           <Text className="text-sm text-red-500">

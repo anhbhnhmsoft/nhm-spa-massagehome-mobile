@@ -396,16 +396,30 @@ export const useReviewModal = (serviceBookingId: string, onSuccess: () => void) 
 
 /**
  * Lấy danh sách review của user
- * @param user_id
  */
-export const useGetReviewList = (user_id: string) => {
-  const query = useInfiniteListReview({
-    filter: {
-      user_id: user_id,
-    },
+export const useGetReviewList = (enabled?: boolean) => {
+  const [params, setParams] = useImmer<ListReviewRequest>({
+    filter:  {},
     page: 1,
-    per_page: 10
+    per_page: 10,
   });
+  // Hàm setFilter
+  const setFilter = useCallback(
+    (filterPatch: Partial<ListReviewRequest['filter']>) => {
+      setParams((draft) => {
+        // 🚨 QUAN TRỌNG: Reset page về 1 khi filter thay đổi
+        draft.page = 1;
+        // Merge filter mới vào draft.filter (sử dụng logic Immer)
+        draft.filter = {
+          ...draft.filter,
+          ...filterPatch,
+        };
+      });
+    },
+    [setParams]
+  );
+
+  const query = useInfiniteListReview(params, enabled);
 
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
@@ -417,6 +431,8 @@ export const useGetReviewList = (user_id: string) => {
 
   return {
     ...query,
+    params,
+    setFilter,
     data,
     pagination,
   };

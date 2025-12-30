@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import { X, ChevronDown } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import useApplicationStore from '@/lib/store';
 import { _APP_NAME, _LanguagesMap } from '@/lib/const';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import SelectLanguage from '@/components/select-language';
 import { router } from 'expo-router';
 
@@ -16,7 +15,7 @@ export default function Index() {
 
   const selectedLang = useApplicationStore((state) => state.language);
 
-  const languageSheetRef = useRef<BottomSheetModal>(null);
+  const [modalLangVisible, setModalLangVisible] = useState<boolean>(false);
 
   const langConfig = useMemo(
     () => _LanguagesMap.find((lang) => lang.code === selectedLang),
@@ -44,7 +43,7 @@ export default function Index() {
             {/* Language Button */}
             <TouchableOpacity
               className="flex-row items-center rounded-full border border-white/30 bg-white/20 px-3 py-1.5 backdrop-blur-md"
-              onPress={() => languageSheetRef.current?.present()}
+              onPress={() => setModalLangVisible(true)}
             >
               <Image source={langConfig?.icon} className="mr-2 h-6 w-6" />
               <Text className="mr-1 font-inter-medium text-white">{langConfig?.label}</Text>
@@ -85,7 +84,10 @@ export default function Index() {
           </Text>
         </View>
       </View>
-      <SelectLanguage ref={languageSheetRef} />
+      <SelectLanguage
+        visible={modalLangVisible}
+        onClose={() => setModalLangVisible(false)}
+      />
     </>
   );
 }
