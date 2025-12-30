@@ -1,9 +1,18 @@
-import { useAllCategoriesQuery, useTotalIncomeQuery } from '@/features/ktv/hooks/use-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useAllCategoriesQuery,
+  useProfileKtvQuery,
+  useTotalIncomeQuery,
+} from '@/features/ktv/hooks/use-query';
+import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
-import { DashboardQueryParams, PercentChangeResult, ServiceForm } from '@/features/ktv/types';
+import {
+  DashboardQueryParams,
+  EditProfileKtvRequest,
+  PercentChangeResult,
+  ServiceForm,
+} from '@/features/ktv/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import * as ImagePicker from 'expo-image-picker';
@@ -11,10 +20,13 @@ import * as Linking from 'expo-linking';
 import { Alert } from 'react-native';
 import {
   useAddServiceMutation,
+  useDeleteImageMutation,
   useDeleteServiceMutation,
   useDetailServiceMutation,
   useFinishBookingMutation,
+  useUpdateProfileKtvMutation,
   useUpdateServiceMutation,
+  useUploadImageMutation,
 } from '@/features/ktv/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useKtvStore } from '@/features/ktv/stores';
@@ -33,7 +45,8 @@ import { queryClient } from '@/lib/provider/query-provider';
 import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
-// Hook cho sửa - xóa - chi tiết dịch vụ
+import useAuthStore from '@/features/auth/store';
+import { useCameraPermissions } from 'expo-camera';
 export const useSetService = () => {
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
   const setServiceDetail = useKtvStore((state) => state.setServiceDetail);
@@ -506,5 +519,275 @@ export const useDashboardTotalIncome = () => {
 };
 
 export const editProfileKTV = () => {
+  const errorHandle = useErrorToast();
+  const { data: profileData, error, refetch } = useProfileKtvQuery();
+  const { mutate: editProfile } = useUpdateProfileKtvMutation();
+  const { t } = useTranslation();
+  const setLoading = useApplicationStore((state) => state.setLoading);
+  const schema = z
+    .object({
+      address: z.string().min(1, t('profile.error.invalid_address')).max(255),
 
-}
+      experience: z.coerce.number().min(1, t('profile.error.invalid_experience')).max(60),
+
+      bio: z.object({
+        vi: z.string().optional(),
+        en: z.string().optional(),
+        cn: z.string().optional(),
+      }),
+
+      lat: z.coerce.number().optional(),
+      lng: z.coerce.number().optional(),
+
+      gender: z.coerce.number().optional(),
+
+      date_of_birth: z.string().optional(),
+
+      old_password: z.string().optional(),
+      new_password: z.string().optional(),
+    })
+    .refine((data) => !!data.bio.vi?.trim() || !!data.bio.en?.trim() || !!data.bio.cn?.trim(), {
+      path: ['bio.vi'],
+      message: t('profile.error.bio_required'),
+    })
+    .refine((data) => !data.new_password || !!data.old_password, {
+      path: ['old_password'],
+      message: t('profile.error.old_password_min'),
+    });
+  const form = useForm<EditProfileKtvRequest>({
+    defaultValues: {
+      address: profileData?.address ?? '',
+      experience: profileData?.experience ?? 0,
+      bio: {
+        vi: profileData?.bio?.vi ?? '',
+        en: profileData?.bio?.en ?? '',
+        cn: profileData?.bio?.cn ?? '',
+      },
+
+      lat: profileData?.lat ?? '',
+      lng: profileData?.lng ?? '',
+      gender: profileData?.gender ?? undefined,
+      date_of_birth: profileData?.date_of_birth ?? '',
+    },
+
+    resolver: zodResolver(schema),
+    mode: 'onSubmit', // 🔥 QUAN TRỌNG
+  });
+
+  const onSubmit = useCallback((data: EditProfileKtvRequest) => {
+    setLoading(true);
+
+    // 🔹 Format lại data trước khi gửi
+    const payload: EditProfileKtvRequest = {
+      ...data,
+      // date_of_birth chỉ gửi YYYY-MM-DD
+      date_of_birth: data.date_of_birth || '',
+      // bio luôn đầy đủ 3 key
+      bio: {
+        vi: data.bio?.vi ?? '',
+        en: data.bio?.en ?? '',
+        cn: data.bio?.cn ?? '',
+      },
+      // lat/lng convert sang string
+      lat: data.lat != null ? String(data.lat) : '0',
+      lng: data.lng != null ? String(data.lng) : '0',
+      // address không để rỗng
+      address: data.address ?? '',
+      // gender mặc định nếu cần
+      gender: data.gender ?? 1, // nếu backend cũng yêu cầu string
+      // experience mặc định nếu cần
+      experience: data.experience ?? 0, // nếu backend yêu cầu string
+    };
+
+    editProfile(payload, {
+      onSuccess: (res) => {
+        refetch();
+        router.back();
+      },
+      onError: (error) => {
+        errorHandle(error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  }, []);
+
+  return {
+    form,
+    profileData,
+    onSubmit,
+  };
+};
+
+const MAX_IMAGE = 5;
+
+export const useChangeImage = () => {
+  const { t } = useTranslation();
+  const [permission, requestPermission] = useCameraPermissions();
+
+  /**
+   * Xin quyền camera
+   */
+  const takePictureCamera = useCallback(async () => {
+    if (!permission?.granted) {
+      const res = await requestPermission();
+      if (!res.granted) {
+        Alert.alert(t('permission.camera.title'), t('permission.camera.message'));
+        return false;
+      }
+    } else {
+      // Nếu có quyền chụp ảnh thì chuyển sang màn hình chụp ảnh
+      router.push('/(app)/(service-ktv)/take-picture-image');
+      return true;
+    }
+  }, [permission?.granted, t]);
+
+  /**
+   * Chọn ảnh từ thư viện (tối đa 5)
+   */
+  const chooseImageFromLib = useCallback(
+    async (imageLength: number = 0) => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (imageLength >= MAX_IMAGE) {
+        Alert.alert(t('common.error'), t('image.max_5'));
+        return;
+      }
+      if (status !== 'granted') {
+        Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
+        return;
+      }
+      const remain = MAX_IMAGE - imageLength;
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+        allowsMultipleSelection: true,
+        selectionLimit: remain,
+      });
+
+      if (result.canceled) return;
+
+      if (result.assets.length > MAX_IMAGE) {
+        Alert.alert(t('common.error'), t('image.max_5'));
+        return;
+      }
+
+      // 👉 build FormData nhiều ảnh
+      const form = new FormData();
+
+      result.assets.forEach((asset, index) => {
+        form.append('images[]', {
+          uri: asset.uri,
+          name: `image_${index}.jpg`,
+          type: 'image/jpeg',
+        } as any);
+      });
+
+      return form; // 👈 trả về cho hook upload
+    },
+    [t]
+  );
+
+  return {
+    takePictureCamera,
+    chooseImageFromLib,
+  };
+};
+
+export const useEditImage = () => {
+  const { mutate: uploadImage } = useUploadImageMutation();
+  const { mutate: deleteImage } = useDeleteImageMutation();
+
+  const { chooseImageFromLib } = useChangeImage();
+
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const errorHandle = useErrorToast();
+  const { success: successToast } = useToast();
+  const { t } = useTranslation();
+
+  const uploadImages = useCallback(
+    (form: FormData, onSuccess?: () => void) => {
+      setLoading(true);
+
+      uploadImage(form, {
+        onSuccess: (res) => {
+          queryClient.invalidateQueries({
+            queryKey: ['ktvApi-profileKtv'],
+          });
+
+          successToast?.({
+            message: res.message,
+          });
+          onSuccess?.();
+        },
+        onError: (error) => {
+          errorHandle(error);
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    },
+    [uploadImage, queryClient, setLoading, errorHandle, successToast, t]
+  );
+
+  const addImages = useCallback(
+    async (imageLength: number = 0, onSuccess?: () => void) => {
+      const form = await chooseImageFromLib(imageLength);
+      if (!form) return;
+
+      uploadImages(form, onSuccess);
+    },
+    [chooseImageFromLib, uploadImages]
+  );
+
+  const removeImage = useCallback(
+    (imageId: string, onSuccess?: () => void) => {
+      Alert.alert(
+        t('ktv.edit_profile.common.confirm'),
+        t('ktv.edit_profile.image.confirm_delete'),
+        [
+          {
+            text: t('ktv.edit_profile.common.cancel'),
+            style: 'cancel',
+          },
+          {
+            text: t('ktv.edit_profile.common.delete'),
+            style: 'destructive',
+            onPress: () => {
+              setLoading(true);
+
+              deleteImage(imageId, {
+                onSuccess: (res) => {
+                  queryClient.invalidateQueries({
+                    queryKey: ['ktvApi-profileKtv'],
+                  });
+
+                  successToast?.({
+                    message: res.message,
+                  });
+                  onSuccess?.();
+                },
+                onError: (error) => {
+                  errorHandle(error);
+                },
+                onSettled: () => {
+                  setLoading(false);
+                },
+              });
+            },
+          },
+        ]
+      );
+    },
+    [deleteImage, queryClient, setLoading, errorHandle, successToast, t]
+  );
+
+  return {
+    uploadImages,
+    addImages,
+    removeImage,
+  };
+};

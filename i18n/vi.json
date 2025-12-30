@@ -341,7 +341,12 @@
     "error": {
         "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
         "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
-        "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu"
+        "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu",
+        "invalid_address": "Địa chỉ không hợp lệ",
+        "invalid_experience": "Số năm kinh nghiệm phải từ 0 đến 60",
+        "old_password_min": "Mật khẩu hiện tại phải có ít nhất 8 ký tự",
+        "new_password_min": "Mật khẩu mới phải có ít nhất 8 ký tự",
+        "bio_required": "Vui lòng nhập giới thiệu bản thân"
     },
     "partner_form": {
         "title": "Đăng ký kỹ thuật viên",
@@ -444,7 +449,8 @@
     },
     "confirm": {
       "delete_withdraw_info": "Bạn có chắc chắn muốn xóa",
-      "delete_withdraw_info_message": "Bạn có chắc chắn muốn xóa thông tin rút tiền này không?"
+      "delete_withdraw_info_message": "Bạn có chắc chắn muốn xóa thông tin rút tiền này không?",
+      
     },
     "success": {
       "deposit": "Nạp tiền thành công, cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!",
@@ -677,6 +683,20 @@
           "options_price": "Vui lòng nhập giá tiền gói dịch vụ",
           "options_min": "Vui lòng thêm ít nhất 1 gói dịch vụ"
         }
+      }
+    },
+    "edit_profile": {
+   
+      "image": {
+        "max_5": "Bạn chỉ được chọn tối đa 5 hình ảnh.",
+        "confirm_delete": "Bạn có chắc chắn muốn xóa hình ảnh này không? Hành động này không thể hoàn tác."
+      },
+      "common": {
+        "success": "Thao tác thành công",
+        "error": "Có lỗi xảy ra",
+        "confirm": "Xác nhận",
+        "cancel": "Hủy",
+        "delete": "Xóa"
       }
     }
   }

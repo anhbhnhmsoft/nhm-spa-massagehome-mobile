@@ -97,7 +97,6 @@ export type PercentChangeResult = {
 export type ServiceDetailResponse = ResponseDataSuccessType<ServiceDetailItem>;
 export type TotalIncomeResponse = ResponseDataSuccessType<DashboardStats>;
 
-
 export type DetailInfoKTV = {
   id: string;
   name: string;
@@ -112,6 +111,24 @@ export type DetailInfoKTV = {
   lat: string;
   lng: string;
   address: string;
+  experience: number;
+  date_of_birth: string;
+};
+
+export type EditProfileKtvRequest = {
+  address?: string;
+  experience?: number;
+  bio?: IMultiLangField;
+  lat?: string;
+  lng?: string;
+
+  /** Giới tính (1: Nam, 2: Nữ, 3: Khác – tùy BE) */
+  gender?: number;
+
+  /** Ngày sinh (YYYY-MM-DD) */
+  date_of_birth?: string;
+  old_password?: string;
+  new_password?: string;
 };
 
 export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;

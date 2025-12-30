@@ -86,3 +86,11 @@ export const useTotalIncomeQuery = (params: DashboardQueryParams) => {
     select: (res) => res.data,
   });
 };
+
+export const useProfileKtvQuery = () => {
+  return useQuery({
+    queryKey: ['ktvApi-profileKtv'],
+    queryFn: () => ktvApi.profileKtv(),
+    select: (res) => res.data,
+  });
+};

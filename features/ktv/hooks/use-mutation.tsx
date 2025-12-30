@@ -1,6 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import ktvApi from '@/features/ktv/api';
-import { CancelBookingRequet, DetailServiceRequest } from '@/features/ktv/types';
+import {
+  CancelBookingRequet,
+  DetailServiceRequest,
+  EditProfileKtvRequest,
+} from '@/features/ktv/types';
 
 // Thêm dịch vụ
 export const useAddServiceMutation = () => {
@@ -46,5 +50,26 @@ export const useCancelBookingMutation = () => {
 export const useFinishBookingMutation = () => {
   return useMutation({
     mutationFn: (id: string) => ktvApi.finishBooking(id),
+  });
+};
+
+// upload hình ảnh dịch vụ
+export const useUploadImageMutation = () => {
+  return useMutation({
+    mutationFn: (data: FormData) => ktvApi.uploadImage(data),
+  });
+};
+
+// xóa hình ảnh dịch vụ
+export const useDeleteImageMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => ktvApi.deleteImage(id),
+  });
+};
+
+// cập nhật profile ktv
+export const useUpdateProfileKtvMutation = () => {
+  return useMutation({
+    mutationFn: (data: EditProfileKtvRequest) => ktvApi.updateProfile(data),
   });
 };
