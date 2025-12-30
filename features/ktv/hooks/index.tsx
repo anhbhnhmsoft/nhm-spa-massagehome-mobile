@@ -1,9 +1,9 @@
-import { useAllCategoriesQuery } from '@/features/ktv/hooks/use-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useAllCategoriesQuery, useTotalIncomeQuery } from '@/features/ktv/hooks/use-query';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
-import { ServiceForm } from '@/features/ktv/types';
+import { DashboardQueryParams, PercentChangeResult, ServiceForm } from '@/features/ktv/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import * as ImagePicker from 'expo-image-picker';
@@ -31,6 +31,9 @@ import { Storage } from '../../../lib/storages';
 import { _StorageKey } from '../../../lib/storages/key';
 import * as Notifications from 'expo-notifications';
 import { queryClient } from '@/lib/provider/query-provider';
+import { DashboardTab } from '@/features/service/const';
+import { useGetTransactionList } from '@/features/payment/hooks';
+import { computePercentChange } from './useDashboardChart';
 // Hook cho sửa - xóa - chi tiết dịch vụ
 export const useSetService = () => {
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
@@ -419,6 +422,84 @@ export const useHydrateBooking = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_hydrated]);
 
-
   return complete;
+};
+export const useDashboardTotalIncome = () => {
+  const [activeTab, setActiveTab] = useState<DashboardTab>(DashboardTab.DAY);
+  const { t } = useTranslation();
+
+  // Params API theo tab hiện tại
+  const params: DashboardQueryParams = useMemo(() => ({ type: activeTab }), [activeTab]);
+
+  // Gọi API tổng doanh thu
+  const { data, isLoading, refetch } = useTotalIncomeQuery(params);
+
+  // Gọi API danh sách giao dịch
+  const queryTransactionList = useGetTransactionList({
+    filter: {},
+    page: 1,
+    per_page: 10,
+  });
+
+  // Chuẩn hóa dữ liệu biểu đồ
+  const chartData = useMemo(() => {
+    if (!data?.chart_data) return [];
+    return data.chart_data.map((item) => ({
+      label: item.date,
+      value: Number(item.total),
+    }));
+  }, [data?.chart_data]);
+
+  // Tính percent change so với kỳ trước
+  const percentChange: PercentChangeResult | null = useMemo(() => {
+    if (!data?.chart_data || data.chart_data.length === 0) return null;
+    return computePercentChange(activeTab, data.chart_data);
+  }, [data?.chart_data, activeTab]);
+
+  // Build text hiển thị percent change với i18next
+  const percentChangeText = useMemo(() => {
+    if (!percentChange) return '';
+
+    const compareKey =
+      activeTab === 'day'
+        ? 'yesterday'
+        : activeTab === 'week' || activeTab === 'month'
+          ? 'last_week'
+          : 'last_month';
+
+    if (percentChange.previousTotal === 0 && percentChange.currentTotal === 0) {
+      return t('dashboard.percent_change.zero', {
+        compare: t(`dashboard.compare.${compareKey}`),
+      });
+    }
+
+    if (percentChange.previousTotal === 0) {
+      return t('dashboard.percent_change.new', {
+        compare: t(`dashboard.compare.${compareKey}`),
+      });
+    }
+
+    const sign = percentChange.percent! > 0 ? '+' : '';
+    return `${sign}${percentChange.percent}% ${t('dashboard.percent_change.compare', {
+      compare: t(`dashboard.compare.${compareKey}`),
+    })}`;
+  }, [percentChange, activeTab, t]);
+
+  // Set tab hiện tại
+  const handleSetTab = useCallback((tab: DashboardTab) => {
+    setActiveTab(tab);
+  }, []);
+
+  return {
+    activeTab,
+    handleSetTab,
+    isLoading,
+    refetch,
+    data,
+    chartData,
+    queryTransactionList,
+    percentChange,
+    percentChangeText, // text đã format sẵn
+    t,
+  };
 };

@@ -154,7 +154,7 @@ export const getMessageError = (err: Error | ErrorAPIServer | any, t: TFunction)
       return t('common_error.unknown_error');
     }
   }
-}
+};
 /**
  * Xử lý thay đổi giá trị số
  * @param value Giá trị nhập vào
@@ -170,7 +170,7 @@ export const handleSetChangeNumber = (value: string, onChange: (value: number) =
     return;
   }
   onChange(Number(value));
-}
+};
 
 export const openMap = async (lat: number, lng: number) => {
   const url = `https://www.google.com/maps?q=${lat},${lng}`;

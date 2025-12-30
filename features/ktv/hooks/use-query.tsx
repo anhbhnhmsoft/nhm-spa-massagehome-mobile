@@ -1,8 +1,11 @@
 import { ListBookingRequest, ListBookingResponse } from '@/features/booking/types';
 import ktvApi from '@/features/ktv/api';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { ListServiceRequest, ListServiceResponse } from '@/features/ktv/types';
-
+import {
+  DashboardQueryParams,
+  ListServiceRequest,
+  ListServiceResponse,
+} from '@/features/ktv/types';
 
 // lấy thông tin dashboard ktv
 export const useDashboardKtvQuery = () => {
@@ -72,6 +75,14 @@ export const useBookingDetailsQuery = (id: string) => {
   return useQuery({
     queryKey: ['bookingApi-details-ktv', id],
     queryFn: () => ktvApi.bookingDetails(id),
+    select: (res) => res.data,
+  });
+};
+
+export const useTotalIncomeQuery = (params: DashboardQueryParams) => {
+  return useQuery({
+    queryKey: ['ktvApi-totalIncome', params],
+    queryFn: () => ktvApi.totalIncome(params),
     select: (res) => res.data,
   });
 };
