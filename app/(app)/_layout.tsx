@@ -40,14 +40,14 @@ export default function AppLayout() {
           headerShown: false,
         }}>
         {/* --- TAB KTV SCREEN --- */}
-        <Stack.Protected guard={checkAuth && user?.role === _UserRole.AGENCY}>
-          <Stack.Screen name="(tab-agency)" />
-          <Stack.Screen name="(service-ktv)" />
-        </Stack.Protected>
-        {/* --- TAB KTV SCREEN --- */}
         <Stack.Protected guard={checkAuth && user?.role === _UserRole.KTV}>
           <Stack.Screen name="(tab-ktv)" />
           <Stack.Screen name="(service-ktv)" />
+        </Stack.Protected>
+
+        {/* --- TAB KTV SCREEN --- */}
+        <Stack.Protected guard={checkAuth && user?.role === _UserRole.AGENCY}>
+          <Stack.Screen name="(tab-agency)" />
         </Stack.Protected>
 
         {/* --- TAB CUSTOMER SCREEN --- */}

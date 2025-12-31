@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useTranslation } from 'react-i18next';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
@@ -18,18 +12,10 @@ import { useSetService } from '@/features/ktv/hooks';
 import ReviewListModal from '@/components/app/list-review';
 import { ServiceItem } from '@/features/service/types';
 
-
 // --- Main Screen ---
 export default function ServiceListScreen() {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch,
-    isRefetching,
-    isLoading,
-  } = useListServices();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, isLoading } =
+    useListServices();
 
   const { t } = useTranslation();
 
@@ -87,10 +73,16 @@ export default function ServiceListScreen() {
               </View>
             )}
             renderItem={({ item }) => (
-              <ServiceCard item={item} onEdit={editService} onDelete={deleteService} onDetail={detailService} onReview={() => {
-                setSelectedService(item);
-                setShowReviewList(true);
-              }} />
+              <ServiceCard
+                item={item}
+                onEdit={editService}
+                onDelete={deleteService}
+                onDetail={detailService}
+                onReview={() => {
+                  setSelectedService(item);
+                  setShowReviewList(true);
+                }}
+              />
             )}
             refreshControl={
               <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
