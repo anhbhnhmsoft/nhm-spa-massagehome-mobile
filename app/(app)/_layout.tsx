@@ -16,7 +16,6 @@ export default function AppLayout() {
 
   const checkAuth = useCheckAuth();
   const user = useAuthStore((state) => state.user);
-
   useEffect(() => {
     // Chờ _TIME_OUT_LOADING_SCREEN_LAYOUT để đảm bảo rằng checkAuth đã có giá trị
     const timeout = setTimeout(() => {
@@ -24,7 +23,6 @@ export default function AppLayout() {
     }, _TIME_OUT_LOADING_SCREEN_LAYOUT);
     return () => clearTimeout(timeout);
   }, []);
-
 
   // Kiểm tra heartbeat khi user có đang được xác thực hay không
   useHeartbeat();
@@ -40,8 +38,12 @@ export default function AppLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
+        {/* --- TAB KTV SCREEN --- */}
+        <Stack.Protected guard={checkAuth && user?.role === _UserRole.AGENCY}>
+          <Stack.Screen name="(tab-agency)" />
+          <Stack.Screen name="(service-ktv)" />
+        </Stack.Protected>
         {/* --- TAB KTV SCREEN --- */}
         <Stack.Protected guard={checkAuth && user?.role === _UserRole.KTV}>
           <Stack.Screen name="(tab-ktv)" />
@@ -49,7 +51,7 @@ export default function AppLayout() {
         </Stack.Protected>
 
         {/* --- TAB CUSTOMER SCREEN --- */}
-        <Stack.Protected guard={user?.role !== _UserRole.KTV}>
+        <Stack.Protected guard={user?.role !== _UserRole.KTV && user?.role !== _UserRole.AGENCY}>
           <Stack.Screen name="(tab)" />
           <Stack.Protected guard={checkAuth}>
             <Stack.Screen name="(service)" />
