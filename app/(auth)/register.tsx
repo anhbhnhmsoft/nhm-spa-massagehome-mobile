@@ -5,21 +5,30 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { useHandleRegister } from '@/features/auth/hooks';
 import { Controller } from 'react-hook-form';
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
-import { Check, Eye, EyeOff, Mars, Venus, ChevronDown } from 'lucide-react-native';
+import {
+  Check,
+  Eye,
+  EyeOff,
+  Mars,
+  Venus,
+  ChevronDown,
+  CheckSquare,
+  Square,
+} from 'lucide-react-native';
 import { _Gender } from '@/features/auth/const';
 import { _LanguagesMap } from '@/lib/const';
 import { SelectLanguageModal } from '@/components/select-language';
-
+import { router } from 'expo-router';
 
 export default function RegisterScreen() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
-  const {form, onSubmit, loading} = useHandleRegister();
+  const { form, onSubmit, loading } = useHandleRegister();
 
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
@@ -28,34 +37,30 @@ export default function RegisterScreen() {
   const {
     control,
     handleSubmit,
-    formState: { errors},
+    formState: { errors },
   } = form;
-
+  const [isAgreed, setIsAgreed] = useState<boolean>(false);
   return (
-    <SafeAreaView
-      className="relative h-full flex-1 bg-white"
-      edges={['top', 'bottom']}
-    >
+    <SafeAreaView className="relative h-full flex-1 bg-white" edges={['top', 'bottom']}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1}}
+          contentContainerStyle={{ flexGrow: 1 }}
           enableOnAndroid={true}
           scrollEnabled={true}
           bounces={false}
           overScrollMode="never"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="flex-1 px-5 pt-4 justify-between gap-8">
-            <View className="items-center flex-1 w-full">
-              <Text className="text-2xl font-inter-bold text-gray-900 text-center mb-3">
+          showsVerticalScrollIndicator={false}>
+          <View className="flex-1 justify-between gap-8 px-5 pt-4">
+            <View className="w-full flex-1 items-center">
+              <Text className="mb-3 text-center font-inter-bold text-2xl text-gray-900">
                 {t('auth.register_title')}
               </Text>
-              <Text className="text-gray-500 text-center text-base px-4 leading-6 mb-4">
+              <Text className="mb-4 px-4 text-center text-base leading-6 text-gray-500">
                 {t('auth.register_description')}
               </Text>
               {/* Input Container */}
-              <View className={"flex-1 gap-4 w-full"}>
+              <View className={'w-full flex-1 gap-4'}>
                 {/* Name Input */}
                 <Controller
                   control={control}
@@ -67,16 +72,14 @@ export default function RegisterScreen() {
                         id="name"
                         placeholder={t('common.name')}
                         value={value}
-                        className={cn('h-12 w-full rounded-2xl bg-white overflow-hidden px-4', {
+                        className={cn('h-12 w-full overflow-hidden rounded-2xl bg-white px-4', {
                           'border-red-500': errors.name,
                         })}
                         onBlur={onBlur}
                         onChangeText={onChange}
                       />
                       {errors.name && (
-                        <Text className="text-sm text-red-500">
-                          {errors.name.message}
-                        </Text>
+                        <Text className="text-sm text-red-500">{errors.name.message}</Text>
                       )}
                     </View>
                   )}
@@ -93,16 +96,14 @@ export default function RegisterScreen() {
                         id="referral_code"
                         placeholder={t('common.referral_code')}
                         value={value || ''}
-                        className={cn('h-12 w-full rounded-2xl bg-white overflow-hidden px-4', {
+                        className={cn('h-12 w-full overflow-hidden rounded-2xl bg-white px-4', {
                           'border-red-500': errors.referral_code,
                         })}
                         onBlur={onBlur}
                         onChangeText={onChange}
                       />
                       {errors.referral_code && (
-                        <Text className="text-sm text-red-500">
-                          {errors.referral_code.message}
-                        </Text>
+                        <Text className="text-sm text-red-500">{errors.referral_code.message}</Text>
                       )}
                     </View>
                   )}
@@ -120,29 +121,23 @@ export default function RegisterScreen() {
                           id="password"
                           value={value}
                           placeholder={'**********'}
-                          className={cn('h-12 w-full rounded-2xl bg-white overflow-hidden px-4', {
+                          className={cn('h-12 w-full overflow-hidden rounded-2xl bg-white px-4', {
                             'border-red-500': errors.password,
                           })}
                           onBlur={onBlur}
                           onChangeText={onChange}
                           secureTextEntry={!passwordVisible}
-                          textContentType={"password"}
+                          textContentType={'password'}
                         />
                         <TouchableOpacity
                           className="absolute bottom-0 right-4 top-0 justify-center"
                           onPress={() => setPasswordVisible(!passwordVisible)}>
-                          <Icon
-                            as={passwordVisible ? EyeOff : Eye}
-                            size={24}
-                            opacity={0.6}
-                          />
+                          <Icon as={passwordVisible ? EyeOff : Eye} size={24} opacity={0.6} />
                         </TouchableOpacity>
                       </View>
 
                       {errors.password && (
-                        <Text className="text-sm text-red-500">
-                          {errors.password.message}
-                        </Text>
+                        <Text className="text-sm text-red-500">{errors.password.message}</Text>
                       )}
                     </View>
                   )}
@@ -153,7 +148,7 @@ export default function RegisterScreen() {
                   control={control}
                   name="gender"
                   render={({ field: { onChange, value } }) => (
-                    <View className={"gap-2"}>
+                    <View className={'gap-2'}>
                       <Label htmlFor="gender">{t('common.gender')} *</Label>
                       <View className="flex-row justify-between gap-x-4">
                         {/* --- CARD: NAM --- */}
@@ -171,9 +166,7 @@ export default function RegisterScreen() {
                         />
                       </View>
                       {errors.gender && (
-                        <Text className="text-sm text-red-500">
-                          {errors.gender.message}
-                        </Text>
+                        <Text className="text-sm text-red-500">{errors.gender.message}</Text>
                       )}
                     </View>
                   )}
@@ -185,14 +178,13 @@ export default function RegisterScreen() {
                   render={({ field: { onChange, value } }) => {
                     const langConfig = _LanguagesMap.find((lang) => lang.code === value);
 
-                    return(
-                      <View className={"gap-2"}>
+                    return (
+                      <View className={'gap-2'}>
                         <Label htmlFor="language">{t('common.language')} *</Label>
                         <TouchableOpacity
-                          className="flex-row h-12 items-center justify-between rounded-2xl border border-gray-300 bg-white px-3 py-1.5 backdrop-blur-md"
-                          onPress={() => setModalLangVisible(true)}
-                        >
-                          <View className={"flex-row gap-2 items-center"}>
+                          className="h-12 flex-row items-center justify-between rounded-2xl border border-gray-300 bg-white px-3 py-1.5 backdrop-blur-md"
+                          onPress={() => setModalLangVisible(true)}>
+                          <View className={'flex-row items-center gap-2'}>
                             <Image source={langConfig?.icon} className="mr-2 h-6 w-6" />
                             <Text className="mr-1 font-inter-medium">{langConfig?.label}</Text>
                           </View>
@@ -208,47 +200,74 @@ export default function RegisterScreen() {
                         />
 
                         {errors.language && (
-                          <Text className="text-sm text-red-500">
-                            {errors.language.message}
-                          </Text>
+                          <Text className="text-sm text-red-500">{errors.language.message}</Text>
                         )}
                       </View>
-                    )
+                    );
                   }}
                 />
+                {/* Terms and Conditions với useState */}
+                <View className="mt-4 px-1">
+                  <View className="flex-row items-start gap-3">
+                    {/* Ô Checkbox */}
+                    <TouchableOpacity
+                      onPress={() => setIsAgreed(!isAgreed)}
+                      activeOpacity={0.7}
+                      className="mt-0.5">
+                      <Icon
+                        as={isAgreed ? CheckSquare : Square}
+                        size={22}
+                        className={isAgreed ? 'text-primary-color-2' : 'text-gray-400'}
+                      />
+                    </TouchableOpacity>
 
+                    {/* Nội dung văn bản có chứa link */}
+                    <View className="flex-1">
+                      <Text className="font-inter-regular leading-5 text-gray-600">
+                        {t('auth.i_agree_to')}{' '}
+                        <Text
+                          className="font-inter-bold text-primary-color-2 underline"
+                          onPress={() => router.push('/term-or-use-pdf')}>
+                          {t('auth.terms_and_conditions')}
+                        </Text>{' '}
+                        {t('common.and')}{' '}
+                        <Text
+                          className="font-inter-bold text-primary-color-2 underline"
+                          onPress={() => router.push('/term-or-use-pdf')}>
+                          {t('auth.privacy_policy')}
+                        </Text>
+                      </Text>
+                    </View>
+                  </View>
+                </View>
               </View>
             </View>
-            <View className="mt-8 mb-8 w-full">
+
+            <View className="mb-8 mt-8 w-full">
               <TouchableOpacity
                 onPress={handleSubmit(onSubmit)}
-                disabled={loading}
+                disabled={loading || !isAgreed}
                 className={cn(
-                  "w-full py-4 rounded-full items-center justify-center",
-                  !loading
-                    ? "bg-primary-color-2"
-                    : "bg-[#E0E0E0]"
-                )}
-              >
-                <Text className="text-white text-lg font-inter-bold">
-                  {t('common.continue')}
-                </Text>
+                  'w-full items-center justify-center rounded-full py-4',
+                  !loading && isAgreed ? 'bg-primary-color-2' : 'bg-[#E0E0E0]'
+                )}>
+                <Text className="font-inter-bold text-lg text-white">{t('common.continue')}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
-  )
+  );
 }
 
 // --- SUB COMPONENT: GENDER CARD ---
 // Tách ra cho code gọn gàng
 const GenderCard = ({
-                      label,
-                      isActive,
-                      onPress,
-                    }: {
+  label,
+  isActive,
+  onPress,
+}: {
   label: string;
   isActive: boolean;
   onPress: () => void;
@@ -257,36 +276,30 @@ const GenderCard = ({
     <TouchableOpacity
       onPress={onPress}
       className={cn(
-        "flex-1 aspect-[0.85] rounded-2xl items-center justify-center border",
-        isActive
-          ? "bg-blue-100 border-blue-300"
-          : "bg-white border-gray-200"
-      )}
-    >
+        'aspect-[0.85] flex-1 items-center justify-center rounded-2xl border',
+        isActive ? 'border-blue-300 bg-blue-100' : 'border-gray-200 bg-white'
+      )}>
       {/* Icon Circle Wrapper */}
       <View
         className={cn(
-          "w-20 h-20 rounded-full items-center justify-center mb-3",
-          isActive ? "bg-blue-200" : "bg-gray-100"
-        )}
-      >
+          'mb-3 h-20 w-20 items-center justify-center rounded-full',
+          isActive ? 'bg-blue-200' : 'bg-gray-100'
+        )}>
         {label === 'Nam' ? (
-          <Icon as={Mars} size={48} className={isActive ? "text-blue-400" : "text-[#9CA3AF]"}  />
+          <Icon as={Mars} size={48} className={isActive ? 'text-blue-400' : 'text-[#9CA3AF]'} />
         ) : (
-          <Icon as={Venus} size={48} className={isActive ? "text-blue-400" : "text-[#9CA3AF]"}/>
+          <Icon as={Venus} size={48} className={isActive ? 'text-blue-400' : 'text-[#9CA3AF]'} />
         )}
       </View>
 
-      <Text className={cn(
-        "text-lg font-inter-medium",
-        isActive ? "text-gray-900" : "text-gray-500"
-      )}>
+      <Text
+        className={cn('font-inter-medium text-lg', isActive ? 'text-gray-900' : 'text-gray-500')}>
         {label}
       </Text>
 
       {/* Dấu tích nhỏ (Optional - thêm vào cho xịn nếu muốn) */}
       {isActive && (
-        <View className="absolute top-3 right-3 bg-blue-400 rounded-full p-1">
+        <View className="absolute right-3 top-3 rounded-full bg-blue-400 p-1">
           <Check size={12} color="white" strokeWidth={4} />
         </View>
       )}

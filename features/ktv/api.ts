@@ -11,9 +11,12 @@ import {
   CancelBookingRequet,
   TotalIncomeResponse,
   DashboardQueryParams,
+  DetailInfoKTVResponse,
+  EditProfileKtvRequest,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
+import { createUploadTask } from 'expo-file-system';
 
 const defaultUri = '/ktv';
 
@@ -88,6 +91,27 @@ const ktvApi = {
   },
   totalIncome: async (params: DashboardQueryParams): Promise<TotalIncomeResponse> => {
     const response = await client.get(`${defaultUri}/total-income`, { params });
+    return response.data;
+  },
+  profileKtv: async (): Promise<DetailInfoKTVResponse> => {
+    const response = await client.get(`${defaultUri}/profile`);
+    return response.data;
+  },
+
+  uploadImage: async (data: FormData) => {
+    const response = await client.post(`${defaultUri}/upload-ktv-images`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+  deleteImage: async (id: string) => {
+    const response = await client.delete(`${defaultUri}/delete-ktv-image/${id}`);
+    return response.data;
+  },
+  updateProfile: async (data: EditProfileKtvRequest) => {
+    const response = await client.post(`${defaultUri}/edit-profile-ktv`, data);
     return response.data;
   },
 };

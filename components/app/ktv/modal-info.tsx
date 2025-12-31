@@ -135,9 +135,7 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
 
         {/* Đăng xuất */}
-        <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
-          onPress={() => setLogoutModalOpen(true)}>
+        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={logout}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={LogOut} size={24} className="text-red-500" />
           </View>

@@ -373,7 +373,6 @@ export const useCheckAuth = () => {
   return status === _AuthStatus.AUTHORIZED;
 };
 
-
 /**
  * Hook để kiểm tra xem user có đang được xác thực hay không, nếu không thì push về màn hình auth
  */
@@ -531,12 +530,11 @@ export const useSetLanguageUser = (onClose?: () => void) => {
             },
           }
         );
-      }
-      else {
+      } else {
         await syncLanguage(lang);
       }
       // Đóng bottom sheet
-      if (onClose){
+      if (onClose) {
         onClose();
       }
     },

@@ -104,7 +104,9 @@
     "no_description": "Chưa có mô tả",
     "all": "Tất cả",
     "security": "Bảo mật",
-    "new_password_placeholder": "Nhập mật khẩu mới"
+    "new_password_placeholder": "Nhập mật khẩu mới",
+    "and": "và",
+    "years_of_experience" : "Số năm kinh nghiệm"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -251,6 +253,10 @@
     "register_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
     "login_title": "Đăng nhập",
     "login_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
+    "i_agree_to": "Tôi đồng ý với",
+    "terms_and_conditions": "Điều khoản dịch vụ",
+    "privacy_policy": "Chính sách bảo mật",
+    "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
     "error": {
       "phone_required": "Vui lòng nhập số điện thoại",
       "phone_invalid": "Số điện thoại không hợp lệ, vui lòng nhập lại",
@@ -341,7 +347,12 @@
     "error": {
         "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
         "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
-        "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu"
+        "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu",
+        "invalid_address": "Địa chỉ không hợp lệ",
+        "invalid_experience": "Số năm kinh nghiệm phải từ 0 đến 60",
+        "old_password_min": "Mật khẩu hiện tại phải có ít nhất 8 ký tự",
+        "new_password_min": "Mật khẩu mới phải có ít nhất 8 ký tự",
+        "bio_required": "Vui lòng nhập giới thiệu bản thân"
     },
     "partner_form": {
         "title": "Đăng ký kỹ thuật viên",
@@ -677,6 +688,22 @@
           "options_price": "Vui lòng nhập giá tiền gói dịch vụ",
           "options_min": "Vui lòng thêm ít nhất 1 gói dịch vụ"
         }
+      }
+    },
+    "edit_profile": {
+   
+      "image": {
+        "max_5": "Bạn chỉ được chọn tối đa 5 hình ảnh.",
+        "confirm_delete": "Bạn có chắc chắn muốn xóa hình ảnh này không? Hành động này không thể hoàn tác.",
+        "display_images": "Ảnh hiển thị ({{count}}/5 ảnh)",
+        "add_image": "Thêm ảnh"
+      },
+      "common": {
+        "success": "Thao tác thành công",
+        "error": "Có lỗi xảy ra",
+        "confirm": "Xác nhận",
+        "cancel": "Hủy",
+        "delete": "Xóa"
       }
     }
   }
