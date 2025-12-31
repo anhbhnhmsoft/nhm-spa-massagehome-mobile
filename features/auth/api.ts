@@ -1,12 +1,17 @@
 import { client } from '@/lib/axios-client';
 import {
   AuthenticateRequest,
-  AuthenticateResponse, DeviceInfoRequest, EditProfileRequest, LoginRequest, LoginResponse,
+  AuthenticateResponse,
+  DeviceInfoRequest,
+  EditProfileRequest,
+  LoginRequest,
+  LoginResponse,
   ProfileResponse,
   RegisterRequest,
   RegisterResponse,
   ResendRegisterOTPResponse,
   SetLanguageRequest,
+  TermOfUseResponse,
   VerifyRegisterOTPRequest,
   VerifyRegisterOTPResponse,
 } from '@/features/auth/types';
@@ -91,25 +96,25 @@ const authApi = {
    * Hàm để edit avatar cho user
    * @param data
    */
-  editAvatar: async (data:FormData): Promise<ProfileResponse> =>  {
+  editAvatar: async (data: FormData): Promise<ProfileResponse> => {
     const response = await client.post(`${defaultUri}/edit-avatar`, data, {
       headers: {
-        "Content-Type": "multipart/form-data"
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     });
     return response.data;
   },
   /**
    * Hàm để xóa avatar cho user
    */
-  deleteAvatar: async (): Promise<ProfileResponse> =>  {
+  deleteAvatar: async (): Promise<ProfileResponse> => {
     const response = await client.delete(`${defaultUri}/delete-avatar`);
     return response.data;
   },
   /**
    * Hàm để edit profile cho user
    */
-  editProfile: async (data: EditProfileRequest): Promise<ProfileResponse> =>  {
+  editProfile: async (data: EditProfileRequest): Promise<ProfileResponse> => {
     const response = await client.post(`${defaultUri}/edit-profile`, data);
     return response.data;
   },
@@ -119,7 +124,15 @@ const authApi = {
   logout: async (): Promise<ResponseSuccessType> => {
     const response = await client.post(`${defaultUri}/logout`);
     return response.data;
-  }
+  },
+
+  /**
+   * Hàm để lấy điều khoản dịch vụ và chính sách bảo mật
+   */
+  termOfUse: async () : Promise<TermOfUseResponse> => {
+    const response = await client.get(`commercial/contract/term-of-use`);
+    return response.data;
+  },
 };
 
 export default authApi;

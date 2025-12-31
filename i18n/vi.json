@@ -104,7 +104,8 @@
     "no_description": "Chưa có mô tả",
     "all": "Tất cả",
     "security": "Bảo mật",
-    "new_password_placeholder": "Nhập mật khẩu mới"
+    "new_password_placeholder": "Nhập mật khẩu mới",
+    "and": "và"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -251,6 +252,10 @@
     "register_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
     "login_title": "Đăng nhập",
     "login_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
+    "i_agree_to": "Tôi đồng ý với",
+    "terms_and_conditions": "Điều khoản dịch vụ",
+    "privacy_policy": "Chính sách bảo mật",
+    "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
     "error": {
       "phone_required": "Vui lòng nhập số điện thoại",
       "phone_invalid": "Số điện thoại không hợp lệ, vui lòng nhập lại",
@@ -449,8 +454,7 @@
     },
     "confirm": {
       "delete_withdraw_info": "Bạn có chắc chắn muốn xóa",
-      "delete_withdraw_info_message": "Bạn có chắc chắn muốn xóa thông tin rút tiền này không?",
-      
+      "delete_withdraw_info_message": "Bạn có chắc chắn muốn xóa thông tin rút tiền này không?"
     },
     "success": {
       "deposit": "Nạp tiền thành công, cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!",
