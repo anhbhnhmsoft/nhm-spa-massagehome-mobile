@@ -105,7 +105,8 @@
     "all": "Tất cả",
     "security": "Bảo mật",
     "new_password_placeholder": "Nhập mật khẩu mới",
-    "and": "và"
+    "and": "và",
+    "years_of_experience" : "Số năm kinh nghiệm"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -693,7 +694,9 @@
    
       "image": {
         "max_5": "Bạn chỉ được chọn tối đa 5 hình ảnh.",
-        "confirm_delete": "Bạn có chắc chắn muốn xóa hình ảnh này không? Hành động này không thể hoàn tác."
+        "confirm_delete": "Bạn có chắc chắn muốn xóa hình ảnh này không? Hành động này không thể hoàn tác.",
+        "display_images": "Ảnh hiển thị ({{count}}/5 ảnh)",
+        "add_image": "Thêm ảnh"
       },
       "common": {
         "success": "Thao tác thành công",

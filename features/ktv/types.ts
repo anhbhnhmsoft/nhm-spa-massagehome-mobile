@@ -113,6 +113,7 @@ export type DetailInfoKTV = {
   address: string;
   experience: number;
   date_of_birth: string;
+  phone: string;
 };
 
 export type EditProfileKtvRequest = {
@@ -127,8 +128,8 @@ export type EditProfileKtvRequest = {
 
   /** Ngày sinh (YYYY-MM-DD) */
   date_of_birth?: string;
-  old_password?: string;
-  new_password?: string;
+  old_pass?: string;
+  new_pass?: string;
 };
 
 export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;

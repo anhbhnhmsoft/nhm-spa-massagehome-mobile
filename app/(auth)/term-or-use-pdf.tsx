@@ -3,7 +3,6 @@ import { View, ActivityIndicator } from 'react-native';
 import Pdf from 'react-native-pdf';
 import HeaderBack from '@/components/header-back';
 import { useTermOfUseQuery } from '@/features/auth/hooks/use-query';
-import { Text } from '@/components/ui/text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TermOrUsePdf() {
@@ -34,7 +33,6 @@ export default function TermOrUsePdf() {
         style={{ flex: 1, backgroundColor: 'white' }}
         onLoadComplete={() => setPdfLoading(false)}
         onError={(error) => {
-          console.log(error);
           setPdfLoading(false);
         }}
       />

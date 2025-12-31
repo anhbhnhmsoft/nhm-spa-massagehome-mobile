@@ -520,8 +520,10 @@ export const useDashboardTotalIncome = () => {
 
 export const editProfileKTV = () => {
   const errorHandle = useErrorToast();
-  const { data: profileData, error, refetch } = useProfileKtvQuery();
+  const { data: profileData, refetch } = useProfileKtvQuery();
   const { mutate: editProfile } = useUpdateProfileKtvMutation();
+
+  const user = useAuthStore((state) => state.user);
   const { t } = useTranslation();
   const setLoading = useApplicationStore((state) => state.setLoading);
   const schema = z
@@ -543,15 +545,21 @@ export const editProfileKTV = () => {
 
       date_of_birth: z.string().optional(),
 
-      old_password: z.string().optional(),
-      new_password: z.string().optional(),
+      old_pass: z.string().optional(),
+      new_pass: z
+        .string()
+        .min(1, { message: t('auth.error.password_invalid') })
+        .min(8, { message: t('auth.error.password_invalid') })
+        .regex(/[a-z]/, { message: t('auth.error.password_invalid') })
+        .regex(/[A-Z]/, { message: t('auth.error.password_invalid') })
+        .regex(/[0-9]/, { message: t('auth.error.password_invalid') }),
     })
     .refine((data) => !!data.bio.vi?.trim() || !!data.bio.en?.trim() || !!data.bio.cn?.trim(), {
       path: ['bio.vi'],
       message: t('profile.error.bio_required'),
     })
-    .refine((data) => !data.new_password || !!data.old_password, {
-      path: ['old_password'],
+    .refine((data) => !data.new_pass || !!data.old_pass, {
+      path: ['old_pass'],
       message: t('profile.error.old_password_min'),
     });
   const form = useForm<EditProfileKtvRequest>({
@@ -571,34 +579,25 @@ export const editProfileKTV = () => {
     },
 
     resolver: zodResolver(schema),
-    mode: 'onSubmit', // 🔥 QUAN TRỌNG
+    mode: 'onSubmit',
   });
 
   const onSubmit = useCallback((data: EditProfileKtvRequest) => {
-    setLoading(true);
-
-    // 🔹 Format lại data trước khi gửi
     const payload: EditProfileKtvRequest = {
       ...data,
-      // date_of_birth chỉ gửi YYYY-MM-DD
       date_of_birth: data.date_of_birth || '',
-      // bio luôn đầy đủ 3 key
       bio: {
         vi: data.bio?.vi ?? '',
         en: data.bio?.en ?? '',
         cn: data.bio?.cn ?? '',
       },
-      // lat/lng convert sang string
       lat: data.lat != null ? String(data.lat) : '0',
       lng: data.lng != null ? String(data.lng) : '0',
-      // address không để rỗng
       address: data.address ?? '',
-      // gender mặc định nếu cần
-      gender: data.gender ?? 1, // nếu backend cũng yêu cầu string
-      // experience mặc định nếu cần
-      experience: data.experience ?? 0, // nếu backend yêu cầu string
+      gender: data.gender ?? 1,
+      experience: data.experience ?? 0,
     };
-
+    console.log(payload);
     editProfile(payload, {
       onSuccess: (res) => {
         refetch();
@@ -617,6 +616,8 @@ export const editProfileKTV = () => {
     form,
     profileData,
     onSubmit,
+    refetch,
+    user,
   };
 };
 

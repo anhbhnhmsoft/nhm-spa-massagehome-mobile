@@ -56,7 +56,7 @@ export const LocationSelector = <T extends FieldValues = FieldValues>({
     <View>
       <View className="mb-2 mt-2 flex-row items-center justify-between">
         <Text className="mb-1.5 ml-1 font-inter-medium text-sm text-gray-500">
-          {t('profile.partner_form.field_location_label')} <Text className="text-red-500">*</Text>
+          {t('profile.partner_form.field_location_label')}
         </Text>
         <TouchableOpacity
           onPress={handleGetCurrentLocation}
