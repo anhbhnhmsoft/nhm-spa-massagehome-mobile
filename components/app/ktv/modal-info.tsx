@@ -127,7 +127,12 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
 
         {/* Thông báo */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center">
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(notification)/notificaton');
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Bell} size={24} className="text-primary-color-1" />
           </View>

@@ -597,7 +597,6 @@ export const editProfileKTV = () => {
       gender: data.gender ?? 1,
       experience: data.experience ?? 0,
     };
-    console.log(payload);
     editProfile(payload, {
       onSuccess: (res) => {
         refetch();
