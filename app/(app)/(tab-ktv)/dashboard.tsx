@@ -53,7 +53,6 @@ const DashboardScreen = () => {
     }
   };
   const TAB_BAR_HEIGHT = getTabBarHeight();
-
   return (
     <View className="flex-1 bg-white">
       <HeaderAppKTV />

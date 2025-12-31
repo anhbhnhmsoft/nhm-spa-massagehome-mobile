@@ -469,7 +469,6 @@ export const useDashboardTotalIncome = () => {
     if (!data?.chart_data || data.chart_data.length === 0) return null;
     return computePercentChange(activeTab, data.chart_data);
   }, [data?.chart_data, activeTab]);
-
   // Build text hiển thị percent change với i18next
   const percentChangeText = useMemo(() => {
     if (!percentChange) return '';
@@ -494,7 +493,7 @@ export const useDashboardTotalIncome = () => {
     }
 
     const sign = percentChange.percent! > 0 ? '+' : '';
-    return `${sign}${percentChange.percent}% ${t('dashboard.percent_change.compare', {
+    return `${sign}${percentChange.percent} ${t('dashboard.percent_change.compare', {
       compare: t(`dashboard.compare.${compareKey}`),
     })}`;
   }, [percentChange, activeTab, t]);

@@ -16,9 +16,6 @@ export const useNotificationScreen = () => {
       onSuccess: () => {
         query.refetch();
       },
-      onError: (err) => {
-        console.log(err);
-      },
       onSettled: () => {
         setLoading(false);
       },
