@@ -31,7 +31,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EditInfoScreen() {
   const { form, profileData, onSubmit, user } = editProfileKTV();
-  console.log(profileData);
   const { removeImage } = useEditImage();
   const { control, handleSubmit, setValue } = form;
 

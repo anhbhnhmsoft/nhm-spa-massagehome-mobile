@@ -2,24 +2,38 @@ import { useMemo } from 'react';
 import { ChartDataItem } from '@/features/ktv/types';
 import { DashboardTab } from '@/features/service/const';
 
+/* =======================
+   Utils
+======================= */
+
 const DAY_TIME_SLOTS = ['00:00-06:00', '06:00-12:00', '12:00-18:00', '18:00-24:00'];
 
+const isValidDate = (d: Date) => !isNaN(d.getTime());
+
 const toYMD = (d: Date) => d.toISOString().slice(0, 10);
+const toYM = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
 const formatDM = (d: Date) =>
   `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-const isSameDay = (a: string, b: string) => toYMD(new Date(a)) === toYMD(new Date(b));
+const isSameDay = (a: string, b: string) => {
+  const d1 = new Date(a);
+  const d2 = new Date(b);
+  if (!isValidDate(d1) || !isValidDate(d2)) return false;
+  return toYMD(d1) === toYMD(d2);
+};
 
 const isSameMonth = (a: string, b: string) => {
   const d1 = new Date(a);
   const d2 = new Date(b);
+  if (!isValidDate(d1) || !isValidDate(d2)) return false;
   return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
 };
 
 const isDateInRange = (date: string, start: Date, end: Date) => {
-  const d = new Date(date).getTime();
-  return d >= start.getTime() && d <= end.getTime();
+  const d = new Date(date);
+  if (!isValidDate(d)) return false;
+  return d >= start && d <= end;
 };
 
 const getLast7Days = () =>
@@ -32,23 +46,18 @@ const getLast7Days = () =>
 const getLast7Months = () =>
   Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();
+    d.setDate(1); // 👈 QUAN TRỌNG
     d.setMonth(d.getMonth() - (6 - i));
-    d.setDate(1);
     return toYMD(d);
   });
 
-const getMonthRanges = (count = 2) => {
-  const ranges: {
-    start: Date;
-    end: Date;
-    label: string;
-  }[] = [];
-
+const getWeekRanges = (count = 7) => {
+  const ranges: { start: Date; end: Date; label: string }[] = [];
   let end = new Date();
 
   for (let i = 0; i < count; i++) {
     const start = new Date(end);
-    start.setDate(start.getDate() - 7);
+    start.setDate(start.getDate() - 6);
 
     ranges.unshift({
       start,
@@ -56,102 +65,92 @@ const getMonthRanges = (count = 2) => {
       label: `${formatDM(start)}-${formatDM(end)}`,
     });
 
-    end = start;
+    end = new Date(start);
+    end.setDate(end.getDate() - 1);
   }
 
   return ranges;
 };
 
-// computePercentChange chỉ trả về số
+/* =======================
+   % CHANGE (SAFE)
+======================= */
+
 export const computePercentChange = (type: DashboardTab, rawData: ChartDataItem[]) => {
   const today = new Date();
-  const toDateStr = (d: Date) => d.toISOString().slice(0, 10);
 
-  const sumByPredicate = (rawData: ChartDataItem[], predicate: (dateStr: string) => boolean) =>
-    rawData.reduce((acc, item) => (predicate(item.date) ? acc + Number(item.total || 0) : acc), 0);
+  const sumBy = (predicate: (d: Date) => boolean) =>
+    rawData.reduce((acc, item) => {
+      const dt = new Date(item.date);
+      if (!isValidDate(dt)) return acc;
+      return predicate(dt) ? acc + Number(item.total || 0) : acc;
+    }, 0);
 
-  const getCurrentPrevious = () => {
-    if (type === 'day') {
-      const cur = toDateStr(today);
-      const prevDate = new Date(today);
-      prevDate.setDate(prevDate.getDate() - 1);
-      return [
-        sumByPredicate(rawData, (d) => toDateStr(new Date(d)) === cur),
-        sumByPredicate(rawData, (d) => toDateStr(new Date(d)) === toDateStr(prevDate)),
-      ];
-    }
+  let currentTotal = 0;
+  let previousTotal = 0;
 
-    if (type === 'week') {
-      const days = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - (6 - i));
-        return toDateStr(d);
-      });
-      const curTotal = sumByPredicate(rawData, (d) => days.includes(toDateStr(new Date(d))));
-      const prevDays = days.map((d) => {
-        const dt = new Date(d);
-        dt.setDate(dt.getDate() - 7);
-        return toDateStr(dt);
-      });
-      const prevTotal = sumByPredicate(rawData, (d) => prevDays.includes(toDateStr(new Date(d))));
-      return [curTotal, prevTotal];
-    }
+  /* ===== DAY ===== */
+  if (type === 'day') {
+    const prev = new Date(today);
+    prev.setDate(prev.getDate() - 1);
 
-    // Month theo tuần
-    if (type === 'month') {
-      const ranges = Array.from({ length: 7 }).map((_, i) => {
-        const end = new Date();
-        end.setDate(end.getDate() - 7 * (6 - i));
-        const start = new Date(end);
-        start.setDate(start.getDate() - 6);
-        return { start, end };
-      });
-      const curRange = ranges[ranges.length - 1];
-      const prevRange = ranges[ranges.length - 2];
-      const curTotal = sumByPredicate(rawData, (d) => {
-        const dt = new Date(d);
-        return dt >= curRange.start && dt <= curRange.end;
-      });
-      const prevTotal = sumByPredicate(rawData, (d) => {
-        const dt = new Date(d);
-        return dt >= prevRange.start && dt <= prevRange.end;
-      });
-      return [curTotal, prevTotal];
-    }
+    currentTotal = sumBy((d) => toYMD(d) === toYMD(today));
+    previousTotal = sumBy((d) => toYMD(d) === toYMD(prev));
+  }
 
-    // Year theo tháng
-    if (type === 'year') {
-      const months = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date();
-        d.setMonth(d.getMonth() - (6 - i));
-        d.setDate(1);
-        return d;
-      });
-      const curMonth = months[months.length - 1];
-      const prevMonth = months[months.length - 2];
-      const curTotal = sumByPredicate(rawData, (d) => {
-        const dt = new Date(d);
-        return dt.getFullYear() === curMonth.getFullYear() && dt.getMonth() === curMonth.getMonth();
-      });
-      const prevTotal = sumByPredicate(rawData, (d) => {
-        const dt = new Date(d);
-        return (
-          dt.getFullYear() === prevMonth.getFullYear() && dt.getMonth() === prevMonth.getMonth()
-        );
-      });
-      return [curTotal, prevTotal];
-    }
+  /* ===== WEEK ===== */
+  if (type === 'week') {
+    const startCur = new Date();
+    startCur.setDate(startCur.getDate() - 6);
 
-    return [0, 0];
-  };
+    const startPrev = new Date(startCur);
+    startPrev.setDate(startPrev.getDate() - 7);
+    const endPrev = new Date(startCur);
+    endPrev.setDate(endPrev.getDate() - 1);
 
-  const [currentTotal, previousTotal] = getCurrentPrevious();
+    currentTotal = sumBy((d) => d >= startCur && d <= today);
+    previousTotal = sumBy((d) => d >= startPrev && d <= endPrev);
+  }
+
+  /* ===== MONTH (by week) ===== */
+  if (type === 'month') {
+    const ranges = getWeekRanges(7);
+    const cur = ranges[ranges.length - 1];
+    const prev = ranges[ranges.length - 2];
+
+    currentTotal = sumBy((d) => d >= cur.start && d <= cur.end);
+    previousTotal = sumBy((d) => d >= prev.start && d <= prev.end);
+  }
+
+  /* ===== YEAR (by month) ===== */
+  if (type === 'year') {
+    const curMonth = new Date();
+    const prevMonth = new Date();
+    prevMonth.setMonth(prevMonth.getMonth() - 1);
+
+    currentTotal = sumBy(
+      (d) => d.getFullYear() === curMonth.getFullYear() && d.getMonth() === curMonth.getMonth()
+    );
+
+    previousTotal = sumBy(
+      (d) => d.getFullYear() === prevMonth.getFullYear() && d.getMonth() === prevMonth.getMonth()
+    );
+  }
+
   const diff = currentTotal - previousTotal;
-  const percent = previousTotal === 0 ? null : Math.round((diff / previousTotal) * 100 * 10) / 10;
-  const isIncrease = diff > 0 ? true : diff < 0 ? false : null;
+  const percent = previousTotal === 0 ? null : Math.round((diff / previousTotal) * 1000) / 10;
 
-  return { currentTotal, previousTotal, percent, isIncrease };
+  return {
+    currentTotal,
+    previousTotal,
+    percent,
+    isIncrease: diff > 0 ? true : diff < 0 ? false : null,
+  };
 };
+
+/* =======================
+   CHART DATA
+======================= */
 
 export const useDashboardChart = (type: DashboardTab, data: ChartDataItem[]) => {
   const chartData = useMemo<ChartDataItem[]>(() => {
@@ -159,51 +158,38 @@ export const useDashboardChart = (type: DashboardTab, data: ChartDataItem[]) => 
     if (type === 'day') {
       return DAY_TIME_SLOTS.map((slot) => {
         const found = data.find((d) => d.date === slot);
-        return {
-          date: slot,
-          total: found ? found.total : '0',
-        };
+        return { date: slot, total: found?.total ?? '0' };
       });
     }
 
     /* ===== WEEK ===== */
     if (type === 'week') {
-      const days = getLast7Days();
-
-      return days.map((date) => {
+      return getLast7Days().map((date) => {
         const found = data.find((d) => isSameDay(d.date, date));
-
-        return {
-          date,
-          total: found ? found.total : '0',
-        };
+        return { date, total: found?.total ?? '0' };
       });
     }
 
     /* ===== MONTH ===== */
     if (type === 'month') {
-      const ranges = getMonthRanges(5);
-
-      return ranges.map((range) => {
+      return getWeekRanges(5).map((range) => {
         const found = data.find((d) => isDateInRange(d.date, range.start, range.end));
-
-        return {
-          date: range.label,
-          total: found ? found.total : '0',
-        };
+        return { date: range.label, total: found?.total ?? '0' };
       });
     }
 
     /* ===== YEAR ===== */
     if (type === 'year') {
       const months = getLast7Months();
+      return months.map((monthDate) => {
+        const ym = monthDate.slice(0, 7); // yyyy-MM
 
-      return months.map((month) => {
-        const found = data.find((d) => isSameMonth(d.date, month));
+        // Use isSameMonth to handle different date formats (yyyy-MM vs yyyy-MM-dd)
+        const found = data.find((d) => isSameMonth(d.date, monthDate));
 
         return {
-          date: month,
-          total: found ? found.total : '0',
+          date: ym,
+          total: found?.total ?? '0',
         };
       });
     }
@@ -216,8 +202,5 @@ export const useDashboardChart = (type: DashboardTab, data: ChartDataItem[]) => 
     [chartData]
   );
 
-  return {
-    chartData,
-    maxValue,
-  };
+  return { chartData, maxValue };
 };

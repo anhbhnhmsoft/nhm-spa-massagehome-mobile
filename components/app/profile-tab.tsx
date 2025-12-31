@@ -1,4 +1,4 @@
-import React, { FC, useState,  forwardRef, useCallback, useRef, useMemo } from 'react';
+import React, { FC, useState, forwardRef, useCallback, useRef, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import {
   ChevronRight,
@@ -15,7 +15,7 @@ import {
   Headphones,
   Info,
   LogOut,
-  Bell
+  Bell,
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
@@ -83,7 +83,7 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({
             />
           ) : (
             // Fallback UI khi không có ảnh hoặc ảnh lỗi
-            <View className="h-14 w-14 rounded-full border-2 border-white bg-slate-200 justify-center items-center">
+            <View className="h-14 w-14 items-center justify-center rounded-full border-2 border-white bg-slate-200">
               <Icon as={UserIcon} size={24} className={'text-slate-400'} />
             </View>
           )}
@@ -107,14 +107,14 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({
       <View className="mt-6 flex-row gap-4 px-2">
         <View className="flex-1 flex-row items-center justify-between">
           <View className="items-center">
-            <Text className="text-base font-inter-bold text-white">
+            <Text className="font-inter-bold text-base text-white">
               {dashboardData?.wallet_balance ? formatBalance(dashboardData?.wallet_balance) : '-'}{' '}
               {t('common.currency')}{' '}
             </Text>
             <Text className="text-xs text-teal-100">{t('profile.balance')}</Text>
           </View>
           <View className="items-center">
-            <Text className="text-base font-inter-bold text-white">
+            <Text className="font-inter-bold text-base text-white">
               {dashboardData?.coupon_user_count ? dashboardData?.coupon_user_count : '0'}{' '}
             </Text>
             <Text className="text-xs text-teal-100">{t('profile.coupon')}</Text>
@@ -164,7 +164,9 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
     <View className="mb-3 rounded-xl bg-white p-4 shadow-sm">
       <View className="mb-4 flex-row items-center justify-between">
         <Text className="font-inter-bold text-gray-800">{t('profile.my_order')}</Text>
-        <TouchableOpacity className="flex-row items-center" onPress={() => router.push('/(app)/(profile)/orders')}>
+        <TouchableOpacity
+          className="flex-row items-center"
+          onPress={() => router.push('/(app)/(profile)/orders')}>
           <Text className="mr-1 text-xs text-gray-400">{t('common.see_more')}</Text>
           <Icon as={ChevronRight} size={12} className={'text-gray-400'} />
         </TouchableOpacity>
@@ -174,15 +176,16 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
           const count = dashboardData?.booking_count?.[item.status] || 0;
           return (
             <TouchableOpacity
-              onPress={useSingleTouch(() => router.push({
-                pathname: '/(app)/(profile)/orders',
-                params: {
-                  status: item.status,
-                }
-              }))}
+              onPress={useSingleTouch(() =>
+                router.push({
+                  pathname: '/(app)/(profile)/orders',
+                  params: {
+                    status: item.status,
+                  },
+                })
+              )}
               key={item.status}
-              className="relative flex-1 items-center"
-            >
+              className="relative flex-1 items-center">
               <View className="mb-2">
                 <Icon as={item.icon} size={24} className="text-gray-500" />
               </View>
@@ -220,7 +223,7 @@ export const RegisterPartnerOrAffiliate = () => {
           <Icon as={Building2} size={24} className="text-primary-color-1" />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-inter-bold text-gray-800" numberOfLines={1}>
+          <Text className="font-inter-bold text-sm text-gray-800" numberOfLines={1}>
             {t('profile.join_partner')}
           </Text>
           <Text className="text-[10px] text-gray-400" numberOfLines={1}>
@@ -232,13 +235,12 @@ export const RegisterPartnerOrAffiliate = () => {
       {/* Affiliate */}
       <TouchableOpacity
         onPress={() => router.push('/(app)/(profile)/affiliate')}
-        className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm"
-      >
+        className="w-[48%] flex-row items-center rounded-xl bg-white p-4 shadow-sm">
         <View className="mr-3">
           <Icon as={HandCoins} size={24} className="text-primary-color-1" />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-inter-bold text-gray-800" numberOfLines={1}>
+          <Text className="font-inter-bold text-sm text-gray-800" numberOfLines={1}>
             {t('profile.partner_commission')}
           </Text>
           <Text className="text-[10px] text-gray-400" numberOfLines={1}>
@@ -260,7 +262,12 @@ export const FeatureList = () => {
   const [visibleLocation, setVisibleLocation] = useState(false);
 
   // Hỗ trợ
-  const { visible: visibleSupport, openSupportModal, closeSupportModal, supportChanel } = useGetSupport();
+  const {
+    visible: visibleSupport,
+    openSupportModal,
+    closeSupportModal,
+    supportChanel,
+  } = useGetSupport();
 
   // Xử lý ngôn ngữ
   const selectedLang = useApplicationStore((state) => state.language);
@@ -277,7 +284,6 @@ export const FeatureList = () => {
   const [modalLangVisible, setModalLangVisible] = useState(false);
 
   const logout = useLogout();
-
 
   return (
     <>
@@ -312,9 +318,7 @@ export const FeatureList = () => {
         </TouchableOpacity>
 
         {/* Thông tin ứng dụng */}
-        <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
-        >
+        <TouchableOpacity className="mb-2 w-[25%] items-center">
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Info} size={24} className="text-primary-color-1" />
           </View>
@@ -322,10 +326,7 @@ export const FeatureList = () => {
         </TouchableOpacity>
 
         {/* Hỗ trợ khách hàng */}
-        <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
-          onPress={() => openSupportModal()}
-        >
+        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => openSupportModal()}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Headphones} size={24} className="text-primary-color-1" />
           </View>
@@ -335,7 +336,7 @@ export const FeatureList = () => {
         {/* Thông báo */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
-        >
+          onPress={() => router.push('/(app)/(notification)/notificaton')}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Bell} size={24} className="text-primary-color-1" />
           </View>
@@ -345,8 +346,7 @@ export const FeatureList = () => {
         {/* Đăng xuất */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
-          onPress={() => setLogoutModalOpen(true)}
-        >
+          onPress={() => setLogoutModalOpen(true)}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={LogOut} size={24} className="text-red-500" />
           </View>
@@ -358,10 +358,7 @@ export const FeatureList = () => {
       <ListLocationModal visible={visibleLocation} onClose={() => setVisibleLocation(false)} />
 
       {/* Ngôn ngữ */}
-      <SelectLanguage
-        visible={modalLangVisible}
-        onClose={() => setModalLangVisible(false)}
-      />
+      <SelectLanguage visible={modalLangVisible} onClose={() => setModalLangVisible(false)} />
 
       {/* Hỗ trợ khách hàng */}
       <SupportModal
@@ -374,8 +371,8 @@ export const FeatureList = () => {
       <Dialog
         isOpen={isLogoutModalOpen}
         onClose={() => setLogoutModalOpen(false)} // Đóng khi bấm Hủy hoặc bấm ra ngoài
-        title="profile.log_out_title"               // Key trong file ngôn ngữ (hoặc text thường)
-        description="profile.log_out_desc"          // Key: "Bạn có chắc muốn đăng xuất không?"
+        title="profile.log_out_title" // Key trong file ngôn ngữ (hoặc text thường)
+        description="profile.log_out_desc" // Key: "Bạn có chắc muốn đăng xuất không?"
         onConfirm={logout}
       />
     </>
