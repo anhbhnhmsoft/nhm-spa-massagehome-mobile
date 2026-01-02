@@ -16,6 +16,10 @@ export default function AuthLayout() {
         <Stack.Screen name="login" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="verify-otp" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="register" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen
+          name="term-or-use-pdf"
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
       </Stack>
     </>
   );
