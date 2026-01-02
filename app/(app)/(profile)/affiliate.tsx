@@ -1,26 +1,24 @@
 import React from 'react';
-import { View,  ScrollView, TouchableOpacity, Share } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Share, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import HeaderBack from '@/components/header-back';
-import useAuthStore from '@/features/auth/store';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import QRCode from 'react-native-qrcode-svg';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
 import DefaultColor from '@/components/styles/color';
+import { useAffiliateUser } from '@/features/affiliate/hooks';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatBalance } from '@/lib/utils';
 
-// Giả lập dữ liệu danh sách giới thiệu từ image_2.png
-const referralList = [
-  { id: 1, phone: '*******858', date: '17/12/2025' },
-];
 
 const ReferralScreen = () => {
   const {t} = useTranslation();
   const copyToClipboard = useCopyClipboard();
-  const user = useAuthStore((state) => state.user);
+  const { config, affiliate_link } = useAffiliateUser();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -40,9 +38,13 @@ const ReferralScreen = () => {
             <Text className="text-gray-700 text-lg font-inter-semibold mb-1">
               {t('affiliate.title_1')}
             </Text>
-            <Text className="text-primary-color-2 text-3xl font-inter-bold">
-              {t('affiliate.title_2', { percent: '30' })}
-            </Text>
+            {config ? (
+              <Text className="text-primary-color-2 text-3xl font-inter-bold">
+                {t('affiliate.title_2', { percent: formatBalance(config.commission_rate) || '0' })}
+              </Text>
+            ) : (
+              <Skeleton className="w-full h-12" />
+            )}
           </View>
 
           {/* Thẻ "Cách hoạt động" */}
@@ -52,15 +54,15 @@ const ReferralScreen = () => {
             </Text>
             <View className="justify-center items-center p-4">
               <QRCode
-                value={user?.affiliate_link ?? ''}
+                value={affiliate_link}
                 size={200}
                 color={DefaultColor.base['primary-color-1']}
                 backgroundColor="white"
               />
             </View>
             <View className="flex-row items-center bg-gray-100 p-3 rounded-xl mb-4">
-              <Text className="text-gray-600 font-inter-medium flex-1" numberOfLines={1}>{user?.affiliate_link ?? ''}</Text>
-              <TouchableOpacity className="ml-2 p-2" onPress={() => copyToClipboard(user?.affiliate_link ?? '')}>
+              <Text className="text-gray-600 font-inter-medium flex-1" numberOfLines={1}>{affiliate_link}</Text>
+              <TouchableOpacity className="ml-2 p-2" onPress={() => copyToClipboard(affiliate_link)}>
                 <Ionicons name="copy-outline" size={24} color="gray" />
               </TouchableOpacity>
             </View>
@@ -68,31 +70,16 @@ const ReferralScreen = () => {
               onPress={async () => {
                 try {
                   await Share.share({
-                    message: user?.affiliate_link ?? '',
-                    url: user?.affiliate_link ?? '',
+                    message: affiliate_link,
+                    url: affiliate_link,
                   });
                 }catch {
-                  // do nothing
+                  Alert.alert(t('affiliate.share_error'))
                 }
               }}
-
             >
-              <Text className="text-white text-lg font-inter-bold">Mời ngay</Text>
+              <Text className="text-white text-lg font-inter-bold">{t('affiliate.share')}</Text>
             </TouchableOpacity>
-          </View>
-          {/* Thẻ "Danh sách giới thiệu" */}
-          <View className="bg-white p-4 rounded-2xl shadow-sm">
-            <Text className="text-lg font-inter-bold text-gray-800 mb-4">Danh sách giới thiệu</Text>
-            <View className="flex-row justify-between mb-2 border-b border-gray-100 pb-2">
-              <Text className="text-gray-500 font-inter-medium">Số điện thoại</Text>
-              <Text className="text-gray-500 font-inter-medium">Ngày</Text>
-            </View>
-            {referralList.map((item) => (
-              <View key={item.id} className="flex-row justify-between py-3 border-b border-gray-100">
-                <Text className="text-gray-800 font-inter-bold">{item.phone}</Text>
-                <Text className="text-gray-600">{item.date}</Text>
-              </View>
-            ))}
           </View>
         </View>
       </ScrollView>
