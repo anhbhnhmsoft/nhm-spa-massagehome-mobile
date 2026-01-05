@@ -4,10 +4,12 @@ import Carousel from 'react-native-reanimated-carousel';
 import { Image } from 'expo-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useListBannerQuery } from '@/features/commercial/hooks/use-query';
-import { ShieldCheck, Award, ThumbsUp, RotateCcw, Clock } from 'lucide-react-native';
+import {
+  ChevronRight,
+  BriefcaseBusiness, Handshake,
+} from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
-import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { useGetListKTVHomepage } from '@/features/user/hooks';
 import { router } from 'expo-router';
@@ -15,6 +17,10 @@ import { KTVHomePageCard } from '@/components/app/ktv-card';
 import Empty from '@/components/empty';
 import { useGetCategoryList } from '@/features/service/hooks';
 import CategoryCard from '@/components/app/category-card';
+import { LinearGradient } from 'expo-linear-gradient'
+import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
+import { useCheckAuth } from '@/features/auth/hooks';
+
 
 const width = Dimensions.get('window').width;
 const carouselHeight = width * 0.5;
@@ -58,7 +64,7 @@ export function CarouselBanner({
           <View className="h-full w-full px-4">
             <Image
               source={{ uri: item.image_url }}
-              style={{ width: '100%', height: '100%', borderRadius: 16 }}
+              style={{ width: '100%', height: '100%', borderRadius: 16, backgroundColor: DefaultColor.slate['300'] }}
               contentFit="cover"
               transition={500}
             />
@@ -81,63 +87,75 @@ export function CarouselBanner({
   );
 }
 
-// Dữ liệu hiển thị trong carousel Trust
-const TRUST_ITEMS = [
-  {
-    title: 'homepage.features.verify',
-    sub: 'homepage.features.verify_sub',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'homepage.features.service',
-    sub: 'homepage.features.service_sub',
-    icon: ThumbsUp,
-  },
-  {
-    title: 'homepage.features.cancel',
-    sub: 'homepage.features.cancel_sub',
-    icon: RotateCcw,
-  },
-  {
-    title: 'homepage.features.award',
-    sub: 'homepage.features.award_sub',
-    icon: Award,
-  },
-];
-export const VerifyFeatureSection = () => {
+
+export const InviteKtv = () => {
   const { t } = useTranslation();
+  const checkAuth = useCheckAuth();
   return (
-    <View className="mx-4 mt-6 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-      <Text className="mb-3 text-base font-inter-bold text-slate-800">
-        {t('homepage.features_trust')}
-      </Text>
-      <View className="flex-row flex-wrap">
-        {TRUST_ITEMS.map((item, index) => {
-          const IconComp = item.icon;
-          return (
-            <View
-              key={index}
-              className={`mb-4 w-1/2 flex-row ${index % 2 !== 0 ? 'pl-2' : 'pr-2'}`}>
-              <View className="mr-3 mt-0.5">
-                <Icon
-                  as={IconComp}
-                  size={20}
-                  color={DefaultColor.base['primary-color-2']}
-                  strokeWidth={2.5}
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="mb-0.5 font-inter-bold text-xs text-slate-700">
-                  {t(item.title)}
-                </Text>
-                <Text className="text-[10px] leading-3 text-slate-400">{t(item.sub)}</Text>
-              </View>
-            </View>
-          );
+    <View className="w-full gap-6">
+      {/* === BUTTON 1: KỸ THUẬT VIÊN (KTV) === */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={useSingleTouch(() => {
+          if (checkAuth){
+            router.push('/(app)/(profile)/partner-register-individual');
+          }else{
+            router.push('/(auth)');
+          }
         })}
-      </View>
+        className="relative w-full bg-primary-color-2 rounded-[24px] p-5 overflow-hidden shadow-lg shadow-blue-900/30 flex-row items-center h-32"
+      >
+        <View className="absolute -top-16 -right-16 w-40 h-40 bg-white/10 rounded-full" />
+        <View className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/5 rounded-full" />
+        <View className="h-16 w-16 bg-white/25 rounded-2xl items-center justify-center mr-5 border border-white/10">
+          <Handshake size={32} color="white" strokeWidth={1.5} />
+        </View>
+        <View className="flex-1 justify-center h-full">
+          <Text className="text-white font-inter-bold text-lg leading-tight">
+            {t('homepage.invite_ktv.title')}
+          </Text>
+          <Text className="text-blue-100 text-sm mt-1 font-inter-medium">
+            {t('homepage.invite_ktv.description')}
+          </Text>
+        </View>
+
+        {/* Arrow Icon */}
+        <View className="bg-white/10 p-2 rounded-full">
+          <ChevronRight size={20} color="white" />
+        </View>
+      </TouchableOpacity>
+
+      {/* === BUTTON 2: ĐỐI TÁC (PARTNER) === */}
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={useSingleTouch(() => {
+          if (checkAuth){
+            router.push('/(app)/(profile)/partner-register-agency');
+          }else{
+            router.push('/(auth)');
+          }
+        })}
+        className="relative w-full bg-primary-color-1 rounded-[24px] p-5 overflow-hidden shadow-lg shadow-blue-900/30 flex-row items-center h-32"
+      >
+        <View className="absolute -top-10 left-10 w-32 h-32 bg-white/10 rounded-full" />
+        <View className="absolute bottom-0 right-0 w-20 h-40 bg-white/5 -rotate-12" />
+        <View className="h-16 w-16 bg-white/25 rounded-2xl items-center justify-center mr-5 border border-white/10">
+          <BriefcaseBusiness size={30} color="white" strokeWidth={1.5} />
+        </View>
+        <View className="flex-1 justify-center h-full">
+          <Text className="text-white font-inter-bold text-lg leading-tight">
+            {t('homepage.invite_partner.title')}
+          </Text>
+          <Text className="text-blue-100 text-sm mt-1 font-inter-medium">
+            {t('homepage.invite_partner.description')}
+          </Text>
+        </View>
+        <View className="bg-white/10 p-2 rounded-full">
+          <ChevronRight size={20} color="white" />
+        </View>
+      </TouchableOpacity>
     </View>
-  );
+  )
 };
 
 // Carousel hiển thị KTV trong trang chủ

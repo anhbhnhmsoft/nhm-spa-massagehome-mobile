@@ -8,8 +8,7 @@ import DefaultColor from '@/components/styles/color';
 import {
   CarouselBanner,
   HomePageCategorySection,
-  HomePageKTVSection,
-  VerifyFeatureSection,
+  HomePageKTVSection, InviteKtv,
 } from '@/components/app/carousel-homepage';
 import { getTabBarHeight } from '@/components/styles/style';
 
@@ -55,8 +54,10 @@ export default function UserDashboard() {
           <CarouselBanner bannerQuery={bannerQuery} />
         </View>
 
-        {/* --- 2. TRUST / VERIFICATION SECTION --- */}
-       <VerifyFeatureSection />
+        {/* --- Mời gia nhập KTV--- */}
+       <View className={"mt-4 px-4"}>
+         <InviteKtv />
+       </View>
 
         {/* --- 3. RECOMMENDED TECHNICIANS (Horizontal) --- */}
         <HomePageKTVSection queryKTV={queryKTV} />
