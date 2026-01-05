@@ -16,6 +16,7 @@ import { InputField } from '@/components/app/partner-register/input-field';
 import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
 import { LocationSelector } from '@/components/app/partner-register/location-selector';
 import { Alert } from 'react-native';
+import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
 export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
@@ -151,6 +152,7 @@ export default function PartnerRegisterIndividualScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <FocusAwareStatusBar hidden={true} />
       <HeaderBack title="profile.partner_form.title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>

@@ -16,6 +16,7 @@ import { InputField } from '@/components/app/partner-register/input-field';
 import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
 import { LocationSelector } from '@/components/app/partner-register/location-selector';
 import { Alert } from 'react-native';
+import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
 export default function PartnerRegisterAgencyScreen() {
   const { t } = useTranslation();
@@ -90,10 +91,10 @@ export default function PartnerRegisterAgencyScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <FocusAwareStatusBar hidden={true} />
       <HeaderBack title="profile.partner_register.agency_title" />
-
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 mt-4 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 mt-4 font-inter-bold text-base text-slate-900">
           {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-4 flex-row flex-wrap gap-3">
@@ -112,8 +113,9 @@ export default function PartnerRegisterAgencyScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
-            {t('profile.partner_form.field_branch_name_label')} <Text className="text-red-500">*</Text>
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
+            {t('profile.partner_form.field_branch_name_label')}{' '}
+            <Text className="text-red-500">*</Text>
           </Text>
           <InputField
             control={control as any}
@@ -124,7 +126,7 @@ export default function PartnerRegisterAgencyScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.field_branch_bio_label')}
           </Text>
           <Controller
@@ -146,7 +148,7 @@ export default function PartnerRegisterAgencyScreen() {
         </View>
 
         <View className="mb-6">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
           </Text>
           <ProvinceSelector
@@ -170,7 +172,7 @@ export default function PartnerRegisterAgencyScreen() {
         <TouchableOpacity
           className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
           onPress={handleSubmit}>
-          <Text className="text-base font-inter-bold text-white">
+          <Text className="font-inter-bold text-base text-white">
             {t('profile.partner_form.button_submit')}
           </Text>
         </TouchableOpacity>
