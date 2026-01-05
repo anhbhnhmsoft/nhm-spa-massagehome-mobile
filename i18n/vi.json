@@ -500,7 +500,7 @@
     "total_services": "dịch vụ có sẵn",
     "total_masseurs": "thợ massage có sẵn",
     "experience": "Kinh nghiệm",
-    "completed": "Hoàn thành",
+    "completed": "Hoàn thành",  
     "desc": "Mô tả bản thân",
     "price_service": "Giá dịch vụ",
     "available": "Sẵn sàng",
@@ -690,7 +690,6 @@
       }
     },
     "edit_profile": {
-
       "image": {
         "max_5": "Bạn chỉ được chọn tối đa 5 hình ảnh.",
         "confirm_delete": "Bạn có chắc chắn muốn xóa hình ảnh này không? Hành động này không thể hoàn tác.",
@@ -705,5 +704,9 @@
         "delete": "Xóa"
       }
     }
+  },
+  "agency": {
+    "technician_list_title": "Danh sách kỹ thuật viên",
+    "technician_list_empty": "Không tìm thấy kỹ thuật viên nào"
   }
 }

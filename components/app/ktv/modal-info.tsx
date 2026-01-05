@@ -20,22 +20,52 @@ type ModalInfoProps = {
   onClose: () => void;
 };
 export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
+  // State quản lý Dialog logout
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+
+  // Hàm logout kèm đóng dialog
+  const logout = useLogout();
+  const handleLogout = () => {
+    logout();
+    setLogoutModalOpen(false);
+  };
+
   return (
-    <Modal animationType={'slide'} transparent={true} visible={isVisible} onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View className="flex-1 justify-end bg-black/50">
-          <TouchableWithoutFeedback>
-            <View className="w-full rounded-t-3xl bg-white">
-              <FeatureList onClose={onClose} />
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+    <>
+      <Modal
+        animationType={'slide'}
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={onClose}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View className="flex-1 justify-end bg-black/50">
+            <TouchableWithoutFeedback>
+              <View className="w-full rounded-t-3xl bg-white">
+                <FeatureList onClose={onClose} setLogoutModalOpen={setLogoutModalOpen} />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Đưa Dialog ra ngoài Modal để không bị che */}
+      <Dialog
+        isOpen={isLogoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+        title="profile.log_out_title"
+        description="profile.log_out_desc"
+        onConfirm={handleLogout}
+      />
+    </>
   );
 };
 
-export const FeatureList = ({ onClose }: { onClose: () => void }) => {
+export const FeatureList = ({
+  onClose,
+  setLogoutModalOpen,
+}: {
+  onClose: () => void;
+  setLogoutModalOpen: (v: boolean) => void;
+}) => {
   const { t } = useTranslation();
 
   // Quản lý địa chỉ
@@ -56,10 +86,7 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
     [selectedLang]
   );
 
-  // Xử lý đăng xuất
-  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [modalLangVisible, setModalLangVisible] = useState<boolean>(false);
-  const logout = useLogout();
 
   return (
     <>
@@ -127,7 +154,12 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
 
         {/* Thông báo */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center">
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(notification)/notificaton');
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Bell} size={24} className="text-primary-color-1" />
           </View>
@@ -135,7 +167,12 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
 
         {/* Đăng xuất */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={logout}>
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            setLogoutModalOpen(true);
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={LogOut} size={24} className="text-red-500" />
           </View>
@@ -154,15 +191,6 @@ export const FeatureList = ({ onClose }: { onClose: () => void }) => {
         isVisible={visibleSupport}
         onClose={closeSupportModal}
         supportChanel={supportChanel}
-      />
-
-      {/* Đăng xuất */}
-      <Dialog
-        isOpen={isLogoutModalOpen}
-        onClose={() => setLogoutModalOpen(false)} // Đóng khi bấm Hủy hoặc bấm ra ngoài
-        title="profile.log_out_title" // Key trong file ngôn ngữ (hoặc text thường)
-        description="profile.log_out_desc" // Key: "Bạn có chắc muốn đăng xuất không?"
-        onConfirm={logout}
       />
     </>
   );

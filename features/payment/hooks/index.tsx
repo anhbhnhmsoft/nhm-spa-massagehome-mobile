@@ -133,7 +133,6 @@ export const useWallet = () => {
         router.push('/(app)/(service-ktv)/deposit');
       },
       onError: (err) => {
-        console.log(err);
         handleError(err);
       },
       onSettled: () => {
