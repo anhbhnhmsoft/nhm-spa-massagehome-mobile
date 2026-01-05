@@ -325,7 +325,7 @@ const FormInput = ({
 
     <View
       className={cn(
-        'flex-row items-center rounded-xl border px-4',
+        'h-14 flex-row items-center rounded-xl border px-4',
         error
           ? 'border-red-500'
           : editable
