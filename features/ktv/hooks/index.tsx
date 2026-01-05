@@ -518,107 +518,100 @@ export const useDashboardTotalIncome = () => {
 };
 
 export const editProfileKTV = () => {
-  const errorHandle = useErrorToast();
-  const { data: profileData, refetch } = useProfileKtvQuery();
-  const { mutate: editProfile } = useUpdateProfileKtvMutation();
-
-  const user = useAuthStore((state) => state.user);
   const { t } = useTranslation();
+  const errorHandle = useErrorToast();
+  const { data: profileData, refetch, isLoading } = useProfileKtvQuery();
+  const { mutate: editProfile } = useUpdateProfileKtvMutation();
+  const user = useAuthStore((state) => state.user);
   const setLoading = useApplicationStore((state) => state.setLoading);
+
   const schema = z
     .object({
       address: z.string().min(1, t('profile.error.invalid_address')).max(255),
-
-      experience: z.coerce.number().min(1, t('profile.error.invalid_experience')).max(60),
-
-      bio: z.object({
-        vi: z.string().optional(),
-        en: z.string().optional(),
-        cn: z.string().optional(),
-      }),
-
+      // Sửa lỗi xóa không được: Dùng preprocess để biến chuỗi rỗng thành undefined
+      experience: z.preprocess(
+        (val) => (val === '' || val === null ? undefined : val),
+        z.coerce.number().min(1, t('profile.error.invalid_experience')).max(60)
+      ),
+      bio: z
+        .object({
+          vi: z.string().optional(),
+          en: z.string().optional(),
+          cn: z.string().optional(),
+        })
+        .refine((data) => !!data.vi?.trim() || !!data.en?.trim() || !!data.cn?.trim(), {
+          path: ['vi'],
+          message: t('profile.error.bio_required'),
+        }),
       lat: z.coerce.number().optional(),
       lng: z.coerce.number().optional(),
-
       gender: z.coerce.number().optional(),
-
       date_of_birth: z.string().optional(),
-
       old_pass: z.string().optional(),
       new_pass: z
         .string()
-        .min(1, { message: t('auth.error.password_invalid') })
         .min(8, { message: t('auth.error.password_invalid') })
-        .regex(/[a-z]/, { message: t('auth.error.password_invalid') })
-        .regex(/[A-Z]/, { message: t('auth.error.password_invalid') })
-        .regex(/[0-9]/, { message: t('auth.error.password_invalid') }),
-    })
-    .refine((data) => !!data.bio.vi?.trim() || !!data.bio.en?.trim() || !!data.bio.cn?.trim(), {
-      path: ['bio.vi'],
-      message: t('profile.error.bio_required'),
+        .regex(/[a-z]/)
+        .regex(/[A-Z]/)
+        .regex(/[0-9]/)
+        .optional()
+        .or(z.literal('')), // Cho phép chuỗi rỗng nếu không đổi mật khẩu
     })
     .refine((data) => !data.new_pass || !!data.old_pass, {
       path: ['old_pass'],
       message: t('profile.error.old_password_min'),
     });
-  const form = useForm<EditProfileKtvRequest>({
-    defaultValues: {
-      address: profileData?.address ?? '',
-      experience: profileData?.experience ?? 0,
-      bio: {
-        vi: profileData?.bio?.vi ?? '',
-        en: profileData?.bio?.en ?? '',
-        cn: profileData?.bio?.cn ?? '',
-      },
 
-      lat: profileData?.lat ?? '',
-      lng: profileData?.lng ?? '',
-      gender: profileData?.gender ?? undefined,
-      date_of_birth: profileData?.date_of_birth ?? '',
-    },
-
+  const form = useForm<any>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
   });
 
-  const onSubmit = useCallback((data: EditProfileKtvRequest) => {
-    const payload: EditProfileKtvRequest = {
-      ...data,
-      date_of_birth: data.date_of_birth || '',
-      bio: {
-        vi: data.bio?.vi ?? '',
-        en: data.bio?.en ?? '',
-        cn: data.bio?.cn ?? '',
-      },
-      lat: data.lat != null ? String(data.lat) : '0',
-      lng: data.lng != null ? String(data.lng) : '0',
-      address: data.address ?? '',
-      gender: data.gender ?? 1,
-      experience: data.experience ?? 0,
-    };
-    editProfile(payload, {
-      onSuccess: (res) => {
-        refetch();
-        router.back();
-      },
-      onError: (error) => {
-        errorHandle(error);
-      },
-      onSettled: () => {
-        setLoading(false);
-      },
-    });
-  }, []);
+  const { reset } = form;
 
-  return {
-    form,
-    profileData,
-    onSubmit,
-    refetch,
-    user,
-  };
+  // QUAN TRỌNG: Cập nhật dữ liệu vào form khi profileData có giá trị
+  useEffect(() => {
+    if (profileData) {
+      reset({
+        address: profileData.address || '',
+        experience: profileData.experience,
+        bio: {
+          vi: profileData.bio?.vi || '',
+          en: profileData.bio?.en || '',
+          cn: profileData.bio?.cn || '',
+        },
+        lat: profileData.lat || 0,
+        lng: profileData.lng || 0,
+        gender: profileData.gender || 1,
+        date_of_birth: profileData.date_of_birth || '',
+      });
+    }
+  }, [profileData, reset]);
+
+  const onSubmit = useCallback(
+    (data: any) => {
+      setLoading(true);
+      const payload = {
+        ...data,
+        lat: String(data.lat || '0'),
+        lng: String(data.lng || '0'),
+        experience: Number(data.experience),
+      };
+
+      editProfile(payload, {
+        onSuccess: () => {
+          refetch();
+          router.back();
+        },
+        onError: (error) => errorHandle(error),
+        onSettled: () => setLoading(false),
+      });
+    },
+    [editProfile, refetch, setLoading, errorHandle]
+  );
+
+  return { form, profileData, onSubmit, user, isLoading, refetch };
 };
-
 const MAX_IMAGE = 5;
 
 export const useChangeImage = () => {

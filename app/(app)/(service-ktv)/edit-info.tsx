@@ -30,7 +30,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EditInfoScreen() {
-  const { form, profileData, onSubmit, user } = editProfileKTV();
+  const { form, profileData, onSubmit, user, isLoading } = editProfileKTV();
   const { removeImage } = useEditImage();
   const { control, handleSubmit, setValue } = form;
 
@@ -52,6 +52,11 @@ export default function EditInfoScreen() {
             bounces={false}
             overScrollMode="never"
             showsVerticalScrollIndicator={false}>
+            {isLoading && (
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-base text-gray-500">{t('common.loading')}...</Text>
+              </View>
+            )}
             {profileData && (
               <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -190,7 +195,7 @@ export default function EditInfoScreen() {
                     control={control}
                     name="address"
                     setValue={setValue as any}
-                    error={form.formState.errors.address?.message}
+                    error={form.formState.errors.address?.message as string | undefined}
                   />
 
                   {/* Số năm kinh nghiệm (Disabled) */}
