@@ -21,63 +21,53 @@ import DefaultColor from '@/components/styles/color';
 import { Text } from '@/components/ui/text';
 import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 
-/**
- * Card hiển thị thông tin của massager trong trang chủ
- * @param item
- * @constructor
- */
 export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
   const { t } = useTranslation();
-
-  // State quản lý lỗi ảnh
   const [imageError, setImageError] = useState(false);
-
-  const setKtv = useSetKtv();
+  const setKtv = useSetKtv(); // Hook của bạn
 
   return (
     <TouchableOpacity
-      className="w-full flex-1 rounded-xl border border-slate-100 bg-white p-3 shadow-sm"
+      activeOpacity={0.8}
+      className="w-full flex-1 rounded-xl border border-slate-100 bg-white p-2 shadow-sm" // Giảm padding p-3 -> p-2
       onPress={() => setKtv(item.id)}>
-      {/* --- PHẦN AVATAR --- */}
+      {/* --- AVATAR: GIẢM CHIỀU CAO --- */}
       <View className="relative mb-2">
         {item.profile?.avatar_url && !imageError ? (
           <Image
             source={{ uri: item.profile.avatar_url }}
-            className="h-32 w-full rounded-lg bg-slate-100"
+            className="h-24 w-full rounded-lg bg-slate-100" // Giảm h-32 -> h-24
             resizeMode="cover"
-            // Khi lỗi -> Set state -> React render lại -> Chạy xuống dòng fallback dưới
             onError={() => setImageError(true)}
           />
         ) : (
-          // Fallback UI khi không có ảnh hoặc ảnh lỗi
-          <View className="h-32 w-full items-center justify-center rounded-lg bg-slate-200">
-            <User size={32} color="#94a3b8" />
+          <View className="h-24 w-full items-center justify-center rounded-lg bg-slate-200">
+            <User size={24} color="#94a3b8" />
           </View>
         )}
 
-        {/* Icon Verified */}
-        <View className="absolute right-2 top-2 rounded-full bg-primary-color-2 p-1">
-          <CheckCircle size={10} color="white" />
+        {/* Icon Verified: Thu nhỏ lại chút */}
+        <View className="absolute right-1 top-1 rounded-full bg-primary-color-2 p-0.5">
+          <CheckCircle size={8} color="white" />
         </View>
       </View>
 
       {/* --- INFO --- */}
-      <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
+      <Text className="text-center font-inter-bold text-sm text-slate-800" numberOfLines={1}>
         {item.name}
       </Text>
 
-      {/* Rating */}
-      <View className="mb-3 mt-1 flex-row items-center">
-        <Star size={14} color={DefaultColor.yellow[500]} fill={DefaultColor.yellow[500]} />
-
-        <Text className="ml-1 font-inter-bold text-xs text-slate-700">{item.rating || 0}</Text>
-        <Text className="ml-1 text-xs text-slate-400">({item.review_count || 0})</Text>
+      {/* Rating: Căn giữa */}
+      <View className="mb-2 mt-1 flex-row items-center justify-center">
+        <Star size={10} color="#EAB308" fill="#EAB308" />
+        <Text className="ml-1 font-inter-bold text-[10px] text-slate-700">{item.rating || 0}</Text>
+        <Text className="ml-0.5 text-[10px] text-slate-400">({item.review_count || 0})</Text>
       </View>
 
-      {/* Services Count */}
-      <View className="flex-row items-center justify-center gap-1 rounded-lg bg-blue-50 py-2">
-        <Briefcase size={14} color="#2563eb" />
-        <Text className="font-inter-medium text-xs text-blue-600">
+      {/* Services Count: Thu nhỏ font và padding */}
+      <View className="flex-row items-center justify-center gap-1 rounded bg-blue-50 px-1 py-1">
+        <Briefcase size={10} color="#2563eb" />
+        <Text className="font-inter-medium text-[10px] text-blue-600" numberOfLines={1}>
           {item.service_count} {t('common.service')}
         </Text>
       </View>
