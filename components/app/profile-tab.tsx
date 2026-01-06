@@ -271,7 +271,6 @@ export const FeatureList = () => {
 
   // Xử lý ngôn ngữ
   const selectedLang = useApplicationStore((state) => state.language);
-  const languageSheetRef = useRef<BottomSheetModal>(null);
   const langConfig = useMemo(
     () => _LanguagesMap.find((lang) => lang.code === selectedLang),
     [selectedLang]
@@ -304,7 +303,7 @@ export const FeatureList = () => {
         {/* Ngôn ngữ */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
-          onPress={() => languageSheetRef.current?.present()}>
+          onPress={() => setModalLangVisible(true)}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Image
               source={langConfig?.icon}

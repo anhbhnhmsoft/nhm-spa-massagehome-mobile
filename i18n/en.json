@@ -316,6 +316,14 @@
       "cancel_sub": "Full refund within 24 hours",
       "award": "Certified",
       "award_sub": "Professional certificates confirmed"
+    },
+    "invite_ktv": {
+      "title": "Become a Therapist",
+      "description": "Attractive income, instant job matching"
+    },
+    "invite_partner": {
+      "title": "Business Partnership",
+      "description": "Expand your network, grow your profits"
     }
   },
   "profile": {
