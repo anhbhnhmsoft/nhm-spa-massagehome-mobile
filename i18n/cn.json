@@ -316,6 +316,14 @@
       "cancel_sub": "24 小时内全额退款",
       "award": "资质认证",
       "award_sub": "已确认专业技能证书"
+    },
+    "invite_ktv": {
+      "title": "成为技师",
+      "description": "高收入，即刻接单"
+    },
+    "invite_partner": {
+      "title": "商务合作",
+      "description": "拓展网络，提升利润"
     }
   },
   "profile": {
