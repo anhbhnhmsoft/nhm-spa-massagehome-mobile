@@ -130,7 +130,7 @@ export const useWallet = () => {
     mutateConfigPayment(undefined, {
       onSuccess: (res) => {
         setConfigPayment(res.data);
-        router.push('/(app)/(service-ktv)/deposit');
+        router.push('/(app)/(profile)/deposit');
       },
       onError: (err) => {
         handleError(err);

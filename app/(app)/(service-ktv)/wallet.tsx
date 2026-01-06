@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
-import { ArrowUpRight, ArrowDownLeft, History, Ticket } from 'lucide-react-native';
+import { ArrowUpRight, ArrowDownLeft } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/icon';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
@@ -8,7 +8,6 @@ import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import { cn, formatBalance, formatCurrency } from '@/lib/utils';
 import GradientBackground from '@/components/styles/gradient-background';
-import { useWallet } from '@/features/payment/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   _TransactionInType,
@@ -21,10 +20,11 @@ import { ListTransactionItem } from '@/features/payment/types';
 import dayjs from 'dayjs';
 import Empty from '@/components/empty';
 import { CouponUserItem } from '@/features/service/types';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import {  useLocalSearchParams } from 'expo-router';
+import {  useState } from 'react';
 import { WithdrawModal } from '@/components/app/wallet';
 import { TFunction } from 'i18next';
+import { useWallet } from '@/features/ktv/hooks';
 
 export default function WalletScreen() {
   const { t } = useTranslation();
@@ -32,113 +32,55 @@ export default function WalletScreen() {
   const { toTabWallet } = useLocalSearchParams<{ toTabWallet?: string }>();
 
   const {
-    tab,
-    setTab,
     queryWallet,
     queryTransactionList,
-    queryCouponUserList,
     goToDepositScreen,
     refresh,
   } = useWallet();
 
-  useEffect(() => {
-    if (toTabWallet) {
-      setTab('coupon');
-      router.setParams({ toTabWallet: undefined });
-    }
-  }, [toTabWallet]);
 
   return (
     <>
       <SafeAreaView className="flex-1 bg-white">
         <FocusAwareStatusBar hidden={true} />
         <HeaderBack title="wallet.title" />
-
-        {/* === LIST TRANSACTION === */}
-        {tab === 'transaction' && (
-          <FlatList
-            keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
-            data={queryTransactionList.data || []}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            ListHeaderComponent={
-              <HeaderWallet
-                queryWallet={queryWallet}
-                setTab={setTab}
-                tab={tab}
-                t={t}
-                goToDepositScreen={goToDepositScreen}
-                setVisibleWithdraw={setVisibleWithdraw}
-              />
-            }
-            style={{
-              flex: 1,
-              position: 'relative',
-            }}
-            contentContainerStyle={{
-              gap: 12,
-              paddingHorizontal: 16,
-              paddingBottom: 100,
-            }}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={null}
-            onEndReached={() => {
-              if (queryTransactionList.hasNextPage && !queryTransactionList.isFetchingNextPage)
-                queryTransactionList.fetchNextPage();
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={queryTransactionList.isRefetching}
-                onRefresh={() => refresh()}
-              />
-            }
-            renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
-            ListEmptyComponent={<Empty />}
-          />
-        )}
-
-        {/* === LIST COUPON === */}
-        {tab === 'coupon' && (
-          <FlatList
-            keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
-            data={queryCouponUserList.data || []}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            ListHeaderComponent={
-              <HeaderWallet
-                queryWallet={queryWallet}
-                setTab={setTab}
-                tab={tab}
-                t={t}
-                goToDepositScreen={goToDepositScreen}
-                setVisibleWithdraw={setVisibleWithdraw}
-              />
-            }
-            style={{
-              flex: 1,
-              position: 'relative',
-            }}
-            contentContainerStyle={{
-              gap: 12,
-              paddingHorizontal: 16,
-              paddingBottom: 100,
-            }}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={null}
-            onEndReached={() => {
-              if (queryCouponUserList.hasNextPage && !queryCouponUserList.isFetchingNextPage)
-                queryCouponUserList.fetchNextPage();
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={queryCouponUserList.isRefetching}
-                onRefresh={() => refresh()}
-              />
-            }
-            renderItem={({ item }) => <CouponItem item={item} key={item.id} />}
-            ListEmptyComponent={<Empty />}
-          />
-        )}
+        <FlatList
+          keyExtractor={(item, index) => `transaction-${item.id}-${index}`}
+          data={queryTransactionList.data || []}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          ListHeaderComponent={
+            <HeaderWallet
+              queryWallet={queryWallet}
+              t={t}
+              goToDepositScreen={goToDepositScreen}
+              setVisibleWithdraw={setVisibleWithdraw}
+            />
+          }
+          style={{
+            flex: 1,
+            position: 'relative',
+          }}
+          contentContainerStyle={{
+            gap: 12,
+            paddingHorizontal: 16,
+            paddingBottom: 100,
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={null}
+          onEndReached={() => {
+            if (queryTransactionList.hasNextPage && !queryTransactionList.isFetchingNextPage)
+              queryTransactionList.fetchNextPage();
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={queryTransactionList.isRefetching}
+              onRefresh={() => refresh()}
+            />
+          }
+          renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
+          ListEmptyComponent={<Empty />}
+        />
       </SafeAreaView>
 
       <WithdrawModal isVisible={visibleWithdraw} onClose={() => setVisibleWithdraw(false)} />
@@ -148,8 +90,6 @@ export default function WalletScreen() {
 // Header Wallet
 type HeaderWalletProps = {
   queryWallet: ReturnType<typeof useWallet>['queryWallet'];
-  setTab: ReturnType<typeof useWallet>['setTab'];
-  tab: ReturnType<typeof useWallet>['tab'];
   t: TFunction;
   goToDepositScreen: ReturnType<typeof useWallet>['goToDepositScreen'];
   setVisibleWithdraw: (visibleWithdraw: boolean) => void;
@@ -157,8 +97,6 @@ type HeaderWalletProps = {
 
 const HeaderWallet = ({
   queryWallet,
-  setTab,
-  tab,
   t,
   goToDepositScreen,
   setVisibleWithdraw,
@@ -230,51 +168,6 @@ const HeaderWallet = ({
           </TouchableOpacity>
         </View>
       </GradientBackground>
-
-      {/* TRANSACTION & COUPON */}
-      <View className="mt-4 flex-row gap-2 p-2">
-        <TouchableOpacity
-          onPress={() => setTab('transaction')}
-          className={cn(
-            'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
-            tab === 'transaction' ? 'bg-primary-color-2' : 'bg-slate-200'
-          )}>
-          <Icon
-            as={History}
-            size={18}
-            className={cn(tab === 'transaction' ? 'text-white' : 'text-slate-500')}
-          />
-          <Text
-            className={cn(
-              'font-inter-bold text-sm',
-              tab === 'transaction' ? 'text-white' : 'text-slate-500'
-            )}>
-            {t('wallet.transactions')}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setTab('coupon')}
-          className={cn(
-            'flex-1 flex-row items-center justify-center gap-2 rounded-xl p-2',
-            tab === 'coupon' ? 'bg-primary-color-2' : 'bg-slate-200'
-          )}>
-          <View className="flex-row items-center gap-2">
-            <Icon
-              as={Ticket}
-              size={18}
-              className={cn(tab === 'coupon' ? 'text-white' : 'text-slate-500')}
-            />
-            <Text
-              className={cn(
-                'font-inter-bold text-sm',
-                tab === 'coupon' ? 'text-white' : 'text-slate-500'
-              )}>
-              {t('wallet.coupons')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };

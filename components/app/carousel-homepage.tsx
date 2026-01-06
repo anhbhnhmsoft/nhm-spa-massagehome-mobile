@@ -17,8 +17,6 @@ import { KTVHomePageCard } from '@/components/app/ktv-card';
 import Empty from '@/components/empty';
 import { useGetCategoryList } from '@/features/service/hooks';
 import CategoryCard from '@/components/app/category-card';
-import { LinearGradient } from 'expo-linear-gradient'
-import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { useCheckAuth } from '@/features/auth/hooks';
 
 
@@ -96,31 +94,30 @@ export const InviteKtv = () => {
       {/* === BUTTON 1: KỸ THUẬT VIÊN (KTV) === */}
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={useSingleTouch(() => {
-          if (checkAuth){
+        onPress={() => {
+          if (checkAuth) {
             router.push('/(app)/(profile)/partner-register-individual');
-          }else{
+          } else {
             router.push('/(auth)');
           }
-        })}
-        className="relative w-full bg-primary-color-2 rounded-[24px] p-5 overflow-hidden shadow-lg shadow-blue-900/30 flex-row items-center h-32"
-      >
-        <View className="absolute -top-16 -right-16 w-40 h-40 bg-white/10 rounded-full" />
-        <View className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/5 rounded-full" />
-        <View className="h-16 w-16 bg-white/25 rounded-2xl items-center justify-center mr-5 border border-white/10">
+        }}
+        className="relative h-32 w-full flex-row items-center overflow-hidden rounded-[24px] bg-primary-color-2 p-5 shadow-lg shadow-blue-900/30">
+        <View className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/10" />
+        <View className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-white/5" />
+        <View className="mr-5 h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/25">
           <Handshake size={32} color="white" strokeWidth={1.5} />
         </View>
-        <View className="flex-1 justify-center h-full">
-          <Text className="text-white font-inter-bold text-lg leading-tight">
+        <View className="h-full flex-1 justify-center">
+          <Text className="font-inter-bold text-lg leading-tight text-white">
             {t('homepage.invite_ktv.title')}
           </Text>
-          <Text className="text-blue-100 text-sm mt-1 font-inter-medium">
+          <Text className="mt-1 font-inter-medium text-sm text-blue-100">
             {t('homepage.invite_ktv.description')}
           </Text>
         </View>
 
         {/* Arrow Icon */}
-        <View className="bg-white/10 p-2 rounded-full">
+        <View className="rounded-full bg-white/10 p-2">
           <ChevronRight size={20} color="white" />
         </View>
       </TouchableOpacity>
@@ -128,34 +125,33 @@ export const InviteKtv = () => {
       {/* === BUTTON 2: ĐỐI TÁC (PARTNER) === */}
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={useSingleTouch(() => {
-          if (checkAuth){
+        onPress={() => {
+          if (checkAuth) {
             router.push('/(app)/(profile)/partner-register-agency');
-          }else{
+          } else {
             router.push('/(auth)');
           }
-        })}
-        className="relative w-full bg-primary-color-1 rounded-[24px] p-5 overflow-hidden shadow-lg shadow-blue-900/30 flex-row items-center h-32"
-      >
-        <View className="absolute -top-10 left-10 w-32 h-32 bg-white/10 rounded-full" />
-        <View className="absolute bottom-0 right-0 w-20 h-40 bg-white/5 -rotate-12" />
-        <View className="h-16 w-16 bg-white/25 rounded-2xl items-center justify-center mr-5 border border-white/10">
+        }}
+        className="relative h-32 w-full flex-row items-center overflow-hidden rounded-[24px] bg-primary-color-1 p-5 shadow-lg shadow-blue-900/30">
+        <View className="absolute -top-10 left-10 h-32 w-32 rounded-full bg-white/10" />
+        <View className="absolute bottom-0 right-0 h-40 w-20 -rotate-12 bg-white/5" />
+        <View className="mr-5 h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/25">
           <BriefcaseBusiness size={30} color="white" strokeWidth={1.5} />
         </View>
-        <View className="flex-1 justify-center h-full">
-          <Text className="text-white font-inter-bold text-lg leading-tight">
+        <View className="h-full flex-1 justify-center">
+          <Text className="font-inter-bold text-lg leading-tight text-white">
             {t('homepage.invite_partner.title')}
           </Text>
-          <Text className="text-blue-100 text-sm mt-1 font-inter-medium">
+          <Text className="mt-1 font-inter-medium text-sm text-blue-100">
             {t('homepage.invite_partner.description')}
           </Text>
         </View>
-        <View className="bg-white/10 p-2 rounded-full">
+        <View className="rounded-full bg-white/10 p-2">
           <ChevronRight size={20} color="white" />
         </View>
       </TouchableOpacity>
     </View>
-  )
+  );
 };
 
 // Carousel hiển thị KTV trong trang chủ

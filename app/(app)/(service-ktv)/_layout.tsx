@@ -14,6 +14,7 @@ export default function ServiceKtvLayout() {
         <Stack.Screen name="wallet" />
         <Stack.Screen name="deposit" />
         <Stack.Screen name="take-picture-image" />
+        <Stack.Screen name="affiliate" />
       </Stack>
     </>
   );

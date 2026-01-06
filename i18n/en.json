@@ -344,6 +344,7 @@
     "user_info_title": "Account Information",
     "edit_info": "Edit info",
     "notification": "Notifications",
+    "affiliate": "Affiliate",
     "error": {
       "invalid_name": "Name must be between 4 and 255 characters",
       "invalid_date_of_birth": "Birth date cannot be in the future",

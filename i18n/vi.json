@@ -342,6 +342,7 @@
     "user_info_title": "Thông tin tài khoản",
     "edit_info": "Sửa thông tin",
     "notification": "Thông báo",
+    "affiliate": "Giới thiệu hoa hồng",
     "error": {
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",

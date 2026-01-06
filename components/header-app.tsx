@@ -70,8 +70,6 @@ export function HeaderApp({
               router.push('/(app)/(notification)/notificaton');
             }}>
             <Icon as={Bell} size={24} className="text-white" />
-            {/* Dấu chấm đỏ thông báo */}
-            <View className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-[#1d4ed8] bg-red-500" />
           </TouchableOpacity>
         </View>
         {showSearch && (
