@@ -52,7 +52,6 @@ import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useWalletStore } from '@/features/payment/stores';
 import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
 
-
 // Hook cho chỉnh sửa dịch vụ
 export const useSetService = () => {
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
@@ -854,7 +853,7 @@ export const useWallet = () => {
     mutateConfigPayment(undefined, {
       onSuccess: (res) => {
         setConfigPayment(res.data);
-        router.push('/(app)/(profile)/deposit');
+        router.push('/(app)/(service-ktv)/deposit');
       },
       onError: (err) => {
         handleError(err);
