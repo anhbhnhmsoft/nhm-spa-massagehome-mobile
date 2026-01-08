@@ -73,3 +73,10 @@ export const useUpdateProfileKtvMutation = () => {
     mutationFn: (data: EditProfileKtvRequest) => ktvApi.updateProfile(data),
   });
 };
+
+// lấy link qr giới thiệu agency
+export const useLinkQrAgencyMutation = () => {
+  return useMutation({
+    mutationFn: (agency_id: string) => ktvApi.linkQrAgency(agency_id),
+  });
+};

@@ -8,7 +8,16 @@ import { _LanguagesMap } from '@/lib/const';
 import { useLogout } from '@/features/auth/hooks';
 import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
-import { Bell, HandCoins, Headphones, Info, LogOut, UserPen, Wallet } from 'lucide-react-native';
+import {
+  Bell,
+  HandCoins,
+  Headphones,
+  Info,
+  LogOut,
+  QrCode,
+  UserPen,
+  Wallet,
+} from 'lucide-react-native';
 import { ListLocationModal } from '@/components/app/location';
 import SelectLanguage from '@/components/select-language';
 import SupportModal from '@/components/app/support-modal';
@@ -159,9 +168,11 @@ export const FeatureList = ({
         </TouchableOpacity>
 
         {/* Hỗ trợ khách hàng */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => {
-          openSupportModal();
-        }}>
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            openSupportModal();
+          }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Headphones} size={24} className="text-primary-color-1" />
           </View>
@@ -181,6 +192,18 @@ export const FeatureList = ({
           <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
         </TouchableOpacity>
 
+        {/* QR code */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(service-ktv)/scan_qr');
+          }}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={QrCode} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">Quét mã giới thiệu</Text>
+        </TouchableOpacity>
         {/* Đăng xuất */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"

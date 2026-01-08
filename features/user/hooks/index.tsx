@@ -1,5 +1,5 @@
 import { useInfiniteListKTV, useQueryDashboardProfile } from '@/features/user/hooks/use-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import useUserServiceStore, { useKTVSearchStore } from '@/features/user/stores';
 import { useGetServiceList } from '@/features/service/hooks';
@@ -10,7 +10,10 @@ import useAuthStore from '@/features/auth/store';
 import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
-
+import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { BarcodeScanningResult, Camera, useCameraPermissions } from 'expo-camera';
 export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
 export { useFileUpload } from '@/features/user/hooks/use-file-upload';
 
@@ -38,7 +41,6 @@ export const useGetListKTV = () => {
 };
 
 export const useGetListKTVHomepage = () => {
-
   const query = useInfiniteListKTV({
     filter: {},
     // Sắp xếp theo đánh giá trung bình giảm dần
@@ -61,8 +63,6 @@ export const useGetListKTVHomepage = () => {
     pagination,
   };
 };
-
-
 
 /**
  * Lưu thông tin massager vào store và chuyển hướng đến màn hình chi tiết massager
@@ -180,10 +180,12 @@ export const useProfile = () => {
   }, [checkAuth]);
 
   const isLoading = useMemo(() => {
-    return queryProfile.isLoading ||
+    return (
+      queryProfile.isLoading ||
       queryDashboard.isLoading ||
       queryDashboard.isRefetching ||
-      queryProfile.isRefetching;
+      queryProfile.isRefetching
+    );
   }, [
     queryProfile.isLoading,
     queryDashboard.isLoading,
@@ -193,9 +195,7 @@ export const useProfile = () => {
 
   useEffect(() => {
     setLoading(isLoading);
-  }, [
-    isLoading,
-  ]);
+  }, [isLoading]);
 
   const refreshProfile = useCallback(() => {
     queryProfile.refetch();
@@ -207,5 +207,87 @@ export const useProfile = () => {
     dashboardData: queryDashboard.data,
     refreshProfile,
     isLoading,
+  };
+};
+
+/**
+ * Xử lý màn hình quét qr code khách hàng
+ */
+
+export const useScanQRCodeCustomer = () => {
+  const [permission, requestPermission] = useCameraPermissions();
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const { t } = useTranslation();
+
+  const [isScanning, setIsScanning] = useState(false);
+  const scanningRef = useRef(false);
+  useEffect(() => {
+    if (!permission?.granted) {
+      requestPermission();
+    }
+  }, [permission]);
+
+  const onBarcodeScanned = useCallback(
+    (result: BarcodeScanningResult) => {
+      if (!isScanning || scanningRef.current || !result.data) return;
+
+      scanningRef.current = true;
+      setIsScanning(false);
+      setLoading(true);
+
+      try {
+        const url = new URL(result.data);
+        const agencyId = url.searchParams.get('id');
+
+        if (!agencyId) {
+          Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
+            {
+              text: 'OK',
+              onPress: () => {
+                scanningRef.current = false;
+                setIsScanning(true);
+              },
+            },
+          ]);
+          return;
+        }
+
+        router.replace({
+          pathname: '/(app)/(profile)/partner-register-individual',
+          params: { agencyId },
+        });
+      } catch (error) {
+        Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
+          {
+            text: 'OK',
+            onPress: () => {
+              scanningRef.current = false;
+              setIsScanning(true);
+            },
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isScanning, setLoading, t]
+  );
+
+  const startScan = () => {
+    scanningRef.current = false;
+    setIsScanning(true);
+  };
+
+  const stopScan = () => {
+    scanningRef.current = true;
+    setIsScanning(false);
+  };
+
+  return {
+    hasPermission: permission?.granted,
+    isScanning,
+    startScan,
+    stopScan,
+    onBarcodeScanned,
   };
 };

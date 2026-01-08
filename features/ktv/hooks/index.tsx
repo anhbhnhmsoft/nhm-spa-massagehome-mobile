@@ -24,6 +24,7 @@ import {
   useDeleteServiceMutation,
   useDetailServiceMutation,
   useFinishBookingMutation,
+  useLinkQrAgencyMutation,
   useUpdateProfileKtvMutation,
   useUpdateServiceMutation,
   useUploadImageMutation,
@@ -46,7 +47,7 @@ import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
-import { useCameraPermissions } from 'expo-camera';
+import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
 import { useGetCouponUserList } from '@/features/service/hooks';
 import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useWalletStore } from '@/features/payment/stores';
@@ -869,5 +870,94 @@ export const useWallet = () => {
     queryTransactionList,
     goToDepositScreen,
     refresh,
+  };
+};
+
+/**
+ * Xử lý màn hình quét qr code khách hàng
+ */
+
+export const useScanQRCodeCustomer = () => {
+  const [permission, requestPermission] = useCameraPermissions();
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const { mutate } = useLinkQrAgencyMutation();
+  const { success: successToast, error: errorToast } = useToast();
+  const { t } = useTranslation();
+
+  const [isScanning, setIsScanning] = useState(false);
+  const scanningRef = useRef(false);
+
+  useEffect(() => {
+    if (!permission?.granted) {
+      requestPermission();
+    }
+  }, [permission]);
+
+  const onBarcodeScanned = useCallback(
+    (result: BarcodeScanningResult) => {
+      if (!isScanning || scanningRef.current || !result.data) return;
+      scanningRef.current = true;
+      setIsScanning(false);
+      setLoading(true);
+
+      let agencyId: string | null = null;
+
+      try {
+        const url = new URL(result.data);
+        agencyId = url.searchParams.get('id');
+
+        if (!agencyId) {
+          throw new Error('INVALID_QR');
+        }
+      } catch {
+        Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
+          {
+            text: 'OK',
+            onPress: () => {
+              scanningRef.current = false;
+              setIsScanning(true);
+            },
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
+
+      // 🚀 Bắn ID lên server (role KTV)
+      mutate(agencyId, {
+        onSuccess: (res) => {
+          successToast({ message: res.message || t('qr_scan.link_success') });
+          router.back();
+        },
+
+        onError: (err) => {
+          errorToast({ message: err.message || t('qr_scan.link_error') });
+          router.back();
+        },
+
+        onSettled: () => {
+          setLoading(false);
+        },
+      });
+    },
+    [isScanning, setLoading, t]
+  );
+
+  const startScan = () => {
+    scanningRef.current = false;
+    setIsScanning(true);
+  };
+
+  const stopScan = () => {
+    scanningRef.current = true;
+    setIsScanning(false);
+  };
+
+  return {
+    hasPermission: permission?.granted,
+    isScanning,
+    startScan,
+    stopScan,
+    onBarcodeScanned,
   };
 };
