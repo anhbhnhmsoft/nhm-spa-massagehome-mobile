@@ -708,6 +708,22 @@
   },
   "agency": {
     "technician_list_title": "Danh sách kỹ thuật viên",
-    "technician_list_empty": "Không tìm thấy kỹ thuật viên nào"
+    "technician_list_empty": "Không tìm thấy kỹ thuật viên nào",
+    "inviteKTV": "Mời KTV",
+    "total": "Tổng cộng",
+    "busy": "Đang bận",
+    "inviteKTVModal": {
+      "title": "Mời Kỹ Thuật Viên",
+      "description": "Quét mã QR để gia nhập Agency hoặc chia sẻ đường dẫn bên dưới",
+      "qrDemoLabel": "DEMO QR",
+      "inviteLinkLabel": "Đường dẫn mời trực tiếp",
+      "doneButton": "Hoàn tất",
+      "copySuccess": "Đã sao chép"
+    },
+    "empty" :{
+      "empty_title": "Chưa có kỹ thuật viên ",
+      "empty_description": "Mời kỹ thuật viên gia nhập Agency của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
+      "empty_button": "Mời kỹ thuật viên"
+    }
   }
 }

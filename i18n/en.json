@@ -714,8 +714,25 @@
       }
     }
   },
-  "agency": {
+ "agency": {
     "technician_list_title": "Technician List",
-    "technician_list_empty": "No technicians found"
+    "technician_list_empty": "No technicians found",
+    "inviteKTV": "Invite Technician",
+    "total": "Total",
+    "busy": "Busy",
+    "inviteKTVModal": {
+      "title": "Invite Technician",
+      "description": "Scan the QR code to join the agency or share the invitation link below",
+      "qrDemoLabel": "QR Demo",
+      "inviteLinkLabel": "Direct Invitation Link",
+      "doneButton": "Done",
+      "copySuccess": "Copied"
+    },
+    "empty": {
+      "empty_title": "No Technicians Yet",
+      "empty_description": "Invite technicians to join your agency to grow the network and increase income.",
+      "empty_button": "Invite Technician"
+    }
   }
+
 }

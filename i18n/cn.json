@@ -716,6 +716,23 @@
   },
   "agency": {
     "technician_list_title": "技师列表",
-    "technician_list_empty": "未找到任何技师"
+    "technician_list_empty": "未找到任何技师",
+    "inviteKTV": "邀请技师",
+    "total": "总数",
+    "busy": "忙碌中",
+    "inviteKTVModal": {
+      "title": "邀请技师",
+      "description": "扫描二维码加入机构，或分享下面的邀请链接",
+      "qrDemoLabel": "二维码示例",
+      "inviteLinkLabel": "直接邀请链接",
+      "doneButton": "完成",
+      "copySuccess": "已复制"
+    },
+    "empty": {
+      "empty_title": "暂无技师",
+      "empty_description": "邀请技师加入您的机构，共同发展团队并提升收入。",
+      "empty_button": "邀请技师"
+    }
   }
+
 }
