@@ -114,6 +114,11 @@ const ktvApi = {
     const response = await client.post(`${defaultUri}/edit-profile-ktv`, data);
     return response.data;
   },
+
+  linkQrAgency: async (agency_id: string) => {
+    const response = await client.post(`agency/link-qr`, { agency_id });
+    return response.data;
+  },
 };
 
 export default ktvApi;

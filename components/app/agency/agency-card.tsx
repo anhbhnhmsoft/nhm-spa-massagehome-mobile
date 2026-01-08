@@ -30,7 +30,6 @@ interface AgencyListHeaderProps {
 export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModalProps) => {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  console.log('inviteLink', inviteLink);
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(inviteLink);
     setCopied(true);
@@ -104,7 +103,7 @@ export const AgencyListHeader = ({ onInvitePress, totalKtv, busyKtv }: AgencyLis
     <View className="px-4 py-4">
       {/* Hàng 1: Tiêu đề và Nút mời */}
       <View className="flex-row items-center justify-between pb-5">
-        <Text className="font-inter-bold text-lg text-primary-color-1">
+        <Text className="font-inter-bold text-base text-primary-color-1">
           {t('agency.technician_list_title')}
         </Text>
         {totalKtv !== 0 && (

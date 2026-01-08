@@ -133,3 +133,5 @@ export type EditProfileKtvRequest = {
 };
 
 export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;
+
+export type QRCodeAgencyResponse = ResponseDataSuccessType<{ agency_id: string }>;
