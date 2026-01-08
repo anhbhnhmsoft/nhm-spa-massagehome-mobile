@@ -17,9 +17,12 @@ import { ProvinceSelector } from '@/components/app/partner-register/province-sel
 import { LocationSelector } from '@/components/app/partner-register/location-selector';
 import { Alert } from 'react-native';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
+
+  const { agencyId } = useLocalSearchParams<{ agencyId: string }>();
   const user = useAuthStore((state) => state.user);
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
@@ -135,7 +138,11 @@ export default function PartnerRegisterIndividualScreen() {
     },
   });
 
-  const { control, formState: { errors }, setValue } = form;
+  const {
+    control,
+    formState: { errors },
+    setValue,
+  } = form;
 
   useEffect(() => {
     if (user?.primary_location) {
@@ -149,6 +156,14 @@ export default function PartnerRegisterIndividualScreen() {
       }
     }
   }, [user, setValue]);
+  useEffect(() => {
+    if (agencyId && typeof agencyId === 'string') {
+      form.setValue('agency_id', agencyId, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [agencyId, form]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -156,7 +171,7 @@ export default function PartnerRegisterIndividualScreen() {
       <HeaderBack title="profile.partner_form.title" />
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 mt-4 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 mt-4 font-inter-bold text-base text-slate-900">
           {t('profile.partner_form.images_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-2 flex-row flex-wrap gap-3">
@@ -165,11 +180,13 @@ export default function PartnerRegisterIndividualScreen() {
               key={uri + index}
               uri={uri}
               label={t('common.photo')}
-              onAdd={() => pickImage((newUri) => {
-                const copy = [...galleryImages];
-                copy[index] = newUri;
-                setGalleryImages(copy);
-              })}
+              onAdd={() =>
+                pickImage((newUri) => {
+                  const copy = [...galleryImages];
+                  copy[index] = newUri;
+                  setGalleryImages(copy);
+                })
+              }
               onRemove={() => {
                 setGalleryImages(galleryImages.filter((_, i) => i !== index));
               }}
@@ -188,7 +205,7 @@ export default function PartnerRegisterIndividualScreen() {
           {t('profile.partner_form.images_warning')}
         </Text>
 
-        <Text className="mb-2 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 font-inter-bold text-base text-slate-900">
           {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-4 flex-row flex-wrap gap-3">
@@ -206,7 +223,7 @@ export default function PartnerRegisterIndividualScreen() {
           />
         </View>
 
-        <Text className="mb-2 text-base font-inter-bold text-slate-900">
+        <Text className="mb-2 font-inter-bold text-base text-slate-900">
           {t('profile.partner_form.degrees_title')} <Text className="text-red-500">*</Text>
         </Text>
         <View className="mb-4 flex-row flex-wrap gap-3">
@@ -215,11 +232,13 @@ export default function PartnerRegisterIndividualScreen() {
               key={uri + index}
               uri={uri}
               label={t('profile.partner_form.degree_photo')}
-              onAdd={() => pickImage((newUri) => {
-                const copy = [...degreeImages];
-                copy[index] = newUri;
-                setDegreeImages(copy);
-              })}
+              onAdd={() =>
+                pickImage((newUri) => {
+                  const copy = [...degreeImages];
+                  copy[index] = newUri;
+                  setDegreeImages(copy);
+                })
+              }
               onRemove={() => {
                 setDegreeImages(degreeImages.filter((_, i) => i !== index));
               }}
@@ -233,7 +252,7 @@ export default function PartnerRegisterIndividualScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.follow_agency_label')}
           </Text>
           {/* <Text className="mb-2 text-xs text-gray-500">
@@ -245,11 +264,12 @@ export default function PartnerRegisterIndividualScreen() {
             placeholder={t('profile.partner_form.follow_agency_placeholder')}
             keyboardType="numeric"
             error={errors.agency_id?.message}
+            editable={!agencyId}
           />
         </View>
 
         <View className="mb-4">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.field_name_label')} <Text className="text-red-500">*</Text>
           </Text>
           <InputField
@@ -261,7 +281,7 @@ export default function PartnerRegisterIndividualScreen() {
         </View>
 
         <View className="mb-4">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.field_bio_label')}
           </Text>
           <Controller
@@ -283,7 +303,7 @@ export default function PartnerRegisterIndividualScreen() {
         </View>
 
         <View className="mb-6">
-          <Text className="mb-1 text-base font-inter-bold text-slate-900">
+          <Text className="mb-1 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
           </Text>
           <ProvinceSelector
@@ -307,7 +327,7 @@ export default function PartnerRegisterIndividualScreen() {
         <TouchableOpacity
           className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
           onPress={handleSubmit}>
-          <Text className="text-base font-inter-bold text-white">
+          <Text className="font-inter-bold text-base text-white">
             {t('profile.partner_form.button_submit')}
           </Text>
         </TouchableOpacity>

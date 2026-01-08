@@ -13,6 +13,8 @@ import * as Clipboard from 'expo-clipboard';
 import { useTranslation } from 'react-i18next';
 
 import { UserPlus, Users, UserMinus } from 'lucide-react-native';
+import { canGoBack } from 'expo-router/build/global-state/routing';
+import QRCode from 'react-native-qrcode-svg';
 
 interface InviteKTVModalProps {
   isVisible: boolean;
@@ -28,10 +30,7 @@ interface AgencyListHeaderProps {
 export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModalProps) => {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-
-  // Link ảnh QR demo (Bạn có thể thay bằng require('./path-to-local-image.png') nếu có ảnh trong máy)
-  const demoQRUri = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${inviteLink}`;
-
+  console.log('inviteLink', inviteLink);
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(inviteLink);
     setCopied(true);
@@ -61,18 +60,7 @@ export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModa
 
           {/* QR Code Demo Area */}
           <View className="mb-8 rounded-3xl border-2 border-gray-50 bg-white p-4">
-            <Image
-              source={{ uri: demoQRUri }}
-              style={{ width: 180, height: 180 }}
-              className="rounded-lg"
-              resizeMode="contain"
-            />
-            {/* Overlay chữ Demo để bạn dễ nhận diện */}
-            <View className="absolute bottom-0 left-0 right-0 top-0 items-center justify-center bg-white/10">
-              <View className="rounded bg-red-500 px-2 py-1">
-                <Text className="text-[10px] font-bold italic text-white">DEMO QR</Text>
-              </View>
-            </View>
+            <QRCode value={inviteLink} size={180} backgroundColor="white" color="#000" />
           </View>
 
           {/* Ô Input Copy Link */}

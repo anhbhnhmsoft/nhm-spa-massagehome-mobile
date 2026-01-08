@@ -20,11 +20,12 @@ import {
   AgencyListHeader,
   InviteKTVModal,
 } from '@/components/app/agency/agency-card';
+import useAuthStore from '@/features/auth/store';
 
 export default function AgencyDashboard() {
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false); // Quản lý modal
-
+  const user = useAuthStore((state) => state.user);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, totalKtv } =
     useHomeAgency();
 
@@ -73,7 +74,7 @@ export default function AgencyDashboard() {
       <InviteKTVModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        inviteLink={`https://myapp.com/join/agency/123`}
+        inviteLink={`nhmspa://agency/link?id=${user?.id}`}
       />
     </View>
   );

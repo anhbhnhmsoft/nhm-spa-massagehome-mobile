@@ -16,6 +16,7 @@ import {
   Info,
   LogOut,
   Bell,
+  QrCode,
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
@@ -340,6 +341,16 @@ export const FeatureList = () => {
             <Icon as={Bell} size={24} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
+        </TouchableOpacity>
+
+        {/* QR code */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => router.push('/(app)/(service)/scan_qr')}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={QrCode} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">Quét mã giới thiệu</Text>
         </TouchableOpacity>
 
         {/* Đăng xuất */}

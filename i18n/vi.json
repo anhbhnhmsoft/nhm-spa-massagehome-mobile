@@ -725,5 +725,12 @@
       "empty_description": "Mời kỹ thuật viên gia nhập Agency của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
       "empty_button": "Mời kỹ thuật viên"
     }
+  },
+  "qr_scan": {
+    "invalid_title": "Không hợp lệ",
+    "invalid_message": "Mã QR không hợp lệ hoặc đã hết hạn",
+    "processing": "Đang xử lý mã QR...",
+    "scan_qr": "Quét mã QR",
+    "scan_title":  " Di chuyển camera đến mã QR của người giới thiệu"
   }
 }

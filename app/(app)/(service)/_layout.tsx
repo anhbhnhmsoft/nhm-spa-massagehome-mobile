@@ -5,11 +5,15 @@ export default function ServiceLayout() {
   return (
     <>
       <FocusAwareStatusBar />
-      <Stack>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="masseurs-detail" options={{ headerShown: false }} />
         <Stack.Screen name="service-detail" options={{ headerShown: false }} />
-        <Stack.Screen name="service-booking" options={{ headerShown: false , animation:"slide_from_bottom"}} />
-        <Stack.Screen name="chat" options={{ headerShown: false}} />
+        <Stack.Screen
+          name="service-booking"
+          options={{ headerShown: false, animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen name="chat" options={{ headerShown: false }} />
+        <Stack.Screen name="scan-qr" options={{ headerShown: false }} />
       </Stack>
     </>
   );
