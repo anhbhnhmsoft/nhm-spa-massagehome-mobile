@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Switch,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, Switch, TouchableOpacity } from 'react-native';
 import { Clock, Calendar } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -17,10 +11,10 @@ import { Controller, useFieldArray } from 'react-hook-form';
 import DefaultColor from '@/components/styles/color';
 import { cn } from '@/lib/utils';
 import { _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
+import { useEffect } from 'react';
 
 // --- Config Dayjs ---
 dayjs.extend(customParseFormat);
-
 
 // Date Object để truyền vào DateTimePicker
 const parseTime = (timeStr: string): Date => {
@@ -35,7 +29,6 @@ const formatTime = (date: Date): string => {
   return dayjs(date).format('HH:mm');
 };
 
-
 const WorkScheduleScreen = () => {
   const { t } = useTranslation();
   const { query, form, onSubmit, loadingSave } = useConfigSchedule();
@@ -44,6 +37,7 @@ const WorkScheduleScreen = () => {
     control,
     watch,
     formState: { errors },
+    setValue,
   } = form;
 
   // Setup Field Array (Quản lý danh sách lịch)
@@ -77,7 +71,10 @@ const WorkScheduleScreen = () => {
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2">
                     <View
-                      className={cn('rounded-full p-2', value ? 'bg-primary-color-2' : 'bg-gray-100')}>
+                      className={cn(
+                        'rounded-full p-2',
+                        value ? 'bg-primary-color-2' : 'bg-gray-100'
+                      )}>
                       <Clock
                         size={24}
                         color={value ? DefaultColor.white : DefaultColor.gray[400]}
@@ -101,9 +98,7 @@ const WorkScheduleScreen = () => {
                       false: DefaultColor.blue[100],
                       true: DefaultColor.base['primary-color-2'],
                     }}
-                    thumbColor={
-                      value ? DefaultColor.blue[500] : DefaultColor.blue[200]
-                    }
+                    thumbColor={value ? DefaultColor.blue[500] : DefaultColor.blue[200]}
                     onValueChange={onChange}
                     value={value}
                   />
@@ -120,17 +115,17 @@ const WorkScheduleScreen = () => {
           <View className="pb-24">
             <View className="pb-24">
               {fields.map((fieldItem, index) => {
-                // Lấy trạng thái active hiện tại của dòng này để ẩn/hiện input giờ
                 const isActive = watch(`working_schedule.${index}.active`);
+
                 return (
                   <View
                     key={fieldItem.id}
-                    className={`mb-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm`}>
-                    {/* Row 1: Tên ngày + Switch Active */}
+                    className="mb-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                    {/* Row 1: Day + Switch */}
                     <View className="mb-1 flex-row items-center justify-between">
                       <View className="flex-row items-center gap-2">
                         <Calendar size={18} color="#6b7280" />
-                        <Text className="text-base font-inter-semibold text-gray-700">
+                        <Text className="font-inter-semibold text-base text-gray-700">
                           {t(_KTVConfigSchedulesLabel[fieldItem.day_key])}
                         </Text>
                       </View>
@@ -140,7 +135,10 @@ const WorkScheduleScreen = () => {
                         name={`working_schedule.${index}.active`}
                         render={({ field: { onChange, value } }) => (
                           <Switch
-                            trackColor={{ false: DefaultColor.blue[100], true: DefaultColor.base['primary-color-2'] }}
+                            trackColor={{
+                              false: DefaultColor.blue[100],
+                              true: DefaultColor.base['primary-color-2'],
+                            }}
                             thumbColor={value ? DefaultColor.blue[500] : DefaultColor.blue[200]}
                             onValueChange={onChange}
                             value={value}
@@ -149,50 +147,59 @@ const WorkScheduleScreen = () => {
                       />
                     </View>
 
-                    {/* Row 2: Chọn Giờ (Chỉ hiện khi Active) */}
-                    {isActive ? (
-                      <View className="mt-2 flex-row items-center gap-3">
-                        {/* Start Time Controller */}
-                        <View className="flex-1">
-                          <Text className="mb-1 ml-1 text-xs text-gray-400">{t('config_schedule.start_time')}</Text>
-                          <Controller
-                            control={control}
-                            name={`working_schedule.${index}.start_time`}
-                            render={({ field: { onChange, value } }) => (
-                              <DateTimePickerInput
-                                mode="time"
-                                value={parseTime(value)} // String -> Date
-                                onChange={(date) => onChange(formatTime(date))} // Date -> String
-                              />
-                            )}
-                          />
-                        </View>
-
-                        <View className="justify-center pb-4">
-                          <Text className="font-bold text-gray-400">-</Text>
-                        </View>
-
-                        {/* End Time Controller */}
-                        <View className="flex-1">
-                          <Text className="mb-1 ml-1 text-xs text-gray-400">{t('config_schedule.end_time')}</Text>
-                          <Controller
-                            control={control}
-                            name={`working_schedule.${index}.end_time`}
-                            render={({ field: { onChange, value } }) => (
-                              <DateTimePickerInput
-                                mode="time"
-                                value={parseTime(value)}
-                                onChange={(date) => onChange(formatTime(date))}
-                              />
-                            )}
-                          />
-                        </View>
+                    {/* Row 2: Giờ */}
+                    <View className="relative mt-2 flex-row items-center gap-3">
+                      {/* Start Time Controller */}
+                      <View className={`flex-1 ${!isActive ? 'absolute opacity-0' : ''}`}>
+                        <Text className="mb-1 ml-1 text-xs text-gray-400">
+                          {t('config_schedule.start_time')}
+                        </Text>
+                        <Controller
+                          control={control}
+                          name={`working_schedule.${index}.start_time`}
+                          defaultValue="08:00" // mặc định
+                          render={({ field: { onChange, value } }) => (
+                            <DateTimePickerInput
+                              mode="time"
+                              value={parseTime(value || '08:00')}
+                              onChange={(date) => onChange(formatTime(date))}
+                            />
+                          )}
+                        />
                       </View>
-                    ) : (
-                      <View className="ml-1 mt-2">
-                        <Text className="text-sm font-inter-italic text-gray-400">{t('config_schedule.off')}</Text>
+
+                      <View className="justify-center pb-4">
+                        <Text className="font-bold text-gray-400">-</Text>
                       </View>
-                    )}
+
+                      {/* End Time Controller */}
+                      <View className={`flex-1 ${!isActive ? 'absolute opacity-0' : ''}`}>
+                        <Text className="mb-1 ml-1 text-xs text-gray-400">
+                          {t('config_schedule.end_time')}
+                        </Text>
+                        <Controller
+                          control={control}
+                          name={`working_schedule.${index}.end_time`}
+                          defaultValue="18:00"
+                          render={({ field: { onChange, value } }) => (
+                            <DateTimePickerInput
+                              mode="time"
+                              value={parseTime(value || '18:00')}
+                              onChange={(date) => onChange(formatTime(date))}
+                            />
+                          )}
+                        />
+                      </View>
+
+                      {/* Nếu inactive, hiển thị text "Off" */}
+                      {!isActive && (
+                        <View className="absolute ml-1 mt-2">
+                          <Text className="font-inter-italic text-sm text-gray-400">
+                            {t('config_schedule.off')}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
                 );
               })}
@@ -207,7 +214,9 @@ const WorkScheduleScreen = () => {
             disabled={loadingSave}
             onPress={onSubmit}
             activeOpacity={0.8}>
-            <Text className="text-base font-bold text-white">{t('config_schedule.save_changes')}</Text>
+            <Text className="text-base font-bold text-white">
+              {t('config_schedule.save_changes')}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
