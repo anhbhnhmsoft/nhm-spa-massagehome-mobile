@@ -14,6 +14,7 @@ import {
   DetailInfoKTVResponse,
   EditProfileKtvRequest,
   ConfigSchedulesResponse,
+  EditConfigScheduleRequest,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
@@ -123,6 +124,13 @@ const ktvApi = {
   // Lấy thông tin cấu hình thời gian làm việc của KTV
   configSchedule: async (): Promise<ConfigSchedulesResponse> => {
     const response = await client.get(`${defaultUri}/config-schedule`);
+    return response.data;
+  },
+  // câp nhâp thông tin cấu hình thời gian làm việc của KTV
+  updateConfigSchedule: async (
+    data: EditConfigScheduleRequest
+  ): Promise<ConfigSchedulesResponse> => {
+    const response = await client.post(`${defaultUri}/config-schedule`, data);
     return response.data;
   },
 };

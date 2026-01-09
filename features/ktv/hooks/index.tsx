@@ -7,7 +7,7 @@ import {
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   DashboardQueryParams,
   EditConfigScheduleRequest,
@@ -27,6 +27,7 @@ import {
   useDetailServiceMutation,
   useFinishBookingMutation,
   useLinkQrAgencyMutation,
+  useUpdateConfigScheduleMutation,
   useUpdateProfileKtvMutation,
   useUpdateServiceMutation,
   useUploadImageMutation,
@@ -969,19 +970,21 @@ export const useScanQRCodeCustomer = () => {
 };
 
 export const useConfigSchedule = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const query = useConfigScheduleQuery();
-  const {error: errorToast} = useToast();
-
+  const { error: errorToast, success } = useToast();
+  const setLoading = useApplicationStore((state) => state.setLoading);
+  const { mutate } = useUpdateConfigScheduleMutation();
   const form = useForm<EditConfigScheduleRequest>({
     defaultValues: _DefaultValueFormConfigSchedule,
     resolver: zodResolver(
       z.object({
         is_working: z.boolean(),
         working_schedule: z.array(
-          z.object({
-              day_key: z.enum(_KTVConfigSchedules,{
-                error: t('config_schedule.error.invalid_day')
+          z
+            .object({
+              day_key: z.enum(_KTVConfigSchedules, {
+                error: t('config_schedule.error.invalid_day'),
               }),
               start_time: z.string().min(5),
               end_time: z.string().min(5),
@@ -997,7 +1000,7 @@ export const useConfigSchedule = () => {
                 if (!start.isValid() || !end.isValid()) return false;
 
                 // Thêm kiểm tra giờ kết thúc phải sau giờ bắt đầu
-                return end.isAfter(start)
+                return end.isAfter(start);
               },
               {
                 message: t('config_schedule.error.invalid_time_end'),
@@ -1011,7 +1014,7 @@ export const useConfigSchedule = () => {
 
   // Lấy dữ liệu cấu hình lịch làm việc khi component mount
   useEffect(() => {
-    if (query.data){
+    if (query.data) {
       const data = query.data;
       form.setValue('is_working', data.is_working);
       form.setValue('working_schedule', data.working_schedule);
@@ -1026,15 +1029,25 @@ export const useConfigSchedule = () => {
     }
   }, [query.isError]);
 
-  const onSubmit = form.handleSubmit((data) => {
-    // Xử lý dữ liệu trước khi submit
-    console.log(data)
+  const onSubmit = form.handleSubmit((data: EditConfigScheduleRequest) => {
+    setLoading(true);
+    mutate(data, {
+      onSuccess: (res) => {
+        success({ message: res.message });
+      },
+      onError: (err) => {
+        errorToast({ message: err.message });
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
   });
 
   return {
     query,
     form,
     onSubmit,
-    loadingSave: form.formState.isSubmitting
-  }
-}
+    loadingSave: form.formState.isSubmitting,
+  };
+};

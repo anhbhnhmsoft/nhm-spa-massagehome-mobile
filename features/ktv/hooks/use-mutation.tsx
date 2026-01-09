@@ -3,6 +3,7 @@ import ktvApi from '@/features/ktv/api';
 import {
   CancelBookingRequet,
   DetailServiceRequest,
+  EditConfigScheduleRequest,
   EditProfileKtvRequest,
 } from '@/features/ktv/types';
 
@@ -78,5 +79,12 @@ export const useUpdateProfileKtvMutation = () => {
 export const useLinkQrAgencyMutation = () => {
   return useMutation({
     mutationFn: (agency_id: string) => ktvApi.linkQrAgency(agency_id),
+  });
+};
+
+// cập nhật
+export const useUpdateConfigScheduleMutation = () => {
+  return useMutation({
+    mutationFn: (data: EditConfigScheduleRequest) => ktvApi.updateConfigSchedule(data),
   });
 };
