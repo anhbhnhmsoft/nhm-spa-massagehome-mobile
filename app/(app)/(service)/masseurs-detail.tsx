@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel'; // Import thư viện
-import { Star, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import Carousel from 'react-native-reanimated-carousel';
+import { Star, MessageCircle, ChevronLeft, ChevronRight, Clock } from 'lucide-react-native';
 import { useKTVDetail } from '@/features/user/hooks';
 import {
   AvatarKTV,
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { formatDistance } from '@/lib/utils';
+import { cn, formatDistance, getCurrentDayKey } from '@/lib/utils';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
@@ -21,6 +21,11 @@ import Empty from '@/components/empty';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGetRoomChat } from '@/features/chat/hooks';
 import ReviewListModal from '@/components/app/list-review';
+import { _KTVConfigSchedules, _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
+import { KTVWorkSchedule, ListKTVItem } from '@/features/user/types';
+import { ScheduleSection } from '@/components/app/ktv-card';
+
+
 // Lấy chiều rộng màn hình để set cho Carousel
 const { width: PAGE_WIDTH } = Dimensions.get('window');
 const CAROUSEL_HEIGHT = PAGE_WIDTH * 1.2; // Tỷ lệ ảnh dọc (giống hình mẫu)
@@ -60,6 +65,31 @@ const MasseurDetailScreen = () => {
     }
     return null;
   }, [detail]);
+
+
+
+  // Kiểm tra xem KTV có đang làm việc trong thời gian hiện tại không
+  const currentDayKey = getCurrentDayKey();
+  const isOnlineRealtime = useMemo(() => {
+    // Check 1: Nút tổng (Manual Switch)
+    if (!detail.schedule?.is_working) return false;
+
+    // Tìm cấu hình của ngày hôm nay
+    const todayConfig = detail.schedule?.schedule_time?.find(
+      (item: any) => item.day_key === currentDayKey
+    );
+    // Check 2: Hôm nay có lịch không?
+    if (!todayConfig || !todayConfig.active) return false;
+
+    // Check 3: So sánh giờ hiện tại
+    const now = dayjs();
+    const start = dayjs(todayConfig.start_time, 'HH:mm'); // Tạo object giờ hôm nay
+    const end = dayjs(todayConfig.end_time, 'HH:mm');
+
+    // Nếu giờ hiện tại nằm giữa Start và End
+    // Lưu ý: '[]' nghĩa là bao gồm cả phút bắt đầu và kết thúc
+    return now.isBetween(start, end, null, '[]');
+  }, [detail, currentDayKey]);
 
   return (
     <>
@@ -106,7 +136,7 @@ const MasseurDetailScreen = () => {
                 <View
                   style={{ bottom: 32, right: 16 }}
                   className="absolute rounded-full bg-black/50 px-3 py-1">
-                  <Text className="text-xs font-inter-medium text-white">
+                  <Text className="font-inter-medium text-xs text-white">
                     {t('masseurs_detail.display_image')} {currentIndex + 1}/
                     {detail.display_image.length}
                   </Text>
@@ -115,8 +145,7 @@ const MasseurDetailScreen = () => {
                 {/* Nút Chat hỗ trợ */}
                 <TouchableOpacity
                   onPress={() => getRoomChat({ user_id: detail.id })}
-                  className="absolute right-4 top-12 rounded-full bg-white/80 p-2"
-                >
+                  className="absolute right-4 top-12 rounded-full bg-white/80 p-2">
                   <Icon as={MessageCircle} size={20} className="text-primary-color-2" />
                 </TouchableOpacity>
 
@@ -140,7 +169,7 @@ const MasseurDetailScreen = () => {
                     <Text className="font-inter-bold text-2xl text-gray-800">{detail.name}</Text>
                     {detail.booking_soon && (
                       <View className="mt-1.5 self-start rounded-md bg-orange-100 px-2 py-0.5">
-                        <Text className="text-[10px] font-inter-bold text-orange-600">
+                        <Text className="font-inter-bold text-[10px] text-orange-600">
                           {t('masseurs_detail.booking_soon', { time: detail.booking_soon })}
                         </Text>
                       </View>
@@ -159,7 +188,7 @@ const MasseurDetailScreen = () => {
                       fill={DefaultColor.yellow[500]}
                       color={DefaultColor.yellow[500]}
                     />
-                    <Text className="text-xs font-inter-bold text-orange-500">
+                    <Text className="font-inter-bold text-xs text-orange-500">
                       {detail.rating} ({detail.review_count}) {t('masseurs_detail.review_count')}
                     </Text>
                   </View>
@@ -181,15 +210,16 @@ const MasseurDetailScreen = () => {
                     </Text>
 
                     {/* Chỉ hiện nút nếu văn bản dài (ví dụ > 100 ký tự) để tránh hiện nút khi bio quá ngắn */}
-                    {detail.review_application.bio && detail.review_application.bio.length > 100 && (
-                      <TouchableOpacity
-                        className="mt-2 flex-row items-center justify-center rounded-lg bg-gray-50 py-2"
-                        onPress={() => setIsBioExpanded(!isBioExpanded)}>
-                        <Text className="mr-1 text-xs text-gray-500">
-                          {isBioExpanded ? t('common.hide') : t('common.see_more')}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
+                    {detail.review_application.bio &&
+                      detail.review_application.bio.length > 100 && (
+                        <TouchableOpacity
+                          className="mt-2 flex-row items-center justify-center rounded-lg bg-gray-50 py-2"
+                          onPress={() => setIsBioExpanded(!isBioExpanded)}>
+                          <Text className="mr-1 text-xs text-gray-500">
+                            {isBioExpanded ? t('common.hide') : t('common.see_more')}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 </View>
 
@@ -205,7 +235,9 @@ const MasseurDetailScreen = () => {
                   {/* Giới tính */}
                   <View className="items-center gap-1">
                     <Text className="text-xs text-gray-400">{t('masseurs_detail.gender')}</Text>
-                    <Text className="font-inter-medium">{t(_GenderMap[detail.profile.gender])}</Text>
+                    <Text className="font-inter-medium">
+                      {t(_GenderMap[detail.profile.gender])}
+                    </Text>
                   </View>
                   {/* Tuổi */}
                   <View className="items-center gap-1">
@@ -226,11 +258,14 @@ const MasseurDetailScreen = () => {
                 </View>
               </View>
 
+              {/* Lịch làm việc */}
+              {detail.schedule && <ScheduleSection schedule={detail.schedule} isOnlineRealtime={isOnlineRealtime} />}
+
               {/* --- Review Section --- */}
               <View className="mt-2 bg-white p-4">
                 {/* --- Header Review --- */}
                 <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="text-base font-inter-bold text-gray-800">
+                  <Text className="font-inter-bold text-base text-gray-800">
                     {t('masseurs_detail.review_by_customer')}
                   </Text>
                 </View>
@@ -249,9 +284,8 @@ const MasseurDetailScreen = () => {
                 {detail.review_count > 1 && (
                   <TouchableOpacity
                     className="mt-4 flex-row items-center justify-center rounded-full bg-gray-50 py-2"
-                    onPress={() => setShowReviewList(true)}
-                  >
-                    <Text className="text-xs font-inter-medium text-gray-500">
+                    onPress={() => setShowReviewList(true)}>
+                    <Text className="font-inter-medium text-xs text-gray-500">
                       {t('masseurs_detail.see_all_reviews', { count: detail.review_count - 1 })}
                     </Text>
                     <Icon as={ChevronRight} size={12} className="ml-2 text-gray-500" />
@@ -276,11 +310,11 @@ const MasseurDetailScreen = () => {
                 key={item.id}
                 className="bg-white px-5 pb-4" // Thêm bg-white và padding-bottom
               >
-                <ServiceCard item={item} />
+                <ServiceCard item={item}  />
               </View>
             );
           }}
-          ListEmptyComponent={<Empty className={"bg-white"} />}
+          ListEmptyComponent={<Empty className={'bg-white'} />}
           ListFooterComponent={
             <View
               style={{
@@ -291,9 +325,14 @@ const MasseurDetailScreen = () => {
           }
         />
       </View>
-      <ReviewListModal isVisible={showReviewList} onClose={() => setShowReviewList(false)} params={{user_id: detail.id}} />
+      <ReviewListModal
+        isVisible={showReviewList}
+        onClose={() => setShowReviewList(false)}
+        params={{ user_id: detail.id }}
+      />
     </>
   );
 };
+
 
 export default MasseurDetailScreen;

@@ -106,7 +106,12 @@
     "security": "Bảo mật",
     "new_password_placeholder": "Nhập mật khẩu mới",
     "and": "và",
-    "years_of_experience" : "Số năm kinh nghiệm"
+    "years_of_experience" : "Số năm kinh nghiệm",
+    "online": "Đang trực tuyến",
+    "offline": "Đang ngoại tuyến",
+    "day_off": "Ngày nghỉ",
+    "offline_service_title": "Kĩ thuật viên đang nghỉ",
+    "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -510,7 +515,8 @@
     "unavailable": "Tạm ngưng",
     "sales_count_item_service": "Đã bán {{ count }}",
     "price_service_sub": "Chỉ từ",
-    "booking_soon": "Lịch hẹn sớm nhất sau {{ time }}"
+    "booking_soon": "Lịch hẹn sớm nhất sau {{ time }}",
+    "working_hours": "Giờ làm việc"
   },
   "services": {
     "total_services": "dịch vụ có sẵn",

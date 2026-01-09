@@ -127,9 +127,7 @@ const ktvApi = {
     return response.data;
   },
   // câp nhâp thông tin cấu hình thời gian làm việc của KTV
-  updateConfigSchedule: async (
-    data: EditConfigScheduleRequest
-  ): Promise<ConfigSchedulesResponse> => {
+  updateConfigSchedule: async (data: EditConfigScheduleRequest): Promise<ConfigSchedulesResponse> => {
     const response = await client.post(`${defaultUri}/config-schedule`, data);
     return response.data;
   },

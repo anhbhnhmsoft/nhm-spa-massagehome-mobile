@@ -1,6 +1,6 @@
-import { ListKTVItem } from '@/features/user/types';
+import { KTVWorkSchedule, ListKTVItem } from '@/features/user/types';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import {
   Award,
@@ -11,15 +11,22 @@ import {
   ShieldCheck,
   Star,
   User,
+  Clock,
 } from 'lucide-react-native';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { formatDistance } from '@/lib/utils';
+import { cn, formatDistance, getCurrentDayKey } from '@/lib/utils';
 import { useSetKtv } from '@/features/user/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import StarRating from '@/components/star-rating';
-import DefaultColor from '@/components/styles/color';
 import { Text } from '@/components/ui/text';
-import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import {  _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
+import { Icon } from '@/components/ui/icon';
+dayjs.extend(isBetween);
+dayjs.extend(customParseFormat);
+
 
 export const KTVHomePageCard = ({ item }: { item: ListKTVItem }) => {
   const { t } = useTranslation();
@@ -86,7 +93,10 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
 
   const calculateDistance = useCalculateDistance();
 
-  const distance = calculateDistance(item.review_application.latitude, item.review_application.longitude);
+  const distance = calculateDistance(
+    item.review_application.latitude,
+    item.review_application.longitude
+  );
 
   const setKtv = useSetKtv();
 
@@ -142,7 +152,9 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
           )}
           <View className="flex-row items-center gap-1">
             <TrendingUp size={10} color="#64748b" />
-            <Text className="text-[10px] text-slate-500">{item.jobs_received_count} {t('common.jobs_received_count')}</Text>
+            <Text className="text-[10px] text-slate-500">
+              {item.jobs_received_count} {t('common.jobs_received_count')}
+            </Text>
           </View>
         </View>
 
@@ -157,8 +169,8 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
   );
 };
 
-/** * Card Skeleton hiển thị thông tin của massager trong trang dịch vụ
- * @constructor
+/**
+ * Card Skeleton hiển thị thông tin của massager trong trang dịch vụ
  */
 export const KTVServiceCardSkeleton = () => {
   return (
@@ -185,6 +197,97 @@ export const KTVServiceCardSkeleton = () => {
           <View />
           <Skeleton className="h-8 w-20 rounded-md bg-slate-200" />
         </View>
+      </View>
+    </View>
+  );
+};
+
+
+/**
+ * Hiển thị thông tin lịch làm việc của massager
+ */
+export const ScheduleSection = ({ schedule, isOnlineRealtime }: { schedule: KTVWorkSchedule, isOnlineRealtime: boolean }) => {
+  const { t } = useTranslation();
+  const currentDayKey = getCurrentDayKey();
+
+
+  // Sắp xếp lịch để hiển thị từ Thứ 2 -> CN (nếu data trả về lộn xộn)
+  const sortedSchedule = useMemo(() => {
+    return [...(schedule?.schedule_time || [])].sort((a, b) => a.day_key - b.day_key);
+  }, [schedule]);
+
+  if (!schedule) return null;
+
+  return (
+    <View className="mt-2 bg-white px-4 py-4">
+      {/* Header Section */}
+      <View className="mb-3 flex-row items-center justify-between">
+        <View className="flex-row items-center gap-2">
+          {/* Icon Đồng hồ */}
+          <Icon as={Clock} size={20} className="text-primary-color-2" />
+          <Text className="font-inter-bold text-base text-gray-800">
+            {t('masseurs_detail.working_hours')}
+          </Text>
+        </View>
+
+        {/* Badge Trạng thái hiện tại */}
+        <View
+          className={cn(
+            'rounded-md px-2 py-1',
+            isOnlineRealtime ? 'bg-green-100' : 'bg-gray-100'
+          )}>
+          <Text
+            className={cn(
+              'text-xs',
+              isOnlineRealtime ? 'font-inter-bold text-green-700' : 'text-gray-500'
+            )}>
+            {isOnlineRealtime ? t('common.online') : t('common.offline')}
+          </Text>
+        </View>
+      </View>
+
+      {/* List Lịch */}
+      <View className="rounded-xl bg-gray-50 p-3">
+        {sortedSchedule.map((item, index) => {
+          const isToday = item.day_key === currentDayKey;
+
+          return (
+            <View
+              key={item.day_key}
+              className={`flex-row items-center justify-between py-2 ${
+                index !== sortedSchedule.length - 1 ? 'border-b border-dashed border-gray-200' : ''
+              }`}>
+              {/* Cột Thứ */}
+              <View className="flex-row items-center gap-2">
+                {isToday && <View className="h-1.5 w-1.5 rounded-full bg-primary-color-2" />}
+                <Text
+                  className={cn(
+                    'text-sm',
+                    isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700'
+                  )}>
+                  {t(_KTVConfigSchedulesLabel[item.day_key])}
+                </Text>
+              </View>
+
+              {/* Cột Giờ */}
+              <View>
+                {item.active ? (
+                  <Text
+                    className={cn(
+                      'text-sm',
+                      isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700'
+                    )}>
+                    {item.start_time} - {item.end_time}
+                  </Text>
+                ) : (
+                  <Text className="font-inter-italic text-sm text-gray-400">
+                    {t('common.day_off')}
+                  </Text>
+                )}
+              </View>
+            </View>
+          );
+        })}
       </View>
     </View>
   );

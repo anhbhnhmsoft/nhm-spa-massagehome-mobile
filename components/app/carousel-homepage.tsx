@@ -106,7 +106,6 @@ export const InviteKtv = () => {
         activeOpacity={0.9}
         onPress={() => handlePress('/(app)/(profile)/partner-register-individual')}
         className="relative flex-1 overflow-hidden rounded-[24px] bg-primary-color-2 p-4 shadow-sm shadow-blue-900/20"
-        style={{ minHeight: 160 }}
       >
         {/* Background Decorations */}
         <View className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10" />
@@ -129,11 +128,11 @@ export const InviteKtv = () => {
             <Text className="font-inter-bold text-base leading-tight text-white" numberOfLines={2}>
               {t('homepage.invite_ktv.title')}
             </Text>
-            <Text
-              className="mt-1 font-inter-medium text-xs text-blue-100 opacity-90"
-              numberOfLines={2}>
-              {t('homepage.invite_ktv.description')}
-            </Text>
+            {/*<Text*/}
+            {/*  className="mt-1 font-inter-medium text-xs text-blue-100 opacity-90"*/}
+            {/*  numberOfLines={2}>*/}
+            {/*  {t('homepage.invite_ktv.description')}*/}
+            {/*</Text>*/}
           </View>
         </View>
       </TouchableOpacity>
@@ -143,7 +142,7 @@ export const InviteKtv = () => {
         activeOpacity={0.9}
         onPress={() => handlePress('/(app)/(profile)/partner-register-agency')}
         className="relative flex-1 overflow-hidden rounded-[24px] bg-primary-color-1 p-4 shadow-sm shadow-blue-900/20"
-        style={{ minHeight: 160 }}>
+      >
         {/* Background Decorations */}
         <View className="absolute -left-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
         <View className="absolute bottom-0 right-0 h-28 w-16 -rotate-12 bg-white/5" />
@@ -165,11 +164,11 @@ export const InviteKtv = () => {
             <Text className="font-inter-bold text-base leading-tight text-white" numberOfLines={2}>
               {t('homepage.invite_partner.title')}
             </Text>
-            <Text
-              className="mt-1 font-inter-medium text-xs text-blue-100 opacity-90"
-              numberOfLines={2}>
-              {t('homepage.invite_partner.description')}
-            </Text>
+            {/*<Text*/}
+            {/*  className="mt-1 font-inter-medium text-xs text-blue-100 opacity-90"*/}
+            {/*  numberOfLines={2}>*/}
+            {/*  {t('homepage.invite_partner.description')}*/}
+            {/*</Text>*/}
           </View>
         </View>
       </TouchableOpacity>

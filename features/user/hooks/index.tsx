@@ -227,36 +227,18 @@ export const useScanQRCodeCustomer = () => {
     }
   }, [permission]);
 
-  const onBarcodeScanned = useCallback(
-    (result: BarcodeScanningResult) => {
-      if (!isScanning || scanningRef.current || !result.data) return;
+  const onBarcodeScanned = (result: BarcodeScanningResult) => {
+    if (!isScanning || scanningRef.current || !result.data) return;
 
-      scanningRef.current = true;
-      setIsScanning(false);
-      setLoading(true);
+    scanningRef.current = true;
+    setIsScanning(false);
+    setLoading(true);
 
-      try {
-        const url = new URL(result.data);
-        const agencyId = url.searchParams.get('id');
+    try {
+      const url = new URL(result.data);
+      const agencyId = url.searchParams.get('id');
 
-        if (!agencyId) {
-          Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
-            {
-              text: 'OK',
-              onPress: () => {
-                scanningRef.current = false;
-                setIsScanning(true);
-              },
-            },
-          ]);
-          return;
-        }
-
-        router.replace({
-          pathname: '/(app)/(profile)/partner-register-individual',
-          params: { agencyId },
-        });
-      } catch (error) {
+      if (!agencyId) {
         Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
           {
             text: 'OK',
@@ -266,12 +248,27 @@ export const useScanQRCodeCustomer = () => {
             },
           },
         ]);
-      } finally {
-        setLoading(false);
+        return;
       }
-    },
-    [isScanning, setLoading, t]
-  );
+
+      router.replace({
+        pathname: '/(app)/(profile)/partner-register-individual',
+        params: { agencyId },
+      });
+    } catch (error) {
+      Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
+        {
+          text: 'OK',
+          onPress: () => {
+            scanningRef.current = false;
+            setIsScanning(true);
+          },
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const startScan = () => {
     scanningRef.current = false;

@@ -180,7 +180,7 @@ const WorkScheduleScreen = () => {
                         <Controller
                           control={control}
                           name={`working_schedule.${index}.end_time`}
-                          defaultValue="18:00"
+                          defaultValue="16:00"
                           render={({ field: { onChange, value } }) => (
                             <DateTimePickerInput
                               mode="time"

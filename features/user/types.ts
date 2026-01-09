@@ -8,6 +8,17 @@ import { _LanguageCode } from '@/lib/const';
 import { _Gender, _UserRole } from '@/features/auth/const';
 import { _BookingStatus } from '@/features/service/const';
 import { _PartnerFileType } from './const';
+import { _KTVConfigSchedules } from '@/features/ktv/consts';
+
+export type KTVWorkSchedule = {
+  is_working: boolean;
+  schedule_time: {
+    day_key: _KTVConfigSchedules;
+    start_time: string;
+    end_time: string;
+    active: boolean;
+  }[];
+};
 
 export type ListKTVItem = {
   id: string;
@@ -33,6 +44,7 @@ export type ListKTVItem = {
     longitude: number;
     bio: string;
   };
+  schedule: KTVWorkSchedule;
 };
 export type KTVDetail = ListKTVItem & {
   display_image: {

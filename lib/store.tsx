@@ -4,6 +4,7 @@ import { _LanguageCode } from '@/lib/const';
 import { Storage } from '@/lib/storages';
 import { LocationObject, PermissionStatus } from 'expo-location';
 import i18n from 'i18next';
+import { devtools } from 'zustand/middleware';
 
 export type LocationPermission = PermissionStatus | 'skipped' | null;
 
@@ -29,60 +30,74 @@ export interface IApplicationStore {
   hydrateLocationPermission: () => Promise<LocationPermission>;
 }
 
-const useApplicationStore = create<IApplicationStore>((set) => ({
-  language: _LanguageCode.VI,
-  loading: false,
+const useApplicationStore = create<IApplicationStore>()(
+  devtools(
+    (set) => ({
+      language: _LanguageCode.VI,
+      loading: false,
 
-  location: null,
-  location_permission: null,
+      location: null,
+      location_permission: null,
 
-  // functions
-  setLanguage: async (lang) => {
-    try {
-      await Storage.setItem(_StorageKey.LANGUAGE, lang);
-      await i18n.changeLanguage(lang);
+      // functions
+      setLanguage: async (lang) => {
+        try {
+          await Storage.setItem(_StorageKey.LANGUAGE, lang);
+          await i18n.changeLanguage(lang);
 
-      set({ language: lang });
-    } catch {
-      // do nothing
+          set({ language: lang }, false, 'app/setLanguage');
+        } catch {
+          // do nothing
+        }
+      },
+
+      hydrateLanguage: async () => {
+        try {
+          let lang = await Storage.getItem<_LanguageCode>(_StorageKey.LANGUAGE);
+          if (lang !== _LanguageCode.EN && lang !== _LanguageCode.VI) {
+            lang = _LanguageCode.VI;
+          }
+          await i18n.changeLanguage(lang);
+          set({ language: lang }, false, 'app/hydrateLanguage');
+        } catch {
+          // do nothing
+        }
+      },
+
+      setLoading: (state: boolean) => {
+        set({ loading: state }, false, 'app/setLoading');
+      },
+
+      setLocation: (location: LocationApp | null) => {
+        set({ location }, false, 'app/setLocation');
+      },
+
+      setLocationPermission: async (permission: PermissionStatus | 'skipped' | null) => {
+        try {
+          await Storage.setItem(_StorageKey.LOCATION_PERMISSION, permission);
+        } catch {
+          // do nothing
+        }
+        set({ location_permission: permission }, false, 'app/setLocationPermission');
+      },
+
+      hydrateLocationPermission: async () => {
+        try {
+          let permission = await Storage.getItem<LocationPermission>(
+            _StorageKey.LOCATION_PERMISSION
+          );
+          set({ location_permission: permission }, false, 'app/hydrateLocationPermission');
+          return permission;
+        } catch {
+          return null;
+        }
+      },
+    }),
+    {
+      name: 'ApplicationStore', // Tên hiển thị trong Redux DevTools
+      enabled: __DEV__, // Chỉ bật khi dev
     }
-  },
-  hydrateLanguage: async () => {
-    try {
-      let lang = await Storage.getItem<_LanguageCode>(_StorageKey.LANGUAGE);
-      if (lang !== _LanguageCode.EN && lang !== _LanguageCode.VI) {
-        lang = _LanguageCode.VI;
-      }
-      await i18n.changeLanguage(lang);
-      set({ language: lang });
-    } catch  {
-      // do nothing
-    }
-  },
-  setLoading: (state: boolean) => {
-    set({ loading: state });
-  },
-  setLocation: (location: LocationApp | null) => {
-    set({ location });
-  },
-  setLocationPermission: async (permission: PermissionStatus | 'skipped' | null) => {
-    try {
-      await Storage.setItem(_StorageKey.LOCATION_PERMISSION, permission);
-    } catch  {
-      // do nothing
-    }
-    set({ location_permission: permission });
-  },
-  hydrateLocationPermission: async () => {
-    try {
-      let permission = await Storage.getItem<LocationPermission>(_StorageKey.LOCATION_PERMISSION);
-      set({ location_permission: permission });
-      return permission;
-    } catch {
-      // do nothing
-      return null;
-    }
-  },
-}));
+  )
+);
 
 export default useApplicationStore;

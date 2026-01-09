@@ -20,8 +20,6 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const PromoModal = () => {
   const { isVisible, collectCoupon, isPending, data, setIsVisible } = useCommercialCoupon();
 
-
-
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
