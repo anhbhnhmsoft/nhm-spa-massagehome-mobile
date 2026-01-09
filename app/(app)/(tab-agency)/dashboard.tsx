@@ -10,7 +10,6 @@ import {
   Sparkles,
   TrendingUp,
 } from 'lucide-react-native';
-import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useDashboardTotalIncome } from '@/features/ktv/hooks';
 import { formatBalance } from '@/lib/utils';
@@ -19,6 +18,7 @@ import DashboardChart from '@/components/app/ktv/dashboard_chart';
 import { TransactionItem } from '../(profile)/wallet';
 import Empty from '@/components/empty';
 import { router } from 'expo-router';
+import { HeaderAppAgency } from '@/components/app/agency/header-app';
 interface StatCardProps {
   icon: ComponentType<{
     size?: number;
@@ -55,7 +55,7 @@ const DashboardScreen = () => {
   const TAB_BAR_HEIGHT = getTabBarHeight();
   return (
     <View className="flex-1 bg-white">
-      <HeaderAppKTV />
+      <HeaderAppAgency />
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="px-5"

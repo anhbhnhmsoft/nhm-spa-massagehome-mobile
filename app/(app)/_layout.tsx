@@ -29,7 +29,6 @@ export default function AppLayout() {
   // Tự động sync device token lên server khi user login
   useNotification();
 
-
   return (
     <>
       <FullScreenLoading loading={loading || notReady} whiteBg={notReady} />
@@ -50,6 +49,7 @@ export default function AppLayout() {
         {/* --- TAB KTV SCREEN --- */}
         <Stack.Protected guard={checkAuth && user?.role === _UserRole.AGENCY}>
           <Stack.Screen name="(tab-agency)" />
+          <Stack.Screen name="(service-agency)" />
         </Stack.Protected>
 
         {/* --- TAB CUSTOMER SCREEN --- */}

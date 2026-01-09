@@ -2,7 +2,7 @@ import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { Tabs } from 'expo-router';
 import { getTabBarHeight, tabBarStyle } from '@/components/styles/style';
 import { TabIcon } from '@/components/app/tab-icon';
-import { Home, MessageCircle, ChartColumnBigIcon } from 'lucide-react-native';
+import { Home, MessageCircle, ChartColumnBigIcon, Wallet } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -38,10 +38,10 @@ export default function TabsAgencyLayout() {
 
         {/* 4. Chat */}
         <Tabs.Screen
-          name="chat"
+          name="wallet"
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon focused={focused} icon={MessageCircle} label={t('tab_ktv.chat')} />
+              <TabIcon focused={focused} icon={Wallet} label={t('profile.wallet')} />
             ),
           }}
         />

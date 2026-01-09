@@ -9,11 +9,9 @@ import {
   Modal, // Thêm Modal
   Pressable,
 } from 'react-native';
-import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useTranslation } from 'react-i18next';
 import { useHomeAgency } from '@/features/agency/hook';
-import { UserPlus, X } from 'lucide-react-native';
 import ItemKtv from '@/components/app/agency/ktv-card';
 import {
   AgencyEmptyState,
@@ -21,6 +19,8 @@ import {
   InviteKTVModal,
 } from '@/components/app/agency/agency-card';
 import useAuthStore from '@/features/auth/store';
+import { HeaderAppAgency } from '@/components/app/agency/header-app';
+import useApplicationStore from '@/lib/store';
 
 export default function AgencyDashboard() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function AgencyDashboard() {
   const bottomPadding = getTabBarHeight() + 20;
   return (
     <View className="flex-1 bg-white">
-      <HeaderAppKTV />
+      <HeaderAppAgency />
 
       <FlatList
         data={data}
