@@ -81,6 +81,7 @@ export default function PartnerRegisterIndividualScreen() {
       });
     }
   }, [agencyId, form]);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />

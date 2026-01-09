@@ -30,16 +30,6 @@ const countByType = (files: { type_upload: _PartnerFileType }[], type: _PartnerF
 
 /**
  * Lọc danh sách file_uploads theo từng loại ảnh (_PartnerFileType)
- *
- * Mục đích:
- * - `file_uploads` trong form là 1 mảng chung (theo format BE)
- * - UI cần hiển thị ảnh theo từng nhóm (CCCD, bằng cấp, gallery, ...)
- * - Helper này giúp tách dữ liệu theo type để render UI
- *
- * Lưu ý:
- * - KHÔNG tạo state riêng cho từng loại ảnh
- * - Mọi thao tác add/remove đều update trực tiếp `file_uploads`
- * - Đảm bảo Zod validate + submit payload luôn đồng bộ
  */
 export const getFilesByType = (
   files: ApplyPartnerRequest['file_uploads'],
@@ -54,7 +44,7 @@ const addFileError = (ctx: z.RefinementCtx, type: _PartnerFileType, message: str
   });
 };
 
-export const buildApplyPartnerFormData = (data: ApplyPartnerRequest): FormData => {
+const buildApplyPartnerFormData = (data: ApplyPartnerRequest): FormData => {
   const fd = new FormData();
   fd.append('role', String(data.role));
   fd.append('province_code', data.province_code);
@@ -103,7 +93,10 @@ export const usePartnerRegisterForm = () => {
   const setLoading = useApplicationStore((s) => s.setLoading);
   const { mutate } = useMutationApplyPartner();
   const { error: errorToast, success: successToast } = useToast();
-  // hàm validate và xử lý form đăng ký đối tác
+  // hàm validate và xử lý form đăng ký  ktv
+  const test = () => {
+    successToast({ message: t('profile.partner_form.register_success') });
+  };
   const schemas = z
     .object({
       role: z.union([z.literal(_UserRole.KTV), z.literal(_UserRole.AGENCY)]),
@@ -145,7 +138,7 @@ export const usePartnerRegisterForm = () => {
     })
     .superRefine((data, ctx) => {
       const files = data.file_uploads;
-
+      //  CCCD  Mặt trước
       if (countByType(files, _PartnerFileType.IDENTITY_CARD_FRONT) !== 1) {
         addFileError(
           ctx,
@@ -153,7 +146,7 @@ export const usePartnerRegisterForm = () => {
           t('profile.partner_form.alert_missing_id_message')
         );
       }
-
+      // CCCD  Mặt sau
       if (countByType(files, _PartnerFileType.IDENTITY_CARD_BACK) !== 1) {
         addFileError(
           ctx,
@@ -161,7 +154,7 @@ export const usePartnerRegisterForm = () => {
           t('profile.partner_form.alert_missing_id_message')
         );
       }
-
+      // CCCD và mặt
       if (countByType(files, _PartnerFileType.FACE_WITH_IDENTITY_CARD) !== 1) {
         addFileError(
           ctx,
@@ -169,7 +162,7 @@ export const usePartnerRegisterForm = () => {
           t('profile.partner_form.alert_missing_face_with_card_message')
         );
       }
-
+      // ảnh bẳng cấp
       if (countByType(files, _PartnerFileType.LICENSE) < 1) {
         addFileError(
           ctx,
@@ -178,6 +171,7 @@ export const usePartnerRegisterForm = () => {
         );
       }
 
+      // ảnh gallery
       const galleryCount = countByType(files, _PartnerFileType.KTV_IMAGE_DISPLAY);
 
       if (galleryCount < 3) {
@@ -233,13 +227,10 @@ export const usePartnerRegisterForm = () => {
   const onSubmit = useCallback(async (data: ApplyPartnerRequest) => {
     setLoading(true);
     const formData = buildApplyPartnerFormData(data);
-
-    console.log('form', formData);
-
     mutate(formData, {
       onSuccess: (res) => {
         setLoading(false);
-        successToast({ message: res.message });
+        successToast({ message: t('profile.partner_form.register_success') });
         router.back();
       },
       onError: (error) => {
@@ -257,5 +248,6 @@ export const usePartnerRegisterForm = () => {
     form,
     onSubmit,
     onInvalidSubmit,
+    test,
   };
 };
