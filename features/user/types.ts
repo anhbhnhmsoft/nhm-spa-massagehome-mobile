@@ -1,7 +1,13 @@
-import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
+import {
+  BaseSearchRequest,
+  IMultiLangField,
+  Paginator,
+  ResponseDataSuccessType,
+} from '@/lib/types';
 import { _LanguageCode } from '@/lib/const';
 import { _Gender, _UserRole } from '@/features/auth/const';
 import { _BookingStatus } from '@/features/service/const';
+import { _PartnerFileType } from './const';
 
 export type ListKTVItem = {
   id: string;
@@ -40,12 +46,12 @@ export type KTVDetail = ListKTVItem & {
       name: string;
       avatar_url: string | null;
     };
-    comment: string| null;
+    comment: string | null;
     rating: number;
     created_at: string;
   } | null;
   booking_soon: string | null; // Thời gian hẹn sớm nhất
-}
+};
 
 export type ListKTVRequest = BaseSearchRequest<{
   keyword?: string;
@@ -55,33 +61,35 @@ export type ListKTVRequest = BaseSearchRequest<{
   lng?: number;
 }>;
 
-
 export type ListKTVResponse = ResponseDataSuccessType<Paginator<ListKTVItem>>;
 
 export type DetailKTVResponse = ResponseDataSuccessType<KTVDetail>;
 
-
 export type DashboardProfile = {
-  "booking_count": {
+  booking_count: {
     [key in _BookingStatus]: number;
-  },
-  "wallet_balance": string,
-  "coupon_user_count": number
-}
+  };
+  wallet_balance: string;
+  coupon_user_count: number;
+};
 export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>;
 
 export type ApplyPartnerRequest = {
-  name?: string;
-  role?: _UserRole;
-  reviewApplication?: {
-    agency_id?: string;
-    province_code?: string;
-    address?: string;
-    bio?: string;
-  };
-  files?: {
-    type?: number;
-    file_path: string;
+  role: _UserRole.KTV | _UserRole.AGENCY;
+  agency_id?: string | undefined;
+  province_code: string;
+  address: string;
+  latitude?: string | undefined;
+  longitude?: string | undefined;
+  experience: number;
+  bio: IMultiLangField;
+  file_uploads: {
+    type_upload: _PartnerFileType;
+    file: {
+      uri: string; // local uri
+      name: string; // filename
+      type: string; // mime type
+    };
   }[];
 };
 
