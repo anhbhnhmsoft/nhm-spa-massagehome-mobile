@@ -1,182 +1,289 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
-import { Controller } from 'react-hook-form';
+import {
+  ScrollView,
+  View,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
 import { _UserRole } from '@/features/auth/const';
 import { useProvinces } from '@/features/location/hooks/use-query';
-import useAuthStore from '@/features/auth/store';
 import { useImagePicker } from '@/features/app/hooks/use-image-picker';
-import { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
+import { getFilesByType } from '@/features/user/hooks/use-partner-register-form';
 import { ImageSlot } from '@/components/app/partner-register/image-slot';
 import { InputField } from '@/components/app/partner-register/input-field';
 import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
 import { LocationSelector } from '@/components/app/partner-register/location-selector';
-import { Alert } from 'react-native';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
+import { _PartnerFileType } from '@/features/user/const';
+import { cn } from '@/lib/utils';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { usePartnerRegisterAgency } from '@/features/user/hooks/use-parter-rester-agency';
 
-export default function PartnerRegisterAgencyScreen() {
+const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any) => (
+  <View className="relative mb-4">
+    <View
+      className={cn(
+        'min-h-[100px] rounded-xl border bg-white px-4 py-3',
+        error ? 'border-red-500' : 'border-gray-200'
+      )}>
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#9CA3AF"
+        multiline
+        textAlignVertical="top"
+        className="flex-1 pr-8 pt-1 text-base text-gray-900"
+      />
+    </View>
+
+    {/* Badge ngôn ngữ */}
+    <View className="absolute right-3 top-3 rounded-md bg-gray-100 px-2 py-1">
+      <Text className="text-[10px] font-bold text-gray-500">{lang}</Text>
+    </View>
+
+    {/* ERROR TEXT */}
+    {error && <Text className="ml-1 mt-1 text-xs text-red-500">{error}</Text>}
+  </View>
+);
+export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
-  const user = useAuthStore((state) => state.user);
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
 
-  const schema = useMemo(
-    () =>
-      z.object({
-        name: z.string().min(1, t('profile.partner_form.error_branch_name_required')),
-        city: z.string().min(1, t('profile.partner_form.error_city_required')),
-        location: z.string().min(1, t('profile.partner_form.error_location_required')),
-        latitude: z.number().optional(),
-        longitude: z.number().optional(),
-        bio: z.string().optional(),
-      }),
-    [t]
-  );
-
+  const { form, onSubmit, onInvalidSubmit } = usePartnerRegisterAgency();
   const {
-    form,
-    idFront,
-    setIdFront,
-    idBack,
-    setIdBack,
+    control,
+    formState: { errors },
+    setValue,
     handleSubmit,
-  } = usePartnerRegisterForm({
-    role: _UserRole.AGENCY,
-    schema,
-    validateIdImages: (idFront, idBack) => {
-      if (!idFront || !idBack) {
-        Alert.alert(
-          t('profile.partner_form.alert_missing_id_title'),
-          t('profile.partner_form.alert_missing_id_message')
-        );
-        return false;
-      }
-      return true;
-    },
-    prepareFiles: async (uploadFile, galleryImages, idFront, idBack) => {
-      const files: Array<{ type: number; file_path: string; is_public: boolean }> = [];
-
-      if (idFront) {
-        const result = await uploadFile(idFront, { type: 1, isPublic: false });
-        files.push({ type: 1, file_path: result.file_path, is_public: result.is_public });
-      }
-
-      if (idBack) {
-        const result = await uploadFile(idBack, { type: 2, isPublic: false });
-        files.push({ type: 2, file_path: result.file_path, is_public: result.is_public });
-      }
-
-      return files;
-    },
-  });
-
-  const { control, formState: { errors }, setValue } = form;
-
-  useEffect(() => {
-    if (user?.primary_location) {
-      setValue('location', user.primary_location.address);
-      // Set latitude and longitude cho địa chỉ mặc định
-      if (user.primary_location.latitude) {
-        setValue('latitude', Number(user.primary_location.latitude));
-      }
-      if (user.primary_location.longitude) {
-        setValue('longitude', Number(user.primary_location.longitude));
-      }
-    }
-  }, [user, setValue]);
-
+  } = form;
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
       <HeaderBack title="profile.partner_register.agency_title" />
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="mb-2 mt-4 font-inter-bold text-base text-slate-900">
-          {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
-        </Text>
-        <View className="mb-4 flex-row flex-wrap gap-3">
-          <ImageSlot
-            uri={idFront}
-            label={t('profile.partner_form.id_front')}
-            onAdd={() => pickImage((uri) => setIdFront(uri))}
-            onRemove={() => setIdFront(null)}
-          />
-          <ImageSlot
-            uri={idBack}
-            label={t('profile.partner_form.id_back')}
-            onAdd={() => pickImage((uri) => setIdBack(uri))}
-            onRemove={() => setIdBack(null)}
-          />
-        </View>
-
-        <View className="mb-4">
-          <Text className="mb-1 font-inter-bold text-base text-slate-900">
-            {t('profile.partner_form.field_branch_name_label')}{' '}
-            <Text className="text-red-500">*</Text>
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+        enableOnAndroid={true}
+        scrollEnabled={true}
+        bounces={false}
+        overScrollMode="never"
+        showsVerticalScrollIndicator={false}>
+        <View className="flex-1 px-4 pt-4">
+          <Text className="mb-2 font-inter-bold text-base text-slate-900">
+            {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
           </Text>
-          <InputField
-            control={control as any}
-            name="name"
-            placeholder={t('profile.partner_form.field_branch_name_placeholder')}
-            error={errors.name?.message}
-          />
-        </View>
-
-        <View className="mb-4">
-          <Text className="mb-1 font-inter-bold text-base text-slate-900">
-            {t('profile.partner_form.field_branch_bio_label')}
-          </Text>
+          {/* Ảnh căn cước công dân  */}
           <Controller
             control={control}
-            name="bio"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                className="h-28 rounded-xl bg-gray-100 px-4 py-3 text-base text-slate-900"
-                placeholder={t('profile.partner_form.field_branch_bio_placeholder')}
-                placeholderTextColor="#9CA3AF"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                multiline
-                textAlignVertical="top"
-              />
-            )}
-          />
-        </View>
+            name="file_uploads"
+            render={({ field: { value = [], onChange } }) => {
+              const idFrontFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_FRONT)[0];
 
-        <View className="mb-6">
-          <Text className="mb-1 font-inter-bold text-base text-slate-900">
-            {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
+              const idBackFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_BACK)[0];
+
+              return (
+                <View className="mb-4 flex-row flex-wrap gap-3">
+                  {/* CCCD FRONT */}
+                  <ImageSlot
+                    uri={idFrontFile?.file.uri || null}
+                    label={t('profile.partner_form.id_front')}
+                    onAdd={() =>
+                      pickImage((uri) => {
+                        // remove old front if exists
+                        const filtered = value.filter(
+                          (f) => f.type_upload !== _PartnerFileType.IDENTITY_CARD_FRONT
+                        );
+
+                        onChange([
+                          ...filtered,
+                          {
+                            type_upload: _PartnerFileType.IDENTITY_CARD_FRONT,
+                            file: {
+                              uri,
+                              name: 'id_front.jpg',
+                              type: 'image/jpeg',
+                            },
+                          },
+                        ]);
+                      })
+                    }
+                    onRemove={() =>
+                      onChange(
+                        value.filter((f) => f.type_upload !== _PartnerFileType.IDENTITY_CARD_FRONT)
+                      )
+                    }
+                  />
+
+                  {/* CCCD BACK */}
+                  <ImageSlot
+                    uri={idBackFile?.file.uri || null}
+                    label={t('profile.partner_form.id_back')}
+                    onAdd={() =>
+                      pickImage((uri) => {
+                        const filtered = value.filter(
+                          (f) => f.type_upload !== _PartnerFileType.IDENTITY_CARD_BACK
+                        );
+
+                        onChange([
+                          ...filtered,
+                          {
+                            type_upload: _PartnerFileType.IDENTITY_CARD_BACK,
+                            file: {
+                              uri,
+                              name: 'id_back.jpg',
+                              type: 'image/jpeg',
+                            },
+                          },
+                        ]);
+                      })
+                    }
+                    onRemove={() =>
+                      onChange(
+                        value.filter((f) => f.type_upload !== _PartnerFileType.IDENTITY_CARD_BACK)
+                      )
+                    }
+                  />
+                </View>
+              );
+            }}
+          />
+
+          <Text className="mb-2 font-inter-bold text-base text-slate-900">
+            {t('profile.partner_form.face_with_id')} <Text className="text-red-500">*</Text>
           </Text>
-          <ProvinceSelector
-            control={control as any}
-            name="city"
-            provinces={provincesData?.data || []}
-            isLoading={isLoadingProvinces}
-            error={errors.city?.message}
-          />
-        </View>
+          {/* Ảnh khuôn  mặt và cccd */}
+          <Controller
+            control={control}
+            name="file_uploads"
+            render={({ field: { value = [], onChange } }) => {
+              const faceWithCardFile = getFilesByType(
+                value,
+                _PartnerFileType.FACE_WITH_IDENTITY_CARD
+              )[0];
 
-        <View className="mb-4">
-          <LocationSelector
-            control={control as any}
-            name="location"
-            setValue={setValue as any}
-            error={errors.location?.message}
-          />
-        </View>
+              return (
+                <ImageSlot
+                  uri={faceWithCardFile?.file.uri || null}
+                  label={t('profile.partner_form.add_photo')}
+                  onAdd={() =>
+                    pickImage((uri) => {
+                      const filtered = value.filter(
+                        (f) => f.type_upload !== _PartnerFileType.FACE_WITH_IDENTITY_CARD
+                      );
 
-        <TouchableOpacity
-          className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
-          onPress={handleSubmit}>
-          <Text className="font-inter-bold text-base text-white">
-            {t('profile.partner_form.button_submit')}
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+                      onChange([
+                        ...filtered,
+                        {
+                          type_upload: _PartnerFileType.FACE_WITH_IDENTITY_CARD,
+                          file: {
+                            uri,
+                            name: 'face_with_card.jpg',
+                            type: 'image/jpeg',
+                          },
+                        },
+                      ]);
+                    })
+                  }
+                  onRemove={() =>
+                    onChange(
+                      value.filter(
+                        (f) => f.type_upload !== _PartnerFileType.FACE_WITH_IDENTITY_CARD
+                      )
+                    )
+                  }
+                />
+              );
+            }}
+          />
+          <View className="mb-4">
+            <Text className="mb-1 font-inter-bold text-base text-slate-900">
+              {t('profile.partner_form.field_bio_label')}
+            </Text>
+            <Controller
+              control={control}
+              name="bio.vi"
+              render={({ field, fieldState }) => (
+                <LanguageTextArea
+                  lang="VI"
+                  placeholder="Mô tả kinh nghiệm, kỹ năng chuyên môn (Tiếng Việt)..."
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="bio.en"
+              render={({ field, fieldState }) => (
+                <LanguageTextArea
+                  lang="EN"
+                  placeholder="Describe your experience and skills (English)..."
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+
+            {/* Giới thiệu (Trung) */}
+            <Controller
+              control={control}
+              name="bio.cn"
+              render={({ field, fieldState }) => (
+                <LanguageTextArea
+                  lang="CN"
+                  placeholder="描述您的经验和技能 (中文)..."
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  error={fieldState.error?.message}
+                />
+              )}
+            />
+          </View>
+
+          <View className="mb-6">
+            <Text className="mb-1 font-inter-bold text-base text-slate-900">
+              {t('profile.partner_form.field_city_label')} <Text className="text-red-500">*</Text>
+            </Text>
+            <ProvinceSelector
+              control={control as any}
+              name="province_code"
+              provinces={provincesData?.data || []}
+              isLoading={isLoadingProvinces}
+              error={errors.province_code?.message}
+            />
+          </View>
+
+          <View className="mb-4">
+            <LocationSelector
+              control={control}
+              name="address"
+              setValue={setValue}
+              error={errors.address?.message}
+            />
+          </View>
+
+          <TouchableOpacity
+            className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
+            onPress={handleSubmit(onSubmit, onInvalidSubmit)}>
+            <Text className="font-inter-bold text-base text-white">
+              {t('profile.partner_form.button_submit')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
