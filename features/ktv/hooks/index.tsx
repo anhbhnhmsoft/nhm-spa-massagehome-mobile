@@ -1,5 +1,6 @@
 import {
   useAllCategoriesQuery,
+  useConfigScheduleQuery,
   useProfileKtvQuery,
   useTotalIncomeQuery,
 } from '@/features/ktv/hooks/use-query';
@@ -9,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import {
   DashboardQueryParams,
+  EditConfigScheduleRequest,
   EditProfileKtvRequest,
   PercentChangeResult,
   ServiceForm,
@@ -35,7 +37,11 @@ import { router } from 'expo-router';
 import useToast from '@/features/app/hooks/use-toast';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import useApplicationStore from '@/lib/store';
-import { _DefaultValueFormService } from '@/features/ktv/consts';
+import {
+  _DefaultValueFormConfigSchedule,
+  _DefaultValueFormService,
+  _KTVConfigSchedules,
+} from '@/features/ktv/consts';
 import { useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
 import { ServiceItem } from '@/features/service/types';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
@@ -52,6 +58,7 @@ import { useGetCouponUserList } from '@/features/service/hooks';
 import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useWalletStore } from '@/features/payment/stores';
 import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
+import dayjs from 'dayjs';
 
 // Hook cho chỉnh sửa dịch vụ
 export const useSetService = () => {
@@ -876,7 +883,6 @@ export const useWallet = () => {
 /**
  * Xử lý màn hình quét qr code khách hàng
  */
-
 export const useScanQRCodeCustomer = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const setLoading = useApplicationStore((s) => s.setLoading);
@@ -961,3 +967,74 @@ export const useScanQRCodeCustomer = () => {
     onBarcodeScanned,
   };
 };
+
+export const useConfigSchedule = () => {
+  const {t} = useTranslation();
+  const query = useConfigScheduleQuery();
+  const {error: errorToast} = useToast();
+
+  const form = useForm<EditConfigScheduleRequest>({
+    defaultValues: _DefaultValueFormConfigSchedule,
+    resolver: zodResolver(
+      z.object({
+        is_working: z.boolean(),
+        working_schedule: z.array(
+          z.object({
+              day_key: z.enum(_KTVConfigSchedules,{
+                error: t('config_schedule.error.invalid_day')
+              }),
+              start_time: z.string().min(5),
+              end_time: z.string().min(5),
+              active: z.boolean(),
+            })
+            .refine(
+              (data) => {
+                // Nếu ngày đó TẮT (không làm) -> Không cần check -> Luôn đúng
+                if (!data.active) return true;
+                const start = dayjs(data.start_time, 'HH:mm');
+                const end = dayjs(data.end_time, 'HH:mm');
+                // Kiểm tra xem giờ bắt đầu và kết thúc có hợp lệ không
+                if (!start.isValid() || !end.isValid()) return false;
+
+                // Thêm kiểm tra giờ kết thúc phải sau giờ bắt đầu
+                return end.isAfter(start)
+              },
+              {
+                message: t('config_schedule.error.invalid_time_end'),
+                path: ['end_time'],
+              }
+            )
+        ),
+      })
+    ),
+  });
+
+  // Lấy dữ liệu cấu hình lịch làm việc khi component mount
+  useEffect(() => {
+    if (query.data){
+      const data = query.data;
+      form.setValue('is_working', data.is_working);
+      form.setValue('working_schedule', data.working_schedule);
+    }
+  }, [query.data]);
+
+  // Xử lý lỗi khi gọi API
+  useEffect(() => {
+    if (query.isError) {
+      errorToast({ message: t('config_schedule.error.something_went_wrong') });
+      router.back();
+    }
+  }, [query.isError]);
+
+  const onSubmit = form.handleSubmit((data) => {
+    // Xử lý dữ liệu trước khi submit
+    console.log(data)
+  });
+
+  return {
+    query,
+    form,
+    onSubmit,
+    loadingSave: form.formState.isSubmitting
+  }
+}

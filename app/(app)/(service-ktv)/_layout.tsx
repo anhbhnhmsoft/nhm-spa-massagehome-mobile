@@ -15,7 +15,8 @@ export default function ServiceKtvLayout() {
         <Stack.Screen name="deposit" />
         <Stack.Screen name="take-picture-image" />
         <Stack.Screen name="affiliate" />
-        <Stack.Screen name="scan-qr" />
+        <Stack.Screen name="scan_qr" />
+        <Stack.Screen name="config-schedule" />
       </Stack>
     </>
   );

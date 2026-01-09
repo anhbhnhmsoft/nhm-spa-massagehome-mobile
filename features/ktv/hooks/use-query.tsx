@@ -71,6 +71,7 @@ export const useInfiniteServiceList = (params: ListServiceRequest) => {
   });
 };
 
+// Lấy thông tin chi tiết booking
 export const useBookingDetailsQuery = (id: string) => {
   return useQuery({
     queryKey: ['bookingApi-details-ktv', id],
@@ -79,6 +80,7 @@ export const useBookingDetailsQuery = (id: string) => {
   });
 };
 
+// Lấy thông tin doanh thu theo tháng
 export const useTotalIncomeQuery = (params: DashboardQueryParams) => {
   return useQuery({
     queryKey: ['ktvApi-totalIncome', params],
@@ -87,10 +89,19 @@ export const useTotalIncomeQuery = (params: DashboardQueryParams) => {
   });
 };
 
+// Lấy thông tin profile ktv
 export const useProfileKtvQuery = () => {
   return useQuery({
     queryKey: ['ktvApi-profileKtv'],
     queryFn: () => ktvApi.profileKtv(),
+    select: (res) => res.data,
+  });
+};
+
+export const useConfigScheduleQuery = () => {
+  return useQuery({
+    queryKey: ['ktvApi-configSchedule'],
+    queryFn: () => ktvApi.configSchedule(),
     select: (res) => res.data,
   });
 };

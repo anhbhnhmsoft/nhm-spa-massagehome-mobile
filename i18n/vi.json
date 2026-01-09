@@ -198,6 +198,15 @@
       "friday": "T6",
       "saturday": "T7",
       "sunday": "CN"
+    },
+    "KTVConfigSchedulesLabel": {
+      "MONDAY": "Thứ 2",
+      "TUESDAY": "Thứ 3",
+      "WEDNESDAY": "Thứ 4",
+      "THURSDAY": "Thứ 5",
+      "FRIDAY": "Thứ 6",
+      "SATURDAY": "Thứ 7",
+      "SUNDAY": "Chủ nhật"
     }
   },
   "tab": {
@@ -343,6 +352,7 @@
     "edit_info": "Sửa thông tin",
     "notification": "Thông báo",
     "affiliate": "Giới thiệu hoa hồng",
+    "config_schedule": "Cấu hình lịch làm việc",
     "error": {
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
@@ -737,5 +747,21 @@
     "processing": "Đang xử lý mã QR...",
     "scan_qr": "Quét mã QR",
     "scan_title":  " Di chuyển camera đến mã QR của người giới thiệu"
+  },
+  "config_schedule": {
+    "loading": "Đang tải cấu hình...",
+    "title": "Cấu hình thời gian làm việc",
+    "working": "Đang nhận khách",
+    "off": "Đang tạm nghỉ",
+    "working_schedule": "Lịch làm việc trong tuần",
+    "status_today": "Trạng thái hôm nay",
+    "start_time": "Giờ bắt đầu",
+    "end_time": "Giờ kết thúc",
+    "save_changes": "Lưu thay đổi",
+    "error": {
+      "invalid_time_end": "Giờ kết thúc phải sau giờ bắt đầu",
+      "invalid_day": "Vui lòng chọn ngày hợp lệ",
+      "something_went_wrong": "Đã xảy ra lỗi, vui lòng thử lại"
+    }
   }
 }

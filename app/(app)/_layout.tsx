@@ -28,6 +28,8 @@ export default function AppLayout() {
   useHeartbeat();
   // Tự động sync device token lên server khi user login
   useNotification();
+
+
   return (
     <>
       <FullScreenLoading loading={loading || notReady} whiteBg={notReady} />

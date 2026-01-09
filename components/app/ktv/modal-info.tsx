@@ -10,6 +10,7 @@ import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
 import {
   Bell,
+  CalendarCog,
   HandCoins,
   Headphones,
   Info,
@@ -103,6 +104,19 @@ export const FeatureList = ({
         <View className="mb-3 w-full">
           <Text className="font-inter-bold text-gray-800">{t('profile.common_features')}</Text>
         </View>
+
+        {/* Edit info */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(service-ktv)/config-schedule');
+          }}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={CalendarCog} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">{t('profile.config_schedule')}</Text>
+        </TouchableOpacity>
 
         {/* Edit info */}
         <TouchableOpacity

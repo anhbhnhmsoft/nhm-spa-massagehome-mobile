@@ -10,6 +10,7 @@ import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types'
 import { _LanguageCode } from '@/lib/const';
 import { _Gender } from '@/features/auth/const';
 import { DashboardTab } from '../service/const';
+import { _KTVConfigSchedules } from '@/features/ktv/consts';
 
 export type DashboardKtvResponse = ResponseDataSuccessType<{
   booking: BookingItem | null;
@@ -135,3 +136,28 @@ export type EditProfileKtvRequest = {
 export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;
 
 export type QRCodeAgencyResponse = ResponseDataSuccessType<{ agency_id: string }>;
+
+export type KTVConfigSchedule = {
+  id: string;
+  ktv_id: string;
+  working_schedule: {
+    day_key: _KTVConfigSchedules;
+    start_time: string;
+    end_time: string;
+    active: boolean;
+  }[];
+  is_working: boolean;
+};
+
+export type ConfigSchedulesResponse = ResponseDataSuccessType<KTVConfigSchedule>;
+
+
+export type EditConfigScheduleRequest = {
+  working_schedule: {
+    day_key: _KTVConfigSchedules;
+    start_time: string;
+    end_time: string;
+    active: boolean;
+  }[];
+  is_working: boolean;
+};
