@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import QueryProvider from '@/lib/provider/query-provider';
 import ThemeProvider from '@/lib/provider/theme-provider';
 import useFontInter from '@/lib/provider/font-inter';
-import { useEffect,  useState } from 'react';
+import { useEffect, useState } from 'react';
 import initI18n from '@/lib/provider/i18n';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -15,8 +15,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
 import useAuthStore from '@/features/auth/store';
-
-
+import useApplicationStore from '@/lib/store';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -89,9 +88,7 @@ const AppContainer = () => {
         <Stack.Protected guard={!complete}>
           <Stack.Screen name="index" />
         </Stack.Protected>
-        <Stack.Protected
-          guard={complete}
-        >
+        <Stack.Protected guard={complete}>
           {/* Hiển thị màn hình request location nếu chưa có quyền location, và không nhấn bỏ qua */}
           <Stack.Screen name="(app)" />
           <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>

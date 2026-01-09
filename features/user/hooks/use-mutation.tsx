@@ -9,8 +9,7 @@ export const useMutationKtvDetail = () => {
 };
 
 export const useMutationApplyPartner = () => {
-  return useMutation<ApplyPartnerResponse, unknown, ApplyPartnerRequest>({
-    mutationFn: (payload: ApplyPartnerRequest) => userApi.applyPartner(payload),
+  return useMutation({
+    mutationFn: (payload: FormData) => userApi.applyPartner(payload),
   });
 };
-

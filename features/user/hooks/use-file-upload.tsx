@@ -28,7 +28,6 @@ export const useFileUpload = () => {
     const response = await client.post('/file/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-
     return {
       file_path: response.data.data.file_path as string,
       is_public: isPublic,
@@ -37,4 +36,3 @@ export const useFileUpload = () => {
 
   return { uploadFile };
 };
-
