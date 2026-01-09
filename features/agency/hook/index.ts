@@ -7,7 +7,6 @@ import { useWalletStore } from '@/features/payment/stores';
 import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
 import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useGetTransactionList } from '@/features/payment/hooks';
-import { useGetCouponUserList } from '@/features/service/hooks';
 import { router } from 'expo-router';
 
 export const useHomeAgency = () => {
@@ -27,7 +26,6 @@ export const useWallet = () => {
   const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
   const needRefresh = useWalletStore((state) => state.need_refresh);
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
-  const [tab, setTab] = useState<'transaction' | 'coupon'>('transaction');
   // Mutate function dùng để gọi API cấu hình nạp tiền
   const { mutate: mutateConfigPayment } = useConfigPaymentMutation();
 
@@ -35,24 +33,11 @@ export const useWallet = () => {
   const queryWallet = useWalletQuery();
 
   // Query function dùng để gọi API lấy danh sách giao dịch
-  const queryTransactionList = useGetTransactionList(
-    {
-      filter: {},
-      page: 1,
-      per_page: 10,
-    },
-    tab === 'transaction'
-  );
-
-  // Query function dùng để gọi API lấy danh sách coupon user
-  const queryCouponUserList = useGetCouponUserList(
-    {
-      filter: {},
-      page: 1,
-      per_page: 10,
-    },
-    tab === 'coupon'
-  );
+  const queryTransactionList = useGetTransactionList({
+    filter: {},
+    page: 1,
+    per_page: 10,
+  });
 
   useEffect(() => {
     // Nếu cần refresh ví, gọi API refresh ví
@@ -76,7 +61,6 @@ export const useWallet = () => {
     try {
       await queryWallet.refetch();
       await queryTransactionList.refetch();
-      await queryCouponUserList.refetch();
     } catch (error) {
       handleError(error);
     } finally {
@@ -102,11 +86,8 @@ export const useWallet = () => {
   }, []);
 
   return {
-    tab,
-    setTab,
     queryWallet,
     queryTransactionList,
-    queryCouponUserList,
     goToDepositScreen,
     refresh,
   };
