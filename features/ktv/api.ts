@@ -15,12 +15,11 @@ import {
   EditProfileKtvRequest,
   ConfigSchedulesResponse,
   EditConfigScheduleRequest,
-  ListOptionCategorynResponse,
+  ListOptionCategoriesResponse,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
-import { createUploadTask } from 'expo-file-system';
-import { ServiceItem, UpdateServiceResponse } from '../service/types';
+import { UpdateServiceResponse } from '../service/types';
 
 const defaultUri = '/ktv';
 
@@ -137,7 +136,7 @@ const ktvApi = {
   },
 
   // get list danh sách gói dịch vụ của category
-  optionByCategorys: async (id: string): Promise<ListOptionCategorynResponse> => {
+  optionByCategories: async (id: string): Promise<ListOptionCategoriesResponse> => {
     const response = await client.get(`${defaultUri}/category-price/${id}`);
     return response.data;
   },

@@ -108,8 +108,8 @@ export const useConfigScheduleQuery = () => {
 
 export const useOptionByCategoryQuery = (id?: string) => {
   return useQuery({
-    queryKey: ['ktvApi-optionCategorys', id],
-    queryFn: () => ktvApi.optionByCategorys(id as string),
+    queryKey: ['ktvApi-optionByCategories', id],
+    queryFn: () => ktvApi.optionByCategories(id as string),
     enabled: !!id, // ⭐ chỉ call khi có category_id
     select: (res) => res.data,
   });

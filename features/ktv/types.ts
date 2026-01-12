@@ -154,7 +154,7 @@ export type KTVConfigSchedule = {
 };
 
 export type ConfigSchedulesResponse = ResponseDataSuccessType<KTVConfigSchedule>;
-export type ListOptionCategorynResponse = ResponseDataSuccessType<OptionCategory[]>;
+export type ListOptionCategoriesResponse = ResponseDataSuccessType<OptionCategory[]>;
 export type EditConfigScheduleRequest = {
   working_schedule: {
     day_key: _KTVConfigSchedules;
