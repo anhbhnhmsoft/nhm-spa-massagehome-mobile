@@ -24,6 +24,7 @@ import { _Gender } from '@/features/auth/const';
 import { _LanguagesMap } from '@/lib/const';
 import { SelectLanguageModal } from '@/components/select-language';
 import { router } from 'expo-router';
+import { ContractFileType } from '@/features/file/const';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
@@ -227,13 +228,27 @@ export default function RegisterScreen() {
                         {t('auth.i_agree_to')}{' '}
                         <Text
                           className="font-inter-bold text-primary-color-2 underline"
-                          onPress={() => router.push('/term-or-use-pdf')}>
+                          onPress={() =>
+                            router.push({
+                              pathname: '/term-or-use-pdf',
+                              params: {
+                                type: ContractFileType.TERM_OF_USE.toString(), // ✅ number OK
+                              },
+                            })
+                          }>
                           {t('auth.terms_and_conditions')}
                         </Text>{' '}
                         {t('common.and')}{' '}
                         <Text
                           className="font-inter-bold text-primary-color-2 underline"
-                          onPress={() => router.push('/term-or-use-pdf')}>
+                          onPress={() =>
+                            router.push({
+                              pathname: '/term-or-use-pdf',
+                              params: {
+                                type: ContractFileType.POLICY_PRIVACY.toString(), // ✅ number OK
+                              },
+                            })
+                          }>
                           {t('auth.privacy_policy')}
                         </Text>
                       </Text>

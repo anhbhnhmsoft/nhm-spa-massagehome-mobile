@@ -62,7 +62,7 @@ export type CancelBookingRequet = {
 export type ServiceOption = {
   id: string;
   duration: number;
-  price: number;
+  price: string;
 };
 export type ServiceDetailItem = {
   id: string;

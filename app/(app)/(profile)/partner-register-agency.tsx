@@ -1,15 +1,11 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  ScrollView,
   View,
   TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
-import { Controller, useWatch } from 'react-hook-form';
-import { z } from 'zod';
+import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
@@ -18,7 +14,6 @@ import { useProvinces } from '@/features/location/hooks/use-query';
 import { useImagePicker } from '@/features/app/hooks/use-image-picker';
 import { getFilesByType } from '@/features/user/hooks/use-partner-register-form';
 import { ImageSlot } from '@/components/app/partner-register/image-slot';
-import { InputField } from '@/components/app/partner-register/input-field';
 import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
 import { LocationSelector } from '@/components/app/partner-register/location-selector';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
@@ -26,6 +21,10 @@ import { _PartnerFileType } from '@/features/user/const';
 import { cn } from '@/lib/utils';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { usePartnerRegisterAgency } from '@/features/user/hooks/use-parter-rester-agency';
+import { Icon } from '@/components/ui/icon';
+import { CheckSquare, Square } from 'lucide-react-native';
+import { router } from 'expo-router';
+import { ContractFileType } from '@/features/file/const';
 
 const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any) => (
   <View className="relative mb-4">
@@ -58,7 +57,7 @@ export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
-
+  const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const { form, onSubmit, onInvalidSubmit } = usePartnerRegisterAgency();
   const {
     control,
@@ -274,16 +273,66 @@ export default function PartnerRegisterIndividualScreen() {
               error={errors.address?.message}
             />
           </View>
-
-          <TouchableOpacity
-            className="mb-4 items-center rounded-full bg-primary-color-2 py-4"
-            onPress={handleSubmit(onSubmit, onInvalidSubmit)}>
-            <Text className="font-inter-bold text-base text-white">
-              {t('profile.partner_form.button_submit')}
-            </Text>
-          </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
+      <View className="border-t border-gray-100 bg-white p-4">
+        <View className="mb-2 flex-row items-start gap-3">
+          {/* Ô Checkbox */}
+          <TouchableOpacity
+            onPress={() => setIsAgreed(!isAgreed)}
+            activeOpacity={0.7}
+            className="mt-0.5">
+            <Icon
+              as={isAgreed ? CheckSquare : Square}
+              size={22}
+              className={isAgreed ? 'text-primary-color-2' : 'text-gray-400'}
+            />
+          </TouchableOpacity>
+
+          {/* Nội dung văn bản có chứa link */}
+          <View className="flex-1">
+            <Text className="font-inter-regular leading-5 text-gray-600">
+              {t('auth.i_agree_to')}{' '}
+              <Text
+                className="font-inter-bold text-primary-color-2 underline"
+                onPress={() =>
+                  router.push({
+                    pathname: '/term-or-use-pdf',
+                    params: {
+                      type: ContractFileType.POLICY_FOR_AGENCY.toString(),
+                    },
+                  })
+                }>
+                {t('auth.terms_and_conditions')}
+              </Text>{' '}
+              {t('common.and')}{' '}
+              <Text
+                className="font-inter-bold text-primary-color-2 underline"
+                onPress={() =>
+                  router.push({
+                    pathname: '/term-or-use-pdf',
+                    params: {
+                      type: ContractFileType.POLICY_PRIVACY.toString(),
+                    },
+                  })
+                }>
+                {t('auth.privacy_policy')}
+              </Text>
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmit, onInvalidSubmit)}
+          disabled={!isAgreed}
+          className={cn(
+            'items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200',
+            isAgreed ? 'bg-primary-color-2' : 'bg-[#E0E0E0]'
+          )}>
+          <Text className="font-inter-bold text-base text-white">
+            {t('profile.partner_form.button_submit')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

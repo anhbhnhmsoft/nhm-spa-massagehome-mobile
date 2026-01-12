@@ -11,7 +11,6 @@ import {
   RegisterResponse,
   ResendRegisterOTPResponse,
   SetLanguageRequest,
-  TermOfUseResponse,
   VerifyRegisterOTPRequest,
   VerifyRegisterOTPResponse,
 } from '@/features/auth/types';
@@ -123,14 +122,6 @@ const authApi = {
    */
   logout: async (): Promise<ResponseSuccessType> => {
     const response = await client.post(`${defaultUri}/logout`);
-    return response.data;
-  },
-
-  /**
-   * Hàm để lấy điều khoản dịch vụ và chính sách bảo mật
-   */
-  termOfUse: async () : Promise<TermOfUseResponse> => {
-    const response = await client.get(`commercial/contract/term-of-use`);
     return response.data;
   },
 };
