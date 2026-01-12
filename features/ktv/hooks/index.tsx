@@ -1,19 +1,21 @@
 import {
   useAllCategoriesQuery,
   useConfigScheduleQuery,
+  useOptionByCategoryQuery,
   useProfileKtvQuery,
   useTotalIncomeQuery,
 } from '@/features/ktv/hooks/use-query';
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
-import { useForm, useWatch } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   DashboardQueryParams,
   EditConfigScheduleRequest,
   EditProfileKtvRequest,
   PercentChangeResult,
   ServiceForm,
+  ServiceOption,
 } from '@/features/ktv/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -65,6 +67,7 @@ import dayjs from 'dayjs';
 export const useSetService = () => {
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
   const setServiceDetail = useKtvStore((state) => state.setServiceDetail);
+
   const setLoading = useApplicationStore((state) => state.setLoading);
   const errorHandle = useErrorToast();
   const { t } = useTranslation();
@@ -162,6 +165,7 @@ export const useFormService = () => {
   const serviceEdit = useKtvStore((state) => state.service_edit);
   const setServiceEdit = useKtvStore((state) => state.setServiceEdit);
 
+  const setServiceDetail = useKtvStore((state) => state.setServiceDetail);
   const handleError = useErrorToast();
   const { success: successToast } = useToast();
 
@@ -197,34 +201,31 @@ export const useFormService = () => {
           },
           { error: t('ktv.services.form.error.image') }
         ),
-        options: z
-          .array(
-            z.object({
-              price: z.number().min(0, t('ktv.services.form.error.options_price')),
-              duration: z.number().min(15, {
-                message: t('ktv.services.form.error.options_duration'),
-              }),
-            })
-          )
-          .min(1, t('ktv.services.form.error.options_min')),
       })
     ),
   });
 
+  const { watch } = form;
+  const categoryId = watch('category_id');
+
+  const optionByCategoryQuery = useOptionByCategoryQuery(categoryId);
+  const listOptionByCategory = useMemo(() => {
+    return optionByCategoryQuery.data || [];
+  }, [optionByCategoryQuery.data]);
   // Xử lý khi sửa dịch vụ
   useEffect(() => {
-    if (serviceEdit) {
-      form.setValue('name', serviceEdit.name);
-      form.setValue('description', serviceEdit.description);
-      form.setValue('category_id', serviceEdit.category_id);
-      form.setValue('is_active', serviceEdit.is_active);
-      form.setValue('image', {
-        uri: serviceEdit.image_url || '',
-        name: `${Math.random().toString(36).substring(2, 10)}.jpg`,
-        type: 'image/jpg',
-      });
-      form.setValue('options', serviceEdit.options);
-    }
+    if (!serviceEdit) return;
+    // 1. Set các field cơ bản
+    form.setValue('name', serviceEdit.name);
+    form.setValue('description', serviceEdit.description);
+    form.setValue('category_id', serviceEdit.category_id);
+    form.setValue('is_active', serviceEdit.is_active);
+
+    form.setValue('image', {
+      uri: serviceEdit.image_url || '',
+      name: `${Math.random().toString(36).substring(2, 10)}.jpg`,
+      type: 'image/jpg',
+    });
   }, [serviceEdit]);
 
   // Xử lý khi có lỗi trong query category
@@ -307,17 +308,14 @@ export const useFormService = () => {
         formData.append(`description[${lang}]`, data.description[lang]!);
       }
     });
-    data.options.forEach((option, index) => {
-      formData.append(`options[${index}][price]`, String(option.price));
-      formData.append(`options[${index}][duration]`, String(option.duration));
-    });
     if (serviceEdit) {
       // Cập nhật dịch vụ
       updateService(
         { id: serviceEdit.id, data: formData },
         {
-          onSuccess: () => {
+          onSuccess: (res) => {
             successToast({ message: t('ktv.services.form.success') });
+            setServiceDetail(res.data);
             form.reset(_DefaultValueFormService);
             setReloadListService(true);
             setServiceEdit(null);
@@ -331,7 +329,7 @@ export const useFormService = () => {
     } else {
       // Thêm dịch vụ
       addService(formData, {
-        onSuccess: () => {
+        onSuccess: (res) => {
           successToast({ message: t('ktv.services.form.success') });
           form.reset(_DefaultValueFormService);
           setReloadListService(true);
@@ -353,6 +351,8 @@ export const useFormService = () => {
     form,
     submit,
     loading: isAdding || isUpdating,
+    setServiceEdit,
+    listOptionByCategory,
   };
 };
 

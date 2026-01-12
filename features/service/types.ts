@@ -1,4 +1,5 @@
 import { BaseSearchRequest, ResponseDataSuccessType, Paginator } from '@/lib/types';
+import { ServiceOption } from '../ktv/types';
 
 export type CategoryItem = {
   id: string;
@@ -35,11 +36,7 @@ export type ServiceItem = {
     id: string;
     name: string;
   };
-  options: {
-    id: string;
-    price: string;
-    duration: number;
-  }[];
+  options: ServiceOption[];
 };
 
 export type ServiceListRequest = BaseSearchRequest<{
@@ -50,7 +47,6 @@ export type ServiceListRequest = BaseSearchRequest<{
 export type ServiceListResponse = ResponseDataSuccessType<Paginator<ServiceItem>>;
 
 export type ServiceDetailResponse = ResponseDataSuccessType<ServiceItem>;
-
 
 export type BookingServiceRequest = {
   service_id: string;
@@ -64,7 +60,7 @@ export type BookingServiceRequest = {
   latitude: number;
   longitude: number;
   coupon_id?: string;
-}
+};
 
 // Pick only required fields for booking
 export type PickBookingItem = {
@@ -76,7 +72,10 @@ export type PickBookingItem = {
 };
 
 // Pick only required fields for booking requirement
-export type PickBookingRequirement = Omit<BookingServiceRequest, "service_id" | "service_name" | "option_id" | "duration">;
+export type PickBookingRequirement = Omit<
+  BookingServiceRequest,
+  'service_id' | 'service_name' | 'option_id' | 'duration'
+>;
 
 export type BookingServiceResponse = ResponseDataSuccessType<{
   status: boolean;
@@ -84,10 +83,10 @@ export type BookingServiceResponse = ResponseDataSuccessType<{
     not_enough_money: boolean;
     final_price: string;
     balance_customer: string;
-  },
+  };
   success?: {
     booking_id: string;
-  }
+  };
 }>;
 
 export type CouponItem = {
@@ -117,19 +116,18 @@ export type CouponUserItem = {
   coupon_id: string; // ID coupon
   user_id: string; // ID user
   is_used: boolean; // Có được sử dụng không
-  coupon: CouponItem
-}
+  coupon: CouponItem;
+};
 
 export type CouponUserListRequest = BaseSearchRequest<object>;
 export type CouponUserListResponse = ResponseDataSuccessType<Paginator<CouponUserItem>>;
-
 
 export type SendReviewRequest = {
   service_booking_id: string;
   rating: number;
   comment?: string;
   hidden?: boolean;
-}
+};
 
 export type ReviewItem = {
   id: string; // ID đánh giá
@@ -145,12 +143,12 @@ export type ReviewItem = {
     avatar: string | null; // Hình ảnh user đánh giá
     name: string; // Tên user đánh giá
   } | null; // Thông tin user đánh giá
-}
-
+};
 
 export type ListReviewRequest = BaseSearchRequest<{
   user_id?: string; // tùy chọn, ID của ktv cần lấy đánh giá
   service_id?: string; // tùy chọn, ID của dịch vụ cần lấy đánh giá
-}>
+}>;
 
-export type ListReviewResponse = ResponseDataSuccessType<Paginator<ReviewItem>>
+export type ListReviewResponse = ResponseDataSuccessType<Paginator<ReviewItem>>;
+export type UpdateServiceResponse = ResponseDataSuccessType<ServiceItem>;

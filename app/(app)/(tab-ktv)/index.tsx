@@ -8,7 +8,6 @@ import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { router } from 'expo-router';
 import { AppointmentCard, ReviewNewToday, TodayEarnings } from '@/components/app/ktv/homepage';
 import { useDashboardKtvQuery } from '@/features/ktv/hooks/use-query';
-import useApplicationStore from '@/lib/store';
 
 export default function KTVDashboard() {
   const { t } = useTranslation();
