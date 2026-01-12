@@ -234,7 +234,6 @@ export const usePartnerRegisterForm = () => {
         router.back();
       },
       onError: (error) => {
-        console.log(error);
         setLoading(false);
         errorToast({ message: error.message });
       },

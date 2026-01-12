@@ -30,6 +30,13 @@ export type BookingDetailsResponse = ResponseDataSuccessType<{ data: BookingItem
 
 export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>;
 
+export type OptionCategory = {
+  id: string;
+  category_id: string;
+  price: string;
+  duration: number;
+};
+
 export type ServiceForm = {
   category_id: string;
   is_active: boolean;
@@ -38,11 +45,6 @@ export type ServiceForm = {
   description: IMultiLangField;
   // Ảnh (lưu ý: lúc form nhập có thể là null, nhưng khi submit là bắt buộc)
   image: IFileUpload;
-  // Mảng các gói dịch vụ
-  options: {
-    price: number;
-    duration: number;
-  }[];
 };
 
 export type ListServiceRequest = BaseSearchRequest<object>;
@@ -56,6 +58,12 @@ export type CancelBookingRequet = {
   booking_id: string;
   reason: string;
 };
+
+export type ServiceOption = {
+  id: string;
+  duration: number;
+  price: number;
+};
 export type ServiceDetailItem = {
   id: string;
   name: Record<_LanguageCode, string>;
@@ -64,11 +72,7 @@ export type ServiceDetailItem = {
   image_url: string | null;
   bookings_count: number;
   is_active: boolean;
-  options: {
-    id: string;
-    duration: number;
-    price: number;
-  }[];
+  options: ServiceOption[];
 };
 export interface DashboardStats {
   total_income: string;
@@ -150,8 +154,7 @@ export type KTVConfigSchedule = {
 };
 
 export type ConfigSchedulesResponse = ResponseDataSuccessType<KTVConfigSchedule>;
-
-
+export type ListOptionCategorynResponse = ResponseDataSuccessType<OptionCategory[]>;
 export type EditConfigScheduleRequest = {
   working_schedule: {
     day_key: _KTVConfigSchedules;

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -21,7 +21,7 @@ import { useFormService } from '@/features/ktv/hooks';
 import { Controller, useFieldArray } from 'react-hook-form';
 import { Image } from 'expo-image';
 import SelectModal from '@/components/select-modal';
-
+import { router } from 'expo-router';
 
 export default function FormScreen() {
   const [langName, setLangName] = useState<_LanguageCode>(_LanguageCode.VI);
@@ -30,8 +30,17 @@ export default function FormScreen() {
 
   const { t } = useTranslation();
 
-  const { optionsCategory, form, handleSetImage, resetImage, submit, isEdit, loading } = useFormService();
-
+  const {
+    optionsCategory,
+    form,
+    handleSetImage,
+    resetImage,
+    submit,
+    isEdit,
+    loading,
+    setServiceEdit,
+    listOptionByCategory,
+  } = useFormService();
   const {
     control,
     setValue,
@@ -40,13 +49,8 @@ export default function FormScreen() {
   } = form;
 
   // Field Array quản lý danh sách tùy chọn
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'options',
-  });
 
   const categoryId = watch('category_id');
-
   const getCategoryLabel = useCallback(
     (categoryId: string) => {
       const category = optionsCategory.find((cat) => cat.value === categoryId);
@@ -54,10 +58,21 @@ export default function FormScreen() {
     },
     [optionsCategory]
   );
+  const handleBack = useCallback(() => {
+    if (isEdit) {
+      setServiceEdit(null);
+      router.back();
+    } else {
+      router.back();
+    }
+  }, []);
   return (
     <View className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
-      <HeaderBack title={isEdit ? 'ktv.services.edit_service' : 'ktv.services.add_new_service'} />
+      <HeaderBack
+        title={isEdit ? 'ktv.services.edit_service' : 'ktv.services.add_new_service'}
+        onBack={handleBack}
+      />
       <SafeAreaView className="flex-1" edges={['bottom']}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -114,7 +129,7 @@ export default function FormScreen() {
                   </View>
                   {/*Error*/}
                   {errors.image && (
-                    <Text className="mt-2 text-red-500 text-sm">
+                    <Text className="mt-2 text-sm text-red-500">
                       {t('ktv.services.form.error.image')}
                     </Text>
                   )}
@@ -152,7 +167,7 @@ export default function FormScreen() {
                   </TouchableOpacity>
                   {/*Error*/}
                   {errors.category_id && (
-                    <Text className="mt-2 text-red-500 text-sm">{errors.category_id.message}</Text>
+                    <Text className="mt-2 text-sm text-red-500">{errors.category_id.message}</Text>
                   )}
                 </View>
               )}
@@ -168,34 +183,35 @@ export default function FormScreen() {
                   if (lang !== langName) return <></>;
                   return (
                     <View className="mb-5">
-                    <View className="mb-2 flex-row items-center justify-between">
-                      <Text className="font-inter-bold text-sm text-gray-800">
-                        {t('ktv.services.form.service_name')}
-                      </Text>
-                      <LanguageTabs selected={langName} onSelect={setLangName} />
+                      <View className="mb-2 flex-row items-center justify-between">
+                        <Text className="font-inter-bold text-sm text-gray-800">
+                          {t('ktv.services.form.service_name')}
+                        </Text>
+                        <LanguageTabs selected={langName} onSelect={setLangName} />
+                      </View>
+                      <View
+                        className={cn('h-12 rounded-xl border border-gray-200 bg-white px-4', {
+                          'border-red-500': errors.name?.[langName],
+                        })}>
+                        <TextInput
+                          className="h-full text-gray-900"
+                          placeholder={t('ktv.services.form.service_name_placeholder')}
+                          value={value || ''}
+                          onChangeText={(text) => onChange(text)}
+                          onBlur={onBlur}
+                        />
+                      </View>
+                      {/*Error*/}
+                      {errors.name?.[langName] && (
+                        <Text className="mt-2 text-sm text-red-500">
+                          {errors.name?.[langName].message}
+                        </Text>
+                      )}
                     </View>
-                    <View
-                      className={cn('h-12 rounded-xl border border-gray-200 bg-white px-4', {
-                        'border-red-500': errors.name?.[langName],
-                      })}>
-                      <TextInput
-                        className="h-full text-gray-900"
-                        placeholder={t('ktv.services.form.service_name_placeholder')}
-                        value={value || ''}
-                        onChangeText={(text) => onChange(text)}
-                        onBlur={onBlur}
-                      />
-                    </View>
-                    {/*Error*/}
-                    {errors.name?.[langName] && (
-                      <Text className="mt-2 text-red-500 text-sm">
-                        {errors.name?.[langName].message}
-                      </Text>
-                    )}
-                  </View>
-                );
-              }}
-            />))}
+                  );
+                }}
+              />
+            ))}
 
             {/* --- Description --- */}
             {Object.values(_LanguageCode).map((lang) => (
@@ -229,16 +245,15 @@ export default function FormScreen() {
                       </View>
                       {/*Error*/}
                       {errors.description?.[langName] && (
-                        <Text className="mt-2 text-red-500 text-sm">
+                        <Text className="mt-2 text-sm text-red-500">
                           {errors.description?.[langName].message}
                         </Text>
                       )}
                     </View>
-                  )
+                  );
                 }}
               />
             ))}
-
 
             {/* --- Service Active --- */}
             <Controller
@@ -266,94 +281,44 @@ export default function FormScreen() {
               )}
             />
 
-            {/* --- DANH SÁCH GÓI (OPTIONS) --- */}
+            {/* --- DANH SÁCH GÓI (OPTIONS) vụ đăng ký---  */}
             <View className="mb-2 flex-row items-center justify-between">
-              <Text className="font-inter-bold text-sm text-gray-800">{t('ktv.services.form.options')}</Text>
-              <TouchableOpacity
-                onPress={() => append({ price: 0, duration: 15 })}
-                className="flex-row items-center">
-                <Plus size={16} color={DefaultColor.base['primary-color-2']} />
-                <Text className="ml-1 text-sm font-inter-bold text-primary-color-2">
-                  {t('ktv.services.form.add_option')}
-                </Text>
-              </TouchableOpacity>
+              <Text className="font-inter-bold text-sm text-gray-800">
+                {t('ktv.services.form.options')}
+              </Text>
             </View>
-
-            {fields.map((field, index) => (
+            {/* item */}
+            {listOptionByCategory.map((item, index) => (
               <View
-                key={field.id}
+                key={item.id}
                 className="mb-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
                 <View className="mb-2 flex-row justify-between">
-                  <Text className="text-xs font-inter-bold uppercase text-gray-500">
+                  <Text className="text-xs font-bold uppercase text-gray-500">
                     {t('ktv.services.form.option')} {index + 1}
                   </Text>
-                  {fields.length > 1 && (
-                    <TouchableOpacity onPress={() => remove(index)}>
-                      <Trash2 size={16} color={DefaultColor.gray[500]} />
-                    </TouchableOpacity>
-                  )}
                 </View>
 
                 <View className="flex-row gap-3">
-                  {/* INPUT: THỜI LƯỢNG */}
                   <View className="flex-1">
                     <Text className="mb-1 text-xs text-gray-400">
                       {t('ktv.services.form.duration')}
                     </Text>
-                    <Controller
-                      control={control}
-                      name={`options.${index}.duration`}
-                      render={({ field: { onChange, value } }) => (
-                        <TextInput
-                          keyboardType="numeric"
-                          className="rounded-lg border border-gray-300 p-2 text-center"
-                          value={String(value)}
-                          onChangeText={(text) => handleSetChangeNumber(text, onChange)}
-                          placeholder={t('ktv.services.form.duration')}
-                        />
-                      )}
-                    />
-                    {errors.options?.[index]?.duration && (
-                      <Text className="mt-2 text-red-500 text-sm">
-                        {t('ktv.services.form.error.options_duration')}
-                      </Text>
-                    )}
+                    <Text className="rounded-lg border border-gray-300 p-2 text-center">
+                      {item.duration}
+                    </Text>
                   </View>
 
-                  {/* INPUT: GIÁ TIỀN */}
                   <View className="flex-1">
                     <Text className="mb-1 text-xs text-gray-400">
                       {t('ktv.services.form.price')}
                     </Text>
-                    <Controller
-                      control={control}
-                      name={`options.${index}.price`}
-                      render={({ field: { onChange, value } }) => (
-                        <TextInput
-                          keyboardType="numeric"
-                          className="rounded-lg border border-gray-300 p-2 text-right"
-                          value={String(value)}
-                          onChangeText={(text) => handleSetChangeNumber(text, onChange)}
-                          placeholder={t('ktv.services.form.price')}
-                        />
-                      )}
-                    />
-                    {errors.options?.[index]?.price && (
-                      <Text className="mt-2 text-red-500 text-sm">
-                        {t('ktv.services.form.error.options_price')}
-                      </Text>
-                    )}
+                    <Text className="rounded-lg border border-gray-300 p-2 text-right">
+                      {item.price}
+                    </Text>
                   </View>
                 </View>
               </View>
             ))}
-
-            {errors.options && (
-              <Text className="mt-2 text-red-500 text-sm">
-                {errors.options.message}
-              </Text>
-            )}
-
           </ScrollView>
         </KeyboardAvoidingView>
 
@@ -362,9 +327,8 @@ export default function FormScreen() {
           <TouchableOpacity
             disabled={loading}
             onPress={submit}
-            className="items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200"
-          >
-            <Text className="text-base font-inter-bold text-white">
+            className="items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200">
+            <Text className="font-inter-bold text-base text-white">
               {loading ? t('common.loading') : t('ktv.services.form.save')}
             </Text>
           </TouchableOpacity>
@@ -381,12 +345,17 @@ export default function FormScreen() {
         }}
         data={optionsCategory}
       />
-
     </View>
   );
 }
 
-const LanguageTabs = ({ selected, onSelect }: { selected: string; onSelect: (lang: _LanguageCode) => void }) => {
+const LanguageTabs = ({
+  selected,
+  onSelect,
+}: {
+  selected: string;
+  onSelect: (lang: _LanguageCode) => void;
+}) => {
   return (
     <View className="flex-row overflow-hidden rounded-lg bg-gray-100 p-1">
       {_LanguagesMap.map((lang) => (

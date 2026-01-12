@@ -15,10 +15,12 @@ import {
   EditProfileKtvRequest,
   ConfigSchedulesResponse,
   EditConfigScheduleRequest,
+  ListOptionCategorynResponse,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
 import { createUploadTask } from 'expo-file-system';
+import { ServiceItem, UpdateServiceResponse } from '../service/types';
 
 const defaultUri = '/ktv';
 
@@ -53,7 +55,7 @@ const ktvApi = {
     return response.data;
   },
   // api cho màn hình update-service
-  updateService: async (data: FormData, id: string): Promise<ResponseSuccessType> => {
+  updateService: async (data: FormData, id: string): Promise<UpdateServiceResponse> => {
     const response = await client.post(`${defaultUri}/update-service/${id}`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -127,8 +129,16 @@ const ktvApi = {
     return response.data;
   },
   // câp nhâp thông tin cấu hình thời gian làm việc của KTV
-  updateConfigSchedule: async (data: EditConfigScheduleRequest): Promise<ConfigSchedulesResponse> => {
+  updateConfigSchedule: async (
+    data: EditConfigScheduleRequest
+  ): Promise<ConfigSchedulesResponse> => {
     const response = await client.post(`${defaultUri}/config-schedule`, data);
+    return response.data;
+  },
+
+  // get list danh sách gói dịch vụ của category
+  optionByCategorys: async (id: string): Promise<ListOptionCategorynResponse> => {
+    const response = await client.get(`${defaultUri}/category-price/${id}`);
     return response.data;
   },
 };

@@ -57,9 +57,7 @@ export const SERVICE_DETAIL = {
 
 export default function ServiceDetailScreen() {
   const { detail } = useServiceDetail();
-
   const { editService, deleteService } = useSetService();
-
   const { t } = useTranslation();
 
   const [showReviewList, setShowReviewList] = useState(false);
@@ -128,7 +126,9 @@ export default function ServiceDetailScreen() {
               </Text>
               {/*Xem tất cả đánh giá*/}
               <TouchableOpacity>
-                <Text className={'ml-2 font-inter-semibold text-sm text-primary-color-2'} onPress={() => setShowReviewList(true)}>
+                <Text
+                  className={'ml-2 font-inter-semibold text-sm text-primary-color-2'}
+                  onPress={() => setShowReviewList(true)}>
                   ({t('ktv.services.see_reviews')})
                 </Text>
               </TouchableOpacity>
@@ -139,8 +139,7 @@ export default function ServiceDetailScreen() {
           <View className="mt-4 flex-row gap-3">
             <TouchableOpacity
               onPress={() => editService(detail.id)}
-              className="flex-1 flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3 shadow-md shadow-blue-200"
-            >
+              className="flex-1 flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3 shadow-md shadow-blue-200">
               <Pencil size={18} color="white" />
               <Text className="ml-2 font-inter-bold text-sm text-white">
                 {t('ktv.services.edit_service')}
@@ -149,8 +148,7 @@ export default function ServiceDetailScreen() {
 
             <TouchableOpacity
               onPress={() => deleteService(detail.id, true)}
-              className="flex-1 flex-row items-center justify-center rounded-xl border border-red-100 bg-red-50 py-3"
-            >
+              className="flex-1 flex-row items-center justify-center rounded-xl border border-red-100 bg-red-50 py-3">
               <Trash2 size={18} color={DefaultColor.red[500]} />
               <Text className="ml-2 font-inter-bold text-sm text-red-500">
                 {t('ktv.services.delete_service')}
@@ -188,13 +186,13 @@ export default function ServiceDetailScreen() {
               className="mb-3 flex-row items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <View className="flex-row items-center">
                 <Clock size={14} color={DefaultColor.gray[700]} />
-                <Text className="ml-1.5 text-sm font-inter-bold text-gray-700">
+                <Text className="ml-1.5 font-inter-bold text-sm text-gray-700">
                   {opt.duration} {t('common.minute')}
                 </Text>
               </View>
               <View className="flex-row items-center">
                 <Banknote size={14} color={DefaultColor.base['primary-color-2']} />
-                <Text className="ml-1.5 text-sm font-inter-bold text-primary-color-2">
+                <Text className="ml-1.5 font-inter-bold text-sm text-primary-color-2">
                   {formatBalance(opt.price)} {t('common.currency')}
                 </Text>
               </View>
