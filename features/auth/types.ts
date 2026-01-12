@@ -95,9 +95,3 @@ export type EditProfileRequest = {
   old_password?: string;
   new_password?: string;
 };
-export type TermOfUseResponse = ResponseDataSuccessType<{
-  type: 1;
-  file: string;
-  slug: string;
-  note: string;
-}>;

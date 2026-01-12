@@ -44,10 +44,3 @@ export const useHeartbeatQuery = (enabled: boolean) => {
     },
   });
 };
-
-export const useTermOfUseQuery = () => {
-  return useQuery({
-    queryKey: ['authApi-term-of-use'],
-    queryFn: authApi.termOfUse,
-  });
-};

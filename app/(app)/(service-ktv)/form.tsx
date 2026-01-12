@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,16 +9,16 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Camera, ChevronDown, Plus, Trash2, X } from 'lucide-react-native';
+import { Camera, ChevronDown, X } from 'lucide-react-native';
 import HeaderBack from '@/components/header-back';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
 import { _LanguageCode, _LanguagesMap } from '@/lib/const';
-import { cn, handleSetChangeNumber } from '@/lib/utils';
+import { cn, formatBalance } from '@/lib/utils';
 import { useFormService } from '@/features/ktv/hooks';
-import { Controller, useFieldArray } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { Image } from 'expo-image';
 import SelectModal from '@/components/select-modal';
 import { router } from 'expo-router';
@@ -313,7 +313,7 @@ export default function FormScreen() {
                       {t('ktv.services.form.price')}
                     </Text>
                     <Text className="rounded-lg border border-gray-300 p-2 text-right">
-                      {item.price}
+                      {formatBalance(item.price)}
                     </Text>
                   </View>
                 </View>
