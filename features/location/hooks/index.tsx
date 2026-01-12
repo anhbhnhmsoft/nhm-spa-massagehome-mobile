@@ -121,17 +121,12 @@ export const useSearchLocation = () => {
 // Hook lấy danh sách địa chỉ phân trang
 export const useGetListAddress = (params: ListAddressRequest) => {
   const query = useInfinityAddressList(params);
-  const setLoading = useApplicationStore((s) => s.setLoading);
   const data = useMemo(() => {
     return query.data?.pages.flatMap((page) => page.data.data) || [];
   }, [query.data]);
   const pagination = useMemo(() => {
     return query.data?.pages[0].data || null;
   }, [query.data]);
-
-  useEffect(() => {
-    setLoading(query.isLoading);
-  }, [query.isLoading]);
 
   return {
     ...query,

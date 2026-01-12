@@ -95,7 +95,7 @@ const useApplicationStore = create<IApplicationStore>()(
     }),
     {
       name: 'ApplicationStore', // Tên hiển thị trong Redux DevTools
-      enabled: __DEV__, // Chỉ bật khi dev
+      enabled: true, // Chỉ bật khi dev
     }
   )
 );

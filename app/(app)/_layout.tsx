@@ -12,6 +12,7 @@ import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
+  const setLoading = useApplicationStore((s) => s.setLoading);
   const [notReady, setNotReady] = useState(true);
 
   const checkAuth = useCheckAuth();

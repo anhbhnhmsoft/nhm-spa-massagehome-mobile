@@ -5,15 +5,12 @@ import { TabIcon } from '@/components/app/tab-icon';
 import {
   Briefcase,
   Home,
-  User,
   CalendarDays,
   MessageCircle,
   ChartColumnBigIcon,
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { useBookingStore } from '@/lib/ktv/useBookingStore';
-import { useEffect } from 'react';
 import { useHydrateBooking } from '@/features/ktv/hooks';
 
 export default function TabsKTVLayout() {

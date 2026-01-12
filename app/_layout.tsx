@@ -15,7 +15,6 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
 import useAuthStore from '@/features/auth/store';
-import useApplicationStore from '@/lib/store';
 
 export {
   // Catch any errors thrown by the Layout component.
