@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { Plus, Wallet, X, Trash, Zap } from 'lucide-react-native';
+import { Plus, Trash, Wallet, X } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import { useTranslation } from 'react-i18next';
 import {
@@ -167,10 +167,7 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
       />
 
       {/* Modal Tạo Request Rút Tiền */}
-      <CreateWithdrawTicketModal
-        id={idChoose}
-        setId={setIdChoose}
-      />
+      <CreateWithdrawTicketModal id={idChoose} setId={setIdChoose} />
     </ModalToast>
   );
 };
@@ -477,30 +474,6 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
                         </TouchableOpacity>
                       ))}
                     </View>
-                  </View>
-
-                  {/* Số tiền thực tế sẽ rút */}
-                  <View className="mb-8 rounded-2xl bg-primary-color-2 p-5 pt-8 shadow-sm">
-                    <View className="flex-row items-center justify-between">
-                      <View>
-                        <Text className="mb-1 font-inter-medium text-green-100">
-                          {t('payment.received_points')}
-                        </Text>
-                        <View className="flex-row items-baseline gap-2">
-                          <Text className="font-inter-bold text-4xl text-white">
-                            {formatBalance(withdrawMoney || 0)}
-                          </Text>
-                          <Text className="font-inter-bold text-lg text-green-200">đ</Text>
-                        </View>
-                      </View>
-                      <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                        <Zap size={20} color="white" fill="white" />
-                      </View>
-                    </View>
-                    <Text className="mt-2 rounded bg-black/10 py-1 text-center text-xs text-green-100/60">
-                      {formatBalance(configPayment?.currency_exchange_rate || 0)}đ = 1{' '}
-                      {t('common.currency')}
-                    </Text>
                   </View>
 
                   {/* Ghi chú */}

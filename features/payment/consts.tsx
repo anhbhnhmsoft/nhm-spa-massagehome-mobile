@@ -2,10 +2,10 @@ import DefaultColor from '@/components/styles/color';
 
 export const _QUICK_AMOUNTS = [100000, 200000, 500000, 1000000, 2000000, 5000000];
 
-export const _QUICK_WITHDRAW_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
+export const _QUICK_WITHDRAW_AMOUNTS = [100000, 200000, 500000, 1000000, 2000000, 5000000];
 
-export enum _PaymentType{
-  QR_BANKING= 1,
+export enum _PaymentType {
+  QR_BANKING = 1,
   ZALO_PAY = 2,
   MOMO_PAY = 3,
 }
@@ -29,13 +29,13 @@ export const _PAYMENT_METHODS = [
 ] as const;
 
 export enum _TransactionType {
- DEPOSIT_QR_CODE = 1, // Nạp tiền qua mã QR
- DEPOSIT_ZALO_PAY = 2, // Nạp tiền qua Zalo Pay
- DEPOSIT_MOMO_PAY = 3, // Nạp tiền qua Momo Pay
- WITHDRAWAL = 4, // Rút tiền (Yêu cầu)
- PAYMENT = 5, // Thanh toán (Booking)
- AFFILIATE = 6, // Nhận hoa hồng
- PAYMENT_FOR_KTV = 7, // Thanh toán cho KTV
+  DEPOSIT_QR_CODE = 1, // Nạp tiền qua mã QR
+  DEPOSIT_ZALO_PAY = 2, // Nạp tiền qua Zalo Pay
+  DEPOSIT_MOMO_PAY = 3, // Nạp tiền qua Momo Pay
+  WITHDRAWAL = 4, // Rút tiền (Yêu cầu)
+  PAYMENT = 5, // Thanh toán (Booking)
+  AFFILIATE = 6, // Nhận hoa hồng
+  PAYMENT_FOR_KTV = 7, // Thanh toán cho KTV
 }
 
 export const _TransactionTypeMap = {
@@ -46,7 +46,7 @@ export const _TransactionTypeMap = {
   [_TransactionType.PAYMENT]: 'enum.transaction_type.PAYMENT',
   [_TransactionType.AFFILIATE]: 'enum.transaction_type.AFFILIATE',
   [_TransactionType.PAYMENT_FOR_KTV]: 'enum.transaction_type.PAYMENT_FOR_KTV',
-}
+};
 
 export enum _TransactionStatus {
   PENDING = 1,
@@ -64,7 +64,7 @@ export const _TransactionStatusMap = {
   [_TransactionStatus.PENDING]: 'enum.transaction_status.PENDING',
   [_TransactionStatus.COMPLETED]: 'enum.transaction_status.COMPLETED',
   [_TransactionStatus.FAILED]: 'enum.transaction_status.FAILED',
-}
+};
 
 // Các loại giao dịch vào wallet
 export const _TransactionInType = [
@@ -73,15 +73,14 @@ export const _TransactionInType = [
   _TransactionType.DEPOSIT_MOMO_PAY,
   _TransactionType.AFFILIATE,
   _TransactionType.PAYMENT_FOR_KTV,
-] as readonly _TransactionType[]
+] as readonly _TransactionType[];
 
 export const _TransactionOutType = [
   _TransactionType.WITHDRAWAL,
   _TransactionType.PAYMENT,
-] as readonly _TransactionType[]
-
+] as readonly _TransactionType[];
 
 // Các loại thông tin rút tiền
-export enum _UserWithdrawInfoType  {
+export enum _UserWithdrawInfoType {
   BANK = 1, // Thông tin tài khoản ngân hàng
 }

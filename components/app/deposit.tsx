@@ -19,16 +19,7 @@ import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
 import { cn, formatBalance, generateQRCodeImageUrl } from '@/lib/utils';
 import { _PAYMENT_METHODS, _PaymentType, _QUICK_AMOUNTS } from '@/features/payment/consts';
-import {
-  ArrowDown,
-  CheckCircle2,
-  Circle,
-  Copy,
-  Download,
-  QrCode,
-  X,
-  Zap,
-} from 'lucide-react-native';
+import { CheckCircle2, Circle, Copy, Download, QrCode, X } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import React, { useMemo } from 'react';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
@@ -121,41 +112,6 @@ export default function Deposit() {
                 ))}
               </View>
             </View>
-
-            {/* --- MŨI TÊN LIÊN KẾT --- */}
-            <View className="relative z-20 -my-4 items-center">
-              <View className="rounded-full bg-blue-200 p-1.5">
-                <View className="rounded-full bg-white p-1.5 shadow-sm">
-                  <ArrowDown size={20} color="#2B7BBE" strokeWidth={2.5} />
-                </View>
-              </View>
-            </View>
-
-            {/* --- KHỐI QUY ĐỔI (OUTPUT) --- */}
-            <View className="mb-8 rounded-2xl bg-primary-color-2 p-5 pt-8 shadow-sm">
-              <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="mb-1 font-inter-medium text-green-100">
-                    {t('payment.received_points')}
-                  </Text>
-                  <View className="flex-row items-baseline gap-2">
-                    <Text className="font-inter-bold text-4xl text-white">
-                      {formatBalance(receivedPoints)}
-                    </Text>
-                    <Text className="font-inter-bold text-lg text-green-200">
-                      {t('common.currency')}
-                    </Text>
-                  </View>
-                </View>
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                  <Zap size={20} color="white" fill="white" />
-                </View>
-              </View>
-              <Text className="mt-2 rounded bg-black/10 py-1 text-center text-xs text-green-100/60">
-                {formatBalance(configPayment?.currency_exchange_rate)}đ = 1 {t('common.currency')}
-              </Text>
-            </View>
-
             {/* --- 3. PHƯƠNG THỨC THANH TOÁN --- */}
             <Text className="mb-4 font-inter-bold text-lg text-gray-900">
               {t('payment.payment_methods')}
@@ -241,29 +197,28 @@ export default function Deposit() {
               )}
             />
           </View>
-
-          {/* --- BOTTOM BUTTON --- */}
-          <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
-            <View className="mb-2 flex-row justify-between">
-              <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
-              <Text className="font-inter-bold text-lg text-gray-900">
-                {watchedAmount ? formatBalance(watchedAmount) : '0'} đ
-              </Text>
-            </View>
-            <TouchableOpacity
-              className={`items-center justify-center rounded-full py-3.5 ${
-                watchedAmount && Number(watchedAmount) > 0 && watchedPayment
-                  ? 'bg-primary-color-2'
-                  : 'bg-gray-300'
-              }`}
-              onPress={handleSubmit(submitDeposit)}
-              disabled={!watchedAmount || Number(watchedAmount) <= 0 || !watchedPayment}>
-              <Text className="font-inter-bold text-base text-white">
-                {t('payment.confirm_payment')}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </KeyboardAwareScrollView>
+        {/* --- BOTTOM BUTTON --- */}
+        <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
+          <View className="mb-2 flex-row justify-between">
+            <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
+            <Text className="font-inter-bold text-lg text-gray-900">
+              {watchedAmount ? formatBalance(watchedAmount) : '0'} đ
+            </Text>
+          </View>
+          <TouchableOpacity
+            className={`items-center justify-center rounded-full py-3.5 ${
+              watchedAmount && Number(watchedAmount) > 0 && watchedPayment
+                ? 'bg-primary-color-2'
+                : 'bg-gray-300'
+            }`}
+            onPress={handleSubmit(submitDeposit)}
+            disabled={!watchedAmount || Number(watchedAmount) <= 0 || !watchedPayment}>
+            <Text className="font-inter-bold text-base text-white">
+              {t('payment.confirm_payment')}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
 
       {/* --- QR PAYMENT MODAL --- */}

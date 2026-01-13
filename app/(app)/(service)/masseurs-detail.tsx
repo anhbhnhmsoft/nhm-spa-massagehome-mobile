@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
+import { Dimensions, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import { Star, MessageCircle, ChevronLeft, ChevronRight, Clock } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, MessageCircle, Star } from 'lucide-react-native';
 import { useKTVDetail } from '@/features/user/hooks';
 import {
   AvatarKTV,
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { cn, formatDistance, getCurrentDayKey } from '@/lib/utils';
+import { formatDistance, getCurrentDayKey } from '@/lib/utils';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
@@ -21,10 +21,7 @@ import Empty from '@/components/empty';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGetRoomChat } from '@/features/chat/hooks';
 import ReviewListModal from '@/components/app/list-review';
-import { _KTVConfigSchedules, _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
-import { KTVWorkSchedule, ListKTVItem } from '@/features/user/types';
 import { ScheduleSection } from '@/components/app/ktv-card';
-
 
 // Lấy chiều rộng màn hình để set cho Carousel
 const { width: PAGE_WIDTH } = Dimensions.get('window');
@@ -38,7 +35,6 @@ const MasseurDetailScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   // Trạng thái mở rộng của giới thiệu
   const [isBioExpanded, setIsBioExpanded] = useState(false);
-
   // Trạng thái hiển thị danh sách review
   const [showReviewList, setShowReviewList] = useState(false);
 
@@ -47,13 +43,7 @@ const MasseurDetailScreen = () => {
   const getRoomChat = useGetRoomChat();
 
   // Lấy danh sách dịch vụ của KTV
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isRefetching,
-  } = queryServices;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isRefetching } = queryServices;
 
   // Tính toán khoảng cách
   const distance = useMemo(() => {
@@ -65,8 +55,6 @@ const MasseurDetailScreen = () => {
     }
     return null;
   }, [detail]);
-
-
 
   // Kiểm tra xem KTV có đang làm việc trong thời gian hiện tại không
   const currentDayKey = getCurrentDayKey();
@@ -90,7 +78,6 @@ const MasseurDetailScreen = () => {
     // Lưu ý: '[]' nghĩa là bao gồm cả phút bắt đầu và kết thúc
     return now.isBetween(start, end, null, '[]');
   }, [detail, currentDayKey]);
-
   return (
     <>
       <View className={`flex-1 bg-base-color-3`}>
@@ -259,7 +246,9 @@ const MasseurDetailScreen = () => {
               </View>
 
               {/* Lịch làm việc */}
-              {detail.schedule && <ScheduleSection schedule={detail.schedule} isOnlineRealtime={isOnlineRealtime} />}
+              {detail.schedule && (
+                <ScheduleSection schedule={detail.schedule} isOnlineRealtime={isOnlineRealtime} />
+              )}
 
               {/* --- Review Section --- */}
               <View className="mt-2 bg-white p-4">
@@ -310,7 +299,7 @@ const MasseurDetailScreen = () => {
                 key={item.id}
                 className="bg-white px-5 pb-4" // Thêm bg-white và padding-bottom
               >
-                <ServiceCard item={item}  />
+                <ServiceCard item={item} />
               </View>
             );
           }}
@@ -333,6 +322,5 @@ const MasseurDetailScreen = () => {
     </>
   );
 };
-
 
 export default MasseurDetailScreen;

@@ -14,7 +14,11 @@ import { useSetService } from '@/features/service/hooks';
 import { cn, formatBalance } from '@/lib/utils';
 
 // Hiển thị ảnh của KTV với xử lý lỗi ảnh
-export const ImageDisplayCustomer = ({ source, width, height}: {
+export const ImageDisplayCustomer = ({
+  source,
+  width,
+  height,
+}: {
   source: string;
   width: number;
   height: number;
@@ -132,7 +136,10 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
 
   // tính giá thấp nhất trong options
   const minPrice = useMemo(() => {
-    const min = item.options.reduce((acc, option) => Math.min(acc, Number(option.price)), Number(item.options[0].price));
+    const min = item.options.reduce(
+      (acc, option) => Math.min(acc, Number(option.price)),
+      Number(item.options[0].price)
+    );
     return min.toFixed(2);
   }, [item.options]);
 
@@ -142,8 +149,7 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
     <TouchableOpacity
       disabled={!item.is_active}
       onPress={() => setService(item.id)}
-      className={'flex-row border-b border-gray-100 pb-4'}
-    >
+      className={'flex-row border-b border-gray-100 pb-4'}>
       {item.image_url && !imageError ? (
         <Image
           source={{ uri: item.image_url }}
@@ -169,28 +175,42 @@ export const ServiceCard = ({ item }: { item: ServiceItem }) => {
           <Icon as={ImageOff} size={24} className="text-slate-400" />
         </View>
       )}
-      <View className="flex-1 ml-3 justify-between">
+      <View className="ml-3 flex-1 justify-between">
         <View>
           <View className="flex-row justify-between">
-            <Text className="text-base font-inter-bold text-gray-800 flex-1 pr-2" numberOfLines={1}>{item.name}</Text>
+            <Text className="flex-1 pr-2 font-inter-bold text-base text-gray-800" numberOfLines={1}>
+              {item.name}
+            </Text>
           </View>
-          <Text className="text-xs text-gray-500 mt-1" numberOfLines={2}>{item.description}</Text>
-          <Text className="text-[10px] text-orange-500 mt-1"> {t('masseurs_detail.sales_count_item_service', { count: item.bookings_count })}</Text>
+          <Text className="mt-1 text-xs text-gray-500" numberOfLines={2}>
+            {item.description}
+          </Text>
+          <View className="mt-1 flex-row items-center justify-between">
+            <Text className="mt-1 text-[10px] text-orange-500">
+              {t('masseurs_detail.sales_count_item_service', { count: item.bookings_count })}
+            </Text>
+            <View
+              className={cn('rounded-full bg-primary-color-2 px-2 py-0.5', {
+                'bg-primary-color-2': item.is_active,
+                'bg-red-500': !item.is_active,
+              })}>
+              <Text className="font-inter-semibold text-xs text-white">
+                {item.is_active ? t('masseurs_detail.available') : t('masseurs_detail.unavailable')}
+              </Text>
+            </View>
+          </View>
         </View>
         {/* Giá và Nút */}
-        <View className="flex-row justify-between items-end mt-2">
+        <View className="mt-2 flex-row items-end justify-between">
           <View className="flex-row items-baseline gap-1">
-            <Text className="text-xs text-primary-color-1 font-inter-bold">{t('masseurs_detail.price_service_sub')}</Text>
-            <Text className="text-lg text-primary-color-1 font-inter-bold">{formatBalance(minPrice)}</Text>
-            <Text className="text-xs text-primary-color-1 font-inter-bold">{t('common.currency')}</Text>
-          </View>
-
-          <View className={cn('bg-primary-color-2 px-4 py-1.5 rounded-full', {
-            'bg-primary-color-2': item.is_active,
-            'bg-red-500': !item.is_active,
-          })}>
-            <Text className="text-white text-xs font-inter-bold">
-              {item.is_active ? t('masseurs_detail.available') : t('masseurs_detail.unavailable')}
+            <Text className="font-inter-bold text-xs text-primary-color-1">
+              {t('masseurs_detail.price_service_sub')}
+            </Text>
+            <Text className="font-inter-bold text-lg text-primary-color-1">
+              {formatBalance(minPrice)}
+            </Text>
+            <Text className="font-inter-bold text-xs text-primary-color-1">
+              {t('common.currency')}
             </Text>
           </View>
         </View>
