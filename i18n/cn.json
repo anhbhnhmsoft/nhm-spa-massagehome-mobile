@@ -172,7 +172,10 @@
       "WITHDRAWAL": "提现",
       "PAYMENT": "服务支付",
       "AFFILIATE": "佣金",
-      "PAYMENT_FOR_KTV": "支付给技师"
+      "PAYMENT_FOR_KTV": "支付给技师",
+      "REFUND": "退款",
+      "RETRIEVE_PAYMENT_REFUND_KTV": "提取退款",
+      "REFERRAL_KTV": "推荐技师"
     },
     "transaction_status": {
       "PENDING": "处理中",
@@ -358,6 +361,8 @@
     "notification": "通知",
     "affiliate": "推荐佣金",
     "config_schedule": "日程配置",
+    "inviteTechnician": "邀请技师",
+    "scanReferral": "扫描推荐",
     "error": {
       "invalid_name": "姓名必须为 4-255 个字符",
       "invalid_date_of_birth": "出生日期不能在未来",
@@ -737,7 +742,7 @@
       "title": "邀请技师",
       "description": "扫描二维码加入代理或分享下方链接",
       "qrDemoLabel": "演示二维码",
-      "inviteIdLabel": "Copy your ID",
+      "inviteIdLabel": "复制您的 ID",
       "doneButton": "完成",
       "copySuccess": "已复制"
     },
