@@ -1,37 +1,26 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  Pressable,
-  TextInput,
-  Image, // Sử dụng Image thay cho QRCode
-} from 'react-native';
-import { X, Copy, Check, ClipboardList } from 'lucide-react-native';
+import { Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Check, ClipboardList, Copy, UserPlus, X } from 'lucide-react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useTranslation } from 'react-i18next';
-
-import { UserPlus, Users, UserMinus } from 'lucide-react-native';
-import { canGoBack } from 'expo-router/build/global-state/routing';
 import QRCode from 'react-native-qrcode-svg';
 
 interface InviteKTVModalProps {
   isVisible: boolean;
   onClose: () => void;
   inviteLink: string;
+  userId: string;
 }
 
 interface AgencyListHeaderProps {
   onInvitePress: () => void;
   totalKtv: number;
-  busyKtv: number;
 }
-export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModalProps) => {
+export const InviteKTVModal = ({ isVisible, onClose, inviteLink, userId }: InviteKTVModalProps) => {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(inviteLink);
+    await Clipboard.setStringAsync(userId);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -65,12 +54,12 @@ export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModa
           {/* Ô Input Copy Link */}
           <View className="mb-6 w-full">
             <Text className="mb-2 ml-1 font-inter-medium text-sm text-gray-400">
-              {t('agency.inviteKTVModal.inviteLinkLabel')}
+              {t('agency.inviteKTVModal.inviteIdLabel')}
             </Text>
             <View className="w-full flex-row items-center rounded-2xl border border-gray-200 bg-gray-50 px-4 py-1">
               <TextInput
                 className="h-12 flex-1 font-inter-regular text-gray-700"
-                value={inviteLink}
+                value={userId}
                 editable={false}
                 selectTextOnFocus={true}
               />
@@ -96,7 +85,7 @@ export const InviteKTVModal = ({ isVisible, onClose, inviteLink }: InviteKTVModa
   );
 };
 
-export const AgencyListHeader = ({ onInvitePress, totalKtv, busyKtv }: AgencyListHeaderProps) => {
+export const AgencyListHeader = ({ onInvitePress, totalKtv }: AgencyListHeaderProps) => {
   const { t } = useTranslation();
 
   return (
@@ -117,33 +106,6 @@ export const AgencyListHeader = ({ onInvitePress, totalKtv, busyKtv }: AgencyLis
           </TouchableOpacity>
         )}
       </View>
-
-      {/* Hàng 2: Thẻ thống kê */}
-      {totalKtv > 0 && (
-        <View className="flex-row justify-between">
-          {/* Thẻ Tổng số */}
-          <View className="w-[48%] flex-row items-center justify-between rounded-3xl border border-gray-50 bg-white p-4">
-            <View>
-              <Text className="mb-1 font-inter-medium text-xs text-gray-500">Tổng số</Text>
-              <Text className="font-inter-bold text-2xl text-primary-color-1">{totalKtv}</Text>
-            </View>
-            <View className="rounded-xl bg-blue-50 p-2">
-              <Users size={20} color="#044984" />
-            </View>
-          </View>
-
-          {/* Thẻ Đang bận */}
-          <View className="w-[48%] flex-row items-center justify-between rounded-3xl border border-gray-50 bg-white p-4">
-            <View>
-              <Text className="mb-1 font-inter-medium text-xs text-gray-500">Đang bận</Text>
-              <Text className="font-inter-bold text-2xl text-primary-color-1">{busyKtv}</Text>
-            </View>
-            <View className="rounded-xl bg-orange-50 p-2">
-              <UserMinus size={20} color="#f97316" />
-            </View>
-          </View>
-        </View>
-      )}
     </View>
   );
 };

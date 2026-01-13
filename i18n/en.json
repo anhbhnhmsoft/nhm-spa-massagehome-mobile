@@ -737,7 +737,7 @@
       "title": "Invite Technician",
       "description": "Scan QR to join Agency or share the link below",
       "qrDemoLabel": "DEMO QR",
-      "inviteLinkLabel": "Direct Invite Link",
+      "inviteIdLabel": "Copy your ID",
       "doneButton": "Done",
       "copySuccess": "Copied"
     },

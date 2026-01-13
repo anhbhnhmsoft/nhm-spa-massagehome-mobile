@@ -1,7 +1,6 @@
 import React, { useState } from 'react'; // 1. Thêm useState
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 import { getTabBarHeight } from '@/components/styles/style';
-import { useTranslation } from 'react-i18next';
 import { useHomeAgency } from '@/features/agency/hook';
 import ItemKtv from '@/components/app/agency/ktv-card';
 import {
@@ -10,10 +9,10 @@ import {
   InviteKTVModal,
 } from '@/components/app/agency/agency-card';
 import useAuthStore from '@/features/auth/store';
-import { HeaderAppAgency } from '@/components/app/agency/header-app';
+import HeaderBack from '@/components/header-back';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function AgencyDashboard() {
-  const { t } = useTranslation();
+export default function ManagedTechnicians() {
   const [modalVisible, setModalVisible] = useState(false); // Quản lý modal
   const user = useAuthStore((state) => state.user);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, totalKtv } =
@@ -21,8 +20,8 @@ export default function AgencyDashboard() {
 
   const bottomPadding = getTabBarHeight() + 20;
   return (
-    <View className="flex-1 bg-white">
-      <HeaderAppAgency />
+    <SafeAreaView className="flex-1 bg-white">
+      <HeaderBack />
 
       <FlatList
         data={data}
@@ -34,11 +33,7 @@ export default function AgencyDashboard() {
         }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <AgencyListHeader
-            onInvitePress={() => setModalVisible(true)}
-            totalKtv={totalKtv}
-            busyKtv={0}
-          />
+          <AgencyListHeader onInvitePress={() => setModalVisible(true)} totalKtv={totalKtv} />
         )}
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor="#044984" />
@@ -67,6 +62,6 @@ export default function AgencyDashboard() {
         inviteLink={`nhmspa://agency/link?id=${user?.id}`}
         userId={user?.id || ''}
       />
-    </View>
+    </SafeAreaView>
   );
 }
