@@ -1,5 +1,6 @@
 import {
-  useInfiniteCategoryList, useInfiniteListReview,
+  useInfiniteCategoryList,
+  useInfiniteListReview,
   useInfiniteServiceList,
   useQueryListCoupon,
   useQueryListCouponUser,
@@ -8,7 +9,8 @@ import {
   BookingServiceRequest,
   CategoryListFilterPatch,
   CategoryListRequest,
-  CouponUserListRequest, ListReviewRequest,
+  CouponUserListRequest,
+  ListReviewRequest,
   PickBookingItem,
   PickBookingRequirement,
   SendReviewRequest,
@@ -42,7 +44,10 @@ import { formatBalance, getMessageError } from '@/lib/utils';
  * @param initialParams
  * @param isFeature
  */
-export const useGetCategoryList = (initialParams: Omit<CategoryListRequest, 'filter'>, isFeature?: boolean) => {
+export const useGetCategoryList = (
+  initialParams: Omit<CategoryListRequest, 'filter'>,
+  isFeature?: boolean
+) => {
   // Sử dụng useImmer để quản lý params (chứa filter)
   const [params, setParams] = useImmer<CategoryListRequest>({
     ...initialParams,
@@ -289,6 +294,7 @@ export const useServiceBooking = () => {
           }
         },
         onError: (error) => {
+          console.log('res', error);
           // Xử lý khi có lỗi xảy ra
           handleError(error);
         },
@@ -371,7 +377,7 @@ export const useReviewModal = (serviceBookingId: string, onSuccess: () => void) 
     }
   }, [serviceBookingId]);
 
-  const onSubmit =  (data: SendReviewRequest) => {
+  const onSubmit = (data: SendReviewRequest) => {
     sendReview(data, {
       onSuccess: () => {
         success({ message: t('services.success.review_success') });
@@ -381,9 +387,9 @@ export const useReviewModal = (serviceBookingId: string, onSuccess: () => void) 
       onError: (error) => {
         const message = getMessageError(error, t);
         if (message) {
-          form.setError('comment', {message: message});
+          form.setError('comment', { message: message });
         }
-      }
+      },
     });
   };
 
@@ -399,7 +405,7 @@ export const useReviewModal = (serviceBookingId: string, onSuccess: () => void) 
  */
 export const useGetReviewList = (enabled?: boolean) => {
   const [params, setParams] = useImmer<ListReviewRequest>({
-    filter:  {},
+    filter: {},
     page: 1,
     per_page: 10,
   });

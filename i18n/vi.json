@@ -81,7 +81,7 @@
     "sold_out": "Hết lượt",
     "expired": "Hết hạn",
     "version": "Phiên bản",
-    "currency": "Point",
+    "currency": "VND",
     "auto_pay": "Duyệt tự động 24/7",
     "save_image": "Lưu ảnh",
     "date_of_birth": "Ngày sinh",
@@ -106,7 +106,7 @@
     "security": "Bảo mật",
     "new_password_placeholder": "Nhập mật khẩu mới",
     "and": "và",
-    "years_of_experience" : "Số năm kinh nghiệm",
+    "years_of_experience": "Số năm kinh nghiệm",
     "online": "Đang trực tuyến",
     "offline": "Đang ngoại tuyến",
     "day_off": "Ngày nghỉ",
@@ -362,11 +362,11 @@
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
       "old_password_required": "Vui lòng nhập mật khẩu cũ để thay đổi mật khẩu",
-        "invalid_address": "Địa chỉ không hợp lệ",
-        "invalid_experience": "Số năm kinh nghiệm phải từ 0 đến 60",
-        "old_password_min": "Mật khẩu hiện tại phải có ít nhất 8 ký tự",
-        "new_password_min": "Mật khẩu mới phải có ít nhất 8 ký tự",
-        "bio_required": "Vui lòng nhập giới thiệu bản thân"
+      "invalid_address": "Địa chỉ không hợp lệ",
+      "invalid_experience": "Số năm kinh nghiệm phải từ 0 đến 60",
+      "old_password_min": "Mật khẩu hiện tại phải có ít nhất 8 ký tự",
+      "new_password_min": "Mật khẩu mới phải có ít nhất 8 ký tự",
+      "bio_required": "Vui lòng nhập giới thiệu bản thân"
     },
     "partner_form": {
       "title": "Đăng ký kỹ thuật viên",
@@ -422,9 +422,9 @@
       "error_location_required": "Vui lòng nhập khu vực / quận huyện làm việc.",
       "error_degrees_required": "Vui lòng thêm ít nhất một ảnh bằng cấp.",
       "face_with_id": "Chụp ảnh khuôn mặt cùng CCCD",
-      "alert_missing_face_with_card_title" : "Thiếu ảnh khuôn mặt cùng CCCD",
-      "alert_missing_face_with_card_message" : "Vui lòng thêm ảnh chụp khuôn mặt cùng CCCD.",
-      "register_success":  "Đơn đăng ký của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."
+      "alert_missing_face_with_card_title": "Thiếu ảnh khuôn mặt cùng CCCD",
+      "alert_missing_face_with_card_message": "Vui lòng thêm ảnh chụp khuôn mặt cùng CCCD.",
+      "register_success": "Đơn đăng ký của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."
     },
     "partner_register": {
       "title": "Bạn muốn đăng ký làm gì?",
@@ -470,7 +470,7 @@
       "add_new_account": "Liên kết tài khoản mới",
       "no_account": "Chưa có tài khoản nào",
       "title_modal_request": "Yêu cầu rút tiền",
-      "enter_withdraw_money": "Nhập số point muốn rút"
+      "enter_withdraw_money": "Nhập số tiền muốn rút"
     },
     "confirm": {
       "delete_withdraw_info": "Bạn có chắc chắn muốn xóa",
@@ -522,7 +522,7 @@
     "total_services": "dịch vụ có sẵn",
     "total_masseurs": "thợ massage có sẵn",
     "experience": "Kinh nghiệm",
-    "completed": "Hoàn thành",  
+    "completed": "Hoàn thành",
     "desc": "Mô tả bản thân",
     "price_service": "Giá dịch vụ",
     "available": "Sẵn sàng",
@@ -741,7 +741,7 @@
       "doneButton": "Hoàn tất",
       "copySuccess": "Đã sao chép"
     },
-    "empty" :{
+    "empty": {
       "empty_title": "Chưa có kỹ thuật viên ",
       "empty_description": "Mời kỹ thuật viên gia nhập Agency của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
       "empty_button": "Mời kỹ thuật viên"
@@ -752,7 +752,7 @@
     "invalid_message": "Mã QR không hợp lệ hoặc đã hết hạn",
     "processing": "Đang xử lý mã QR...",
     "scan_qr": "Quét mã QR",
-    "scan_title":  " Di chuyển camera đến mã QR của người giới thiệu"
+    "scan_title": " Di chuyển camera đến mã QR của người giới thiệu"
   },
   "config_schedule": {
     "loading": "Đang tải cấu hình...",

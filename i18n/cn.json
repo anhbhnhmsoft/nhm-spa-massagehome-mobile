@@ -81,7 +81,7 @@
     "sold_out": "售罄",
     "expired": "已过期",
     "version": "版本",
-    "currency": "积分",
+    "currency": "越南盾",
     "auto_pay": "24/7 自动批准",
     "save_image": "保存图片",
     "date_of_birth": "出生日期",
@@ -470,7 +470,7 @@
       "add_new_account": "关联新账户",
       "no_account": "尚无账户",
       "title_modal_request": "申请提现",
-      "enter_withdraw_money": "输入提现积分"
+      "enter_withdraw_money": "请输入要提取的金额"
     },
     "confirm": {
       "delete_withdraw_info": "您确定要删除吗？",

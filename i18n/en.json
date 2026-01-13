@@ -81,7 +81,7 @@
     "sold_out": "Sold out",
     "expired": "Expired",
     "version": "Version",
-    "currency": "Points",
+    "currency": "VND",
     "auto_pay": "Auto-approve 24/7",
     "save_image": "Save Image",
     "date_of_birth": "Date of Birth",
@@ -470,7 +470,7 @@
       "add_new_account": "Link New Account",
       "no_account": "No account yet",
       "title_modal_request": "Request Withdrawal",
-      "enter_withdraw_money": "Enter points to withdraw"
+      "enter_withdraw_money": "Enter the amount you want to withdraw"
     },
     "confirm": {
       "delete_withdraw_info": "Are you sure you want to delete?",
