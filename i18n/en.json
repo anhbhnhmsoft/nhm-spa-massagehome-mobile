@@ -325,12 +325,12 @@
     "services": "Featured Services",
     "features_trust": "Our Commitment",
     "invite_ktv": {
-      "title": "Technician Registration",
-      "description": "Attractive income, start immediately"
+      "title": "Register",
+      "description": "Technician"
     },
     "invite_partner": {
-      "title": "Business Partnership",
-      "description": "Expand network, increase profit"
+      "title": "Become",
+      "description": "Partner"
     }
   },
   "profile": {

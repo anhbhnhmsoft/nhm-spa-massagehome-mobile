@@ -20,11 +20,11 @@ export const TabIcon = ({
       }}>
       {/* Khối nền của Icon */}
       <View
-        className={`mb-1 h-10 w-10 items-center justify-center rounded-2xl ${
+        className={`mb-1 h-8 w-8 items-center justify-center rounded-xl ${
           focused ? 'bg-blue-600' : 'bg-transparent'
         }`}>
         <IconComponent
-          size={20}
+          size={16}
           color={focused ? 'white' : DefaultColor.gray['400']}
           strokeWidth={focused ? 2.5 : 2}
         />

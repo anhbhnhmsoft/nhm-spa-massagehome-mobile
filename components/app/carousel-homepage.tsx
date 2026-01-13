@@ -27,6 +27,7 @@ export function CarouselBanner({
   // Lấy thêm trạng thái isFetching (hoặc isRefetching)
   const { data: banners, isLoading, isFetching } = bannerQuery;
 
+
   // --- TRƯỜNG HỢP 1: HIỂN THỊ SKELETON KHI LOADING HOẶC REFETCHING ---
   if (isLoading || isFetching || !banners || banners.length === 0) {
     return (
@@ -87,38 +88,44 @@ export const InviteKtv = ({ onPress }: { onPress: (redirectTo: Href) => void }) 
   const { t } = useTranslation();
 
   return (
-    <View className="w-full flex-row gap-5 rounded-sm bg-white px-4 py-2">
+    <View className="w-full flex-row justify-between gap-5 rounded-sm bg-white px-4 py-2">
       {/* === BUTTON 1: KỸ THUẬT VIÊN (KTV) === */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => onPress('/(app)/(profile)/partner-register-individual')}
-        className="w-20 items-center">
+        className="w-50 flex-row items-center gap-2">
         {/* Bao ngoài icon để tạo hình tròn/bo góc đẹp hơn */}
         <Image
           source={require('../../assets/images/image_ktv.png')}
-          style={{ width: 36, height: 36, borderRadius: 18 }} // Tương đương style width: 40, height: 40
+          style={{ width: 45, height: 45, borderRadius: 45 }} // Tương đương style width: 40, height: 40
         />
-        <Text
-          className="mt-2 text-center font-inter-semibold text-[14px] text-base-color-1"
-          numberOfLines={2}>
-          {t('homepage.invite_ktv.title')}
-        </Text>
+        <View>
+          <Text className="text-left font-inter-semibold text-[14px] text-base-color-1">
+            {t('homepage.invite_ktv.title')}
+          </Text>
+          <Text className="text-left font-inter-semibold text-[14px] text-base-color-1">
+            {t('homepage.invite_ktv.description')}
+          </Text>
+        </View>
       </TouchableOpacity>
 
       {/* === BUTTON 2: ĐỐI TÁC (PARTNER) === */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => onPress('/(app)/(profile)/partner-register-agency')}
-        className="w-20 items-center">
+        className="w-50 flex-row items-center gap-2">
         <Image
           source={require('../../assets/images/image_agency.png')}
-          style={{ width: 36, height: 36, borderRadius: 18 }} // Tương đương style width: 40, height: 40
+          style={{ width: 45, height: 45, borderRadius: 45 }} // Tương đương style width: 40, height: 40
         />
-        <Text
-          className="mt-2 text-center font-inter-semibold text-[14px] text-base-color-1"
-          numberOfLines={2}>
-          {t('homepage.invite_partner.title')}
-        </Text>
+        <View>
+          <Text className="text-left font-inter-semibold text-[14px] text-base-color-1">
+            {t('homepage.invite_partner.title')}
+          </Text>
+          <Text className="text-left font-inter-semibold text-[14px] text-base-color-1">
+            {t('homepage.invite_partner.description')}
+          </Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -143,7 +150,7 @@ export const HomePageKTVSection = ({
   }, [queryKTV.data]);
 
   return (
-    <View className="mt-6">
+    <View className="mt-4">
       {/* Header Section */}
       <View className="mb-3 flex-row items-center justify-between px-4">
         <Text className="font-inter-bold text-base text-slate-800">
@@ -230,7 +237,7 @@ export const HomePageCategorySection = ({
   const { t } = useTranslation();
 
   return (
-    <View className="mb-10 mt-6 px-4">
+    <View className="mb-10 mt-4 px-4">
       <View className="mb-3 flex-row items-center justify-between">
         <Text className="font-inter-bold text-base text-slate-800">{t('homepage.services')}</Text>
         <TouchableOpacity onPress={() => router.push('/(app)/(tab)/services')}>

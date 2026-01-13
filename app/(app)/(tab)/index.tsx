@@ -74,22 +74,18 @@ export default function UserDashboard() {
         </View>
 
         {/* --- 2. QUICK ACTIONS SECTION --- */}
-        <View className="-mt-6 px-4">
+        <View className="mt-4 px-4">
           {/* Đẩy phần dưới lên đè nhẹ lên banner */}
-          <View className="rounded-3xl bg-white p-2 shadow-xl shadow-slate-200">
+          <View className="rounded-2xl bg-white p-2 shadow-xl shadow-slate-200">
             <InviteKtv onPress={redirectAuth} />
           </View>
         </View>
 
         {/* --- 3. TECHNICIANS SECTION --- */}
-        <View className="mt-2">
-          <HomePageKTVSection queryKTV={queryKTV} />
-        </View>
+        <HomePageKTVSection queryKTV={queryKTV} />
 
         {/* --- 4. SERVICES SECTION --- */}
-        <View className="mt-2">
-          <HomePageCategorySection queryCategory={queryCategory} />
-        </View>
+        <HomePageCategorySection queryCategory={queryCategory} />
       </ScrollView>
       <ListLocationModal visible={showLocationModal} onClose={() => setShowLocationModal(false)} />
     </View>

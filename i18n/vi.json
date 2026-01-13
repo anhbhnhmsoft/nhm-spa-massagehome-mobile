@@ -325,12 +325,12 @@
     "services": "Dịch vụ nổi bật",
     "features_trust": "Cam kết của chúng tôi",
     "invite_ktv": {
-      "title": "Đăng ký Kĩ thuật viên",
-      "description": "Thu nhập hấp dẫn, nhận việc ngay"
+      "title": "Đăng ký",
+      "description": "Kĩ thuật viên"
     },
     "invite_partner": {
-      "title": "Hợp tác Kinh Doanh",
-      "description": "Mở rộng mạng lưới, tăng trưởng lợi nhuận"
+      "title": "Hợp tác",
+      "description": "Kinh Doanh"
     }
   },
   "profile": {

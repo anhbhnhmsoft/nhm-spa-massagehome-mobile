@@ -325,12 +325,12 @@
     "services": "特色服务",
     "features_trust": "我们的承诺",
     "invite_ktv": {
-      "title": "技师注册",
-      "description": "收入丰厚，立即开始"
+      "title": "注册",
+      "description": "成为技师"
     },
     "invite_partner": {
-      "title": "商业合作",
-      "description": "扩展网络，增加利润"
+      "title": "合作",
+      "description": "商业合作"
     }
   },
   "profile": {
