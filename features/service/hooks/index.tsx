@@ -261,6 +261,7 @@ export const useServiceBooking = () => {
         ...pickServiceBooking,
         book_time: dayjs(data.book_time).format('YYYY-MM-DD HH:mm:ss'),
       };
+
       setLoading(true);
       mutationBookingService.mutate(request, {
         onSuccess: (res) => {
@@ -294,7 +295,6 @@ export const useServiceBooking = () => {
           }
         },
         onError: (error) => {
-          console.log('res', error);
           // Xử lý khi có lỗi xảy ra
           handleError(error);
         },

@@ -5,6 +5,7 @@ export const _TIME_OUT_LOADING_SCREEN_LAYOUT = 2000; // time out loading screen 
 
 export const _APP_NAME = "Massage Home"
 
+
 export enum _LanguageCode {
   VI = 'vi',
   EN = 'en',

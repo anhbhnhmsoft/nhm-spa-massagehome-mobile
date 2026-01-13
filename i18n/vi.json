@@ -171,8 +171,11 @@
       "DEPOSIT_MOMO_PAY": "Nạp tiền qua Momo Pay",
       "WITHDRAWAL": "Rút tiền",
       "PAYMENT": "Thanh toán dịch vụ",
-      "AFFILIATE": "Nhận hoa hồng",
-      "PAYMENT_FOR_KTV": "Thanh toán cho KTV"
+      "AFFILIATE": "Nhận hoa hồng Affiliate",
+      "PAYMENT_FOR_KTV": "Thanh toán cho KTV",
+      "REFUND": "Hoàn tiền cho customer",
+      "RETRIEVE_PAYMENT_REFUND_KTV": "thu hồi tiền thanh toán cho KTV khi hủy booking",
+      "REFERRAL_KTV": "Nhận hoa hồng từ người giới thiệu KTV"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",

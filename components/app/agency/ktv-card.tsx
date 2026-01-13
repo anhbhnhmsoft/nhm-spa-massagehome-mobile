@@ -1,7 +1,7 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text,  View } from 'react-native';
 import React from 'react';
 import { ListKTVItem } from '@/features/user/types';
-import { ChevronRight, Phone, User } from 'lucide-react-native';
+import {  Phone, User } from 'lucide-react-native';
 import { _LanguagesMap } from '@/lib/const';
 
 export default function ItemKtv({ item }: { item: ListKTVItem }) {

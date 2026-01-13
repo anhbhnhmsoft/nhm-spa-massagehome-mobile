@@ -1,6 +1,6 @@
 import '@/global.css';
 import { PortalHost } from '@rn-primitives/portal';
-import { Stack } from 'expo-router';
+import {  Stack } from 'expo-router';
 import QueryProvider from '@/lib/provider/query-provider';
 import ThemeProvider from '@/lib/provider/theme-provider';
 import useFontInter from '@/lib/provider/font-inter';
@@ -15,6 +15,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
 import useAuthStore from '@/features/auth/store';
+import useHandleLinking from '@/features/app/hooks/use-handle-linking';
+
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -78,6 +80,10 @@ export default function RootLayout() {
 const AppContainer = () => {
   const complete = useHydrateAuth();
   const status = useAuthStore((state) => state.status);
+
+  // Xử lý linking
+  useHandleLinking(complete);
+
   return (
     <>
       <Stack

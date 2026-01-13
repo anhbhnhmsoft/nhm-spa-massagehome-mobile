@@ -8,7 +8,18 @@ import { _LanguagesMap } from '@/lib/const';
 import { useLogout } from '@/features/auth/hooks';
 import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
-import { Bell, CalendarCog, HandCoins, Headphones, Info, LogOut, QrCode, UserPen, Wallet, } from 'lucide-react-native';
+import {
+  Bell,
+  CalendarCog,
+  HandCoins,
+  Handshake,
+  Headphones,
+  Info,
+  LogOut,
+  QrCode,
+  UserPen,
+  Wallet,
+} from 'lucide-react-native';
 import { ListLocationModal } from '@/components/app/location';
 import SelectLanguage from '@/components/select-language';
 import SupportModal from '@/components/app/support-modal';
@@ -95,7 +106,7 @@ export const FeatureList = ({
           <Text className="font-inter-bold text-gray-800">{t('profile.common_features')}</Text>
         </View>
 
-        {/* Edit info */}
+        {/* Quản lý lịch */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
           onPress={() => {
@@ -106,6 +117,19 @@ export const FeatureList = ({
             <Icon as={CalendarCog} size={24} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.config_schedule')}</Text>
+        </TouchableOpacity>
+
+        {/* Quản lý kỹ thuật viên + mời KTV */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            router.push('/(app)/(service-ktv)/managed-technicians');
+          }}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={Handshake} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">{t('profile.inviteTechnician')}</Text>
         </TouchableOpacity>
 
         {/* Edit info */}
@@ -196,30 +220,6 @@ export const FeatureList = ({
           <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
         </TouchableOpacity>
 
-        {/* Scan QR code */}
-        <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
-          onPress={() => {
-            onClose();
-            router.push('/(app)/(service-ktv)/scan_qr');
-          }}>
-          <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={QrCode} size={24} className="text-primary-color-1" />
-          </View>
-          <Text className="text-center text-xs text-gray-600">{t('profile.scanReferral')}</Text>
-        </TouchableOpacity>
-        {/* QR code uesr */}
-        <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
-          onPress={() => {
-            onClose();
-            router.push('/(app)/(service-ktv)/managed-technicians');
-          }}>
-          <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={QrCode} size={24} className="text-primary-color-1" />
-          </View>
-          <Text className="text-center text-xs text-gray-600">{t('profile.inviteTechnician')}</Text>
-        </TouchableOpacity>
         {/* Đăng xuất */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"

@@ -2,7 +2,6 @@ import React, { useState } from 'react'; // 1. Thêm useState
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useTranslation } from 'react-i18next';
-import { useHomeAgency } from '@/features/agency/hook';
 import ItemKtv from '@/components/app/agency/ktv-card';
 import {
   AgencyEmptyState,
@@ -11,13 +10,22 @@ import {
 } from '@/components/app/agency/agency-card';
 import useAuthStore from '@/features/auth/store';
 import { HeaderAppAgency } from '@/components/app/agency/header-app';
+import { useGetListKTVManager } from '@/features/user/hooks';
 
 export default function AgencyDashboard() {
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false); // Quản lý modal
   const user = useAuthStore((state) => state.user);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, totalKtv } =
-    useHomeAgency();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    pagination,
+  } = useGetListKTVManager();
+
 
   const bottomPadding = getTabBarHeight() + 20;
   return (
@@ -36,8 +44,7 @@ export default function AgencyDashboard() {
         ListHeaderComponent={() => (
           <AgencyListHeader
             onInvitePress={() => setModalVisible(true)}
-            totalKtv={totalKtv}
-            busyKtv={0}
+            totalKtv={pagination?.meta?.total || 0}
           />
         )}
         refreshControl={
@@ -64,7 +71,6 @@ export default function AgencyDashboard() {
       <InviteKTVModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        inviteLink={`nhmspa://agency/link?id=${user?.id}`}
         userId={user?.id || ''}
       />
     </View>

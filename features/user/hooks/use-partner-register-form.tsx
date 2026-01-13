@@ -50,8 +50,8 @@ const buildApplyPartnerFormData = (data: ApplyPartnerRequest): FormData => {
   fd.append('province_code', data.province_code);
   fd.append('address', data.address);
   fd.append('experience', String(data.experience));
-  if (data.agency_id) {
-    fd.append('agency_id', data.agency_id);
+  if (data.referrer_id) {
+    fd.append('referrer_id', data.referrer_id);
   }
 
   if (data.latitude) {
@@ -101,7 +101,7 @@ export const usePartnerRegisterForm = () => {
     .object({
       role: z.union([z.literal(_UserRole.KTV), z.literal(_UserRole.AGENCY)]),
 
-      agency_id: z
+      referrer_id: z
         .string()
         .optional()
         .refine((val) => !val || val.trim() === '' || /^\d+$/.test(val.trim()), {
@@ -197,7 +197,7 @@ export const usePartnerRegisterForm = () => {
     resolver: zodResolver(schemas) as any,
     defaultValues: {
       role: _UserRole.KTV,
-      agency_id: '',
+      referrer_id: '',
       province_code: '',
       address: '',
       latitude: undefined,

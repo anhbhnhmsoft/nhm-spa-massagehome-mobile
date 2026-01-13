@@ -882,85 +882,28 @@ export const useWallet = () => {
  * Xử lý màn hình quét qr code khách hàng
  */
 export const useScanQRCodeKtv = () => {
-  const [permission, requestPermission] = useCameraPermissions();
   const setLoading = useApplicationStore((s) => s.setLoading);
   const { mutate } = useLinkReferrerMutation();
   const { success: successToast, error: errorToast } = useToast();
   const { t } = useTranslation();
 
-  const [isScanning, setIsScanning] = useState(false);
-  const scanningRef = useRef(false);
-
-  useEffect(() => {
-    if (!permission?.granted) {
-      requestPermission();
-    }
-  }, [permission]);
-
-  const onBarcodeScanned = useCallback(
-    (result: BarcodeScanningResult) => {
-      if (!isScanning || scanningRef.current || !result.data) return;
-      scanningRef.current = true;
-      setIsScanning(false);
-      setLoading(true);
-
-      let referrer_id: string | null = null;
-
-      try {
-        const url = new URL(result.data);
-        referrer_id = url.searchParams.get('id');
-
-        if (!referrer_id) {
-          throw new Error('INVALID_QR');
-        }
-      } catch {
-        Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
-          {
-            text: 'OK',
-            onPress: () => {
-              scanningRef.current = false;
-              setIsScanning(true);
-            },
-          },
-        ]);
+  return (referrer_id: string) => {
+    setLoading(true);
+    mutate(referrer_id, {
+      onSuccess: () => {
+        successToast({ message: t('qr_scan.link_success') });
+        router.back();
+      },
+      onError: (err) => {
+        errorToast({ message: err.message || t('qr_scan.link_error') });
+      },
+      onSettled: () => {
         setLoading(false);
-        return;
-      }
-      mutate(referrer_id, {
-        onSuccess: () => {
-          successToast({ message: t('qr_scan.link_success') });
-          router.back();
-        },
-
-        onError: (err) => {
-          errorToast({ message: err.message || t('qr_scan.link_error') });
-        },
-
-        onSettled: () => {
-          setLoading(false);
-        },
-      });
-    },
-    [isScanning, setLoading, t]
-  );
-
-  const startScan = () => {
-    scanningRef.current = false;
-    setIsScanning(true);
+      },
+    });
   };
 
-  const stopScan = () => {
-    scanningRef.current = true;
-    setIsScanning(false);
-  };
 
-  return {
-    hasPermission: permission?.granted,
-    isScanning,
-    startScan,
-    stopScan,
-    onBarcodeScanned,
-  };
 };
 
 export const useConfigSchedule = () => {

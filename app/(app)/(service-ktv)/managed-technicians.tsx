@@ -1,7 +1,6 @@
 import React, { useState } from 'react'; // 1. Thêm useState
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 import { getTabBarHeight } from '@/components/styles/style';
-import { useHomeAgency } from '@/features/agency/hook';
 import ItemKtv from '@/components/app/agency/ktv-card';
 import {
   AgencyEmptyState,
@@ -11,12 +10,12 @@ import {
 import useAuthStore from '@/features/auth/store';
 import HeaderBack from '@/components/header-back';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useGetListKTVManager } from '@/features/user/hooks';
 
 export default function ManagedTechnicians() {
   const [modalVisible, setModalVisible] = useState(false); // Quản lý modal
   const user = useAuthStore((state) => state.user);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, totalKtv } =
-    useHomeAgency();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching, pagination } = useGetListKTVManager();
 
   const bottomPadding = getTabBarHeight() + 20;
   return (
@@ -33,7 +32,7 @@ export default function ManagedTechnicians() {
         }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <AgencyListHeader onInvitePress={() => setModalVisible(true)} totalKtv={totalKtv} />
+          <AgencyListHeader onInvitePress={() => setModalVisible(true)} totalKtv={pagination?.meta?.total || 0} />
         )}
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor="#044984" />
@@ -59,7 +58,6 @@ export default function ManagedTechnicians() {
       <InviteKTVModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        inviteLink={`nhmspa://agency/link?id=${user?.id}`}
         userId={user?.id || ''}
       />
     </SafeAreaView>

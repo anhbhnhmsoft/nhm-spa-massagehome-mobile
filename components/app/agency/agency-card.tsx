@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Check, ClipboardList, Copy, UserPlus, X } from 'lucide-react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useTranslation } from 'react-i18next';
 import QRCode from 'react-native-qrcode-svg';
+import * as Linking from 'expo-linking';
+import { _LinkingTask } from '@/features/app/hooks/use-handle-linking';
+
 
 interface InviteKTVModalProps {
   isVisible: boolean;
   onClose: () => void;
-  inviteLink: string;
   userId: string;
 }
 
@@ -16,14 +18,27 @@ interface AgencyListHeaderProps {
   onInvitePress: () => void;
   totalKtv: number;
 }
-export const InviteKTVModal = ({ isVisible, onClose, inviteLink, userId }: InviteKTVModalProps) => {
+
+export const InviteKTVModal = ({ isVisible, onClose, userId }: InviteKTVModalProps) => {
   const { t } = useTranslation();
+
   const [copied, setCopied] = useState(false);
+
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(userId);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Tạo full link
+  const inviteLink = useMemo(() => {
+    return Linking.createURL('/', {
+      queryParams: {
+        task: _LinkingTask.INVITE_KTV,
+        referrer_id: userId,
+      },
+    });
+  }, [userId]);
 
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>
@@ -83,7 +98,7 @@ export const InviteKTVModal = ({ isVisible, onClose, inviteLink, userId }: Invit
       </Pressable>
     </Modal>
   );
-};
+};;
 
 export const AgencyListHeader = ({ onInvitePress, totalKtv }: AgencyListHeaderProps) => {
   const { t } = useTranslation();

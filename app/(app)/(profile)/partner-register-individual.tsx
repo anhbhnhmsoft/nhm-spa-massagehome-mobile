@@ -61,7 +61,7 @@ const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any
 export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
 
-  const { agencyId } = useLocalSearchParams<{ agencyId: string }>();
+  const { referrer_id } = useLocalSearchParams<{ referrer_id: string }>();
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
 
@@ -74,13 +74,13 @@ export default function PartnerRegisterIndividualScreen() {
     handleSubmit,
   } = form;
   useEffect(() => {
-    if (agencyId && typeof agencyId === 'string') {
-      form.setValue('agency_id', agencyId, {
+    if (referrer_id) {
+      form.setValue('referrer_id', referrer_id, {
         shouldValidate: true,
         shouldDirty: true,
       });
     }
-  }, [agencyId, form]);
+  }, [referrer_id]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -363,11 +363,11 @@ export default function PartnerRegisterIndividualScreen() {
             </Text>
             <InputField
               control={control as any}
-              name="agency_id"
+              name="referrer_id"
               placeholder={t('profile.partner_form.follow_agency_placeholder')}
               keyboardType="numeric"
-              error={errors.agency_id?.message}
-              editable={!agencyId}
+              error={errors.referrer_id?.message}
+              editable={!referrer_id}
             />
           </View>
 

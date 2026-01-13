@@ -88,7 +88,7 @@ export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>
 
 export type ApplyPartnerRequest = {
   role: _UserRole.KTV | _UserRole.AGENCY;
-  agency_id?: string | undefined;
+  referrer_id?: string | undefined;
   province_code: string;
   address: string;
   latitude?: string | undefined;

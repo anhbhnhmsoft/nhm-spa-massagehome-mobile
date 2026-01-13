@@ -1,4 +1,8 @@
-import { useInfiniteListKTV, useQueryDashboardProfile } from '@/features/user/hooks/use-query';
+import {
+  useInfiniteListKTV,
+  useInfiniteListManageKTV,
+  useQueryDashboardProfile,
+} from '@/features/user/hooks/use-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import useUserServiceStore, { useKTVSearchStore } from '@/features/user/stores';
@@ -10,13 +14,14 @@ import useAuthStore from '@/features/auth/store';
 import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
-import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { BarcodeScanningResult, Camera, useCameraPermissions } from 'expo-camera';
-export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
-export { useFileUpload } from '@/features/user/hooks/use-file-upload';
+import { BarcodeScanningResult,  useCameraPermissions } from 'expo-camera';
+export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form'; // ?
 
+/**
+ * Dùng để lấy list KTV theo filter
+ */
 export const useGetListKTV = () => {
   const params = useKTVSearchStore((state) => state.params);
   const setFilter = useKTVSearchStore((state) => state.setFilter);
@@ -40,6 +45,10 @@ export const useGetListKTV = () => {
   };
 };
 
+/**
+ * Dùng để get list KTV trong màn homepage customer
+ * Sắp xếp theo đánh giá trung bình giảm dần
+ */
 export const useGetListKTVHomepage = () => {
   const query = useInfiniteListKTV({
     filter: {},
@@ -63,6 +72,29 @@ export const useGetListKTVHomepage = () => {
     pagination,
   };
 };
+
+export const useGetListKTVManager = () => {
+  const query = useInfiniteListManageKTV({
+    filter: {},
+    page: 1,
+    per_page: 10,
+  });
+
+  const data = useMemo(() => {
+    return query.data?.pages.flatMap((page) => page.data.data) || [];
+  }, [query.data]);
+
+  const pagination = useMemo(() => {
+    return query.data?.pages[0].data || null;
+  }, [query.data]);
+
+  return {
+    ...query,
+    data,
+    pagination,
+  };
+};
+
 
 /**
  * Lưu thông tin massager vào store và chuyển hướng đến màn hình chi tiết massager
@@ -213,7 +245,6 @@ export const useProfile = () => {
 /**
  * Xử lý màn hình quét qr code khách hàng
  */
-
 export const useScanQRCodeCustomer = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const setLoading = useApplicationStore((s) => s.setLoading);

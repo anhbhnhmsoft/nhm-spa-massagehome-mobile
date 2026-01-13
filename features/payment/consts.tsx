@@ -36,6 +36,9 @@ export enum _TransactionType {
   PAYMENT = 5, // Thanh toán (Booking)
   AFFILIATE = 6, // Nhận hoa hồng
   PAYMENT_FOR_KTV = 7, // Thanh toán cho KTV
+  REFUND = 8, // Hoàn tiền cho customer
+  RETRIEVE_PAYMENT_REFUND_KTV = 9, // thu hồi tiền thanh toán cho KTV khi hủy booking
+  REFERRAL_KTV = 10, // Nhận hoa hồng từ người giới thiệu KTV
 }
 
 export const _TransactionTypeMap = {
@@ -46,6 +49,9 @@ export const _TransactionTypeMap = {
   [_TransactionType.PAYMENT]: 'enum.transaction_type.PAYMENT',
   [_TransactionType.AFFILIATE]: 'enum.transaction_type.AFFILIATE',
   [_TransactionType.PAYMENT_FOR_KTV]: 'enum.transaction_type.PAYMENT_FOR_KTV',
+  [_TransactionType.REFUND]: 'enum.transaction_type.REFUND',
+  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]: 'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
+  [_TransactionType.REFERRAL_KTV]: 'enum.transaction_type.REFERRAL_KTV',
 };
 
 export enum _TransactionStatus {

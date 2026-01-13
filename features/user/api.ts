@@ -7,6 +7,7 @@ import {
   ApplyPartnerRequest,
   ApplyPartnerResponse,
 } from '@/features/user/types';
+import { ListKtvResponse } from '@/features/agency/type';
 
 const defaultUri = '/user';
 
@@ -26,7 +27,6 @@ const userApi = {
     const response = await client.get(`${defaultUri}/dashboard-profile`);
     return response.data;
   },
-
   // User hiện tại đăng ký làm đối tác
   applyPartner: async (payload: FormData): Promise<ApplyPartnerResponse> => {
     const response = await client.post(`${defaultUri}/apply-partner`, payload, {
@@ -34,6 +34,11 @@ const userApi = {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  },
+  // Lấy danh sách KTV được quản lý bởi Agency hoặc KTV
+  listManageKTV: async (params: ListKTVRequest): Promise<ListKTVResponse> => {
+    const response = await client.get(`${defaultUri}/list-manage-ktv`, { params });
     return response.data;
   },
 };
