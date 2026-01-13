@@ -1,21 +1,21 @@
 import { client } from '@/lib/axios-client';
 import {
-  DashboardKtvResponse,
   AllCategoriesResponse,
-  ListServiceRequest,
-  ListServiceResponse,
-  DetailServiceRequest,
-  ServiceDetailResponse,
   BookingDetailsResponse,
-  StartBookingResponse,
   CancelBookingRequet,
-  TotalIncomeResponse,
+  ConfigSchedulesResponse,
+  DashboardKtvResponse,
   DashboardQueryParams,
   DetailInfoKTVResponse,
-  EditProfileKtvRequest,
-  ConfigSchedulesResponse,
+  DetailServiceRequest,
   EditConfigScheduleRequest,
+  EditProfileKtvRequest,
   ListOptionCategoriesResponse,
+  ListServiceRequest,
+  ListServiceResponse,
+  ServiceDetailResponse,
+  StartBookingResponse,
+  TotalIncomeResponse,
 } from '@/features/ktv/types';
 import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
@@ -138,6 +138,14 @@ const ktvApi = {
   // get list danh sách gói dịch vụ của category
   optionByCategories: async (id: string): Promise<ListOptionCategoriesResponse> => {
     const response = await client.get(`${defaultUri}/category-price/${id}`);
+    return response.data;
+  },
+
+  // quét qr của người giới thiệu
+  linkReferrer: async (referrer_id: string) => {
+    const response = await client.post(`${defaultUri}/link-referrer`, {
+      referrer_id: referrer_id,
+    });
     return response.data;
   },
 };

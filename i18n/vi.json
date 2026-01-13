@@ -358,6 +358,8 @@
     "notification": "Thông báo",
     "affiliate": "Giới thiệu hoa hồng",
     "config_schedule": "Cấu hình lịch làm việc",
+    "scanReferral": "Quét mã giới thiệu",
+    "inviteTechnician": "Mời kỹ thuật viên",
     "error": {
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
@@ -393,8 +395,8 @@
       "field_bio_placeholder": "Hãy mô tả ngắn về kinh nghiệm, phong cách làm việc, điểm mạnh của bạn...",
       "field_branch_bio_label": "Giới thiệu chi nhánh",
       "field_branch_bio_placeholder": "Hãy mô tả về chi nhánh, dịch vụ nổi bật và cam kết của bạn...",
-      "follow_agency_label": "Nhập mã Agency giới thiệu",
-      "follow_agency_desc": "Nhập mã Agency đã giới thiệu bạn.",
+      "follow_agency_label": "Nhập mã giới thiệu",
+      "follow_agency_desc": "Nhập mã đã giới thiệu bạn.",
       "follow_agency_placeholder": "Nhập mã Code",
       "field_experience_placeholder": "Nhập số năm kinh nghiệm",
       "button_submit": "Gửi đăng ký",
@@ -735,15 +737,15 @@
     "busy": "Đang bận",
     "inviteKTVModal": {
       "title": "Mời Kỹ Thuật Viên",
-      "description": "Quét mã QR để gia nhập Agency hoặc chia sẻ đường dẫn bên dưới",
+      "description": "Quét mã QR để gia nhập mạng lưới  hoặc chia sẻ đường dẫn bên dưới",
       "qrDemoLabel": "DEMO QR",
-      "inviteLinkLabel": "Đường dẫn mời trực tiếp",
+      "inviteIdLabel": "Sao chép ID của bạn",
       "doneButton": "Hoàn tất",
       "copySuccess": "Đã sao chép"
     },
     "empty": {
       "empty_title": "Chưa có kỹ thuật viên ",
-      "empty_description": "Mời kỹ thuật viên gia nhập Agency của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
+      "empty_description": "Mời kỹ thuật viên gia nhập của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
       "empty_button": "Mời kỹ thuật viên"
     }
   },

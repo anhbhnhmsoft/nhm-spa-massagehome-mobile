@@ -17,6 +17,7 @@ export default function ServiceKtvLayout() {
         <Stack.Screen name="affiliate" />
         <Stack.Screen name="scan_qr" />
         <Stack.Screen name="config-schedule" />
+        <Stack.Screen name="managed-technicians" />
       </Stack>
     </>
   );

@@ -737,7 +737,7 @@
       "title": "邀请技师",
       "description": "扫描二维码加入代理或分享下方链接",
       "qrDemoLabel": "演示二维码",
-      "inviteLinkLabel": "直接邀请链接",
+      "inviteIdLabel": "Copy your ID",
       "doneButton": "完成",
       "copySuccess": "已复制"
     },

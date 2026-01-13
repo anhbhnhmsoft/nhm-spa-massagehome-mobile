@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { X, Zap, ZapOff } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useScanQRCodeCustomer } from '@/features/ktv/hooks';
+import { useScanQRCodeKtv } from '@/features/ktv/hooks';
 
 export default function ScanQrScreen() {
   const router = useRouter();
   const [torch, setTorch] = useState(false);
   const { t } = useTranslation();
-  const { isScanning, startScan, stopScan, onBarcodeScanned, hasPermission } =
-    useScanQRCodeCustomer();
+  const { isScanning, startScan, stopScan, onBarcodeScanned, hasPermission } = useScanQRCodeKtv();
   useEffect(() => {
     startScan();
     return () => stopScan();

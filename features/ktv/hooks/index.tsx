@@ -5,17 +5,15 @@ import {
   useProfileKtvQuery,
   useTotalIncomeQuery,
 } from '@/features/ktv/hooks/use-query';
-import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   DashboardQueryParams,
   EditConfigScheduleRequest,
-  EditProfileKtvRequest,
   PercentChangeResult,
   ServiceForm,
-  ServiceOption,
 } from '@/features/ktv/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -28,7 +26,7 @@ import {
   useDeleteServiceMutation,
   useDetailServiceMutation,
   useFinishBookingMutation,
-  useLinkQrAgencyMutation,
+  useLinkReferrerMutation,
   useUpdateConfigScheduleMutation,
   useUpdateProfileKtvMutation,
   useUpdateServiceMutation,
@@ -57,7 +55,6 @@ import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
 import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
-import { useGetCouponUserList } from '@/features/service/hooks';
 import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useWalletStore } from '@/features/payment/stores';
 import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
@@ -884,10 +881,10 @@ export const useWallet = () => {
 /**
  * Xử lý màn hình quét qr code khách hàng
  */
-export const useScanQRCodeCustomer = () => {
+export const useScanQRCodeKtv = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const setLoading = useApplicationStore((s) => s.setLoading);
-  const { mutate } = useLinkQrAgencyMutation();
+  const { mutate } = useLinkReferrerMutation();
   const { success: successToast, error: errorToast } = useToast();
   const { t } = useTranslation();
 
@@ -907,13 +904,13 @@ export const useScanQRCodeCustomer = () => {
       setIsScanning(false);
       setLoading(true);
 
-      let agencyId: string | null = null;
+      let referrer_id: string | null = null;
 
       try {
         const url = new URL(result.data);
-        agencyId = url.searchParams.get('id');
+        referrer_id = url.searchParams.get('id');
 
-        if (!agencyId) {
+        if (!referrer_id) {
           throw new Error('INVALID_QR');
         }
       } catch {
@@ -929,17 +926,14 @@ export const useScanQRCodeCustomer = () => {
         setLoading(false);
         return;
       }
-
-      // 🚀 Bắn ID lên server (role KTV)
-      mutate(agencyId, {
-        onSuccess: (res) => {
-          successToast({ message: res.message || t('qr_scan.link_success') });
+      mutate(referrer_id, {
+        onSuccess: () => {
+          successToast({ message: t('qr_scan.link_success') });
           router.back();
         },
 
         onError: (err) => {
           errorToast({ message: err.message || t('qr_scan.link_error') });
-          router.back();
         },
 
         onSettled: () => {

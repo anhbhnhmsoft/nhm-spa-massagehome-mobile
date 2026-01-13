@@ -88,3 +88,10 @@ export const useUpdateConfigScheduleMutation = () => {
     mutationFn: (data: EditConfigScheduleRequest) => ktvApi.updateConfigSchedule(data),
   });
 };
+
+//
+export const useLinkReferrerMutation = () => {
+  return useMutation({
+    mutationFn: (referrer_id: string) => ktvApi.linkReferrer(referrer_id),
+  });
+};
