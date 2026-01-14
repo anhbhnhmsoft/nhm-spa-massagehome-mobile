@@ -1,28 +1,27 @@
-import React, { FC, useState, forwardRef, useCallback, useRef, useMemo } from 'react';
+import React, { FC, forwardRef, useCallback, useMemo, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import {
+  Bell,
+  Building2,
   ChevronRight,
   ClipboardList,
+  HandCoins,
+  Headphones,
   Heart,
+  Info,
+  LogOut,
+  MapPin,
   RefreshCcw,
   Settings,
   Ticket,
   User as UserIcon,
   Wallet,
-  Building2,
-  HandCoins,
-  MapPin,
-  Headphones,
-  Info,
-  LogOut,
-  Bell,
-  QrCode,
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import { cn, formatBalance } from '@/lib/utils';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useChangeAvatar } from '@/features/auth/hooks';
+import { useChangeAvatar, useLogout } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
 import { Image } from 'expo-image';
 import GradientBackground from '@/components/styles/gradient-background';
@@ -34,7 +33,6 @@ import { ListLocationModal } from '@/components/app/location';
 import useApplicationStore from '@/lib/store';
 import { _LanguagesMap } from '@/lib/const';
 import SelectLanguage from '@/components/select-language';
-import { useLogout } from '@/features/auth/hooks';
 import Dialog from '@/components/dialog';
 import SupportModal from '@/components/app/support-modal';
 import { useGetSupport } from '@/features/config/hooks';

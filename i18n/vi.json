@@ -638,7 +638,8 @@
     "title_2": "{{ percent }}% hoa hồng trọn đời",
     "referral_link": "Liên kết giới thiệu",
     "share": "Mời ngay",
-    "share_error": "Lỗi khi chia sẻ liên kết giới thiệu, vui lòng thử lại sau."
+    "share_error": "Lỗi khi chia sẻ liên kết giới thiệu, vui lòng thử lại sau.",
+    "referred_by": "Bạn đã được giới thiệu bởi {{name}}"
   },
   "support": {
     "title": "Hỗ trợ khách hàng",

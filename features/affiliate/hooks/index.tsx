@@ -1,11 +1,15 @@
-import { useQueryGetConfigAffiliate } from '@/features/affiliate/hooks/use-query';
+import {
+  useQueryGetConfigAffiliate,
+  useQueryMatchAffiliate,
+} from '@/features/affiliate/hooks/use-query';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { getMessageError } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '@/features/auth/store';
 import { router } from 'expo-router';
-
+import useToast from '@/features/app/hooks/use-toast';
+import { useReferralStore } from '@/features/affiliate/store';
 
 export const useAffiliateUser = () => {
   const { t } = useTranslation();
@@ -26,5 +30,34 @@ export const useAffiliateUser = () => {
   return {
     config: queryConfig.data,
     affiliate_link: user?.affiliate_link || '',
-  }
-}
+  };
+};
+
+export const useCheckMatchAffiliate = () => {
+  const { data } = useQueryMatchAffiliate();
+  const setUserReferral = useReferralStore((state) => state.setUserReferral);
+  const { success } = useToast();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!data) return;
+
+    const handleSaveReferral = () => {
+      // 1. Kiểm tra status là true và need_register là true
+      if (data?.status && !!data?.user_referral) {
+        if (data?.need_register) {
+          setUserReferral(data.user_referral);
+          router.push({ pathname: '/(auth)' });
+        } else {
+          success({
+            message: t('affiliate.referred_by', {
+              name: data.user_referral.name,
+            }),
+          });
+        }
+      }
+    };
+
+    handleSaveReferral();
+  }, [data]);
+};

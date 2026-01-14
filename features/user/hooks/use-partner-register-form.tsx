@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-import { Alert } from 'react-native';
-import { useForm, type Resolver } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +10,6 @@ import { _PartnerFileType } from '../const';
 import { ApplyPartnerRequest } from '../types';
 import useToast from '@/features/app/hooks/use-toast';
 import { useMutationApplyPartner } from './use-mutation';
-import { ClockFading } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 const FileSchema = z.object({
