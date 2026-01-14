@@ -9,6 +9,7 @@ import { NotificationPermissionModal } from '@/components/notification-permissio
 import RequestLocationModal from '@/components/app/request-location';
 import { useEffect, useState } from 'react';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
+import { useCheckMatchAffiliate } from '@/features/affiliate/hooks';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
@@ -28,6 +29,9 @@ export default function AppLayout() {
   useHeartbeat();
   // Tự động sync device token lên server khi user login
   useNotification();
+
+  // kiểm tra affiliate link khi user login
+  useCheckMatchAffiliate();
 
   return (
     <>

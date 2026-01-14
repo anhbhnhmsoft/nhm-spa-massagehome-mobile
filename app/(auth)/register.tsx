@@ -1,34 +1,35 @@
 import { useTranslation } from 'react-i18next';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { TouchableWithoutFeedback, Keyboard, View, TouchableOpacity, Image } from 'react-native';
+import { Image, Keyboard, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { useHandleRegister } from '@/features/auth/hooks';
 import { Controller } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import {
   Check,
+  CheckSquare,
+  ChevronDown,
   Eye,
   EyeOff,
   Mars,
-  Venus,
-  ChevronDown,
-  CheckSquare,
   Square,
+  Venus,
 } from 'lucide-react-native';
 import { _Gender } from '@/features/auth/const';
 import { _LanguagesMap } from '@/lib/const';
 import { SelectLanguageModal } from '@/components/select-language';
 import { router } from 'expo-router';
 import { ContractFileType } from '@/features/file/const';
+import { useReferralStore } from '@/features/affiliate/store';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
-
+  const user_referral = useReferralStore((state) => state.user_referral);
   const { form, onSubmit, loading } = useHandleRegister();
 
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -39,7 +40,13 @@ export default function RegisterScreen() {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = form;
+  useEffect(() => {
+    if (user_referral) {
+      setValue('referral_code', user_referral.id);
+    }
+  }, [user_referral]);
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
   return (
     <SafeAreaView className="relative h-full flex-1 bg-white" edges={['top', 'bottom']}>
@@ -102,6 +109,7 @@ export default function RegisterScreen() {
                         })}
                         onBlur={onBlur}
                         onChangeText={onChange}
+                        editable={!user_referral}
                       />
                       {errors.referral_code && (
                         <Text className="text-sm text-red-500">{errors.referral_code.message}</Text>

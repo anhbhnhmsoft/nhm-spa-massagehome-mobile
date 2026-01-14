@@ -2,7 +2,7 @@ import useAuthStore from '@/features/auth/store';
 import { _AuthStatus, _Gender } from '@/features/auth/const';
 import { useHeartbeatQuery } from '@/features/auth/hooks/use-query';
 import useToast from '@/features/app/hooks/use-toast';
-import { ForwardedRef, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
@@ -37,6 +37,7 @@ import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
 import * as Updates from 'expo-updates';
 import { queryClient } from '@/lib/provider/query-provider';
+import { useReferralStore } from '@/features/affiliate/store';
 
 /**
  * Hàm để xác thực user xem là login hay register
@@ -292,6 +293,7 @@ export const useHandleRegister = () => {
   const { t } = useTranslation();
   // handle error toast khi gọi API thất bại
   const handleError = useErrorToast();
+  const clearUserReferral = useReferralStore((state) => state.clearUserReferral);
   // handle success toast khi gọi API thành công
   const { success, error } = useToast();
   // Lấy token_register từ auth store khi submit form verify OTP
@@ -344,6 +346,7 @@ export const useHandleRegister = () => {
               message: t('auth.success.register_success'),
             });
             // Sau khi login thành công thì redirect về màn hình home
+            clearUserReferral();
             router.push('/(app)/(tab)');
           })
           .catch((err) => {

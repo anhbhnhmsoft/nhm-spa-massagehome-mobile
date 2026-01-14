@@ -16,7 +16,8 @@ import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { BarcodeScanningResult,  useCameraPermissions } from 'expo-camera';
+import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
+
 export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form'; // ?
 
 /**
@@ -94,7 +95,6 @@ export const useGetListKTVManager = () => {
     pagination,
   };
 };
-
 
 /**
  * Lưu thông tin massager vào store và chuyển hướng đến màn hình chi tiết massager
@@ -194,7 +194,7 @@ export const useProfile = () => {
   const checkAuth = useCheckAuth();
 
   const queryProfile = useProfileQuery();
-
+  console.log(queryProfile);
   const queryDashboard = useQueryDashboardProfile();
 
   // Cập nhật thông tin user khi có dữ liệu từ query
@@ -299,7 +299,7 @@ export const useScanQRCodeCustomer = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const startScan = () => {
     scanningRef.current = false;
