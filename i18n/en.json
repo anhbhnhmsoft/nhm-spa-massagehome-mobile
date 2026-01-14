@@ -638,7 +638,8 @@
     "title_2": "{{ percent }}% lifetime commission",
     "referral_link": "Referral Link",
     "share": "Invite Now",
-    "share_error": "Error sharing referral link, please try again later."
+    "share_error": "Failed to share the referral link. Please try again later.",
+    "referred_by": "You were referred by {{name}}"
   },
   "support": {
     "title": "Customer Support",

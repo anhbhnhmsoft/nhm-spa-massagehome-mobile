@@ -638,7 +638,8 @@
     "title_2": "{{ percent }}% 终身佣金",
     "referral_link": "推荐链接",
     "share": "立即邀请",
-    "share_error": "分享推荐链接出错，请稍后重试。"
+    "share_error": "分享推荐链接出错，请稍后重试。",
+    "referred_by": "您是由 {{name}} 推荐的"
   },
   "support": {
     "title": "客户支持",
