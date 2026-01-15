@@ -50,10 +50,7 @@ import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
-import { useCameraPermissions } from 'expo-camera';
-import { useWalletQuery } from '@/features/payment/hooks/use-query';
-import { useWalletStore } from '@/features/payment/stores';
-import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
+import {  useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
 
 // Hook cho chỉnh sửa dịch vụ
