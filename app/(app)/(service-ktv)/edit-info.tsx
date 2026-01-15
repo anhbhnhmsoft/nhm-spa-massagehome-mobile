@@ -258,7 +258,7 @@ export default function EditInfoScreen() {
                     name="old_pass"
                     render={({ field, fieldState }) => (
                       <FormInput
-                        label="Mật khẩu hiện tại"
+                        label={t('common.current_password')}
                         value={field.value}
                         onChangeText={field.onChange}
                         secureTextEntry
@@ -272,7 +272,7 @@ export default function EditInfoScreen() {
                     name="new_pass"
                     render={({ field, fieldState }) => (
                       <FormInput
-                        label="Mật khẩu mới"
+                        label={t('common.new_password')}
                         value={field.value}
                         onChangeText={field.onChange}
                         secureTextEntry
