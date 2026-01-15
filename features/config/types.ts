@@ -1,7 +1,6 @@
 import { _ConfigKey } from '@/features/config/consts';
 import { ResponseDataSuccessType } from '@/lib/types';
 
-
 export type SupportChanel = [
   {
     key: _ConfigKey.SP_ZALO;
