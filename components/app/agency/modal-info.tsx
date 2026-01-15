@@ -8,17 +8,7 @@ import { _LanguagesMap } from '@/lib/const';
 import { useLogout } from '@/features/auth/hooks';
 import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
-import {
-  Bell,
-  CalendarCog,
-  HandCoins,
-  Headphones,
-  Info,
-  LogOut,
-  QrCode,
-  UserPen,
-  Wallet,
-} from 'lucide-react-native';
+import { Bell, HandCoins, Headphones, Info, LogOut, UserPen } from 'lucide-react-native';
 import { ListLocationModal } from '@/components/app/location';
 import SelectLanguage from '@/components/select-language';
 import SupportModal from '@/components/app/support-modal';
@@ -110,7 +100,7 @@ export const FeatureList = ({
           className="mb-2 w-[25%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/edit-info');
+            router.push('/(app)/(service-agency)/edit-info');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={UserPen} size={24} className="text-primary-color-1" />
@@ -118,17 +108,17 @@ export const FeatureList = ({
           <Text className="text-center text-xs text-gray-600">{t('profile.edit_info')}</Text>
         </TouchableOpacity>
 
-        {/* Wallet */}
+        {/* Affiliate */}
         <TouchableOpacity
           className="mb-2 w-[25%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/wallet');
+            router.push('/(app)/(service-agency)/affiliate');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={Wallet} size={24} className="text-primary-color-1" />
+            <Icon as={HandCoins} size={24} className="text-primary-color-1" />
           </View>
-          <Text className="text-center text-xs text-gray-600">{t('profile.wallet')}</Text>
+          <Text className="text-center text-xs text-gray-600">{t('profile.affiliate')}</Text>
         </TouchableOpacity>
 
         {/* Ngôn ngữ */}

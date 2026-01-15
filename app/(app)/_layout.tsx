@@ -64,6 +64,9 @@ export default function AppLayout() {
             <Stack.Screen name="(profile)" />
           </Stack.Protected>
         </Stack.Protected>
+        <Stack.Protected guard={checkAuth}>
+          <Stack.Screen name="take-picture-avatar" />
+        </Stack.Protected>
       </Stack>
     </>
   );

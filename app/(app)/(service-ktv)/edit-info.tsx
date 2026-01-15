@@ -1,22 +1,18 @@
 import React, { useRef, useState } from 'react';
 import {
-  View,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import { Camera, Plus, Lock, Save, Briefcase, User as UserIcon, Key, X } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { Briefcase, Camera, Key, Lock, Plus, Save, User as UserIcon, X } from 'lucide-react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import useAuthStore from '@/features/auth/store';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { editProfileKTV, useEditImage } from '@/features/ktv/hooks';
@@ -38,6 +34,7 @@ export default function EditInfoScreen() {
   const bottomShetImagePicker = useRef<BottomSheetModal>(null);
   const [imageError, setImageError] = useState(false);
   const { t } = useTranslation();
+
   return (
     <>
       <SafeAreaView className="flex-1 bg-white">
@@ -261,7 +258,7 @@ export default function EditInfoScreen() {
                     name="old_pass"
                     render={({ field, fieldState }) => (
                       <FormInput
-                        label="Mật khẩu hiện tại"
+                        label={t('common.current_password')}
                         value={field.value}
                         onChangeText={field.onChange}
                         secureTextEntry
@@ -275,7 +272,7 @@ export default function EditInfoScreen() {
                     name="new_pass"
                     render={({ field, fieldState }) => (
                       <FormInput
-                        label="Mật khẩu mới"
+                        label={t('common.new_password')}
                         value={field.value}
                         onChangeText={field.onChange}
                         secureTextEntry
