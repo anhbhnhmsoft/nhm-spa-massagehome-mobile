@@ -94,6 +94,7 @@ export type ApplyPartnerRequest = {
   latitude?: string | undefined;
   longitude?: string | undefined;
   experience: number;
+  is_leader?: boolean;
   bio: IMultiLangField;
   file_uploads: {
     type_upload: _PartnerFileType;

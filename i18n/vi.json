@@ -83,6 +83,7 @@
     "version": "Phiên bản",
     "currency": "VND",
     "auto_pay": "Duyệt tự động 24/7",
+    "hold_payment": "Chờ xác nhận thanh toán",
     "save_image": "Lưu ảnh",
     "date_of_birth": "Ngày sinh",
     "bio": "Giới thiệu",
@@ -163,7 +164,8 @@
     "payment_type": {
       "QR_BANKING": "Chuyển khoản QR Banking",
       "ZALO_PAY": "Thanh toán Zalo Pay",
-      "MOMO_PAY": "Thanh toán Momo Pay"
+      "MOMO_PAY": "Thanh toán Momo Pay",
+      "WECHAT_PAY": "Thanh toán Wechat Pay"
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Nạp tiền qua QR Banking",
@@ -175,7 +177,9 @@
       "PAYMENT_FOR_KTV": "Thanh toán cho KTV",
       "REFUND": "Hoàn tiền cho customer",
       "RETRIEVE_PAYMENT_REFUND_KTV": "thu hồi tiền thanh toán cho KTV khi hủy booking",
-      "REFERRAL_KTV": "Nhận hoa hồng từ người giới thiệu KTV"
+      "REFERRAL_KTV": "Hoa hồng từ kĩ thuật viên",
+      "REFERRAL_INVITE_KTV_REWARD": "Hoa hồng từ kĩ thuật viên khi đăng ký",
+      "DEPOSIT_WECHAT_PAY": "Nạp tiền qua Wechat Pay"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -375,6 +379,7 @@
     },
     "partner_form": {
       "title": "Đăng ký kỹ thuật viên",
+      "title_technician_leader": "Đăng ký Trưởng nhóm Kỹ thuật viên",
       "images_title": "Hình ảnh của bạn hiển thị cho khách hàng",
       "images_min_note": "Tối thiểu 3 ảnh và tối đa 5 ảnh",
       "images_warning": "Không đăng ảnh ảo, hở hang. Ảnh cần rõ mặt, rõ nét, chính diện, nghiêm túc, phù hợp đi làm. Nghiêm cấm để thông tin cá nhân (Số điện thoại, Trang cá nhân, Địa chỉ chi tiết,...).",
@@ -433,9 +438,9 @@
     },
     "partner_register": {
       "title": "Bạn muốn đăng ký làm gì?",
-      "individual_title": "Kỹ thuật viên",
-      "individual_desc": "Kỹ thuật viên Massage, Spa đang mong muốn tìm kiếm thêm nguồn thu nhập mới",
-      "agency_title": "Đại lý",
+      "individual_title": "Trưởng nhóm Kỹ thuật viên",
+      "individual_desc": "Trưởng nhóm Kỹ thuật viên Massage, Spa đang mong muốn tìm kiếm thêm nguồn thu nhập mới",
+      "agency_title": "Đại lý khu vực",
       "agency_desc": "Chúng tôi giúp các Đại lý tiếp cận với hàng triệu khách hàng."
     }
   },
@@ -470,6 +475,7 @@
     "bank_holder": "Tên chủ tài khoản",
     "add_new_withdraw_info": "Liên kết tài khoản mới",
     "request_withdraw": "Yêu cầu rút tiền",
+    "method_disabled": "Đang bảo trì",
     "withdraw": {
       "title_modal": "Chọn tài khoản rút tiền",
       "add_new_account": "Liên kết tài khoản mới",

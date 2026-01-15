@@ -98,7 +98,7 @@ export const usePartnerRegisterForm = () => {
   const schemas = z
     .object({
       role: z.union([z.literal(_UserRole.KTV), z.literal(_UserRole.AGENCY)]),
-
+      is_leader: z.boolean().optional(),
       referrer_id: z
         .string()
         .optional()
@@ -127,7 +127,7 @@ export const usePartnerRegisterForm = () => {
       longitude: z.string().min(1, t('profile.partner_form.error_location_required')),
 
       bio: z.object({
-        vi: z.string().min(20, t('profile.error.bio_required')),
+        vi: z.string().min(10, t('profile.error.bio_required')),
         en: z.string().optional(),
         cn: z.string().optional(),
       }),
@@ -223,6 +223,9 @@ export const usePartnerRegisterForm = () => {
     }
   };
   const onSubmit = useCallback(async (data: ApplyPartnerRequest) => {
+    console.log(data);
+    return;
+
     setLoading(true);
     const formData = buildApplyPartnerFormData(data);
     mutate(formData, {

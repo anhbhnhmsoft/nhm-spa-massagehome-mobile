@@ -29,7 +29,13 @@ export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTran
 
 export type ConfigPaymentItem = {
   currency_exchange_rate: string; // Tỷ giá đổi tiền giữa VND và point
-}
+  allow_payment: {
+    qrcode: boolean; // Cho phép nạp qua QRCode
+    zalopay: boolean; // Cho phép nạp qua ZaloPay
+    momo: boolean; // Cho phép nạp qua Momo
+    wechatpay: boolean; // Cho phép nạp qua WechatPay
+  };
+};
 
 export type ConfigPaymentResponse = ResponseDataSuccessType<ConfigPaymentItem>
 

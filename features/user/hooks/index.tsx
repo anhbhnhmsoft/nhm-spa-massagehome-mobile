@@ -194,7 +194,6 @@ export const useProfile = () => {
   const checkAuth = useCheckAuth();
 
   const queryProfile = useProfileQuery();
-  console.log(queryProfile);
   const queryDashboard = useQueryDashboardProfile();
 
   // Cập nhật thông tin user khi có dữ liệu từ query
@@ -239,83 +238,5 @@ export const useProfile = () => {
     dashboardData: queryDashboard.data,
     refreshProfile,
     isLoading,
-  };
-};
-
-/**
- * Xử lý màn hình quét qr code khách hàng
- */
-export const useScanQRCodeCustomer = () => {
-  const [permission, requestPermission] = useCameraPermissions();
-  const setLoading = useApplicationStore((s) => s.setLoading);
-  const { t } = useTranslation();
-
-  const [isScanning, setIsScanning] = useState(false);
-  const scanningRef = useRef(false);
-  useEffect(() => {
-    if (!permission?.granted) {
-      requestPermission();
-    }
-  }, [permission]);
-
-  const onBarcodeScanned = (result: BarcodeScanningResult) => {
-    if (!isScanning || scanningRef.current || !result.data) return;
-
-    scanningRef.current = true;
-    setIsScanning(false);
-    setLoading(true);
-
-    try {
-      const url = new URL(result.data);
-      const agencyId = url.searchParams.get('id');
-
-      if (!agencyId) {
-        Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
-          {
-            text: 'OK',
-            onPress: () => {
-              scanningRef.current = false;
-              setIsScanning(true);
-            },
-          },
-        ]);
-        return;
-      }
-
-      router.replace({
-        pathname: '/(app)/(profile)/partner-register-individual',
-        params: { agencyId },
-      });
-    } catch (error) {
-      Alert.alert(t('qr_scan.invalid_title'), t('qr_scan.invalid_message'), [
-        {
-          text: 'OK',
-          onPress: () => {
-            scanningRef.current = false;
-            setIsScanning(true);
-          },
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const startScan = () => {
-    scanningRef.current = false;
-    setIsScanning(true);
-  };
-
-  const stopScan = () => {
-    scanningRef.current = true;
-    setIsScanning(false);
-  };
-
-  return {
-    hasPermission: permission?.granted,
-    isScanning,
-    startScan,
-    stopScan,
-    onBarcodeScanned,
   };
 };

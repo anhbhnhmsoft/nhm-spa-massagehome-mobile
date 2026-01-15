@@ -54,10 +54,7 @@ import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
-import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
-import { useWalletQuery } from '@/features/payment/hooks/use-query';
-import { useWalletStore } from '@/features/payment/stores';
-import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
+import {  useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
 
 // Hook cho chỉnh sửa dịch vụ
@@ -801,82 +798,6 @@ export const useEditImage = () => {
   };
 };
 
-// Hook cho màn ví
-export const useWallet = () => {
-  const setLoading = useApplicationStore((state) => state.setLoading);
-  const handleError = useErrorToast();
-  const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
-  const needRefresh = useWalletStore((state) => state.need_refresh);
-  const refreshWallet = useWalletStore((state) => state.refreshWallet);
-  // Mutate function dùng để gọi API cấu hình nạp tiền
-  const { mutate: mutateConfigPayment } = useConfigPaymentMutation();
-
-  // Query function dùng để gọi API lấy thông tin ví
-  const queryWallet = useWalletQuery();
-
-  // Query function dùng để gọi API lấy danh sách giao dịch
-  const queryTransactionList = useGetTransactionList(
-    {
-      filter: {},
-      page: 1,
-      per_page: 10,
-    },
-    true
-  );
-
-  useEffect(() => {
-    // Nếu cần refresh ví, gọi API refresh ví
-    if (needRefresh) {
-      refresh();
-    }
-  }, [needRefresh]);
-
-  useEffect(() => {
-    if (queryWallet.error) {
-      handleError(queryWallet.error);
-    }
-    if (queryTransactionList.error) {
-      handleError(queryTransactionList.error);
-    }
-  }, [queryWallet.error, queryTransactionList.error]);
-
-  // Hàm gọi API refresh ví và danh sách giao dịch
-  const refresh = async () => {
-    await queryWallet.refetch();
-    try {
-      await queryWallet.refetch();
-      await queryTransactionList.refetch();
-    } catch (error) {
-      handleError(error);
-    } finally {
-      refreshWallet(false);
-    }
-  };
-
-  // Hàm điều hướng đến màn hình nạp tiền
-  const goToDepositScreen = useCallback(() => {
-    setLoading(true);
-    mutateConfigPayment(undefined, {
-      onSuccess: (res) => {
-        setConfigPayment(res.data);
-        router.push('/(app)/(service-ktv)/deposit');
-      },
-      onError: (err) => {
-        handleError(err);
-      },
-      onSettled: () => {
-        setLoading(false);
-      },
-    });
-  }, []);
-
-  return {
-    queryWallet,
-    queryTransactionList,
-    goToDepositScreen,
-    refresh,
-  };
-};
 
 /**
  * Xử lý màn hình quét qr code khách hàng

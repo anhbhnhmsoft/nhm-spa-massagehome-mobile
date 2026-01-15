@@ -87,7 +87,6 @@ export const useHandleAuthenticate = () => {
         }
       },
       onError: (err) => {
-        console.log(err);
         handleError(err);
       },
     });

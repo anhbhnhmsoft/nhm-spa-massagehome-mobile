@@ -40,7 +40,7 @@ const paymentApi = {
   },
   // Kiểm tra trạng thái giao dịch
   checkTransaction: async (data: CheckTransactionRequest): Promise<CheckTransactionResponse> => {
-    const response = await client.get(`${defaultUri}/deposit/check`, { params: { ...data } });
+    const response = await client.get(`${defaultUri}/check-transaction`, { params: { ...data } });
     return response.data;
   },
   // Lấy thông tin tài khoản rút tiền

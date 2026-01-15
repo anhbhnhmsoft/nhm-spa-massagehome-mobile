@@ -27,5 +27,5 @@ export const tabBarStyle = StyleSheet.create({
 
 export const getTabBarHeight = () => {
   const insets = useSafeAreaInsets();
-  return useMemo(() => 60 + insets.bottom, [insets.bottom]);
+  return useMemo(() => 70 + insets.bottom, [insets.bottom]);
 }

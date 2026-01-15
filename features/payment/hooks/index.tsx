@@ -34,6 +34,7 @@ import useToast from '@/features/app/hooks/use-toast';
 import { useGetCouponUserList } from '@/features/service/hooks';
 import { getMessageError } from '@/lib/utils';
 import { Alert } from 'react-native';
+import { _UserRole } from '@/features/auth/const';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
@@ -61,7 +62,9 @@ export const useGetTransactionList = (params: ListTransactionRequest, enabled?: 
 /**
  * Hook dùng cho màn ví
  */
-export const useWallet = () => {
+export const useWallet = (
+  useFor: _UserRole
+) => {
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
   const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
@@ -84,14 +87,14 @@ export const useWallet = () => {
     tab === 'transaction'
   );
 
-  // Query function dùng để gọi API lấy danh sách coupon user
+  // Query function dùng để gọi API lấy danh sách coupon user (chỉ dành cho khách hàng)
   const queryCouponUserList = useGetCouponUserList(
     {
       filter: {},
       page: 1,
       per_page: 10,
     },
-    tab === 'coupon'
+    tab === 'coupon' && useFor === _UserRole.CUSTOMER
   );
 
   useEffect(() => {
@@ -125,12 +128,22 @@ export const useWallet = () => {
   };
 
   // Hàm điều hướng đến màn hình nạp tiền
-  const goToDepositScreen = useCallback(() => {
+  const goToDepositScreen = () => {
     setLoading(true);
     mutateConfigPayment(undefined, {
       onSuccess: (res) => {
         setConfigPayment(res.data);
-        router.push('/(app)/(profile)/deposit');
+        switch (useFor) {
+          case _UserRole.CUSTOMER:
+            router.push('/(app)/(profile)/deposit');
+            break;
+          case _UserRole.KTV:
+            router.push('/(app)/(service-ktv)/deposit');
+            break;
+          case _UserRole.AGENCY:
+            router.push('/(app)/(service-agency)/deposit');
+            break;
+        }
       },
       onError: (err) => {
         handleError(err);
@@ -139,7 +152,7 @@ export const useWallet = () => {
         setLoading(false);
       },
     });
-  }, []);
+  };
 
   return {
     tab,
@@ -184,7 +197,7 @@ export const useDeposit = () => {
             (val) => {
               // Loại bỏ dấu chấm/phẩy để lấy số thực
               const numberValue = parseInt(val.replace(/[^0-9]/g, ''));
-              return !isNaN(numberValue) && numberValue >= 10000;
+              return !isNaN(numberValue) && numberValue >= 1000;
             },
             {
               error: t('payment.error.min_amount'),
@@ -250,7 +263,7 @@ export const useDeposit = () => {
 /**
  * Hook dùng cho màn kiểm tra nạp tiền qua QR Banking
  */
-export const useCheckPaymentQRCode = () => {
+export const useCheckPaymentQRCode = (useFor: _UserRole) => {
   const { t } = useTranslation();
   const { success } = useToast();
 
@@ -279,9 +292,21 @@ export const useCheckPaymentQRCode = () => {
       });
       closeModal(); // Đóng modal
       refreshWallet(true);
-      router.push('/(app)/(profile)/wallet');
+      switch (useFor) {
+        case _UserRole.KTV:
+          router.push('/(app)/(service-ktv)/wallet');
+          break;
+        case _UserRole.CUSTOMER:
+          router.push('/(app)/(profile)/wallet');
+          break;
+          case _UserRole.AGENCY:
+            router.push('/(app)/(tab-agency)/wallet');
+            break;
+        default:
+          break;
+      }
     }
-  }, [pollData?.data?.is_completed]);
+  }, [pollData?.data, useFor]);
 
   const closeModal = () => {
     setTransactionId(null);

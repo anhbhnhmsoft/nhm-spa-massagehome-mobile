@@ -8,6 +8,7 @@ export enum _PaymentType {
   QR_BANKING = 1,
   ZALO_PAY = 2,
   MOMO_PAY = 3,
+  WECHAT_PAY = 4,
 }
 
 export const _PAYMENT_METHODS = [
@@ -22,9 +23,9 @@ export const _PAYMENT_METHODS = [
     desc: 'common.auto_pay',
   },
   {
-    id: _PaymentType.MOMO_PAY,
-    name: 'enum.payment_type.MOMO_PAY',
-    desc: 'common.auto_pay',
+    id: _PaymentType.WECHAT_PAY,
+    name: 'enum.payment_type.WECHAT_PAY',
+    desc: 'common.hold_payment',
   },
 ] as const;
 
@@ -39,6 +40,8 @@ export enum _TransactionType {
   REFUND = 8, // Hoàn tiền cho customer
   RETRIEVE_PAYMENT_REFUND_KTV = 9, // thu hồi tiền thanh toán cho KTV khi hủy booking
   REFERRAL_KTV = 10, // Nhận hoa hồng từ người giới thiệu KTV
+  REFERRAL_INVITE_KTV_REWARD = 11, // Nhận hoa hồng từ người giới thiệu KTV khi đăng ký KTV
+  DEPOSIT_WECHAT_PAY = 12, // Nạp tiền qua Wechat Pay
 }
 
 export const _TransactionTypeMap = {
@@ -52,6 +55,8 @@ export const _TransactionTypeMap = {
   [_TransactionType.REFUND]: 'enum.transaction_type.REFUND',
   [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]: 'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
   [_TransactionType.REFERRAL_KTV]: 'enum.transaction_type.REFERRAL_KTV',
+  [_TransactionType.REFERRAL_INVITE_KTV_REWARD]: 'enum.transaction_type.REFERRAL_INVITE_KTV_REWARD',
+  [_TransactionType.DEPOSIT_WECHAT_PAY]: 'enum.transaction_type.DEPOSIT_WECHAT_PAY',
 };
 
 export enum _TransactionStatus {
@@ -79,6 +84,10 @@ export const _TransactionInType = [
   _TransactionType.DEPOSIT_MOMO_PAY,
   _TransactionType.AFFILIATE,
   _TransactionType.PAYMENT_FOR_KTV,
+  _TransactionType.DEPOSIT_WECHAT_PAY,
+  _TransactionType.REFUND,
+  _TransactionType.REFERRAL_INVITE_KTV_REWARD,
+  _TransactionType.REFERRAL_KTV,
 ] as readonly _TransactionType[];
 
 export const _TransactionOutType = [

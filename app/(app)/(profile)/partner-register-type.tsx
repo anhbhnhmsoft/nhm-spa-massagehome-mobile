@@ -18,17 +18,23 @@ export default function PartnerRegisterTypeScreen() {
       <HeaderBack title="profile.join_partner" />
 
       <View className="flex-1 px-4 pt-4">
-        <Text className="mb-6 text-2xl font-inter-bold text-slate-900">
+        <Text className="mb-6 font-inter-bold text-2xl text-slate-900">
           {t('profile.partner_register.title')}
         </Text>
 
+        {/* Trưởng nhóm Kỹ thuật viên */}
         <TouchableOpacity
-          className="mb-4 flex-row items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-gray-100"
+          className="mb-4 flex-row items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           onPress={() => {
-            router.push('/(app)/(profile)/partner-register-individual');
+            router.push({
+              pathname: '/(app)/(profile)/partner-register-individual',
+              params: {
+                is_leader: 'true',
+              },
+            });
           }}>
           <View className="flex-1 pr-3">
-            <Text className="mb-1 text-base font-inter-bold text-slate-900">
+            <Text className="mb-1 font-inter-bold text-base text-slate-900">
               {t('profile.partner_register.individual_title')}
             </Text>
             <Text className="text-sm text-gray-600">
@@ -40,13 +46,14 @@ export default function PartnerRegisterTypeScreen() {
           </View>
         </TouchableOpacity>
 
+        {/* Đại lý khu vực */}
         <TouchableOpacity
-          className="mb-4 flex-row items-center justify-between rounded-2xl bg-white p-4 shadow-sm border border-gray-100"
+          className="mb-4 flex-row items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           onPress={() => {
             router.push('/(app)/(profile)/partner-register-agency');
           }}>
           <View className="flex-1 pr-3">
-            <Text className="mb-1 text-base font-inter-bold text-slate-900">
+            <Text className="mb-1 font-inter-bold text-base text-slate-900">
               {t('profile.partner_register.agency_title')}
             </Text>
             <Text className="text-sm text-gray-600">

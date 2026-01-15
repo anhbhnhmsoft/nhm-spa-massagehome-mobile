@@ -83,6 +83,7 @@
     "version": "Version",
     "currency": "VND",
     "auto_pay": "Auto-approve 24/7",
+    "hold_payment": "Hold Payment",
     "save_image": "Save Image",
     "date_of_birth": "Date of Birth",
     "bio": "Bio",
@@ -163,7 +164,8 @@
     "payment_type": {
       "QR_BANKING": "QR Banking Transfer",
       "ZALO_PAY": "Zalo Pay",
-      "MOMO_PAY": "Momo Pay"
+      "MOMO_PAY": "Momo Pay",
+      "WECHAT_PAY": "WeChat Pay"
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Deposit via QR Banking",
@@ -175,7 +177,9 @@
       "PAYMENT_FOR_KTV": "Payment to Technician",
       "REFUND": "Refund",
       "RETRIEVE_PAYMENT_REFUND_KTV": "Retrieve Payment Refund KTV",
-      "REFERRAL_KTV": "Referral KTV"
+      "REFERRAL_KTV": "Referral KTV",
+      "REFERRAL_INVITE_KTV_REWARD": "Referral Invite KTV Reward",
+      "DEPOSIT_WECHAT_PAY": "Deposit via Wechat Pay"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -375,6 +379,7 @@
     },
     "partner_form": {
       "title": "Technician Registration",
+      "title_technician_leader": "Technician Leader Registration",
       "images_title": "Your images visible to customers",
       "images_min_note": "Minimum 3 and maximum 5 photos",
       "images_warning": "No fake or inappropriate photos. Photos must be clear, showing face, front view, serious, and suitable for work. Personal info (Phone, Social Media, Address...) is strictly prohibited.",
@@ -433,10 +438,10 @@
     },
     "partner_register": {
       "title": "What do you want to register as?",
-      "individual_title": "Technician",
-      "individual_desc": "Massage/Spa Technicians looking for additional income",
-      "agency_title": "Agency",
-      "agency_desc": "We help Agencies reach millions of customers."
+      "individual_title": "Technician Leader",
+      "individual_desc": "Technician Leaders looking for additional income",
+      "agency_title": "Agency Area",
+      "agency_desc": "We help Agency Areas reach millions of customers."
     }
   },
   "wallet": {
@@ -470,6 +475,7 @@
     "bank_holder": "Account Holder Name",
     "add_new_withdraw_info": "Link New Account",
     "request_withdraw": "Request Withdrawal",
+    "method_disabled": "Maintenance",
     "withdraw": {
       "title_modal": "Select Withdrawal Account",
       "add_new_account": "Link New Account",
