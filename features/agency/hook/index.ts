@@ -1,4 +1,4 @@
-import { useCallback, useEffect, } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useApplicationStore from '@/lib/store';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useWalletStore } from '@/features/payment/stores';
@@ -6,7 +6,9 @@ import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation'
 import { useWalletQuery } from '@/features/payment/hooks/use-query';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { router } from 'expo-router';
-
+import { useTranslation } from 'react-i18next';
+import { _TimeFilter } from '@/features/agency/const';
+import { useDashboardAgencyQuery, useListKtvPerformanceQuery, } from '@/features/agency/hook/use-query';
 
 /**
  * Hook dùng cho màn ví
@@ -81,5 +83,61 @@ export const useWallet = () => {
     queryTransactionList,
     goToDepositScreen,
     refresh,
+  };
+};
+
+export const useDashboardAgency = () => {
+  const { t } = useTranslation();
+  const [activeFilter, setActiveFilter] = useState<_TimeFilter>(_TimeFilter.ALL);
+
+  // 1. Thống kê Header
+  const {
+    data: statsData,
+    isLoading: isStatsLoading,
+    refetch: refetchStats,
+  } = useDashboardAgencyQuery(activeFilter);
+
+  // 2. Danh sách KTV (Infinite Query)
+  const {
+    data: performanceData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isPerformanceLoading,
+    refetch: refetchPerformance,
+    isRefetching,
+  } = useListKtvPerformanceQuery(activeFilter);
+
+  // 3. Xử lý dữ liệu
+  const tabs = useMemo(() => Object.values(_TimeFilter), []);
+
+  const listPerformanceKtv = useMemo(() => {
+    return performanceData?.pages.flatMap((page) => page.data) || [];
+  }, [performanceData]);
+
+  // 4. Các hàm hành động
+  const onRefresh = useCallback(async () => {
+    await Promise.all([refetchStats(), refetchPerformance()]);
+  }, [refetchStats, refetchPerformance]);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  return {
+    t,
+    tabs,
+    activeFilter,
+    setActiveFilter,
+    statsData,
+    isStatsLoading,
+    listPerformanceKtv,
+    isPerformanceLoading,
+    isFetchingNextPage,
+    isRefetching,
+    onRefresh,
+    handleLoadMore,
   };
 };

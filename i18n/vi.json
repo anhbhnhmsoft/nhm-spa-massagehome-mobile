@@ -751,6 +751,33 @@
       "empty_title": "Chưa có kỹ thuật viên ",
       "empty_description": "Mời kỹ thuật viên gia nhập của bạn để cùng phát triển mạng lưới và tăng thu nhập.",
       "empty_button": "Mời kỹ thuật viên"
+    },
+    "page": {
+      "dashboard": {
+        "tabs": {
+          "all": "Tất cả",
+          "day": "Hôm nay",
+          "week": "Tuần này",
+          "month": "Tháng này",
+          "quarter": "Quý này",
+          "year": "Năm này"
+        },
+        "stats": {
+          "total_discount": "Tổng chiết khấu",
+          "total_affiliate": "Tổng hoa hồng affiliate",
+          "referred_customers": "KH đã giới thiệu",
+          "ordering_customers": "KH phát sinh đơn",
+          "managed_ktv": "KTV quản lý",
+          "active_ktv": "KTV có đơn hàng"
+        },
+        "items": {
+          "reviews": "{{count}} đánh giá",
+          "revenue": "Doanh thu",
+          "orders": "Đơn hàng",
+          "customers": "Khách hàng"
+        },
+        "performance_title": "Hiệu suất Kỹ thuật viên"
+      }
     }
   },
   "qr_scan": {

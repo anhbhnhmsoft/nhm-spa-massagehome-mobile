@@ -751,6 +751,33 @@
       "empty_title": "No technicians yet",
       "empty_description": "Invite technicians to join your Agency to grow the network and increase income.",
       "empty_button": "Invite Technician"
+    },
+    "page": {
+      "dashboard": {
+        "tabs": {
+          "all": "All",
+          "day": "Today",
+          "week": "This week",
+          "month": "This month",
+          "quarter": "This quarter",
+          "year": "This year"
+        },
+        "stats": {
+          "total_discount": "Total discount",
+          "total_affiliate": "Total affiliate commission",
+          "referred_customers": "Referred customers",
+          "ordering_customers": "Customers with orders",
+          "managed_ktv": "Managed technicians",
+          "active_ktv": "Active technicians"
+        },
+        "items": {
+          "reviews": "{{count}} đánh giá",
+          "revenue": "Doanh thu",
+          "orders": "Đơn hàng",
+          "customers": "Khách hàng"
+        },
+        "performance_title": "Technician performance"
+      }
     }
   },
   "qr_scan": {

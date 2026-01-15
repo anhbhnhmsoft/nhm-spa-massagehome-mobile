@@ -751,6 +751,33 @@
       "empty_title": "尚无技师",
       "empty_description": "邀请技师加入您的代理以扩充网络并增加收入。",
       "empty_button": "邀请技师"
+    },
+    "page": {
+      "dashboard": {
+        "tabs": {
+          "all": "全部",
+          "day": "今天",
+          "week": "本周",
+          "month": "本月",
+          "quarter": "本季度",
+          "year": "今年"
+        },
+        "stats": {
+          "total_discount": "总折扣",
+          "total_affiliate": "联盟佣金总额",
+          "referred_customers": "推荐客户",
+          "ordering_customers": "下单客户",
+          "managed_ktv": "管理的技师",
+          "active_ktv": "有订单的技师"
+        },
+        "items": {
+          "reviews": "{{count}} đánh giá",
+          "revenue": "Doanh thu",
+          "orders": "Đơn hàng",
+          "customers": "Khách hàng"
+        },
+        "performance_title": "技师绩效"
+      }
     }
   },
   "qr_scan": {
