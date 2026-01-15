@@ -24,9 +24,10 @@ import DefaultColor from '@/components/styles/color';
 import React, { useMemo } from 'react';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
 import useSaveFileImage from '@/features/app/hooks/use-save-image';
+import { _UserRole } from '@/features/auth/const';
 
 // --- KHỐI NẠP TIẾN ---
-export default function Deposit() {
+export default function Deposit({ useFor }: { useFor: _UserRole }) {
   const { t } = useTranslation();
 
   const { configPayment, form, submitDeposit } = useDeposit();
@@ -44,9 +45,9 @@ export default function Deposit() {
   const watchedPayment = watch('payment_type');
 
   // Logic tính toán quy đổi
-  const receivedPoints = Math.floor(
-    Number(watchedAmount) / Number(configPayment?.currency_exchange_rate)
-  );
+  // const receivedPoints = Math.floor(
+  //   Number(watchedAmount) / Number(configPayment?.currency_exchange_rate)
+  // );
 
   return (
     <>
@@ -66,33 +67,34 @@ export default function Deposit() {
           showsVerticalScrollIndicator={false}>
           <View className="flex-1 px-5 pt-2">
             {/* --- KHỐI NHẬP TIỀN  --- */}
-            <View className="z-10 rounded-2xl bg-white p-5 shadow-sm">
+            <View className="z-10 mb-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
               <Text className="mb-3 font-inter-medium text-gray-500">
                 {t('payment.deposit_label_input')}
               </Text>
-
-              <View className="mb-4 flex-row items-center border-b border-gray-100 pb-2">
-                <Controller
-                  control={control}
-                  name="amount"
-                  render={({ field: { onChange, value } }) => (
-                    <View
-                      className={cn(
-                        'flex-row items-center border-b pb-2',
-                        errors.amount ? 'border-red-500' : 'border-gray-200'
-                      )}>
-                      <TextInput
-                        className="flex-1 font-inter-bold text-3xl text-gray-900"
-                        placeholder="0"
-                        keyboardType="numeric"
-                        value={value}
-                        onChangeText={onChange}
-                      />
-                      <Text className="font-inter-bold text-xl text-gray-400">đ</Text>
-                    </View>
-                  )}
-                />
-                {/* Hiển thị lỗi Amount */}
+              <View className={"mb-4"}>
+                <View className="flex-row items-center border-b border-gray-100 pb-2">
+                  <Controller
+                    control={control}
+                    name="amount"
+                    render={({ field: { onChange, value } }) => (
+                      <View
+                        className={cn(
+                          'flex-row items-center border-b pb-2',
+                          errors.amount ? 'border-red-500' : 'border-gray-200'
+                        )}>
+                        <TextInput
+                          className="flex-1 font-inter-bold text-3xl text-gray-900"
+                          placeholder="0"
+                          keyboardType="numeric"
+                          value={value}
+                          onChangeText={onChange}
+                        />
+                        <Text className="font-inter-bold text-xl text-gray-400">đ</Text>
+                      </View>
+                    )}
+                  />
+                  {/* Hiển thị lỗi Amount */}
+                </View>
                 {errors.amount && (
                   <Text className="mt-2 text-xs text-red-500">{errors.amount.message}</Text>
                 )}
@@ -123,16 +125,34 @@ export default function Deposit() {
                 <View className="mb-24 gap-3">
                   {_PAYMENT_METHODS.map((method, index) => {
                     const isSelected = value === method.id;
-
+                    let disabled: boolean = false;
+                    if (method.id === _PaymentType.QR_BANKING) {
+                      disabled = !configPayment?.allow_payment?.qrcode;
+                    } else if (method.id === _PaymentType.ZALO_PAY) {
+                      disabled = !configPayment?.allow_payment?.zalopay;
+                    } else if (method.id === _PaymentType.WECHAT_PAY) {
+                      disabled = !configPayment?.allow_payment?.wechatpay;
+                    }
                     return (
                       <TouchableOpacity
                         key={index}
                         onPress={() => onChange(method.id)}
                         activeOpacity={0.7}
+                        disabled={disabled}
                         style={[
                           styles.methodContainer,
                           isSelected ? styles.methodSelected : styles.methodUnselected,
+                          disabled ? styles.methodDisabled : {},
                         ]}>
+                        {disabled && (
+                          <View className="absolute bottom-0 left-0 right-0 top-0 z-10 flex-1 items-center justify-center rounded-xl bg-black/40">
+                            <View className="rounded-2xl bg-white px-2 py-1">
+                              <Text className="font-inter-bold text-xs text-red-500">
+                                {t('payment.method_disabled')}
+                              </Text>
+                            </View>
+                          </View>
+                        )}
                         {/* ICON AREA */}
                         <View
                           style={[
@@ -142,7 +162,7 @@ export default function Deposit() {
                           {method.id === _PaymentType.QR_BANKING && (
                             <QrCode
                               size={24}
-                              color={isSelected ? 'white' : DefaultColor.gray['100']}
+                              color={isSelected ? 'white' : DefaultColor.gray['400']}
                             />
                           )}
                           {method.id === _PaymentType.ZALO_PAY && (
@@ -151,9 +171,9 @@ export default function Deposit() {
                               style={{ width: 24, height: 24, borderRadius: 12 }}
                             />
                           )}
-                          {method.id === _PaymentType.MOMO_PAY && (
+                          {method.id === _PaymentType.WECHAT_PAY && (
                             <Image
-                              source={require('@/assets/icon/momopay.png')}
+                              source={require('@/assets/icon/wechat.png')}
                               style={{ width: 24, height: 24, borderRadius: 12 }}
                             />
                           )}
@@ -198,6 +218,7 @@ export default function Deposit() {
             />
           </View>
         </KeyboardAwareScrollView>
+
         {/* --- BOTTOM BUTTON --- */}
         <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
           <View className="mb-2 flex-row justify-between">
@@ -222,7 +243,7 @@ export default function Deposit() {
       </SafeAreaView>
 
       {/* --- QR PAYMENT MODAL --- */}
-      <CheckQRPaymentModal />
+      <CheckQRPaymentModal useFor={useFor} />
     </>
   );
 }
@@ -231,6 +252,7 @@ const styles = StyleSheet.create({
   methodContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    position:"relative",
     borderRadius: 12, // rounded-xl
     borderWidth: 1,
     padding: 16, // p-4
@@ -258,6 +280,9 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  methodDisabled: {
+    backgroundColor: DefaultColor.gray['200'],
+  },
 
   // Vùng chứa Icon (tròn tròn bên trái)
   iconContainer: {
@@ -272,7 +297,7 @@ const styles = StyleSheet.create({
     backgroundColor: DefaultColor.base['primary-color-1'],
   },
   iconBgUnselected: {
-    backgroundColor: DefaultColor.gray['100'],
+    backgroundColor: DefaultColor.gray['200'],
   },
 
   // Phần text ở giữa
@@ -302,9 +327,9 @@ const styles = StyleSheet.create({
 });
 
 // --- QR PAYMENT MODAL ---
-const CheckQRPaymentModal = () => {
+const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
   const { t } = useTranslation();
-  const { visible, closeModal, qrBankData } = useCheckPaymentQRCode();
+  const { visible, closeModal, qrBankData } = useCheckPaymentQRCode(useFor);
   const copyToClipboard = useCopyClipboard();
   const { saveURLImage } = useSaveFileImage();
 

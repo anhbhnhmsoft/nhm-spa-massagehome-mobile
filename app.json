@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "massagehome-spa",
-    "slug": "massage-home-spa",
+    "name": "masa-spa",
+    "slug": "masa-spa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "massagehomespa",
+    "scheme": "masa-spa",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "androidNavigationBar": {

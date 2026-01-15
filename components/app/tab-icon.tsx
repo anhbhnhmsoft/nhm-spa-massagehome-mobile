@@ -16,7 +16,7 @@ export const TabIcon = ({
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        top: 24, // iOS đẩy xuống 12px, Android giữ nguyên
+        top: 20, // iOS đẩy xuống 12px, Android giữ nguyên
       }}>
       {/* Khối nền của Icon */}
       <View

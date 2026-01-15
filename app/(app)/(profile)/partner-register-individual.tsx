@@ -58,10 +58,12 @@ const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any
     {error && <Text className="ml-1 mt-1 text-xs text-red-500">{error}</Text>}
   </View>
 );
+
 export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
 
-  const { referrer_id } = useLocalSearchParams<{ referrer_id: string }>();
+  const { referrer_id , is_leader} = useLocalSearchParams<{ referrer_id?: string, is_leader?: string }>();
+
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
   const { pickImage } = useImagePicker();
 
@@ -80,12 +82,19 @@ export default function PartnerRegisterIndividualScreen() {
         shouldDirty: true,
       });
     }
-  }, [referrer_id]);
+    if (is_leader) {
+      form.setValue('is_leader', true);
+    }
+  }, [referrer_id, is_leader]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
-      <HeaderBack title="profile.partner_form.title" />
+      <HeaderBack
+        title={
+          is_leader ? 'profile.partner_form.title_technician_leader' : 'profile.partner_form.title'
+        }
+      />
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}

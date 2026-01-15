@@ -83,6 +83,7 @@
     "version": "版本",
     "currency": "越南盾",
     "auto_pay": "24/7 自动批准",
+    "hold_payment": "待确认支付",
     "save_image": "保存图片",
     "date_of_birth": "出生日期",
     "bio": "简介",
@@ -163,7 +164,8 @@
     "payment_type": {
       "QR_BANKING": "银行扫码转账",
       "ZALO_PAY": "Zalo Pay",
-      "MOMO_PAY": "Momo Pay"
+      "MOMO_PAY": "Momo Pay",
+      "WECHAT_PAY": "Wechat Pay"
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "二维码银行充值",
@@ -175,7 +177,9 @@
       "PAYMENT_FOR_KTV": "支付给技师",
       "REFUND": "退款",
       "RETRIEVE_PAYMENT_REFUND_KTV": "提取退款",
-      "REFERRAL_KTV": "推荐技师"
+      "REFERRAL_KTV": "推荐给技师",
+      "REFERRAL_PARTNER": "推荐合作伙伴",
+      "DEPOSIT_WECHAT_PAY": "Wechat Pay 充值"
     },
     "transaction_status": {
       "PENDING": "处理中",
@@ -375,6 +379,7 @@
     },
     "partner_form": {
       "title": "技师注册",
+      "title_technician_leader": "技师组长注册",
       "images_title": "您展示给客户的图片",
       "images_min_note": "最少 3 张，最多 5 张照片",
       "images_warning": "请勿使用虚假或不雅照片。照片必须清晰、露脸、正面、严肃且适合工作。严禁包含个人信息（电话、社交媒体、详细地址...）。",
@@ -433,10 +438,10 @@
     },
     "partner_register": {
       "title": "您想注册为什么角色？",
-      "individual_title": "技师",
-      "individual_desc": "寻找额外收入的按摩/SPA 技师",
-      "agency_title": "代理",
-      "agency_desc": "我们帮助代理接触数百万客户。"
+      "individual_title": "技术员组组长",
+      "individual_desc": "按摩和水疗技师团队的负责人正在寻找新的收入来源",
+      "agency_title": "区域代理",
+      "agency_desc": "我们帮助代理商接触数百万客户"
     }
   },
   "wallet": {
@@ -470,6 +475,7 @@
     "bank_holder": "账户持有人姓名",
     "add_new_withdraw_info": "关联新账户",
     "request_withdraw": "申请提现",
+    "method_disabled": "维护中",
     "withdraw": {
       "title_modal": "选择提现账户",
       "add_new_account": "关联新账户",
