@@ -35,3 +35,13 @@ export const useListKtvPerformanceQuery = (range: _TimeFilter) => {
     enabled: !!range,
   });
 };
+
+export const useGetProfileAgencyProfile = () => {
+  return useQuery({
+    queryKey: ['agency-profile'],
+    queryFn: () => agencyApi.agencyProfile(),
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 3,
+    select: (data) => data.data,
+  });
+};

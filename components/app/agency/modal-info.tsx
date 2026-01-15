@@ -100,7 +100,7 @@ export const FeatureList = ({
           className="mb-2 w-[25%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/edit-info');
+            router.push('/(app)/(service-agency)/edit-info');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={UserPen} size={24} className="text-primary-color-1" />
