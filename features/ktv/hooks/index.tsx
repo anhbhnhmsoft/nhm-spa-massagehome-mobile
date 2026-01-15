@@ -38,11 +38,7 @@ import { router } from 'expo-router';
 import useToast from '@/features/app/hooks/use-toast';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import useApplicationStore from '@/lib/store';
-import {
-  _DefaultValueFormConfigSchedule,
-  _DefaultValueFormService,
-  _KTVConfigSchedules,
-} from '@/features/ktv/consts';
+import { _DefaultValueFormConfigSchedule, _DefaultValueFormService, _KTVConfigSchedules, } from '@/features/ktv/consts';
 import { useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
 import { ServiceItem } from '@/features/service/types';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
@@ -54,7 +50,10 @@ import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
-import {  useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
+import { useWalletQuery } from '@/features/payment/hooks/use-query';
+import { useWalletStore } from '@/features/payment/stores';
+import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
 import dayjs from 'dayjs';
 
 // Hook cho chỉnh sửa dịch vụ
@@ -545,16 +544,11 @@ export const editProfileKTV = () => {
         (val) => (val === '' || val === null ? undefined : val),
         z.coerce.number().min(1, t('profile.error.invalid_experience')).max(60)
       ),
-      bio: z
-        .object({
-          vi: z.string().optional(),
-          en: z.string().optional(),
-          cn: z.string().optional(),
-        })
-        .refine((data) => !!data.vi?.trim() || !!data.en?.trim() || !!data.cn?.trim(), {
-          path: ['vi'],
-          message: t('profile.error.bio_required'),
-        }),
+      bio: z.object({
+        vi: z.string().min(1, t('profile.error.bio_required')),
+        en: z.string().min(1, t('profile.error.bio_required')),
+        cn: z.string().min(1, t('profile.error.bio_required')),
+      }),
       lat: z.coerce.number().optional(),
       lng: z.coerce.number().optional(),
       gender: z.coerce.number().optional(),
@@ -577,6 +571,19 @@ export const editProfileKTV = () => {
   const form = useForm<any>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
+    defaultValues: {
+      address: '',
+      experience: '',
+      bio: {
+        vi: '',
+        en: '',
+        cn: '',
+      },
+      lat: 0,
+      lng: 0,
+      gender: 1,
+      date_of_birth: '',
+    },
   });
 
   const { reset } = form;
@@ -609,7 +616,6 @@ export const editProfileKTV = () => {
         lng: String(data.lng || '0'),
         experience: Number(data.experience),
       };
-
       editProfile(payload, {
         onSuccess: () => {
           refetch();
@@ -624,6 +630,7 @@ export const editProfileKTV = () => {
 
   return { form, profileData, onSubmit, user, isLoading, refetch };
 };
+
 const MAX_IMAGE = 5;
 
 // Hook cho thay đổi ảnh đại diện KTV
@@ -823,8 +830,6 @@ export const useScanQRCodeKtv = () => {
       },
     });
   };
-
-
 };
 
 export const useConfigSchedule = () => {
