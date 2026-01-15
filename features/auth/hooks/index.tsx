@@ -579,7 +579,8 @@ export const useChangeAvatar = () => {
       }
     } else {
       // Nếu có quyền chụp ảnh thì chuyển sang màn hình chụp ảnh
-      router.push('/(app)/(profile)/take-picture-avatar');
+      router.push('/take-picture-avatar');
+
       return true;
     }
   }, [permission?.granted, t]);

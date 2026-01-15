@@ -8,6 +8,7 @@ export default function ServiceAgencyLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="deposit" />
         <Stack.Screen name="affiliate" />
+        <Stack.Screen name="edit-info" />
       </Stack>
     </>
   );
