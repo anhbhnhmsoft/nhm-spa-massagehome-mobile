@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { _TimeFilter } from '@/features/agency/const';
 import {
@@ -11,6 +11,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEditProfileAgencyMutation } from '@/features/agency/hook/use-mutaion';
 import useToast from '@/features/app/hooks/use-toast';
+import useApplicationStore from '@/lib/store';
+import useErrorToast from '@/features/app/hooks/use-error-toast';
+import { router } from 'expo-router';
 
 /**
  * Hook để quản lý dashboard của đại lý
