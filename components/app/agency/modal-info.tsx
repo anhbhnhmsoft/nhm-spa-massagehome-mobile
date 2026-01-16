@@ -14,6 +14,7 @@ import SelectLanguage from '@/components/select-language';
 import SupportModal from '@/components/app/support-modal';
 import Dialog from '@/components/dialog';
 import { router } from 'expo-router';
+import { openAboutPage } from '@/lib/utils';
 
 type ModalInfoProps = {
   isVisible: boolean;
@@ -138,7 +139,7 @@ export const FeatureList = ({
         </TouchableOpacity>
 
         {/* Thông tin ứng dụng */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center">
+        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => openAboutPage()}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Info} size={24} className="text-primary-color-1" />
           </View>
