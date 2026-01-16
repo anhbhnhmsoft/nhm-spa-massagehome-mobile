@@ -379,7 +379,7 @@
     },
     "partner_form": {
       "title": "技师注册",
-      "title_technician_leader": "技师组长注册",
+      "title_technician_leader": "渠道合作商",
       "images_title": "您展示给客户的图片",
       "images_min_note": "最少 3 张，最多 5 张照片",
       "images_warning": "请勿使用虚假或不雅照片。照片必须清晰、露脸、正面、严肃且适合工作。严禁包含个人信息（电话、社交媒体、详细地址...）。",
@@ -438,9 +438,9 @@
     },
     "partner_register": {
       "title": "您想注册为什么角色？",
-      "individual_title": "技术员组组长",
+      "individual_title": "技师团长",
       "individual_desc": "按摩和水疗技师团队的负责人正在寻找新的收入来源",
-      "agency_title": "区域代理",
+      "agency_title": "城市区域代理",
       "agency_desc": "我们帮助代理商接触数百万客户"
     }
   },
