@@ -86,7 +86,7 @@ export const useGetBookingList = () => {
         }
       );
     },
-    [cancelBooking]
+    [cancelBooking, bookingIdCancel]
   );
 
   const handleConfirmCancel = useCallback(() => {
@@ -117,8 +117,8 @@ export const useGetBookingList = () => {
 
   const handleOpenModalCancelBooking = useCallback((bookingId: string) => {
     setShowModalCancelBooking(true);
-    setCancelReason('');
     setBookingIdCancel(bookingId);
+    setCancelReason('');
   }, []);
   return {
     ...query,

@@ -32,7 +32,6 @@ export default function OrdersScreen() {
     cancelReason,
     showModalCancelBooking,
     setShowModalCancelBooking,
-    setBookingIdCancel,
     handleOpenModalCancelBooking,
     handleConfirmCancel,
     setCancelReason,
