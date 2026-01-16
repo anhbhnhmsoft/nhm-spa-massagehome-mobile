@@ -22,6 +22,7 @@ export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh:
 
   const [showReviewModal, setShowReviewModal] = useState(false);
 
+
   return (
     <>
       <View className="mb-4 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
@@ -247,6 +248,26 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                     {formatBalance(item.price)} {t('common.currency')}
                   </Text>
                 </View>
+                {item.coupon ? (
+                  <>
+                    {/* Coupon */}
+                    <View className="h-[1px] bg-slate-100" />
+                    <View className="flex-row flex-wrap justify-between gap-2">
+                      <Text className="text-slate-600">{t('booking.coupon')}</Text>
+                      <Text className="font-inter-semibold text-slate-800">
+                        {item.coupon.label}
+                      </Text>
+                    </View>
+                    {/* Số tiền được giảm */}
+                    <View className="h-[1px] bg-slate-100" />
+                    <View className="flex-row flex-wrap justify-between gap-2">
+                      <Text className="text-slate-600">{t('booking.discount_price')}</Text>
+                      <Text className="font-inter-semibold text-slate-800">
+                        {formatBalance(Number(item.price_before_discount) - Number(item.price))} {t('common.currency')}
+                      </Text>
+                    </View>
+                  </>
+                ) : null}
               </View>
             </View>
 

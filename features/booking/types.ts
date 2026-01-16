@@ -45,6 +45,11 @@ export type BookingItem = {
   duration: number;
   status: _BookingStatus;
   price: string;
+  price_before_discount: string;
+  coupon: {
+    id: string;
+    label: string;
+  } | null;
   has_reviews: boolean;
   lat: number;
   lng: number;

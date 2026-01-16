@@ -640,7 +640,9 @@
     "booking_failed_message": "处理预约时发生错误。很抱歉给您带来不便。请重试。",
     "booking_cancel_confirm_title": "确认取消",
     "booking_cancel_confirm_message": "您确定要取消此预约吗？",
-    "booking_cancel_reason_required": "请输入取消原因"
+    "booking_cancel_reason_required": "请输入取消原因",
+    "coupon": "优惠券",
+    "discount_price": "折扣价格"
   },
   "affiliate": {
     "title": "邀请好友",

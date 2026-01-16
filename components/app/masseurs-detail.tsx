@@ -89,7 +89,7 @@ export const ReviewFistItem = ({ item }: { item: KTVDetail['first_review'] }) =>
 
   return (
     <>
-      <View className="mt-1 flex-row">
+      <View className="mt-1 flex-row items-center justify-center">
         {item ? (
           <>
             {/* Avatar người review (Giả định) */}
