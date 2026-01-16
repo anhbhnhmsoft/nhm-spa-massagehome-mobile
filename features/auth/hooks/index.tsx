@@ -8,6 +8,7 @@ import useApplicationStore from '@/lib/store';
 import { _LanguageCode } from '@/lib/const';
 import {
   useAuthenticateMutation,
+  useLockAccountMutation,
   useLoginMutation,
   useLogoutMutation,
   useMutationDeleteAvatar,
@@ -800,5 +801,67 @@ export const useLogout = () => {
         setLoading(false);
       },
     });
+  };
+};
+
+/**
+ * Hook để xóa tài khoản
+ */
+
+export const useLockAccount = () => {
+  const { t } = useTranslation(); // Khởi tạo hàm dịch t
+  const { mutate, isPending } = useLockAccountMutation();
+  const logout = useAuthStore((s) => s.logout);
+  const handleError = useErrorToast();
+  const setLoading = useApplicationStore((s) => s.setLoading);
+
+  const handleLockAccount = () => {
+    Alert.alert(
+      t('profile.delete_account_confirm_title'), // Tiêu đề: Xác nhận xóa tài khoản
+      t('profile.delete_account_warning'), // Nội dung cảnh báo hành động không thể hoàn tác
+      [
+        {
+          text: t('common.cancel'), // Chữ: Hủy
+          style: 'cancel',
+        },
+        {
+          text: t('profile.delete_account'), // Chữ: Xóa tài khoản
+          style: 'destructive',
+          onPress: () => {
+            setLoading(true);
+
+            mutate(undefined, {
+              onSuccess: () => {
+                setLoading(false);
+
+                // Thông báo sau khi API thành công
+                Alert.alert(
+                  t('header_app.notification'), // Tiêu đề: Thông báo
+                  t('profile.delete_account_success'), // Nội dung: Tài khoản đã được xóa...
+                  [
+                    {
+                      text: 'Ok', // Chữ: OK
+                      onPress: () => {
+                        logout();
+                      },
+                    },
+                  ]
+                );
+              },
+              onError: (error) => {
+                setLoading(false);
+                handleError(error);
+              },
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  return {
+    handleLockAccount,
+    isPending,
   };
 };

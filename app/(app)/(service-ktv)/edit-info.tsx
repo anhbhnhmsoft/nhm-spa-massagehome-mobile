@@ -8,7 +8,17 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { Briefcase, Camera, Key, Lock, Plus, Save, User as UserIcon, X } from 'lucide-react-native';
+import {
+  Briefcase,
+  Camera,
+  Key,
+  Lock,
+  Plus,
+  Save,
+  Trash2,
+  User as UserIcon,
+  X,
+} from 'lucide-react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
@@ -25,12 +35,13 @@ import { BottomEditAvatar } from '@/components/app/profile-tab';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLockAccount } from '@/features/auth/hooks';
 
 export default function EditInfoScreen() {
   const { form, profileData, onSubmit, user, isLoading } = editProfileKTV();
   const { removeImage } = useEditImage();
   const { control, handleSubmit, setValue } = form;
-
+  const { handleLockAccount, isPending } = useLockAccount();
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
   const bottomShetImagePicker = useRef<BottomSheetModal>(null);
   const [imageError, setImageError] = useState(false);
@@ -280,6 +291,17 @@ export default function EditInfoScreen() {
                     )}
                   />
                   {/* (No extra bio field here) */}
+                </View>
+                <View className="mb-8 mt-6 px-4">
+                  <TouchableOpacity
+                    onPress={handleLockAccount}
+                    disabled={isPending}
+                    className="mt-4 flex-row items-center justify-center rounded-xl border border-red-200 bg-white py-3 active:bg-red-50">
+                    <Trash2 size={18} color="#ef4444" />
+                    <Text className="ml-2 font-inter-bold text-red-600">
+                      {t('profile.delete_account')}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </ScrollView>
             )}

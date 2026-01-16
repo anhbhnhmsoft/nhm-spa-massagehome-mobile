@@ -4,35 +4,35 @@ import { router } from 'expo-router';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator, Keyboard,
+  ActivityIndicator,
+  Keyboard,
   TextInput,
-  TouchableOpacity, TouchableWithoutFeedback,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Text} from '@/components/ui/text';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text } from '@/components/ui/text';
 import dayjs from 'dayjs';
-import { useEditProfile } from '@/features/auth/hooks';
+import { useEditProfile, useLockAccount } from '@/features/auth/hooks';
 import React, { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerInput from '@/components/date-time-input';
 import { cn } from '@/lib/utils';
 import HeaderBack from '@/components/header-back';
+import { Trash2 } from 'lucide-react-native';
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
 
-  const {
-    form,
-    onSubmit
-  } = useEditProfile();
+  const { handleLockAccount, isPending } = useLockAccount();
+  const { form, onSubmit } = useEditProfile();
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -44,18 +44,14 @@ export default function EditProfileScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAwareScrollView
           style={{ flex: 1, padding: 16 }}
-          contentContainerStyle={{ flexGrow: 1}}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 50 }}
           enableOnAndroid={true}
           scrollEnabled={true}
           bounces={false}
           overScrollMode="never"
-          showsVerticalScrollIndicator={false}
-        >
+          showsVerticalScrollIndicator={false}>
           {/* Name Field */}
-          <FormInput
-            label={t('common.full_name')}
-            error={errors.name?.message}
-          >
+          <FormInput label={t('common.full_name')} error={errors.name?.message}>
             <Controller
               control={control}
               name="name"
@@ -93,14 +89,12 @@ export default function EditProfileScreen() {
                         value === item.value
                           ? 'border-primary-color-2 bg-primary-color-2/10'
                           : 'border-gray-300 bg-white'
-                      )}
-                    >
+                      )}>
                       <Text
                         className={cn(
                           'font-inter-medium',
                           value === item.value ? 'text-primary-color-2' : 'text-gray-600'
-                        )}
-                      >
+                        )}>
                         {item.label}
                       </Text>
                     </TouchableOpacity>
@@ -154,7 +148,9 @@ export default function EditProfileScreen() {
           </FormInput>
 
           <View className="my-4 h-[1px] bg-gray-200" />
-          <Text className="mb-4 text-lg font-inter-bold text-slate-800">{t('common.security')}</Text>
+          <Text className="mb-4 font-inter-bold text-lg text-slate-800">
+            {t('common.security')}
+          </Text>
 
           {/* Old Password */}
           <FormInput label={t('common.old_password')} error={errors.old_password?.message}>
@@ -191,34 +187,32 @@ export default function EditProfileScreen() {
               )}
             />
           </FormInput>
+
+          <TouchableOpacity
+            onPress={handleLockAccount}
+            disabled={isPending}
+            className="mt-4 flex-row items-center justify-center rounded-xl border border-red-200 bg-white py-3 active:bg-red-50">
+            <Trash2 size={18} color="#ef4444" />
+            <Text className="ml-2 font-inter-bold text-red-600">{t('profile.delete_account')}</Text>
+          </TouchableOpacity>
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
 
       {/* Submit Button */}
-      <View className="px-4 py-4 items-center flex-row gap-4">
+      <View className="flex-row items-center gap-4 px-4 py-4">
         <TouchableOpacity
           onPress={() => router.back()}
           disabled={isSubmitting}
-          className={`flex-1 flex-row items-center justify-center rounded-lg py-3 bg-base-color-3`}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="white" className="mr-2" />
-          ) : null}
-          <Text className="text-lg font-inter-bold text-primary-color-2">
-            {t('common.back')}
-          </Text>
+          className={`flex-1 flex-row items-center justify-center rounded-lg bg-base-color-3 py-3`}>
+          {isSubmitting ? <ActivityIndicator color="white" className="mr-2" /> : null}
+          <Text className="font-inter-bold text-lg text-primary-color-2">{t('common.back')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className={`flex-1 flex-row items-center justify-center rounded-lg py-3 bg-primary-color-2`}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="white" className="mr-2" />
-          ) : null}
-          <Text className="text-lg font-inter-bold text-white">
-            {t('common.save')}
-          </Text>
+          className={`flex-1 flex-row items-center justify-center rounded-lg bg-primary-color-2 py-3`}>
+          {isSubmitting ? <ActivityIndicator color="white" className="mr-2" /> : null}
+          <Text className="font-inter-bold text-lg text-white">{t('common.save')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -227,16 +221,16 @@ export default function EditProfileScreen() {
 
 // Helper Component để render Label và Error Message gọn gàng
 const FormInput = ({
-                     label,
-                     children,
-                     error,
-                   }: {
+  label,
+  children,
+  error,
+}: {
   label: string;
   children: ReactNode;
   error?: string;
 }) => (
   <View className="mb-4">
-    <Text className="mb-2 text-sm font-inter-semibold text-gray-700">{label}</Text>
+    <Text className="mb-2 font-inter-semibold text-sm text-gray-700">{label}</Text>
     {children}
     {error && <Text className="mt-1 text-xs text-red-500">{error}</Text>}
   </View>

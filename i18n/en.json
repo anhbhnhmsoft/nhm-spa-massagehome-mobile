@@ -367,6 +367,10 @@
     "config_schedule": "Schedule Configuration",
     "scanReferral": "Scan Referral",
     "inviteTechnician": "Invite Technician",
+    "delete_account_confirm_title": "Confirm Account Deletion",
+    "delete_account": "Delete Account",
+    "delete_account_warning": "This action will permanently delete all your data, transaction history, and personal information. The data cannot be recovered after deletion.",
+    "delete_account_success": "Your account has been successfully deleted from the system.",
     "error": {
       "invalid_name": "Name must be 4-255 characters",
       "invalid_date_of_birth": "Date of birth cannot be in the future",

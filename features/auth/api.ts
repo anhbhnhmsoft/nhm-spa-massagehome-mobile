@@ -124,6 +124,14 @@ const authApi = {
     const response = await client.post(`${defaultUri}/logout`);
     return response.data;
   },
+
+  /**
+   * Hàm để xóa account
+   */
+  lockAccount: async (): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/lock-account`);
+    return response.data;
+  },
 };
 
 export default authApi;
