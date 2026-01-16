@@ -223,9 +223,6 @@ export const usePartnerRegisterForm = () => {
     }
   };
   const onSubmit = useCallback(async (data: ApplyPartnerRequest) => {
-    console.log(data);
-    return;
-
     setLoading(true);
     const formData = buildApplyPartnerFormData(data);
     mutate(formData, {

@@ -1,12 +1,6 @@
-import { Calendar, Clock, MapPin, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ScrollView, RefreshControl,
-} from 'react-native';
+import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import GradientBackground from '@/components/styles/gradient-background';
@@ -16,7 +10,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useGetBookingList } from '@/features/booking/hooks';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
-import { BookingItem } from '@/features/booking/types';
 import Empty from '@/components/empty';
 import { BookingCard } from '@/components/app/booking';
 
@@ -26,17 +19,19 @@ export default function OrdersScreen() {
 
   const { status } = useLocalSearchParams<{ status?: string }>();
 
-  const { data,
+  const {
+    data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch,
     isRefetching,
     setFilter,
-    params } = useGetBookingList();
+    params,
+  } = useGetBookingList();
 
   useEffect(() => {
-    if (status){
+    if (status) {
       let statusEnum = Number(status) as _BookingStatus;
       setFilter({
         status: statusEnum,
@@ -44,20 +39,16 @@ export default function OrdersScreen() {
     }
   }, [status]);
 
-
   return (
     <View className="flex-1 bg-base-color-3">
       {/* --- HEADER --- */}
       <GradientBackground
         style={{
           paddingTop: insets.top + 10,
-          paddingHorizontal: 16,
           paddingBottom: 24,
           zIndex: 10,
-        }}
-        >
-
-        <View className="flex-row items-center justify-between mb-4 mt-2">
+        }}>
+        <View className="mb-4 mt-2 flex-row items-center justify-between px-4">
           {/* Title & Description */}
           <View className="gap-2">
             <Text className="font-inter-bold text-xl text-white">
@@ -67,34 +58,33 @@ export default function OrdersScreen() {
               {t('header_app.orders_description')}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="rounded-full bg-white/80 p-2">
+          <TouchableOpacity onPress={() => router.back()} className="rounded-full bg-white/80 p-2">
             {/* Icon Back ở đây nếu cần */}
             <Icon as={X} size={20} className="text-primary-color-2" />
           </TouchableOpacity>
         </View>
 
         {/* --- FILTER BAR --- */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 8 }}>
-          {Object.entries(_BookingStatusMap).map(([key, value]) => {
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {Object.entries(_BookingStatusMap).map(([key, value], index) => {
             const checked = params?.filter?.status === Number(key);
+
             return (
               <TouchableOpacity
                 key={key}
-                onPress={() => setFilter({
-                  status: Number(key),
-                })}
+                onPress={() =>
+                  setFilter({
+                    status: Number(key),
+                  })
+                }
                 className={cn(
-                  'flex-row items-center rounded-full border px-4 py-1.5',
+                  'mr-2 flex-row items-center rounded-full border px-4 py-1.5',
+                  index === 0 && 'ml-4',
                   checked ? 'border-white bg-white' : 'border-blue-400/30 bg-blue-800/30'
                 )}>
                 <Text
                   className={cn(
-                    'text-xs font-inter-medium',
+                    'font-inter-medium text-xs',
                     checked ? 'text-blue-700' : 'text-blue-100'
                   )}>
                   {t(value)}
@@ -107,7 +97,6 @@ export default function OrdersScreen() {
 
       {/* --- BODY --- */}
       <View className="mt-4 flex-1 px-4">
-
         {/* List */}
         <FlatList
           keyExtractor={(item, index) => `masseur-${item.id}-${index}`}
@@ -127,10 +116,10 @@ export default function OrdersScreen() {
           onEndReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
-          refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
-          }
-          renderItem={({ item }) => <BookingCard item={item} key={item.id} onRefresh={() => refetch()} />}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+          renderItem={({ item }) => (
+            <BookingCard item={item} key={item.id} onRefresh={() => refetch()} />
+          )}
           ListEmptyComponent={<Empty />}
         />
       </View>

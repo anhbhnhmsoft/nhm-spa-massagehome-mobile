@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { DashboardTab } from '@/features/service/const';
 import { ChartDataItem } from '@/features/ktv/types';
 import { useDashboardChart } from '@/features/ktv/hooks/useDashboardChart';
 import { BarChart3 } from 'lucide-react-native';
+import { formatBalance } from '@/lib/utils';
 
 interface Props {
   type: DashboardTab;
@@ -80,7 +81,9 @@ const DashboardChart: React.FC<Props> = ({ type, data }) => {
                 <View key={index} className="flex-1 items-center">
                   {/* Tooltip hoặc giá trị trên đầu cột (tùy chọn) */}
                   {Number(item.total) > 0 && (
-                    <Text className="mb-1 text-[8px] font-bold text-blue-600">{item.total}</Text>
+                    <Text className="mb-1 text-[8px] font-bold text-blue-600">
+                      {formatBalance(item.total)}
+                    </Text>
                   )}
 
                   <View

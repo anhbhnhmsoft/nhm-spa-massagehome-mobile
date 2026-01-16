@@ -50,7 +50,7 @@ import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
 import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
-import {  useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
 
 // Hook cho chỉnh sửa dịch vụ
@@ -479,7 +479,6 @@ export const useDashboardTotalIncome = () => {
   // Build text hiển thị percent change với i18next
   const percentChangeText = useMemo(() => {
     if (!percentChange) return '';
-
     const compareKey =
       activeTab === 'day'
         ? 'yesterday'
@@ -500,11 +499,11 @@ export const useDashboardTotalIncome = () => {
     }
 
     const sign = percentChange.percent! > 0 ? '+' : '';
+
     return `${sign}${percentChange.percent} ${t('dashboard.percent_change.compare', {
       compare: t(`dashboard.compare.${compareKey}`),
     })}`;
   }, [percentChange, activeTab, t]);
-
   // Set tab hiện tại
   const handleSetTab = useCallback((tab: DashboardTab) => {
     setActiveTab(tab);
@@ -549,7 +548,22 @@ export const editProfileKTV = () => {
       lat: z.coerce.number().optional(),
       lng: z.coerce.number().optional(),
       gender: z.coerce.number().optional(),
-      date_of_birth: z.string().optional(),
+      date_of_birth: z
+        .string()
+        .optional()
+        .refine((val) => dayjs(val).isValid(), {
+          error: t('profile.error.invalid_date_of_birth'),
+        })
+        .refine(
+          (val) => {
+            const inputTime = dayjs(val);
+            // Ngày sinh phải trước ngày hiện tại
+            return inputTime.isBefore(dayjs());
+          },
+          {
+            error: t('profile.error.invalid_date_of_birth'), // "Ngày sinh phải trước ngày hiện tại"
+          }
+        ),
       old_pass: z.string().optional(),
       new_pass: z
         .string()
@@ -801,7 +815,6 @@ export const useEditImage = () => {
     removeImage,
   };
 };
-
 
 /**
  * Xử lý màn hình quét qr code khách hàng

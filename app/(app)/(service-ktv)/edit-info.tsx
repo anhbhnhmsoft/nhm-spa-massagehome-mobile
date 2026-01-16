@@ -24,6 +24,7 @@ import DateTimePickerInput from '@/components/app/ktv/date-time-input';
 import { BottomEditAvatar } from '@/components/app/profile-tab';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function EditInfoScreen() {
   const { form, profileData, onSubmit, user, isLoading } = editProfileKTV();
@@ -34,7 +35,9 @@ export default function EditInfoScreen() {
   const bottomShetImagePicker = useRef<BottomSheetModal>(null);
   const [imageError, setImageError] = useState(false);
   const { t } = useTranslation();
-
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
   return (
     <>
       <SafeAreaView className="flex-1 bg-white">
@@ -49,11 +52,6 @@ export default function EditInfoScreen() {
             bounces={false}
             overScrollMode="never"
             showsVerticalScrollIndicator={false}>
-            {isLoading && (
-              <View className="flex-1 items-center justify-center">
-                <Text className="text-base text-gray-500">{t('common.loading')}...</Text>
-              </View>
-            )}
             {profileData && (
               <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -372,4 +370,53 @@ const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any
     {/* ERROR TEXT */}
     {error && <Text className="ml-1 mt-1 text-xs text-red-500">{error}</Text>}
   </View>
+);
+
+const ProfileSkeleton = () => (
+  <SafeAreaView className="flex-1 bg-white">
+    {/* Header Placeholder */}
+    <HeaderBack title="profile.edit_info" />
+
+    <ScrollView className="flex-1 px-4">
+      {/* 1. Avatar Skeleton */}
+      <View className="mb-6 mt-6 items-center">
+        <Skeleton className="h-28 w-28 rounded-full" />
+      </View>
+
+      {/* 2. Form Fields Skeleton */}
+      <View className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <View key={i} className="mb-3">
+            <Skeleton className="mb-2 h-4 w-24 rounded-sm" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </View>
+        ))}
+
+        {/* Gender Selection Skeleton */}
+        <View className="mb-3">
+          <Skeleton className="mb-2 h-4 w-24 rounded-sm" />
+          <View className="flex-row justify-between">
+            <Skeleton className="h-14 w-[46%] rounded-xl" />
+            <Skeleton className="h-14 w-[46%] rounded-xl" />
+          </View>
+        </View>
+
+        {/* Bio Skeleton */}
+        <Skeleton className="mb-2 mt-4 h-6 w-20" />
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="mb-4 h-24 w-full rounded-xl" />
+        ))}
+
+        {/* Security Skeleton */}
+        <Skeleton className="mb-2 mt-4 h-6 w-32" />
+        <Skeleton className="mb-3 h-14 w-full rounded-xl" />
+        <Skeleton className="mb-10 h-14 w-full rounded-xl" />
+      </View>
+    </ScrollView>
+
+    {/* Footer Button Skeleton */}
+    <View className="border-t border-gray-100 p-4">
+      <Skeleton className="h-14 w-full rounded-xl" />
+    </View>
+  </SafeAreaView>
 );
