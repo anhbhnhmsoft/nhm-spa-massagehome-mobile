@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import Empty from '@/components/empty';
 import { BookingCard } from '@/components/app/booking';
+import { CancellationModal } from '@/components/app/cancel-booking-modal';
 
 export default function OrdersScreen() {
   const { t } = useTranslation();
@@ -28,6 +29,13 @@ export default function OrdersScreen() {
     isRefetching,
     setFilter,
     params,
+    cancelReason,
+    showModalCancelBooking,
+    setShowModalCancelBooking,
+    setBookingIdCancel,
+    handleOpenModalCancelBooking,
+    handleConfirmCancel,
+    setCancelReason,
   } = useGetBookingList();
 
   useEffect(() => {
@@ -118,11 +126,24 @@ export default function OrdersScreen() {
           }}
           refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
           renderItem={({ item }) => (
-            <BookingCard item={item} key={item.id} onRefresh={() => refetch()} />
+            <BookingCard
+              item={item}
+              key={item.id}
+              onRefresh={() => refetch()}
+              cancelBooking={handleOpenModalCancelBooking}
+            />
           )}
           ListEmptyComponent={<Empty />}
         />
       </View>
+      {/* cancel Modal */}
+      <CancellationModal
+        isVisible={showModalCancelBooking}
+        onClose={() => setShowModalCancelBooking(false)}
+        reason={cancelReason}
+        setReason={setCancelReason}
+        onConfirm={handleConfirmCancel}
+      />
     </View>
   );
 }

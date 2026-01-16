@@ -1,8 +1,8 @@
-import { Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import React, { useMemo } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { _BookingStatus, _BookingStatusMap, getStatusColor } from '@/features/service/const';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
@@ -10,9 +10,8 @@ import { User } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTime, useBookingDetails } from '@/features/ktv/hooks/use-booking-details';
-import { queryClient } from '@/lib/provider/query-provider';
 import { formatBalance, openMap } from '@/lib/utils';
-import { CancellationModal } from '@/components/app/ktv/cancel-booking-modal';
+import { CancellationModal } from '@/components/app/cancel-booking-modal';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function BookingDetails() {
@@ -37,9 +36,10 @@ export default function BookingDetails() {
 
   const showActions = useMemo(() => {
     return (
-      booking?.status === _BookingStatus.CONFIRMED ||
-      booking?.status === _BookingStatus.ONGOING
-    ) && !isFinished;
+      (booking?.status === _BookingStatus.CONFIRMED ||
+        booking?.status === _BookingStatus.ONGOING) &&
+      !isFinished
+    );
   }, [booking?.status, isFinished]);
 
   return (
@@ -208,7 +208,9 @@ export default function BookingDetails() {
                   />
                   <Text className="ml-2 text-xs text-slate-400">{t('services.price_service')}</Text>
                 </View>
-                <Text className="font-inter-bold text-slate-800">{formatBalance(booking?.price || 0)} {t('common.currency')}</Text>
+                <Text className="font-inter-bold text-slate-800">
+                  {formatBalance(booking?.price || 0)} {t('common.currency')}
+                </Text>
               </View>
             </View>
           </View>
@@ -222,7 +224,11 @@ export default function BookingDetails() {
           {isRunning && remainingMs != null && (
             <View className="mb-4 items-center">
               <View className="flex-row items-center rounded-full bg-primary-color-1/10 px-5 py-2">
-                <Ionicons name="time-outline" size={18} color={DefaultColor.base['primary-color-2']} />
+                <Ionicons
+                  name="time-outline"
+                  size={18}
+                  color={DefaultColor.base['primary-color-2']}
+                />
                 <Text className="ml-2 font-inter-bold text-primary-color-2">
                   {t('booking.remaining_time', { time: formatTime(remainingMs) })}
                 </Text>
@@ -247,9 +253,7 @@ export default function BookingDetails() {
             disabled={isRunning || isFinished || isBlockedByOther}
             onPress={handleStart}
             className={`mb-2 flex-row items-center justify-center rounded-2xl py-3 ${
-              isRunning || isFinished || isBlockedByOther
-                ? 'bg-slate-300'
-                : 'bg-primary-color-2'
+              isRunning || isFinished || isBlockedByOther ? 'bg-slate-300' : 'bg-primary-color-2'
             }`}>
             <Ionicons
               name={isRunning ? 'checkmark-circle' : isFinished ? 'close-circle' : 'play-circle'}
