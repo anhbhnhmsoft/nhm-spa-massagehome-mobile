@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { _LanguageCode } from '@/lib/const';
+import { _BackendURL, _LanguageCode } from '@/lib/const';
 import { SecureStorage } from '@/lib/storages';
 import { _StorageKey } from '@/lib/storages/key';
 import ErrorAPIServer, { IDeviceInfo } from '@/lib/types';
@@ -13,6 +13,7 @@ import 'react-native-get-random-values';
 import { TFunction } from 'i18next';
 import dayjs from 'dayjs';
 import { _KTVConfigSchedules } from '@/features/ktv/consts'; // Cần cho uuid
+import * as WebBrowser from 'expo-web-browser';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -184,4 +185,8 @@ export const getCurrentDayKey = () => {
   const day = dayjs().day(); // 0 là Chủ nhật, 1 là Thứ 2
   if (day === 0) return _KTVConfigSchedules.SUNDAY; // 0 -> 8
   return day + 1; // 1 -> 2 (Thứ 2), 6 -> 7 (Thứ 7)
+};
+
+export const openAboutPage = async () => {
+  await WebBrowser.openBrowserAsync(`${_BackendURL}/ve-chung-toi`);
 };

@@ -19,7 +19,7 @@ import {
 } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
-import { cn, formatBalance } from '@/lib/utils';
+import { cn, formatBalance, openAboutPage } from '@/lib/utils';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useChangeAvatar, useLogout } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
@@ -316,7 +316,7 @@ export const FeatureList = () => {
         </TouchableOpacity>
 
         {/* Thông tin ứng dụng */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center">
+        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => openAboutPage()}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Info} size={24} className="text-primary-color-1" />
           </View>
