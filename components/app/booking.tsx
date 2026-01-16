@@ -13,15 +13,20 @@ import { _BookingStatus, _BookingStatusMap, getStatusColor } from '@/features/se
 import { useGetRoomChat } from '@/features/chat/hooks';
 import { ReviewModal } from '@/components/app/review-modal';
 
-export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh: () => void }) => {
+export const BookingCard = ({
+  item,
+  onRefresh,
+  cancelBooking,
+}: {
+  item: BookingItem;
+  onRefresh: () => void;
+  cancelBooking: (bookingId: string) => void;
+}) => {
   const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
-
   const [showDetailModal, setShowDetailModal] = useState(false);
   const getRoomChat = useGetRoomChat();
-
   const [showReviewModal, setShowReviewModal] = useState(false);
-
 
   return (
     <>
@@ -59,7 +64,7 @@ export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh:
 
           {/* Detail */}
           <View className="flex-1">
-            <Text className="text-base font-inter-bold text-slate-800">{item.ktv_user.name}</Text>
+            <Text className="font-inter-bold text-base text-slate-800">{item.ktv_user.name}</Text>
             <Text className="text-xs text-slate-500" numberOfLines={1}>
               {item.service.name}
             </Text>
@@ -94,12 +99,6 @@ export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh:
 
         {/* 4. Action Buttons (3 nút dưới cùng) */}
         <View className="flex-row gap-2">
-          {/* Detail Button */}
-          <TouchableOpacity
-            onPress={() => setShowDetailModal(true)}
-            className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
-            <Text className="text-xs font-inter-bold text-slate-600">{t('booking.detail')}</Text>
-          </TouchableOpacity>
           {/* Reviews Button */}
           {item.status === _BookingStatus.COMPLETED ? (
             <>
@@ -108,10 +107,11 @@ export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh:
                 onPress={() => setShowReviewModal(true)}
                 className={cn(
                   'flex-1 items-center justify-center rounded-lg bg-orange-500 py-2',
-                  item.has_reviews && 'bg-slate-400 cursor-not-allowed'
-                )}
-              >
-                <Text className="font-inter-bold text-xs text-white">{ item.has_reviews ? t('booking.has_reviews') : t('booking.reviews')}</Text>
+                  item.has_reviews && 'cursor-not-allowed bg-slate-400'
+                )}>
+                <Text className="font-inter-bold text-xs text-white">
+                  {item.has_reviews ? t('booking.has_reviews') : t('booking.reviews')}
+                </Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -123,6 +123,21 @@ export const BookingCard = ({ item, onRefresh }: { item: BookingItem, onRefresh:
                 <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
               </TouchableOpacity>
             </>
+          )}
+          {/* Detail Button */}
+          <TouchableOpacity
+            onPress={() => setShowDetailModal(true)}
+            className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
+            <Text className="font-inter-bold text-xs text-slate-600">{t('booking.detail')}</Text>
+          </TouchableOpacity>
+
+          {/* cancel Button */}
+          {item.status === _BookingStatus.CONFIRMED && (
+            <TouchableOpacity
+              onPress={() => cancelBooking(item.id)}
+              className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
+              <Text className="font-inter-bold text-xs text-slate-600">{t('common.cancel')}</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -263,7 +278,8 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                     <View className="flex-row flex-wrap justify-between gap-2">
                       <Text className="text-slate-600">{t('booking.discount_price')}</Text>
                       <Text className="font-inter-semibold text-slate-800">
-                        {formatBalance(Number(item.price_before_discount) - Number(item.price))} {t('common.currency')}
+                        {formatBalance(Number(item.price_before_discount) - Number(item.price))}{' '}
+                        {t('common.currency')}
                       </Text>
                     </View>
                   </>

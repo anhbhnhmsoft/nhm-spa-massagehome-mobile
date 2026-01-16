@@ -1,10 +1,11 @@
 import { client } from '@/lib/axios-client';
-import { BookingCheckResponse, ListBookingRequest, ListBookingResponse } from '@/features/booking/types';
+import { BookingCheckResponse, ListBookingRequest, ListBookingResponse, } from '@/features/booking/types';
+import { CancelBookingRequest } from '@/features/ktv/types';
+import { ResponseSuccessType } from '@/lib/types';
 
 const defaultUri = '/booking';
 
 const bookingApi = {
-
   /**
    * Lấy danh sách lịch hẹn
    */
@@ -20,6 +21,10 @@ const bookingApi = {
     const response = await client.get(`${defaultUri}/${id}`);
     return response.data;
   },
-}
+  cancelBooking: async (data: CancelBookingRequest): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/cancel`, data); // Sửa lại
+    return response.data;
+  },
+};
 
 export default bookingApi;
