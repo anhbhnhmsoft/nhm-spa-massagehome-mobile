@@ -367,6 +367,10 @@
     "config_schedule": "Cấu hình lịch làm việc",
     "scanReferral": "Quét mã giới thiệu",
     "inviteTechnician": "Mời kỹ thuật viên",
+    "delete_account_confirm_title": "Xác nhận xóa tài khoản",
+    "delete_account": "Xóa tài khoản",
+    "delete_account_warning": "Hành động này sẽ xóa toàn bộ dữ liệu, lịch sử giao dịch và thông tin cá nhân của bạn. Dữ liệu sẽ không thể khôi phục sau khi xóa.",
+    "delete_account_success": "Tài khoản của bạn đã được xóa khỏi hệ thống thành công.",
     "error": {
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
@@ -379,7 +383,7 @@
     },
     "partner_form": {
       "title": "Đăng ký kỹ thuật viên",
-      "title_technician_leader": "Đăng ký Trưởng nhóm Kỹ thuật viên",
+      "title_technician_leader": "Đăng ký Trưởng nhóm KTV",
       "images_title": "Hình ảnh của bạn hiển thị cho khách hàng",
       "images_min_note": "Tối thiểu 3 ảnh và tối đa 5 ảnh",
       "images_warning": "Không đăng ảnh ảo, hở hang. Ảnh cần rõ mặt, rõ nét, chính diện, nghiêm túc, phù hợp đi làm. Nghiêm cấm để thông tin cá nhân (Số điện thoại, Trang cá nhân, Địa chỉ chi tiết,...).",

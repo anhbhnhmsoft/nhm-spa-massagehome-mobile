@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import {
-  AuthenticateRequest, EditProfileRequest, LoginRequest,
+  AuthenticateRequest,
+  EditProfileRequest,
+  LoginRequest,
   RegisterRequest,
   SetLanguageRequest,
   VerifyRegisterOTPRequest,
@@ -70,32 +72,41 @@ export const useProfileMutation = () => {
 /**
  * Hook để chỉnh sửa avatar user
  */
-export const useMutationEditAvatar = () => useMutation({
-  mutationFn: (data: FormData) => authApi.editAvatar(data),
-});
-
+export const useMutationEditAvatar = () =>
+  useMutation({
+    mutationFn: (data: FormData) => authApi.editAvatar(data),
+  });
 
 /**
  * Hook để xóa avatar user
  */
-export const useMutationDeleteAvatar = () => useMutation({
-  mutationFn: () => authApi.deleteAvatar(),
-});
-
+export const useMutationDeleteAvatar = () =>
+  useMutation({
+    mutationFn: () => authApi.deleteAvatar(),
+  });
 
 /**
  * Hook để chỉnh sửa profile user
  */
-export const useMutationEditProfile = () => useMutation({
-  mutationFn: (data: EditProfileRequest) => authApi.editProfile(data),
-});
+export const useMutationEditProfile = () =>
+  useMutation({
+    mutationFn: (data: EditProfileRequest) => authApi.editProfile(data),
+  });
 
 /**
  * Hook để logout user
  */
-export const useLogoutMutation = () => useMutation({
-  mutationFn: () => authApi.logout(),
-});
+export const useLogoutMutation = () =>
+  useMutation({
+    mutationFn: () => authApi.logout(),
+  });
 
+/**
+ * Hook để xóa account
+ */
 
-
+export const useLockAccountMutation = () => {
+  return useMutation({
+    mutationFn: () => authApi.lockAccount(),
+  });
+};

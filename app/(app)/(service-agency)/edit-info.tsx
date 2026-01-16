@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { Camera, Key, Lock, Save, User as UserIcon } from 'lucide-react-native';
+import { Camera, Key, Lock, Save, Trash2, User as UserIcon } from 'lucide-react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
@@ -26,6 +26,7 @@ import dayjs from 'dayjs';
 import { _Gender } from '@/features/auth/const';
 import { BottomEditAvatar } from '@/components/app/profile-tab';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLockAccount } from '@/features/auth/hooks';
 
 export default function EditInfoScreen() {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ export default function EditInfoScreen() {
   const [imageError, setImageError] = useState(false);
 
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
-
+  const { handleLockAccount, isPending } = useLockAccount();
   // Sử dụng Hook đã viết từ trước
   const { form, onSubmit, errors, isSubmitting, isLoading } = useUpdateProfileAgency();
   const { control, setValue } = form;
@@ -225,6 +226,18 @@ export default function EditInfoScreen() {
                     />
                   )}
                 />
+
+                <View className="mb-8 mt-6 px-4">
+                  <TouchableOpacity
+                    onPress={handleLockAccount}
+                    disabled={isPending}
+                    className="mt-4 flex-row items-center justify-center rounded-xl border border-red-200 bg-white py-3 active:bg-red-50">
+                    <Trash2 size={18} color="#ef4444" />
+                    <Text className="ml-2 font-inter-bold text-red-600">
+                      {t('profile.delete_account')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </ScrollView>
           </KeyboardAwareScrollView>

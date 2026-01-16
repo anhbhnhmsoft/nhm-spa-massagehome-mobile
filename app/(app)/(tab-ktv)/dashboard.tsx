@@ -1,24 +1,17 @@
 import React, { ComponentType, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
-import {
-  Users,
-  CreditCard,
-  Share2,
-  Star,
-  UserCircle,
-  Droplets,
-  Sparkles,
-  TrendingUp,
-} from 'lucide-react-native';
+import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { CreditCard, Share2, Star, TrendingUp, Users } from 'lucide-react-native';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useDashboardTotalIncome } from '@/features/ktv/hooks';
 import { formatBalance } from '@/lib/utils';
-import { _DashboardTabMap, _WeekDayMap, DASHBOARD_TABS } from '@/features/service/const';
+import { _DashboardTabMap, DASHBOARD_TABS, DashboardTab } from '@/features/service/const';
 import DashboardChart from '@/components/app/ktv/dashboard_chart';
-import { TransactionItem } from '../(profile)/wallet';
 import Empty from '@/components/empty';
 import { router } from 'expo-router';
+import { TransactionItem } from '@/components/app/wallet';
+import { Skeleton } from '@/components/ui/skeleton';
+
 interface StatCardProps {
   icon: ComponentType<{
     size?: number;
@@ -41,8 +34,16 @@ const StatCard = ({ icon: Icon, label, value, iconBgColor }: StatCardProps) => (
 );
 
 const DashboardScreen = () => {
-  const { activeTab, handleSetTab, data, percentChangeText, queryTransactionList, refetch, t } =
-    useDashboardTotalIncome();
+  const {
+    activeTab,
+    handleSetTab,
+    data,
+    percentChangeText,
+    queryTransactionList,
+    refetch,
+    t,
+    isLoading,
+  } = useDashboardTotalIncome();
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
     try {
@@ -53,6 +54,76 @@ const DashboardScreen = () => {
     }
   };
   const TAB_BAR_HEIGHT = getTabBarHeight();
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-white">
+        <HeaderAppKTV />
+        <View className="px-5">
+          {/* Tabs Skeleton */}
+          <View className="mb-8 mt-4 rounded-2xl bg-gray-100/80 p-1.5">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 6 }}>
+              {DASHBOARD_TABS.map((tab) => {
+                const isActive = activeTab === tab;
+                return (
+                  <TouchableOpacity
+                    key={tab}
+                    onPress={() => handleSetTab(tab)}
+                    className={`rounded-xl px-5 py-2.5 ${isActive ? 'bg-white' : ''}`}>
+                    <Text
+                      className={`text-center text-[13px] ${
+                        isActive
+                          ? 'font-inter-bold text-primary-color-1'
+                          : 'font-inter-medium text-gray-500'
+                      }`}>
+                      {t(_DashboardTabMap[tab])}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          {/* Total Income Skeleton */}
+          <View className="mb-8 items-center">
+            <Skeleton className="mb-2 h-4 w-32 rounded-md" />
+            <View className="flex-row items-end gap-2">
+              <Skeleton className="h-12 w-48 rounded-xl" />
+            </View>
+            <Skeleton className="mt-4 h-8 w-40 rounded-full" />
+          </View>
+
+          {/* Chart Skeleton */}
+          <Skeleton className="mb-8 h-48 w-full rounded-3xl" />
+
+          {/* Grid Stats Skeleton */}
+          <View className="flex-row flex-wrap justify-between">
+            {[1, 2, 3, 4].map((i) => (
+              <View key={i} className="mb-4 w-[48%] rounded-3xl border border-blue-50 bg-white p-4">
+                <Skeleton className="mb-3 h-11 w-11 rounded-2xl" />
+                <Skeleton className="mb-2 h-4 w-20" />
+                <Skeleton className="h-6 w-24" />
+              </View>
+            ))}
+          </View>
+
+          {/* Transactions Skeleton */}
+          <View className="mt-6">
+            <View className="mb-5 flex-row justify-between">
+              <Skeleton className="h-6 w-40" />
+              <Skeleton className="h-4 w-16" />
+            </View>
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="mb-3 h-16 w-full rounded-2xl" />
+            ))}
+          </View>
+        </View>
+      </View>
+    );
+  }
   return (
     <View className="flex-1 bg-white">
       <HeaderAppKTV />
@@ -102,7 +173,7 @@ const DashboardScreen = () => {
             </Text>
           </View>
 
-          {percentChangeText && (
+          {percentChangeText && activeTab !== DashboardTab.DAY && (
             <View className="mt-3 flex-row items-center rounded-full bg-green-50 px-4 py-1.5">
               <TrendingUp size={14} color="#22c55e" />
               <Text className="ml-1.5 text-sm font-semibold text-green-600">
