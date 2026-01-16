@@ -2,7 +2,7 @@ import { client } from '@/lib/axios-client';
 import {
   AllCategoriesResponse,
   BookingDetailsResponse,
-  CancelBookingRequet,
+  CancelBookingRequest,
   ConfigSchedulesResponse,
   DashboardKtvResponse,
   DashboardQueryParams,
@@ -17,9 +17,9 @@ import {
   StartBookingResponse,
   TotalIncomeResponse,
 } from '@/features/ktv/types';
-import { ListBookingRequest, ListBookingResponse } from '../booking/types';
 import { ResponseSuccessType } from '@/lib/types';
-import { UpdateServiceResponse } from '../service/types';
+import { UpdateServiceResponse } from '@/features/service/types';
+import { ListBookingRequest, ListBookingResponse } from '@/features/booking/types';
 
 const defaultUri = '/ktv';
 
@@ -82,12 +82,12 @@ const ktvApi = {
     });
     return response.data;
   },
-  cancelBooking: async (data: CancelBookingRequet) => {
-    const response = await client.post(`/booking/cancel`, data);
+  cancelBooking: async (data: CancelBookingRequest) => {
+    const response = await client.post(`${defaultUri}/cancel-booking`, data); // Sửa lại
     return response.data;
   },
   finishBooking: async (id: string) => {
-    const response = await client.post(`/booking/finish`, {
+    const response = await client.post(`${defaultUri}/finish-booking`, {
       booking_id: id,
     });
     return response.data;

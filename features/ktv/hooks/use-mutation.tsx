@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import ktvApi from '@/features/ktv/api';
 import {
-  CancelBookingRequet,
+  CancelBookingRequest,
   DetailServiceRequest,
   EditConfigScheduleRequest,
   EditProfileKtvRequest,
@@ -43,7 +43,7 @@ export const useStartBookingMutation = () => {
 //  hủy booking
 export const useCancelBookingMutation = () => {
   return useMutation({
-    mutationFn: (data: CancelBookingRequet) => ktvApi.cancelBooking(data),
+    mutationFn: (data: CancelBookingRequest) => ktvApi.cancelBooking(data),
   });
 };
 

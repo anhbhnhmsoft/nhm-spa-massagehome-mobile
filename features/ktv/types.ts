@@ -54,7 +54,7 @@ export type ListServiceResponse = ResponseDataSuccessType<Paginator<ServiceItem>
 export type DetailServiceRequest = {
   id: string;
 };
-export type CancelBookingRequet = {
+export type CancelBookingRequest = {
   booking_id: string;
   reason: string;
 };
