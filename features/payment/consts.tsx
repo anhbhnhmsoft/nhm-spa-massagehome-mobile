@@ -93,6 +93,7 @@ export const _TransactionInType = [
 export const _TransactionOutType = [
   _TransactionType.WITHDRAWAL,
   _TransactionType.PAYMENT,
+  _TransactionType.RETRIEVE_PAYMENT_REFUND_KTV,
 ] as readonly _TransactionType[];
 
 // Các loại thông tin rút tiền

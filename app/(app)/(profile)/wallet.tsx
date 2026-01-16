@@ -31,7 +31,6 @@ export default function WalletScreen() {
       router.setParams({ toTabWallet: undefined });
     }
   }, [toTabWallet]);
-  console.log(queryTransactionList.data);
   return (
     <>
       <SafeAreaView className="flex-1 bg-white">

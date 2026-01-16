@@ -77,7 +77,7 @@ export function useBookingCountdown() {
 }
 
 export const useBookingDetails = (id: string) => {
-  const { data, isSuccess, refetch, isFetching } = useBookingDetailsQuery(id);
+  const { data, refetch, isFetching } = useBookingDetailsQuery(id);
   const remainingMs = useBookingCountdown();
   const booking = useMemo(() => {
     return data?.data || null;
@@ -88,7 +88,9 @@ export const useBookingDetails = (id: string) => {
   const activeBookingId = useBookingStore((s) => s.bookingId);
   const { warning, error } = useToast();
   const { isRunning, isFinished, isBlockedByOther } = useMemo(() => {
+    // Kiểm tra xem booking hiện tại có phải là booking đang chạy hay không
     const isThisBookingActive = activeBookingId === id;
+    // Kiểm tra xem có booking khác đang chạy hay không
     const otherBookingActive = activeBookingId != null && !isThisBookingActive;
 
     const isRunning = isThisBookingActive && remainingMs != null && remainingMs > 0;
@@ -172,7 +174,7 @@ export const useBookingDetails = (id: string) => {
       return;
     }
 
-    handleStartBooking?.();
+    handleStartBooking();
   }, [isRunning, isBlockedByOther, handleStartBooking, t, warning]);
 
   const handleCancelBooking = useCallback(

@@ -453,7 +453,7 @@ export const useDashboardTotalIncome = () => {
   const params: DashboardQueryParams = useMemo(() => ({ type: activeTab }), [activeTab]);
 
   // Gọi API tổng doanh thu
-  const { data, isLoading, refetch } = useTotalIncomeQuery(params);
+  const { data, isLoading, isRefetching ,refetch } = useTotalIncomeQuery(params);
 
   // Gọi API danh sách giao dịch
   const queryTransactionList = useGetTransactionList({
@@ -512,7 +512,7 @@ export const useDashboardTotalIncome = () => {
   return {
     activeTab,
     handleSetTab,
-    isLoading,
+    isLoading: isLoading || isRefetching,
     refetch,
     data,
     chartData,

@@ -16,7 +16,12 @@ import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
 import useAuthStore from '@/features/auth/store';
 import useHandleLinking from '@/features/app/hooks/use-handle-linking';
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export {
   // Catch any errors thrown by the Layout component.
