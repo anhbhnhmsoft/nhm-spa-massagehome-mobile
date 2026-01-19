@@ -42,7 +42,6 @@ expo-env.d.ts
 
 android
 ios
-google-services.json
 yarn.lock
 package-lock.json
 .idea
