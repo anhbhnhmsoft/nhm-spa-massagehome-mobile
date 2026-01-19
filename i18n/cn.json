@@ -371,6 +371,8 @@
     "delete_account": "删除账户",
     "delete_account_warning": "此操作将永久删除您的所有数据、交易记录和个人信息。删除后数据将无法恢复。",
     "delete_account_success": "您的账户已成功从系统中删除。",
+    "referral_by": "推荐人",
+    "is_leader": "渠道合作商",
     "error": {
       "invalid_name": "姓名必须为 4-255 个字符",
       "invalid_date_of_birth": "出生日期不能在未来",
@@ -641,8 +643,18 @@
     "booking_cancel_confirm_title": "确认取消",
     "booking_cancel_confirm_message": "您确定要取消此预约吗？",
     "booking_cancel_reason_required": "请输入取消原因",
+    "booking_end_success": "服务已结束",
     "coupon": "优惠券",
-    "discount_price": "折扣价格"
+    "discount_price": "折扣价格",
+    "enter_cancel_reason": "输入取消原因",
+    "notification": {
+      "booking_end_title": "服务结束",
+      "booking_end_body": "服务已结束"
+    },
+    "error": {
+      "only_confirmed_booking": "只有已确认的预约才能开始服务。",
+      "another_booking_already_started": "只有一个服务可以在同一时间进行。"
+    }
   },
   "affiliate": {
     "title": "邀请好友",

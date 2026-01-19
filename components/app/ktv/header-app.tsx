@@ -18,7 +18,6 @@ export function HeaderAppKTV() {
   const user = useAuthStore((state) => state.user);
   const [imageError, setImageError] = useState(false);
   const [modalInfoVisible, setModalInfoVisible] = useState<boolean>(false);
-
   return (
     <>
       <GradientBackground
@@ -57,6 +56,11 @@ export function HeaderAppKTV() {
             <View>
               <Text className="text-white text-xs">{t('header_app.hello')}</Text>
               <Text className="text-lg font-inter-bold text-white">{user?.name || 'Stranger'}</Text>
+              {user?.review_application?.is_leader && (
+                <Text className="text-xs text-teal-100">
+                  {t('profile.is_leader')}
+                </Text>
+              )}
             </View>
           </View>
           {/* Hiển thị biểu tượng thông báo */}

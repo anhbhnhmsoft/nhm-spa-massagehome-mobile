@@ -4,7 +4,6 @@ import { useImmer } from 'use-immer';
 import { ListServiceRequest } from '@/features/ktv/types';
 import { useInfiniteBookingList, useInfiniteServiceList } from '@/features/ktv/hooks/use-query';
 import { useKtvStore } from '@/features/ktv/stores';
-import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
 export const useSchedule = () => {
   // React Query handles invalidation; no local `refreshed` flag needed here.

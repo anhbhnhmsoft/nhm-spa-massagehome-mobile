@@ -15,20 +15,18 @@ import {
 interface CancelModalProps {
   isVisible: boolean;
   onClose: () => void;
-  reason: string;
-  setReason: (v: string) => void;
-  onConfirm: () => void;
+  onConfirm: (reason: string) => void;
+  isLoading: boolean;
 }
 
 export const CancellationModal = ({
   isVisible,
   onClose,
-  reason,
-  setReason,
   onConfirm,
+  isLoading,
 }: CancelModalProps) => {
   const { t } = useTranslation();
-
+  const [reason, setReason] = React.useState('');
   return (
     <Modal
       visible={isVisible}
@@ -51,7 +49,7 @@ export const CancellationModal = ({
               {/* Ô nhập liệu Textarea */}
               <View className="mb-6">
                 <TextInput
-                  placeholder="Nhập lý do tại đây..."
+                  placeholder={t('booking.enter_cancel_reason')}
                   placeholderTextColor="#90A1B9"
                   multiline
                   numberOfLines={5}
@@ -75,14 +73,14 @@ export const CancellationModal = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={onConfirm}
-                  disabled={reason.trim().length === 0}
+                  onPress={() => onConfirm(reason)}
+                  disabled={isLoading || reason.trim().length === 0}
                   activeOpacity={0.8}
                   className={`flex-1 items-center rounded-md py-4 ${
                     reason.trim().length === 0 ? 'bg-primary-color-4 opacity-50' : 'bg-destructive'
                   }`}>
                   <Text className="font-inter-semibold text-destructive-foreground">
-                    {t('booking.confirm_cancel')}
+                    {isLoading ? t('common.loading') : t('booking.confirm_cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>

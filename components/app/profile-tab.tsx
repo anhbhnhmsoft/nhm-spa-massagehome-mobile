@@ -89,6 +89,13 @@ export const UserProfileCard: FC<UserProfileCardProps> = ({
           <View className="ml-3 gap-2">
             <Text className="font-inter-bold text-lg text-white">{user?.name || '-'} </Text>
             <Text className="text-xs text-blue-50">ID: {user?.id || '-'} </Text>
+            {user?.referrer && (
+              <View className="flex-row items-center">
+                <Text className="text-xs text-teal-100">
+                  {t('profile.referral_by')}: {user.referrer.name}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
         {/* Action Icon */}

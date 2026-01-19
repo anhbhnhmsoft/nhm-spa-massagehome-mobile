@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "masa-spa",
+    "name": "Masa Home",
     "slug": "massage-home-spa",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "masa-spa",
@@ -11,9 +11,7 @@
     "androidNavigationBar": {
       "visible": "immersive"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {

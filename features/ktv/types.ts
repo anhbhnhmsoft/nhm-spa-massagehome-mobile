@@ -21,12 +21,12 @@ export type DashboardKtvResponse = ResponseDataSuccessType<{
   review_today: ReviewItem[];
 }>;
 export type StartBookingResponse = ResponseDataSuccessType<{
-  status: number;
+  booking_id: string;
   start_time: string;
+  expected_end_time: string;
   duration: number;
-  booking: BookingItem;
 }>;
-export type BookingDetailsResponse = ResponseDataSuccessType<{ data: BookingItem }>;
+export type BookingDetailsResponse = ResponseDataSuccessType<BookingItem>;
 
 export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>;
 

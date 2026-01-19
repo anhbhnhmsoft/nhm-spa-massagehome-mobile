@@ -12,6 +12,9 @@ import { v4 } from 'uuid';
 import 'react-native-get-random-values';
 import { TFunction } from 'i18next';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
+
 import { _KTVConfigSchedules } from '@/features/ktv/consts'; // Cần cho uuid
 import * as WebBrowser from 'expo-web-browser';
 
@@ -189,4 +192,39 @@ export const getCurrentDayKey = () => {
 
 export const openAboutPage = async () => {
   await WebBrowser.openBrowserAsync(`${_BackendURL}/ve-chung-toi`);
+};
+
+/**
+ * Tính toán thời gian kết thúc dựa trên thời gian bắt đầu và độ dài
+ * @param startTime Thời gian bắt đầu (ISO string)
+ * @param duration Độ dài thời gian (phút)
+ */
+export const calculateEndTime = (startTime: string, duration: number) => {
+  const start = dayjs(startTime);
+  return start.add(duration, 'minute');
+};
+
+export const getRemainingTime = (endTime: dayjs.Dayjs) => {
+  const now = dayjs();
+  const diff = endTime.diff(now); // Tính bằng miliseconds
+
+  if (diff <= 0) {
+    return {
+      totalMs: 0,
+      hours: '00',
+      minutes: '00',
+      seconds: '00',
+      isOver: true,
+    };
+  }
+
+  const dur = dayjs.duration(diff);
+
+  return {
+    totalMs: diff,
+    hours: Math.floor(dur.asHours()).toString().padStart(2, '0'),
+    minutes: dur.minutes().toString().padStart(2, '0'),
+    seconds: dur.seconds().toString().padStart(2, '0'),
+    isOver: false,
+  };
 };

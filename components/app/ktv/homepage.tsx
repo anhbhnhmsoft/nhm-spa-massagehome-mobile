@@ -30,12 +30,12 @@ export const AppointmentCard = ({ item }: AppointmentCardProps) => {
   const {t} = useTranslation();
   return (
     <TouchableOpacity
-      onPress={useSingleTouch(() => {
+      onPress={() => {
         router.push({
           pathname: '/(app)/(service-ktv)/booking-details',
           params: { id: item.id },
         });
-      })}
+      }}
       className="bg-white rounded-2xl shadow-sm border border-gray-100 flex-row overflow-hidden">
 
       {/* 1. DẢI MÀU XANH BÊN TRÁI (THEO DESIGN) */}

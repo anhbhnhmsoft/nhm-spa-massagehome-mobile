@@ -2,11 +2,10 @@ import { _StorageKey } from '@/lib/storages/key';
 import { create } from 'zustand';
 import { _LanguageCode } from '@/lib/const';
 import { Storage } from '@/lib/storages';
-import { LocationObject, PermissionStatus } from 'expo-location';
+import { LocationObject } from 'expo-location';
 import i18n from 'i18next';
 import { devtools } from 'zustand/middleware';
 
-export type LocationPermission = PermissionStatus | 'skipped' | null;
 
 export type LocationApp = {
   location: LocationObject;
@@ -18,7 +17,6 @@ export interface IApplicationStore {
   loading: boolean;
 
   location: LocationApp | null;
-  location_permission: LocationPermission;
 
   // functions
   setLanguage: (lang: _LanguageCode) => Promise<void>;
@@ -26,8 +24,6 @@ export interface IApplicationStore {
 
   setLoading: (state: boolean) => void;
   setLocation: (location: LocationApp | null) => void;
-  setLocationPermission: (permission: LocationPermission) => Promise<void>;
-  hydrateLocationPermission: () => Promise<LocationPermission>;
 }
 
 const useApplicationStore = create<IApplicationStore>()(
@@ -70,27 +66,6 @@ const useApplicationStore = create<IApplicationStore>()(
 
       setLocation: (location: LocationApp | null) => {
         set({ location }, false, 'app/setLocation');
-      },
-
-      setLocationPermission: async (permission: PermissionStatus | 'skipped' | null) => {
-        try {
-          await Storage.setItem(_StorageKey.LOCATION_PERMISSION, permission);
-        } catch {
-          // do nothing
-        }
-        set({ location_permission: permission }, false, 'app/setLocationPermission');
-      },
-
-      hydrateLocationPermission: async () => {
-        try {
-          let permission = await Storage.getItem<LocationPermission>(
-            _StorageKey.LOCATION_PERMISSION
-          );
-          set({ location_permission: permission }, false, 'app/hydrateLocationPermission');
-          return permission;
-        } catch {
-          return null;
-        }
       },
     }),
     {

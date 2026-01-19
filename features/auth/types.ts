@@ -11,6 +11,14 @@ export type User = {
   referral_code: string;
   language: _LanguageCode;
   referred_by_user_id: string;
+  referrer: {
+    id: string;
+    name: string;
+  } | null;
+  review_application: {
+    status: number;
+    is_leader: boolean;
+  } | null;
   affiliate_link: string | null;
   profile: {
     avatar_url: string | null;

@@ -72,10 +72,12 @@ const ktvApi = {
     const response = await client.get(`${defaultUri}/list-booking`, { params });
     return response.data;
   },
+  // api cho màn hình booking-details
   bookingDetails: async (id: string): Promise<BookingDetailsResponse> => {
     const response = await client.get<BookingDetailsResponse>(`/booking/detail/${id}`);
     return response.data;
   },
+  // api bắt đầu booking
   startBooking: async (id: string): Promise<StartBookingResponse> => {
     const response = await client.post(`${defaultUri}/start-booking`, {
       booking_id: id,

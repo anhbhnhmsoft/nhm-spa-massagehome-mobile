@@ -27,6 +27,7 @@ export default function AppLayout() {
 
   // Kiểm tra heartbeat khi user có đang được xác thực hay không
   useHeartbeat();
+
   // Tự động sync device token lên server khi user login
   useNotification();
 

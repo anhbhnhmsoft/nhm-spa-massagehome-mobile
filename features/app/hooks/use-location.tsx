@@ -65,35 +65,21 @@ export const fetchAndFormatLocation = async (): Promise<LocationApp> => {
  */
 export const useLocation = () => {
   const setLocation = useApplicationStore((s) => s.setLocation);
-  const locationPermission = useApplicationStore((s) => s.location_permission);
-  const setLocationPermission = useApplicationStore((s) => s.setLocationPermission);
-  const hydrateLocationPermission = useApplicationStore((s) => s.hydrateLocationPermission);
   const [completeCheck, setCompleteCheck] = useState(false);
+  const [locationPermission, setLocationPermission] = useState<Location.PermissionStatus|null>(null);
 
   useEffect(() => {
     const checkPermission = async () => {
       try {
-        const locationPermissionHydrated = await hydrateLocationPermission();
-
-        // Chỉ check nếu permission đã từng được set (không null) và user không chọn skip
-        if (locationPermissionHydrated !== null && locationPermissionHydrated !== 'skipped') {
-          const { status } = await Location.getForegroundPermissionsAsync();
-
-          // Sync Store nếu status thực tế khác store
-          if (status !== locationPermissionHydrated) {
-            await setLocationPermission(status);
-          }
-
-          // Nếu có quyền -> Lấy vị trí (Dùng Helper)
-          if (status === 'granted') {
-            const locationApp = await fetchAndFormatLocation();
-            setLocation(locationApp);
-          }
+        const { status } = await Location.getForegroundPermissionsAsync();
+        setLocationPermission(status);
+        if (status === 'granted') {
+          const locationApp = await fetchAndFormatLocation();
+          setLocation(locationApp);
         }
       } catch (error) {
         // Fallback an toàn
-        await setLocationPermission(null);
-        setLocation(null);
+        setLocationPermission(null);
       }
       finally{
         setCompleteCheck(true);
@@ -111,7 +97,7 @@ export const useLocation = () => {
     return () => {
       subscription.remove();
     };
-  }, [locationPermission]);
+  }, []);
 
   return { locationPermission, completeCheck };
 };
@@ -125,14 +111,10 @@ export const useLocation = () => {
  */
 export const useGetLocation = () => {
   const setLocation = useApplicationStore((s) => s.setLocation);
-  const setLocationPermission = useApplicationStore((s) => s.setLocationPermission);
 
   const getPermission = useCallback(async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-
-      // Luôn cập nhật status mới nhất vào store dù granted hay denied
-      await setLocationPermission(status);
 
       if (status !== 'granted') {
         return false;
@@ -148,21 +130,30 @@ export const useGetLocation = () => {
     }
   }, []);
 
-  const skipGetLocation = useCallback(async () => {
-    await setLocationPermission('skipped');
-  }, []);
-
   return {
     getPermission,
-    skipGetLocation,
   };
 };
 
 export const useLocationAddress = () => {
   const location = useApplicationStore((s) => s.location);
-  const permission = useApplicationStore((s) => s.location_permission);
+  const [locationPermission, setLocationPermission] = useState<Location.PermissionStatus | null>(null);
+
+  useEffect(() => {
+    const checkPermission = async () => {
+      try {
+        const { status } = await Location.getForegroundPermissionsAsync();
+        setLocationPermission(status);
+      } catch (error) {
+        // Fallback an toàn
+        setLocationPermission(null);
+      }
+    };
+    checkPermission();
+  }, []);
+
   return {
     location,
-    permission
+    permission: locationPermission,
   };
 };

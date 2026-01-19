@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, TouchableOpacity, Modal, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, TouchableOpacity, Modal } from 'react-native';
 import { MapPin } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
@@ -12,16 +10,16 @@ export default function RequestLocationModal() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const { skipGetLocation, getPermission } = useGetLocation();
+  const { getPermission } = useGetLocation();
 
   const { locationPermission, completeCheck } = useLocation();
 
   const checkShowLocation = useMemo(() => {
-    return locationPermission !== 'skipped' &&
-      locationPermission !== 'granted' &&
-      locationPermission === null &&
-      completeCheck // Đảm bảo đã check xong permission
+    return locationPermission !== 'granted' &&
+      locationPermission !== null &&
+      completeCheck
   }, [locationPermission, completeCheck]);
+
 
   useEffect(() => {
     setIsVisible(checkShowLocation);
@@ -44,9 +42,6 @@ export default function RequestLocationModal() {
     >
       {/* Overlay làm mờ nền phía sau */}
       <View className="flex-1 bg-black/50 justify-end">
-        <Pressable className="flex-1" onPress={() => {
-          setIsVisible(false);
-        }}/>
 
         {/* Nội dung Modal (Card) */}
         <View className="bg-white rounded-t-2xl px-8 pt-4 pb-12 items-center shadow-2xl">
@@ -80,15 +75,6 @@ export default function RequestLocationModal() {
             >
               <Text className="text-white text-base font-inter-bold">
                 {loading ? t('common.loading') : t('request_location.use_current_location')}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={skipGetLocation}
-              className="w-full py-3 items-center"
-            >
-              <Text className="text-gray-400 text-sm font-inter-semibold">
-                {t('common.skip')}
               </Text>
             </TouchableOpacity>
           </View>

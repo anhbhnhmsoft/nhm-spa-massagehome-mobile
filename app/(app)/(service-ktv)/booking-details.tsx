@@ -9,38 +9,31 @@ import DefaultColor from '@/components/styles/color';
 import { User } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatTime, useBookingDetails } from '@/features/ktv/hooks/use-booking-details';
-import { formatBalance, openMap } from '@/lib/utils';
+import {  useBooking } from '@/features/ktv/hooks/use-booking';
+import { cn, formatBalance, openMap } from '@/lib/utils';
 import { CancellationModal } from '@/components/app/cancel-booking-modal';
 import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function BookingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const {
-    refetch,
-    booking,
-    handleStart,
-    remainingMs,
-    isFetching,
-    showModal,
-    setShowModal,
-    isRunning,
-    isFinished,
-    isBlockedByOther,
-    cancelReason,
-    setCancelReason,
-    handleConfirmCancel,
-  } = useBookingDetails(id);
   const { t } = useTranslation();
-  const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
+  const {
+    booking,
+    handleStartBooking,
+    handleCancelBooking,
+    canStartBooking,
+    canCancelBooking,
+    refetch,
+    timeLeft,
+    showModalCancel,
+    setShowModalCancel,
+    isLoadingBooking,
+    isStartBookingPending,
+    isCancelBookingPending,
+    isFinishBookingPending,
+  } = useBooking(id);
 
-  const showActions = useMemo(() => {
-    return (
-      (booking?.status === _BookingStatus.CONFIRMED ||
-        booking?.status === _BookingStatus.ONGOING) &&
-      !isFinished
-    );
-  }, [booking?.status, isFinished]);
+  const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
 
   return (
     <View className="flex-1 bg-white">
@@ -51,14 +44,14 @@ export default function BookingDetails() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching}
+            refreshing={isLoadingBooking}
             onRefresh={() => refetch()}
             colors={[DefaultColor.base['primary-color-2']]}
             tintColor={DefaultColor.base['primary-color-2']}
           />
         }>
-        {/* Status Badge */}
 
+        {/* Status Badge */}
         <View className="mb-4 items-center">
           {booking?.status ? (
             <View className={`flex-row items-center rounded-full bg-blue-100 px-4 py-2`}>
@@ -218,75 +211,58 @@ export default function BookingDetails() {
       </ScrollView>
 
       {/* Action Buttons */}
-      {showActions && (
-        <View className="border-t border-slate-100 bg-white p-4">
-          {/* Remaining time - chỉ hiển thị khi đang chạy */}
-          {isRunning && remainingMs != null && (
-            <View className="mb-4 items-center">
-              <View className="flex-row items-center rounded-full bg-primary-color-1/10 px-5 py-2">
-                <Ionicons
-                  name="time-outline"
-                  size={18}
-                  color={DefaultColor.base['primary-color-2']}
-                />
-                <Text className="ml-2 font-inter-bold text-primary-color-2">
-                  {t('booking.remaining_time', { time: formatTime(remainingMs) })}
-                </Text>
+      {(canStartBooking || canCancelBooking || timeLeft !== null)
+        && (
+          <View className="border-t border-slate-100 bg-white p-4">
+            {/* Remaining time - chỉ hiển thị khi đang chạy */}
+            {timeLeft != null && (
+              <View className="mb-4 items-center">
+                <View className="flex-row items-center rounded-full bg-primary-color-1/10 px-5 py-2">
+                  <Ionicons
+                    name="time-outline"
+                    size={18}
+                    color={DefaultColor.base['primary-color-2']}
+                  />
+                  <Text className="ml-2 font-inter-bold text-primary-color-2">
+                    {timeLeft.hours} : {timeLeft.minutes} : {timeLeft.seconds}
+                  </Text>
+                </View>
               </View>
-            </View>
-          )}
+            )}
 
-          {/* Start / Running / Finished Button */}
-          {isBlockedByOther && (
-            <View className="mb-2 items-center">
-              <View className="flex-row items-center rounded-full bg-primary-color-1/10 px-5 py-2">
-                <Ionicons name="time-outline" size={18} color="#2563eb" />
-                <Text className="ml-2 font-inter-bold text-primary-color-2">
-                  {t('booking.start_blocked_by_other', {
-                    defaultValue: 'Đã có dịch vụ khác đang chạy',
-                  })}
+            {canStartBooking && (
+              <TouchableOpacity
+                onPress={handleStartBooking}
+                disabled={isStartBookingPending}
+                className={cn(
+                  `mb-2 flex-row items-center justify-center rounded-2xl py-3 ${
+                    !canStartBooking ? 'bg-slate-300' : 'bg-primary-color-2'
+                  }`
+                )}>
+                <Text className="ml-2 font-inter-semibold text-lg text-white">
+                  {isStartBookingPending ? t('common.loading') : t('booking.start_service')}
                 </Text>
-              </View>
-            </View>
-          )}
-          <TouchableOpacity
-            disabled={isRunning || isFinished || isBlockedByOther}
-            onPress={handleStart}
-            className={`mb-2 flex-row items-center justify-center rounded-2xl py-3 ${
-              isRunning || isFinished || isBlockedByOther ? 'bg-slate-300' : 'bg-primary-color-2'
-            }`}>
-            <Ionicons
-              name={isRunning ? 'checkmark-circle' : isFinished ? 'close-circle' : 'play-circle'}
-              size={24}
-              color="white"
-            />
-            <Text className="ml-2 font-inter-semibold text-lg text-white">
-              {isRunning
-                ? t('booking.service_running')
-                : isFinished
-                  ? t('booking.service_finished')
-                  : t('booking.start_service')}
-            </Text>
-          </TouchableOpacity>
+              </TouchableOpacity>
+            )}
 
-          {/* Cancel Button - chỉ hiển thị khi chưa start */}
-          {!isRunning && !isFinished && (
-            <TouchableOpacity
-              onPress={() => setShowModal(true)}
-              className="flex-row items-center justify-center rounded-2xl bg-slate-300 py-3">
-              <Text className="ml-2 font-inter-semibold text-lg text-blue-950">
-                {t('common.cancel')}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
+            {/* Cancel Button - chỉ hiển thị khi chưa start */}
+            {canCancelBooking && (
+              <TouchableOpacity
+                onPress={() => setShowModalCancel(true)}
+                disabled={isCancelBookingPending}
+                className="flex-row items-center justify-center rounded-2xl bg-slate-300 py-3">
+                <Text className="ml-2 font-inter-semibold text-lg text-blue-950">
+                  {isCancelBookingPending ? t('common.loading') : t('common.cancel')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       <CancellationModal
-        isVisible={showModal}
-        onClose={() => setShowModal(false)}
-        reason={cancelReason}
-        setReason={setCancelReason}
-        onConfirm={handleConfirmCancel}
+        isVisible={showModalCancel}
+        onClose={() => setShowModalCancel(false)}
+        onConfirm={handleCancelBooking}
+        isLoading={isCancelBookingPending}
       />
     </View>
   );

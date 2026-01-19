@@ -371,6 +371,8 @@
     "delete_account": "Xóa tài khoản",
     "delete_account_warning": "Hành động này sẽ xóa toàn bộ dữ liệu, lịch sử giao dịch và thông tin cá nhân của bạn. Dữ liệu sẽ không thể khôi phục sau khi xóa.",
     "delete_account_success": "Tài khoản của bạn đã được xóa khỏi hệ thống thành công.",
+    "referral_by": "Giới thiệu bởi",
+    "is_leader": "Trưởng nhóm",
     "error": {
       "invalid_name": "Tên phải từ 4 ký tự trở lên và không quá 255 ký tự",
       "invalid_date_of_birth": "Ngày sinh không thể sau ngày hiện tại",
@@ -641,8 +643,18 @@
     "booking_cancel_confirm_title": "Xác nhận huỷ lịch hẹn",
     "booking_cancel_confirm_message": "Bạn có chắc chắn muốn huỷ lịch hẹn này không?",
     "booking_cancel_reason_required": "Vui lòng nhập lý do huỷ lịch hẹn",
+    "booking_end_success": "Dịch vụ đã kết thúc",
     "coupon": "Mã giảm giá",
-    "discount_price": "Số tiền được giảm"
+    "discount_price": "Số tiền được giảm",
+    "enter_cancel_reason": "Nhập lý do hủy dịch vụ",
+    "notification": {
+      "booking_end_title": "Hết giờ làm dịch vụ",
+      "booking_end_body": "Thời gian làm dịch vụ đã kết thúc"
+    },
+    "error": {
+      "only_confirmed_booking": "Chỉ có thể bắt đầu dịch vụ khi lịch hẹn đã được xác nhận.",
+      "another_booking_already_started": "Chỉ có thể có một dịch vụ đang diễn ra tại một thời điểm."
+    }
   },
   "affiliate": {
     "title": "Giới thiệu bạn bè",

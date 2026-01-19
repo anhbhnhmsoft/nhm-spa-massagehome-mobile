@@ -25,7 +25,6 @@ import {
   useDeleteImageMutation,
   useDeleteServiceMutation,
   useDetailServiceMutation,
-  useFinishBookingMutation,
   useLinkReferrerMutation,
   useUpdateConfigScheduleMutation,
   useUpdateProfileKtvMutation,
@@ -41,10 +40,6 @@ import useApplicationStore from '@/lib/store';
 import { _DefaultValueFormConfigSchedule, _DefaultValueFormService, _KTVConfigSchedules, } from '@/features/ktv/consts';
 import { useMutationServiceDetail } from '@/features/service/hooks/use-mutation';
 import { ServiceItem } from '@/features/service/types';
-import { useBookingStore } from '@/lib/ktv/useBookingStore';
-import { Storage } from '@/lib/storages';
-import { _StorageKey } from '@/lib/storages/key';
-import * as Notifications from 'expo-notifications';
 import { queryClient } from '@/lib/provider/query-provider';
 import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
@@ -361,88 +356,6 @@ export const useServiceDetail = () => {
   };
 };
 
-// Hook cho hydrate booking
-export const useHydrateBooking = () => {
-  // hydrate state
-  const _hydrated = useBookingStore((s) => s._hydrated);
-  const hydrate = useBookingStore((s) => s.hydrate);
-
-  // booking data
-  const bookingId = useBookingStore((s) => s.bookingId);
-  const endTime = useBookingStore((s) => s.endTime);
-  const notificationId = useBookingStore((s) => s.notificationId);
-
-  // actions
-  const clearBooking = useBookingStore((s) => s.clearBooking);
-
-  const finishBooking = useFinishBookingMutation();
-  const [complete, setComplete] = useState(false);
-
-  // chặn gọi finalize nhiều lần
-  const hasFinalizedRef = useRef(false);
-
-  useEffect(() => {
-    // CHƯA hydrate → gọi hydrate
-    if (!_hydrated) {
-      hydrate();
-      return;
-    }
-
-    // ĐÃ xử lý rồi → không làm lại
-    if (hasFinalizedRef.current) {
-      setComplete(true);
-      return;
-    }
-
-    const finalizeIfExpired = async () => {
-      // Không có booking
-      if (!bookingId || !endTime) {
-        hasFinalizedRef.current = true;
-        setComplete(true);
-        return;
-      }
-
-      // Booking còn hạn
-      if (endTime > Date.now()) {
-        hasFinalizedRef.current = true;
-        setComplete(true);
-        return;
-      }
-
-      finishBooking.mutate(bookingId, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', bookingId] });
-          // make sure booking list also refreshes
-          queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
-        },
-        onSettled: async () => {
-          if (notificationId) {
-            try {
-              await Notifications.cancelScheduledNotificationAsync(notificationId);
-            } catch (e) {}
-          }
-
-          try {
-            await Storage.removeItem(_StorageKey.BOOKING_TIME_KEY);
-          } catch (e) {}
-
-          try {
-            await clearBooking();
-          } catch (e) {}
-
-          hasFinalizedRef.current = true;
-          setComplete(true);
-        },
-      });
-    };
-
-    finalizeIfExpired();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_hydrated]);
-
-  return complete;
-};
 
 // Hook cho tổng doanh thu dashboard
 export const useDashboardTotalIncome = () => {
