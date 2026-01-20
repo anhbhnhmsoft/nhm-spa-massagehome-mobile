@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { ImageOff, Star, User } from 'lucide-react-native';
+import { ImageOff, User } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
 import DefaultColor from '@/components/styles/color';
@@ -106,6 +106,8 @@ export const ReviewFistItem = ({ item }: { item: KTVDetail['first_review'] }) =>
                   height: 32,
                   borderRadius: 9999,
                   backgroundColor: DefaultColor.slate[200],
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
                 <Icon as={User} size={14} className="text-slate-400" />
               </View>

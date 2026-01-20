@@ -7,10 +7,8 @@ import { useCancelBookingCustomerMutation } from '@/features/booking/hooks/use-m
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
-import useErrorToast from '@/features/app/hooks/use-error-toast';
 import useApplicationStore from '@/lib/store';
 import { getMessageError } from '@/lib/utils';
-import { useBookingStore } from '@/lib/ktv/useBookingStore';
 
 // Lấy thông tin đặt lịch
 export const useCheckBooking = (id: string | null) => {
@@ -52,14 +50,12 @@ export const useGetBookingList = () => {
     [setParams]
   );
 
-  const handleError = useErrorToast();
   const [showModalCancelBooking, setShowModalCancelBooking] = useState(false);
   const { error } = useToast();
   const { mutate: cancelBooking, isPending: isCancelBookingPending } =
     useCancelBookingCustomerMutation();
 
   const [bookingIdCancel, setBookingIdCancel] = useState<string>('');
-  const _hydrated = useBookingStore((s) => s._hydrated);
   const query = useInfiniteBookingList(params);
 
   const data = useMemo(() => {

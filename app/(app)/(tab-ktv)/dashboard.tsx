@@ -44,6 +44,7 @@ const DashboardScreen = () => {
     t,
     isLoading,
   } = useDashboardTotalIncome();
+
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = async () => {
     try {

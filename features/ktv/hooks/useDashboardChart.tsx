@@ -51,25 +51,24 @@ const getLast7Months = () =>
     return toYMD(d);
   });
 
-const getWeekRanges = (count = 7) => {
-  const ranges: { start: Date; end: Date; label: string }[] = [];
-  let end = new Date();
+const getWeekRanges = () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const lastDay = new Date(y, m + 1, 0);
 
-  for (let i = 0; i < count; i++) {
-    const start = new Date(end);
-    start.setDate(start.getDate() - 6);
+  const points = [1, 8, 15, 22];
 
-    ranges.unshift({
+  return points.map((startDay) => {
+    const start = new Date(y, m, startDay);
+    const end = startDay === 22 ? lastDay : new Date(y, m, startDay + 6);
+
+    return {
       start,
       end,
       label: `${formatDM(start)}-${formatDM(end)}`,
-    });
-
-    end = new Date(start);
-    end.setDate(end.getDate() - 1);
-  }
-
-  return ranges;
+    };
+  });
 };
 
 /* =======================
@@ -114,12 +113,17 @@ export const computePercentChange = (type: DashboardTab, rawData: ChartDataItem[
 
   /* ===== MONTH (by week) ===== */
   if (type === 'month') {
-    const ranges = getWeekRanges(7);
-    const cur = ranges[ranges.length - 1];
-    const prev = ranges[ranges.length - 2];
+    const today = new Date();
+    const ranges = getWeekRanges();
 
-    currentTotal = sumBy((d) => d >= cur.start && d <= cur.end);
-    previousTotal = sumBy((d) => d >= prev.start && d <= prev.end);
+    const idx = ranges.findIndex((r) => today >= r.start && today <= r.end);
+
+    const cur = idx >= 0 ? ranges[idx] : null;
+    const prev = idx > 0 ? ranges[idx - 1] : null;
+
+    currentTotal = cur ? sumBy((d) => d >= cur.start && d <= cur.end) : 0;
+
+    previousTotal = prev ? sumBy((d) => d >= prev.start && d <= prev.end) : 0;
   }
 
   /* ===== YEAR (by month) ===== */
@@ -138,6 +142,7 @@ export const computePercentChange = (type: DashboardTab, rawData: ChartDataItem[
   }
 
   const diff = currentTotal - previousTotal;
+
   const percent = previousTotal === 0 ? null : Math.round((diff / previousTotal) * 1000) / 10;
 
   return {
@@ -172,9 +177,15 @@ export const useDashboardChart = (type: DashboardTab, data: ChartDataItem[]) => 
 
     /* ===== MONTH ===== */
     if (type === 'month') {
-      return getWeekRanges(5).map((range) => {
-        const found = data.find((d) => isDateInRange(d.date, range.start, range.end));
-        return { date: range.label, total: found?.total ?? '0' };
+      return getWeekRanges().map((range) => {
+        const total = data.reduce((sum, d) => {
+          return isDateInRange(d.date, range.start, range.end) ? sum + Number(d.total || 0) : sum;
+        }, 0);
+
+        return {
+          date: range.label,
+          total: String(total),
+        };
       });
     }
 
