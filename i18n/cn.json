@@ -112,7 +112,8 @@
     "offline": "离线",
     "day_off": "休息日",
     "offline_service_title": "技师休息中",
-    "offline_service_message": "该技师当前正在休息。你想要...？"
+    "offline_service_message": "该技师当前正在休息。你想要...？",
+    "save_qr_code": "保存二维码"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -482,6 +483,11 @@
     "add_new_withdraw_info": "关联新账户",
     "request_withdraw": "申请提现",
     "method_disabled": "维护中",
+    "wechat_scan_instruction": "请使用微信扫描二维码完成支付",
+    "amount": "金额",
+    "transfer_note": "转账备注",
+    "note_important": "请务必填写正确的转账备注",
+    "processing_transaction": "微信支付正在处理中，系统确认可能需要 15–30 分钟",
     "withdraw": {
       "title_modal": "选择提现账户",
       "add_new_account": "关联新账户",

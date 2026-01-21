@@ -1,17 +1,18 @@
 import { client } from '@/lib/axios-client';
 import {
-  ConfigPaymentResponse,
-  WalletResponse,
-  DepositRequest,
-  DepositResponse,
   CheckTransactionRequest,
   CheckTransactionResponse,
+  ConfigPaymentResponse,
+  CreateWithdrawInfoRequest,
+  DeleteWithdrawInfoRequest,
+  DepositRequest,
+  DepositResponse,
+  InfoWithdrawResponse,
+  ListBankInfoResponse,
   ListTransactionRequest,
   ListTransactionResponse,
-  InfoWithdrawResponse,
-  CreateWithdrawInfoRequest,
-  ListBankInfoResponse,
-  DeleteWithdrawInfoRequest, RequestWithdrawRequest,
+  RequestWithdrawRequest,
+  WalletResponse,
 } from '@/features/payment/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -36,6 +37,7 @@ const paymentApi = {
   // Nạp tiền
   deposit: async (data: DepositRequest): Promise<DepositResponse> => {
     const response = await client.post(`${defaultUri}/deposit`, data);
+    console.log('response nap', data);
     return response.data;
   },
   // Kiểm tra trạng thái giao dịch
@@ -68,8 +70,6 @@ const paymentApi = {
     const response = await client.post(`${defaultUri}/request-withdraw`, data);
     return response.data;
   },
-
-
 };
 
 export default paymentApi;

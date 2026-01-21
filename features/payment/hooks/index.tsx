@@ -23,6 +23,7 @@ import {
   DepositRequest,
   ListTransactionRequest,
   QRBankData,
+  QRWechatData,
   RequestWithdrawRequest,
 } from '@/features/payment/types';
 import { useForm } from 'react-hook-form';
@@ -62,9 +63,7 @@ export const useGetTransactionList = (params: ListTransactionRequest, enabled?: 
 /**
  * Hook dùng cho màn ví
  */
-export const useWallet = (
-  useFor: _UserRole
-) => {
+export const useWallet = (useFor: _UserRole) => {
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
   const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
@@ -177,7 +176,9 @@ export const useDeposit = () => {
   // State lưu trữ dữ liệu QRBankData khi nạp tiền qua VietQR
   const setTransactionId = useWalletStore((state) => state.setTransactionId);
   const setQrBankData = useWalletStore((state) => state.setQrBankData);
-
+  // State lưu trữ dữ liệu QRWechatData khi nạp tiền qua Wechat Pay
+  const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
+  const [visibleModalWechat, setVisibleModalWechat] = useState<boolean>(false);
   // Mutate function dùng để gọi API nạp tiền
   const { mutate: mutateDeposit } = useDepositMutation();
 
@@ -233,11 +234,17 @@ export const useDeposit = () => {
             const qrBankData = resData.data_payment as QRBankData;
             setQrBankData(qrBankData);
             break;
+          case _PaymentType.WECHAT_PAY:
+            const qrWechatData = resData.data_payment as QRWechatData;
+            setQrWechatData(qrWechatData);
+            setVisibleModalWechat(true);
+            break;
           default:
             break;
         }
       },
       onError: (err) => {
+        console.log(err);
         handleError(err);
       },
       onSettled: () => {
@@ -253,10 +260,17 @@ export const useDeposit = () => {
     }
   }, [configPayment]);
 
+  const handleCloseWechat = useCallback(() => {
+    setVisibleModalWechat(false);
+    setQrWechatData(null);
+    router.back();
+  }, []);
   return {
     configPayment: configPayment as ConfigPaymentItem,
     form,
     submitDeposit,
+    visibleModalWechat,
+    handleCloseWechat,
   };
 };
 
@@ -299,9 +313,9 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
         case _UserRole.CUSTOMER:
           router.push('/(app)/(profile)/wallet');
           break;
-          case _UserRole.AGENCY:
-            router.push('/(app)/(tab-agency)/wallet');
-            break;
+        case _UserRole.AGENCY:
+          router.push('/(app)/(tab-agency)/wallet');
+          break;
         default:
           break;
       }

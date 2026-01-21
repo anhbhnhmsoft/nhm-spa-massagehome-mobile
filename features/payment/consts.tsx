@@ -8,7 +8,7 @@ export enum _PaymentType {
   QR_BANKING = 1,
   ZALO_PAY = 2,
   MOMO_PAY = 3,
-  WECHAT_PAY = 4,
+  WECHAT_PAY = 7,
 }
 
 export const _PAYMENT_METHODS = [
@@ -53,7 +53,8 @@ export const _TransactionTypeMap = {
   [_TransactionType.AFFILIATE]: 'enum.transaction_type.AFFILIATE',
   [_TransactionType.PAYMENT_FOR_KTV]: 'enum.transaction_type.PAYMENT_FOR_KTV',
   [_TransactionType.REFUND]: 'enum.transaction_type.REFUND',
-  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]: 'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
+  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]:
+    'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
   [_TransactionType.REFERRAL_KTV]: 'enum.transaction_type.REFERRAL_KTV',
   [_TransactionType.REFERRAL_INVITE_KTV_REWARD]: 'enum.transaction_type.REFERRAL_INVITE_KTV_REWARD',
   [_TransactionType.DEPOSIT_WECHAT_PAY]: 'enum.transaction_type.DEPOSIT_WECHAT_PAY',
