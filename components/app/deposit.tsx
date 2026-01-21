@@ -19,18 +19,29 @@ import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
 import { cn, formatBalance, generateQRCodeImageUrl } from '@/lib/utils';
 import { _PAYMENT_METHODS, _PaymentType, _QUICK_AMOUNTS } from '@/features/payment/consts';
-import { CheckCircle2, Circle, Copy, Download, QrCode, X } from 'lucide-react-native';
+import {
+  CheckCircle2,
+  Circle,
+  CircleDollarSign,
+  Copy,
+  Download,
+  QrCode,
+  X,
+} from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import React, { useMemo } from 'react';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
 import useSaveFileImage from '@/features/app/hooks/use-save-image';
 import { _UserRole } from '@/features/auth/const';
+import { QRWechatData } from '@/features/payment/types';
+import { useWalletStore } from '@/features/payment/stores';
 
 // --- KHỐI NẠP TIẾN ---
 export default function Deposit({ useFor }: { useFor: _UserRole }) {
   const { t } = useTranslation();
 
-  const { configPayment, form, submitDeposit } = useDeposit();
+  const { configPayment, form, submitDeposit, visibleModalWechat, handleCloseWechat } =
+    useDeposit();
 
   const {
     control,
@@ -71,7 +82,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
               <Text className="mb-3 font-inter-medium text-gray-500">
                 {t('payment.deposit_label_input')}
               </Text>
-              <View className={"mb-4"}>
+              <View className={'mb-4'}>
                 <View className="flex-row items-center border-b border-gray-100 pb-2">
                   <Controller
                     control={control}
@@ -244,6 +255,8 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
 
       {/* --- QR PAYMENT MODAL --- */}
       <CheckQRPaymentModal useFor={useFor} />
+
+      <WeChatPaymentModal visible={visibleModalWechat} onClose={handleCloseWechat} />
     </>
   );
 }
@@ -252,7 +265,7 @@ const styles = StyleSheet.create({
   methodContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    position:"relative",
+    position: 'relative',
     borderRadius: 12, // rounded-xl
     borderWidth: 1,
     padding: 16, // p-4
@@ -475,6 +488,121 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
             </ScrollView>
           </View>
         )}
+      </View>
+    </Modal>
+  );
+};
+
+// QR Wechat
+
+interface WeChatPaymentModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
+
+export const WeChatPaymentModal = ({ visible, onClose }: WeChatPaymentModalProps) => {
+  const { t } = useTranslation();
+  const qrWechatData = useWalletStore((state) => state.qrWechatData);
+  const copyToClipboard = useCopyClipboard();
+  const { saveURLImage } = useSaveFileImage();
+
+  if (!qrWechatData) return null;
+
+  const { qr_image, amount, description } = qrWechatData as QRWechatData;
+
+  return (
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+      <View className="flex-1 justify-end bg-black/60">
+        <View className="max-h-[85%] w-full rounded-t-[32px] bg-white shadow-2xl">
+          {/* --- HEADER --- */}
+          <View className="flex-row items-center justify-between border-b border-gray-100 p-6">
+            <View className="flex-row items-center gap-2">
+              <View className="h-8 w-8 items-center justify-center rounded-lg bg-[#07C160]">
+                <Image
+                  source={require('@/assets/icon/wechat.png')}
+                  style={{ width: 20, height: 20, tintColor: 'white' }}
+                />
+              </View>
+              <Text className="font-inter-bold text-xl text-gray-900">WeChat Pay</Text>
+            </View>
+            <TouchableOpacity onPress={onClose} className="rounded-full bg-gray-100 p-2">
+              <X size={20} color="#6B7280" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: 24, paddingBottom: 50 }}>
+            {/* --- QR CODE SECTION --- */}
+            <View className="items-center">
+              <View className="mb-4 rounded-3xl border-4 border-[#07C160]/10 bg-white p-4">
+                <View className="rounded-2xl border border-gray-100 bg-white p-2">
+                  <Image
+                    source={{ uri: qr_image }}
+                    style={{ width: 220, height: 220 }}
+                    resizeMode="contain"
+                  />
+                </View>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => saveURLImage(qr_image)}
+                className="flex-row items-center gap-2 rounded-full bg-[#07C160]/10 px-6 py-2.5">
+                <Download size={18} color="#07C160" />
+                <Text className="font-inter-bold text-sm text-[#07C160]">
+                  {t('common.save_qr_code')}
+                </Text>
+              </TouchableOpacity>
+
+              <Text className="mt-4 px-10 text-center text-sm text-gray-500">
+                {t('payment.wechat_scan_instruction')}
+              </Text>
+            </View>
+
+            {/* --- DETAILS SECTION --- */}
+            <View className="mt-8 space-y-4 rounded-2xl bg-gray-50 p-5">
+              {/* Số tiền */}
+              <View className="flex-row items-center justify-between border-b border-gray-200 pb-4">
+                <View>
+                  <Text className="mb-1 text-xs uppercase tracking-wider text-gray-500">
+                    {t('payment.amount')}
+                  </Text>
+                  <Text className="font-inter-bold text-2xl text-gray-900">
+                    {formatBalance(amount)} <Text className="font-inter-medium text-sm">VNĐ</Text>
+                  </Text>
+                </View>
+                <CircleDollarSign size={28} color="#07C160" />
+              </View>
+
+              {/* Nội dung chuyển khoản */}
+              <View className="pt-2">
+                <Text className="mb-2 text-xs uppercase tracking-wider text-gray-500">
+                  {t('payment.transfer_note')}
+                </Text>
+                <View className="flex-row items-center justify-between rounded-xl border border-dashed border-gray-300 bg-white p-3">
+                  <Text className="mr-2 flex-1 font-inter-bold text-sm text-red-600">
+                    {description}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => copyToClipboard(description)}
+                    className="rounded-lg bg-gray-100 p-2">
+                    <Copy size={18} color="#374151" />
+                  </TouchableOpacity>
+                </View>
+                <Text className="mt-2 text-[11px] italic text-red-400">
+                  * {t('payment.note_important')}
+                </Text>
+              </View>
+            </View>
+
+            {/* --- WAITING STATUS --- */}
+            <View className="mt-8 flex-row items-center justify-center gap-3 py-4">
+              <Text className="font-inter-medium text-gray-600">
+                {t('payment.processing_transaction')}
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
       </View>
     </Modal>
   );

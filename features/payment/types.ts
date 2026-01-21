@@ -1,5 +1,10 @@
 import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
-import { _PaymentType, _TransactionStatus, _TransactionType, _UserWithdrawInfoType } from '@/features/payment/consts';
+import {
+  _PaymentType,
+  _TransactionStatus,
+  _TransactionType,
+  _UserWithdrawInfoType,
+} from '@/features/payment/consts';
 
 export type WalletItem = {
   id: string;
@@ -8,11 +13,11 @@ export type WalletItem = {
   is_active: boolean;
   total_deposit: string; // Tổng số tiền nạp vào ví dạng string để tránh lỗi tràn số khi tính toán
   total_withdrawal: string; // Tổng số tiền rút ra khỏi ví dạng string để tránh lỗi tràn số khi tính toán
-}
+};
 
-export type WalletResponse = ResponseDataSuccessType<WalletItem>
+export type WalletResponse = ResponseDataSuccessType<WalletItem>;
 
-export type ListTransactionRequest = BaseSearchRequest<object>
+export type ListTransactionRequest = BaseSearchRequest<object>;
 
 export type ListTransactionItem = {
   id: string;
@@ -22,10 +27,9 @@ export type ListTransactionItem = {
   balance_after: string; // Số dư sau giao dịch dạng string để tránh lỗi tràn số khi tính toán
   status: _TransactionStatus;
   created_at: string; // Dạng string vì có thể cần format lại sau khi lấy dữ liệu
-}
+};
 
-export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTransactionItem>>
-
+export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTransactionItem>>;
 
 export type ConfigPaymentItem = {
   currency_exchange_rate: string; // Tỷ giá đổi tiền giữa VND và point
@@ -37,18 +41,18 @@ export type ConfigPaymentItem = {
   };
 };
 
-export type ConfigPaymentResponse = ResponseDataSuccessType<ConfigPaymentItem>
+export type ConfigPaymentResponse = ResponseDataSuccessType<ConfigPaymentItem>;
 
 export type DepositRequest = {
   amount: string;
   payment_type: _PaymentType;
-}
+};
 
 export type DepositItem = {
   transaction_id: string;
   payment_type: _PaymentType;
-  data_payment: QRBankData; // Tùy vào payment_type, có thể là QRBankData hoặc ZaloPayData hoặc MomoPayData
-}
+  data_payment: QRBankData | QRWechatData; // Tùy vào payment_type, có thể là QRBankData hoặc ZaloPayData hoặc MomoPayData
+};
 
 export type QRBankData = {
   bin: string;
@@ -58,35 +62,39 @@ export type QRBankData = {
   amount: number;
   description: string;
   qr_code: string;
+};
+
+export interface QRWechatData {
+  qr_image: string;
+  amount: string;
+  description: string;
 }
 
-export type DepositResponse = ResponseDataSuccessType<DepositItem>
-
+export type DepositResponse = ResponseDataSuccessType<DepositItem>;
 
 export type CheckTransactionRequest = {
   transaction_id: string;
-}
+};
 
 export type CheckTransactionResponse = ResponseDataSuccessType<{
   is_completed: boolean;
-}>
+}>;
 
 type InfoWithdrawConfigBank = {
   bank_bin: string;
   bank_name: string;
   bank_account: string;
   bank_holder: string;
-}
+};
 
 export type InfoWithdrawItem = {
   id: string;
   user_id: string;
   type: _UserWithdrawInfoType;
-  config: InfoWithdrawConfigBank
-}
+  config: InfoWithdrawConfigBank;
+};
 
-export type InfoWithdrawResponse = ResponseDataSuccessType<InfoWithdrawItem[]>
-
+export type InfoWithdrawResponse = ResponseDataSuccessType<InfoWithdrawItem[]>;
 
 export type CreateWithdrawInfoRequest = {
   type: _UserWithdrawInfoType.BANK;
@@ -95,27 +103,26 @@ export type CreateWithdrawInfoRequest = {
     bank_name: string;
     bank_account: string;
     bank_holder: string;
-  }
-}
+  };
+};
 
 export type DeleteWithdrawInfoRequest = {
   id: string;
-}
-
+};
 
 export type BankInfo = {
-  "id": number,
-  "name": string,
-  "code": string,
-  "bin": string,
-  "short_name": string,
-  "logo": string | null,
-}
+  id: number;
+  name: string;
+  code: string;
+  bin: string;
+  short_name: string;
+  logo: string | null;
+};
 
-export type ListBankInfoResponse = ResponseDataSuccessType<BankInfo[]>
+export type ListBankInfoResponse = ResponseDataSuccessType<BankInfo[]>;
 
 export type RequestWithdrawRequest = {
   user_withdraw_info_id: string;
   amount: string;
   note?: string;
-}
+};

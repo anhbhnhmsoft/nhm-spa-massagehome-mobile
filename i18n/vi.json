@@ -112,7 +112,8 @@
     "offline": "Đang ngoại tuyến",
     "day_off": "Ngày nghỉ",
     "offline_service_title": "Kĩ thuật viên đang nghỉ",
-    "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?"
+    "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?",
+    "save_qr_code": "Lưu mã QR"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -482,6 +483,11 @@
     "add_new_withdraw_info": "Liên kết tài khoản mới",
     "request_withdraw": "Yêu cầu rút tiền",
     "method_disabled": "Đang bảo trì",
+    "wechat_scan_instruction": "Vui lòng sử dụng WeChat để quét mã QR thực hiện thanh toán",
+    "amount": "Số tiền",
+    "transfer_note": "Nội dung chuyển khoản",
+    "note_important": "Vui lòng nhập chính xác nội dung này",
+    "processing_transaction": "Hệ thống đang xử lý thanh toán WeChat. Quá trình này có thể mất từ 15–30 phút",
     "withdraw": {
       "title_modal": "Chọn tài khoản rút tiền",
       "add_new_account": "Liên kết tài khoản mới",

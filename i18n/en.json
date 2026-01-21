@@ -112,7 +112,8 @@
     "offline": "Offline",
     "day_off": "Day off",
     "offline_service_title": "Technician is on break",
-    "offline_service_message": "This technician is currently on break. Would you like to...?"
+    "offline_service_message": "This technician is currently on break. Would you like to...?",
+    "save_qr_code": "Save QR Code"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -482,6 +483,11 @@
     "add_new_withdraw_info": "Link New Account",
     "request_withdraw": "Request Withdrawal",
     "method_disabled": "Maintenance",
+    "wechat_scan_instruction": "Please use WeChat to scan the QR code to complete the payment",
+    "amount": "Amount",
+    "transfer_note": "Transfer note",
+    "note_important": "Please enter this note exactly as shown",
+    "processing_transaction": "WeChat payment is being processed. This may take 15–30 minutes to complete",
     "withdraw": {
       "title_modal": "Select Withdrawal Account",
       "add_new_account": "Link New Account",
