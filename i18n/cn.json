@@ -647,6 +647,13 @@
     "coupon": "优惠券",
     "discount_price": "折扣价格",
     "enter_cancel_reason": "输入取消原因",
+    "execution_date": "执行日期",
+    "start": "开始",
+    "end": "结束",
+    "final_price": "最终价格",
+    "customer_notes": "客户备注",
+    "original_price": "原价",
+    "address_notes": "地址备注",
     "notification": {
       "booking_end_title": "服务结束",
       "booking_end_body": "服务已结束"

@@ -647,6 +647,13 @@
     "coupon": "Coupon",
     "discount_price": "Discount Price",
     "enter_cancel_reason": "Enter Cancellation Reason",
+    "execution_date": "Execution date",
+    "start": "Start",
+    "end": "End",
+    "final_price": "Final price",
+    "customer_notes": "Customer notes",
+    "original_price": "Original price",
+    "address_notes": "Address notes",
     "notification": {
       "booking_end_title": "End of Service",
       "booking_end_body": "The service has ended"
