@@ -5,7 +5,7 @@ import {
   useProfileKtvQuery,
   useTotalIncomeQuery,
 } from '@/features/ktv/hooks/use-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SelectOption } from '@/components/select-modal';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -356,7 +356,6 @@ export const useServiceDetail = () => {
   };
 };
 
-
 // Hook cho tổng doanh thu dashboard
 export const useDashboardTotalIncome = () => {
   const [activeTab, setActiveTab] = useState<DashboardTab>(DashboardTab.DAY);
@@ -366,7 +365,7 @@ export const useDashboardTotalIncome = () => {
   const params: DashboardQueryParams = useMemo(() => ({ type: activeTab }), [activeTab]);
 
   // Gọi API tổng doanh thu
-  const { data, isLoading, isRefetching ,refetch } = useTotalIncomeQuery(params);
+  const { data, isLoading, isRefetching, refetch } = useTotalIncomeQuery(params);
 
   // Gọi API danh sách giao dịch
   const queryTransactionList = useGetTransactionList({

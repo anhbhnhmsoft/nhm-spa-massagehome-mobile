@@ -21,6 +21,7 @@
       "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
     },
     "android": {
+      "versionCode": 5,
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
@@ -39,7 +40,8 @@
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.RECEIVE_BOOT_COMPLETED",
-        "android.permission.SCHEDULE_EXACT_ALARM"
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.CAMERA"
       ]
     },
     "plugins": [

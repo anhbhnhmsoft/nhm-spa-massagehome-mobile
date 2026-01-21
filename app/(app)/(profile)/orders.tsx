@@ -29,12 +29,11 @@ export default function OrdersScreen() {
     isRefetching,
     setFilter,
     params,
-    cancelReason,
     showModalCancelBooking,
     setShowModalCancelBooking,
     handleOpenModalCancelBooking,
-    handleConfirmCancel,
-    setCancelReason,
+    handleCancelBooking,
+    isCancelBookingPending,
   } = useGetBookingList();
 
   useEffect(() => {
@@ -139,9 +138,8 @@ export default function OrdersScreen() {
       <CancellationModal
         isVisible={showModalCancelBooking}
         onClose={() => setShowModalCancelBooking(false)}
-        reason={cancelReason}
-        setReason={setCancelReason}
-        onConfirm={handleConfirmCancel}
+        onConfirm={handleCancelBooking}
+        isLoading={isCancelBookingPending}
       />
     </View>
   );

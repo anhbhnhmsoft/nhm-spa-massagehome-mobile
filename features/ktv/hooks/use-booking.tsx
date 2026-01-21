@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useBookingDetailsQuery } from './use-query';
-import {
-  useCancelBookingMutation,
-  useFinishBookingMutation,
-  useStartBookingMutation,
-} from './use-mutation';
+import { useCancelBookingMutation, useFinishBookingMutation, useStartBookingMutation, } from './use-mutation';
 import * as Notifications from 'expo-notifications';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 import { useTranslation } from 'react-i18next';
@@ -20,11 +16,13 @@ export const useBooking = (id: string) => {
   const [showModalCancel, setShowModalCancel] = useState(false);
   const { error, success } = useToast();
   const { data, refetch, isRefetching, isLoading } = useBookingDetailsQuery(id);
-  console.log(data);
   const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getRemainingTime> | null>(null);
-  const { mutate: startBookingMutate, isPending: isStartBookingPending } = useStartBookingMutation();
-  const { mutate: cancelBookingMutate, isPending: isCancelBookingPending } = useCancelBookingMutation();
-  const { mutate: finishBookingMutate, isPending: isFinishBookingPending } = useFinishBookingMutation();
+  const { mutate: startBookingMutate, isPending: isStartBookingPending } =
+    useStartBookingMutation();
+  const { mutate: cancelBookingMutate, isPending: isCancelBookingPending } =
+    useCancelBookingMutation();
+  const { mutate: finishBookingMutate, isPending: isFinishBookingPending } =
+    useFinishBookingMutation();
   const _hydrated = useBookingStore((s) => s._hydrated);
   const hydrate = useBookingStore((s) => s.hydrate);
   const bookingStart = useBookingStore((s) => s.booking_start);
@@ -63,12 +61,12 @@ export const useBooking = (id: string) => {
             await setStartBooking(null);
             await setNotificationBookingStartId(null);
             success({ message: t('booking.booking_end_success') });
-          }
+          },
         });
       }
     }, 1000);
 
-    return () => clearInterval(timer)
+    return () => clearInterval(timer);
   }, [bookingStart]);
 
   // bắt đầu dịch vụ
@@ -177,8 +175,6 @@ export const useBooking = (id: string) => {
     }
     return false;
   }, [data, bookingStart]);
-
-
 
   return {
     booking: data,
