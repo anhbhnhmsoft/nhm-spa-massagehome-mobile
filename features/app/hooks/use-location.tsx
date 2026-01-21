@@ -115,7 +115,6 @@ export const useGetLocation = () => {
   const getPermission = useCallback(async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-
       if (status !== 'granted') {
         return false;
       }

@@ -15,9 +15,7 @@ export default function RequestLocationModal() {
   const { locationPermission, completeCheck } = useLocation();
 
   const checkShowLocation = useMemo(() => {
-    return locationPermission !== 'granted' &&
-      locationPermission !== null &&
-      completeCheck
+    return locationPermission === null && completeCheck
   }, [locationPermission, completeCheck]);
 
 
