@@ -647,6 +647,13 @@
     "coupon": "Mã giảm giá",
     "discount_price": "Số tiền được giảm",
     "enter_cancel_reason": "Nhập lý do hủy dịch vụ",
+    "execution_date": "Ngày thực hiện",
+    "start": "Bắt đầu",
+    "end": "Kết thúc",
+    "final_price": "Giá cuối cùng",
+    "customer_notes": "Ghi chú chung từ khách hàng",
+    "original_price": "Giá gốc",
+    "address_notes": "Ghi chú địa chỉ",
     "notification": {
       "booking_end_title": "Hết giờ làm dịch vụ",
       "booking_end_body": "Thời gian làm dịch vụ đã kết thúc"
