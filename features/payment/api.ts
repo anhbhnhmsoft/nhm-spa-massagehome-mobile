@@ -37,7 +37,6 @@ const paymentApi = {
   // Nạp tiền
   deposit: async (data: DepositRequest): Promise<DepositResponse> => {
     const response = await client.post(`${defaultUri}/deposit`, data);
-    console.log('response nap', data);
     return response.data;
   },
   // Kiểm tra trạng thái giao dịch

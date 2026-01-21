@@ -244,7 +244,6 @@ export const useDeposit = () => {
         }
       },
       onError: (err) => {
-        console.log(err);
         handleError(err);
       },
       onSettled: () => {

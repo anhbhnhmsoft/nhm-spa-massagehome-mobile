@@ -19,7 +19,15 @@ import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
 import { cn, formatBalance, generateQRCodeImageUrl } from '@/lib/utils';
 import { _PAYMENT_METHODS, _PaymentType, _QUICK_AMOUNTS } from '@/features/payment/consts';
-import { CheckCircle2, Circle, CircleDollarSign, Copy, Download, QrCode, X, } from 'lucide-react-native';
+import {
+  CheckCircle2,
+  Circle,
+  CircleDollarSign,
+  Copy,
+  Download,
+  QrCode,
+  X,
+} from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import React, { useMemo } from 'react';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
