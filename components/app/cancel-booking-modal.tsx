@@ -1,16 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  TextInput,
-  TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
+import { AlertCircle } from 'lucide-react-native';
 
 interface CancelModalProps {
   isVisible: boolean;
@@ -26,7 +27,8 @@ export const CancellationModal = ({
   isLoading,
 }: CancelModalProps) => {
   const { t } = useTranslation();
-  const [reason, setReason] = React.useState('');
+  const [reason, setReason] = useState('');
+
   return (
     <Modal
       visible={isVisible}
@@ -35,39 +37,51 @@ export const CancellationModal = ({
       statusBarTranslucent
       onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 items-center justify-center bg-black/60 px-6">
-          {/* KeyboardAvoidingView giúp Modal không bị che khi bàn phím hiện lên */}
+        {/* Lớp nền overlay */}
+        <View className="flex-1 justify-end bg-black/50 px-0 md:justify-center md:px-6">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             className="w-full">
-            <View className="w-full rounded-lg border-hairline border-border bg-white p-6 shadow-2xl">
-              {/* Tiêu đề */}
-              <Text className="mb-2 font-inter-bold text-xl text-base-color-1">
-                {t('booking.cancel_reasons')}
-              </Text>
+            {/* Nội dung Modal - Dùng Border thay cho Shadow để tránh lỗi Layout */}
+            <View className="w-full rounded-t-[32px] border-l border-r border-t border-slate-200 bg-white p-8 md:rounded-[32px] md:border">
+              {/* Thanh gạt nhỏ (Indicator) cho mobile */}
+              <View className="absolute top-3 h-1.5 w-12 self-center rounded-full bg-slate-200" />
 
-              {/* Ô nhập liệu Textarea */}
-              <View className="mb-6">
+              {/* Header: Icon & Text */}
+              <View className="mb-6 mt-4 items-center">
+                <View className="mb-4 h-16 w-16 items-center justify-center rounded-full border border-red-100 bg-red-50">
+                  <AlertCircle color="#EF4444" size={32} />
+                </View>
+                <Text className="text-center font-inter-bold text-2xl text-slate-900">
+                  {t('booking.cancel_reasons')}
+                </Text>
+                <Text className="mt-2 px-6 text-center font-inter-regular leading-5 text-slate-500">
+                  {t('booking.cancel_pending_note')}
+                </Text>
+              </View>
+
+              {/* Input Area */}
+              <View className="mb-8">
                 <TextInput
                   placeholder={t('booking.enter_cancel_reason')}
-                  placeholderTextColor="#90A1B9"
+                  placeholderTextColor="#94A3B8"
                   multiline
-                  numberOfLines={5}
+                  numberOfLines={4}
                   value={reason}
                   onChangeText={setReason}
                   textAlignVertical="top"
-                  autoFocus={true}
-                  className="min-h-[120px] rounded-md border-hairline border-primary-color-4 bg-base-color-3/20 p-4 font-inter-regular text-base-color-1"
+                  className="min-h-[120px] rounded-2xl border border-slate-200 bg-slate-50 p-5 font-inter-medium text-slate-800 focus:border-red-200"
+                  style={{ fontSize: 16 }}
                 />
               </View>
 
-              {/* Nhóm nút bấm */}
-              <View className="flex-row gap-3">
+              {/* Action Buttons */}
+              <View className="mb-4 flex-row gap-3">
                 <TouchableOpacity
                   onPress={onClose}
                   activeOpacity={0.7}
-                  className="flex-1 items-center rounded-md bg-muted py-4">
-                  <Text className="font-inter-semibold text-muted-foreground">
+                  className="flex-1 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 py-4">
+                  <Text className="font-inter-semibold text-base text-slate-600">
                     {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
@@ -76,10 +90,12 @@ export const CancellationModal = ({
                   onPress={() => onConfirm(reason)}
                   disabled={isLoading || reason.trim().length === 0}
                   activeOpacity={0.8}
-                  className={`flex-1 items-center rounded-md py-4 ${
-                    reason.trim().length === 0 ? 'bg-primary-color-4 opacity-50' : 'bg-destructive'
+                  className={`flex-1 items-center justify-center rounded-2xl border py-4 ${
+                    reason.trim().length === 0
+                      ? 'border-slate-200 bg-slate-200'
+                      : 'border-red-600 bg-red-500'
                   }`}>
-                  <Text className="font-inter-semibold text-destructive-foreground">
+                  <Text className="font-inter-bold text-base text-white">
                     {isLoading ? t('common.loading') : t('booking.confirm_cancel')}
                   </Text>
                 </TouchableOpacity>

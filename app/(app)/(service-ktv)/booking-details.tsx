@@ -38,7 +38,6 @@ export default function BookingDetails() {
   const discountAmount = useMemo(() => {
     return Number(booking?.price_before_discount ?? 0) - Number(booking?.price ?? 0);
   }, [booking?.price_before_discount, booking?.price]);
-
   const hasDiscount = useMemo(() => discountAmount > 0, [discountAmount]);
   return (
     <View className="flex-1 bg-white">
@@ -97,7 +96,7 @@ export default function BookingDetails() {
         </View>
 
         {/* Service Card */}
-        <View className="mb-20 overflow-hidden rounded-3xl border border-slate-100 bg-base-color-3 shadow-sm">
+        <View className="mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-base-color-3 shadow-sm">
           {/* Image Header */}
           <View className="relative h-40">
             <Image
@@ -280,20 +279,38 @@ export default function BookingDetails() {
           </View>
         </View>
 
-        {booking?.note && (
+        <View className="mb-4 rounded-[24px] bg-[#E8F0FE] p-4">
+          {/* Header Ghi chú */}
+          <View className="mb-3 flex-row items-center">
+            <AlignLeft size={18} color="#2A64C5" strokeWidth={2.5} />
+            <Text className="ml-2 font-inter-bold text-base tracking-tight text-primary-color-1">
+              {t('booking.customer_notes')}
+            </Text>
+          </View>
+
+          {/* Box nội dung trắng */}
+          <View className="rounded-[16px] bg-white p-4">
+            <Text className="font-inter-medium text-[14px] leading-5 text-[#2C3E50]">
+              {booking?.note || t('booking.no_customer_notes')}
+            </Text>
+          </View>
+        </View>
+
+        {(booking?.status === _BookingStatus.CANCELED ||
+          booking?.status === _BookingStatus.WAITING_CANCEL) && (
           <View className="mb-4 rounded-[24px] bg-[#E8F0FE] p-4">
             {/* Header Ghi chú */}
             <View className="mb-3 flex-row items-center">
               <AlignLeft size={18} color="#2A64C5" strokeWidth={2.5} />
               <Text className="ml-2 font-inter-bold text-base tracking-tight text-primary-color-1">
-                {t('booking.customer_notes')}
+                {t('booking.cancel_service_reason')}
               </Text>
             </View>
 
             {/* Box nội dung trắng */}
             <View className="rounded-[16px] bg-white p-4">
               <Text className="font-inter-medium text-[14px] leading-5 text-[#2C3E50]">
-                {booking.note}
+                {booking?.reason_cancel || t('booking.no_cancel_reason')}
               </Text>
             </View>
           </View>

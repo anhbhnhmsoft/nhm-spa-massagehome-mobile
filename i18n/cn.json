@@ -160,7 +160,8 @@
       "ONGOING": "进行中",
       "COMPLETED": "已完成",
       "CANCELED": "已取消",
-      "PAYMENT_FAILED": "支付失败"
+      "PAYMENT_FAILED": "支付失败",
+      "WAITING_CANCEL": "等待取消"
     },
     "payment_type": {
       "QR_BANKING": "银行扫码转账",
@@ -653,6 +654,7 @@
     "coupon": "优惠券",
     "discount_price": "折扣价格",
     "enter_cancel_reason": "输入取消原因",
+    "cancel_service_reason": "取消服务原因",
     "execution_date": "执行日期",
     "start": "开始",
     "end": "结束",
@@ -660,6 +662,9 @@
     "customer_notes": "客户备注",
     "original_price": "原价",
     "address_notes": "地址备注",
+    "no_customer_notes": "没有客户备注",
+    "no_cancel_reason": "没有取消原因",
+    "cancel_pending_note": "取消请求将发送给管理员进行审核。",
     "notification": {
       "booking_end_title": "服务结束",
       "booking_end_body": "服务已结束"
