@@ -113,7 +113,8 @@
     "day_off": "Day off",
     "offline_service_title": "Technician is on break",
     "offline_service_message": "This technician is currently on break. Would you like to...?",
-    "save_qr_code": "Save QR Code"
+    "save_qr_code": "Save QR Code",
+    "total": "Total"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -710,7 +711,8 @@
       "completed": "Completed",
       "waiting": "Waiting",
       "new_reviews": "New Reviews Today",
-      "no_review_new_today": "No new reviews today"
+      "no_review_new_today": "No new reviews today",
+      "order_in_progress": "Order in progress"
     },
     "services": {
       "add_new_service": "Add New Service",

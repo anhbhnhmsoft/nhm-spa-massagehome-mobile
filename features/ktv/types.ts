@@ -14,6 +14,7 @@ import { _KTVConfigSchedules } from '@/features/ktv/consts';
 
 export type DashboardKtvResponse = ResponseDataSuccessType<{
   booking: BookingItem | null;
+  booking_ongoing: BookingItem | null;
   total_revenue_today: number;
   total_revenue_yesterday: number;
   total_booking_completed_today: number;
@@ -23,7 +24,6 @@ export type DashboardKtvResponse = ResponseDataSuccessType<{
 export type StartBookingResponse = ResponseDataSuccessType<{
   booking_id: string;
   start_time: string;
-  expected_end_time: string;
   duration: number;
 }>;
 export type BookingDetailsResponse = ResponseDataSuccessType<BookingItem>;

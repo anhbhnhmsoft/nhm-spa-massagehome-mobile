@@ -10,6 +10,7 @@ import RequestLocationModal from '@/components/app/request-location';
 import { useEffect, useState } from 'react';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { useCheckMatchAffiliate } from '@/features/affiliate/hooks';
+import { useBookingCountdown } from '@/features/ktv/hooks/use-booking';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
@@ -17,6 +18,7 @@ export default function AppLayout() {
 
   const checkAuth = useCheckAuth();
   const user = useAuthStore((state) => state.user);
+
   useEffect(() => {
     // Chờ _TIME_OUT_LOADING_SCREEN_LAYOUT để đảm bảo rằng checkAuth đã có giá trị
     const timeout = setTimeout(() => {
@@ -33,6 +35,8 @@ export default function AppLayout() {
 
   // kiểm tra affiliate link khi user login
   useCheckMatchAffiliate();
+
+  useBookingCountdown();
 
   return (
     <>

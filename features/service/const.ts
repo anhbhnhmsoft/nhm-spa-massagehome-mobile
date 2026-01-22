@@ -21,7 +21,7 @@ export enum _BookingStatus {
   COMPLETED = 4,
   CANCELED = 5,
   PAYMENT_FAILED = 6,
-  WAITING_CANCEL,
+  WAITING_CANCEL = 7,
 }
 
 export const _BookingStatusMap = {

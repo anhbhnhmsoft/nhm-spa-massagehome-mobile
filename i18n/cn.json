@@ -113,7 +113,8 @@
     "day_off": "休息日",
     "offline_service_title": "技师休息中",
     "offline_service_message": "该技师当前正在休息。你想要...？",
-    "save_qr_code": "保存二维码"
+    "save_qr_code": "保存二维码",
+    "total": "总计"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -710,7 +711,8 @@
       "completed": "已完成",
       "waiting": "等待中",
       "new_reviews": "今日新评价",
-      "no_review_new_today": "今日暂无新评价"
+      "no_review_new_today": "今日暂无新评价",
+      "order_in_progress": "进行中的订单"
     },
     "services": {
       "add_new_service": "添加新服务",

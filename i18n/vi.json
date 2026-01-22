@@ -113,7 +113,8 @@
     "day_off": "Ngày nghỉ",
     "offline_service_title": "Kĩ thuật viên đang nghỉ",
     "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?",
-    "save_qr_code": "Lưu mã QR"
+    "save_qr_code": "Lưu mã QR",
+    "total": "Tổng"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -665,6 +666,7 @@
     "no_customer_notes": "Không có ghi chú từ khách hàng",
     "no_cancel_reason": "Không có lý do hủy",
     "cancel_pending_note": "Yêu cầu hủy sẽ được gửi đến quản trị viên để xét duyệt.",
+    "start_error_booking": "Đã xảy ra lỗi khi bắt đầu dịch vụ. Vui lòng thử lại.",
     "notification": {
       "booking_end_title": "Hết giờ làm dịch vụ",
       "booking_end_body": "Thời gian làm dịch vụ đã kết thúc"
@@ -710,7 +712,8 @@
       "completed": "Đã hoàn thành",
       "waiting": "Đang chờ",
       "new_reviews": "Đánh giá mới hôm nay",
-      "no_review_new_today": "Chưa có đánh giá mới hôm nay"
+      "no_review_new_today": "Chưa có đánh giá mới hôm nay",
+      "order_in_progress": "Đơn đang làm"
     },
     "services": {
       "add_new_service": "Thêm dịch vụ mới",

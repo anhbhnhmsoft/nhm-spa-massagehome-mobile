@@ -1,17 +1,18 @@
-import React, { use } from 'react';
-import { View, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
+import React from 'react';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useTranslation } from 'react-i18next';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { router } from 'expo-router';
-import { AppointmentCard, ReviewNewToday, TodayEarnings } from '@/components/app/ktv/homepage';
+import { AppointmentCard, ReviewNewToday, ServiceOngoingItemCard, TodayEarnings, } from '@/components/app/ktv/homepage';
 import { useDashboardKtvQuery } from '@/features/ktv/hooks/use-query';
 
 export default function KTVDashboard() {
   const { t } = useTranslation();
   const { data, isLoading, isRefetching, refetch } = useDashboardKtvQuery();
+
   const bottomPadding = getTabBarHeight() + 20;
 
   return (
@@ -27,6 +28,24 @@ export default function KTVDashboard() {
         refreshControl={
           <RefreshControl refreshing={isRefetching || isLoading} onRefresh={() => refetch()} />
         }>
+        {/* Section: Đơn đang làm */}
+        {data?.booking_ongoing && (
+          <View className="mb-8">
+            <View className="mb-4 flex-row items-end justify-between">
+              <Text className="font-inter-bold text-lg text-slate-900">
+                {t('ktv.index.order_in_progress')}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push('/(app)/(tab-ktv)/schedule');
+                }}>
+                <Text className="text-sm text-primary-color-2">{t('common.see_all')}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ServiceOngoingItemCard item={data.booking_ongoing} />
+          </View>
+        )}
         {/* Section: Đơn sắp tới */}
         <View className="mb-8">
           <View className="mb-4 flex-row items-end justify-between">
