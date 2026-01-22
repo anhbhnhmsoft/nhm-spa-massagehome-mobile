@@ -15,7 +15,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Ứng dụng cần truy cập vị trí để tìm kiếm các Spa và Kỹ thuật viên gần bạn nhất.",
+        "NSLocationWhenInUseUsageDescription": "Masa Home cần truy cập vị trí để tìm kiếm các Spa và Kỹ thuật viên gần bạn nhất.",
+        "NSPhotoLibraryUsageDescription": "Masa Home cần truy cập thư viện ảnh của bạn để bạn có thể tải ảnh đại diện cá nhân.",
+        "NSCameraUsageDescription": "Masa Home cần sử dụng camera để bạn có thể chụp ảnh đại diện trực tiếp.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
