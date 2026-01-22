@@ -53,6 +53,7 @@ export type BookingItem = {
   has_reviews: boolean;
   lat: number;
   lng: number;
+  reason_cancel: string | null;
 };
 
 export type ListBookingResponse = ResponseDataSuccessType<Paginator<BookingItem>>;

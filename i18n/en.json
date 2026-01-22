@@ -160,7 +160,8 @@
       "ONGOING": "In Progress",
       "COMPLETED": "Completed",
       "CANCELED": "Cancelled",
-      "PAYMENT_FAILED": "Payment Failed"
+      "PAYMENT_FAILED": "Payment Failed",
+      "WAITING_CANCEL": "Waiting Cancel"
     },
     "payment_type": {
       "QR_BANKING": "QR Banking Transfer",
@@ -657,9 +658,13 @@
     "start": "Start",
     "end": "End",
     "final_price": "Final price",
+    "cancel_service_reason": "Reason for service cancellation",
     "customer_notes": "Customer notes",
     "original_price": "Original price",
     "address_notes": "Address notes",
+    "no_customer_notes": "No notes from the customer",
+    "no_cancel_reason": "No cancellation reason",
+    "cancel_pending_note": "The cancellation request will be sent to the administrator for review.",
     "notification": {
       "booking_end_title": "End of Service",
       "booking_end_body": "The service has ended"

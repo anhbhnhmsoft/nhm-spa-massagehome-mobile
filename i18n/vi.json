@@ -160,7 +160,8 @@
       "ONGOING": "Đang thực hiện",
       "COMPLETED": "Hoàn thành",
       "CANCELED": "Hủy",
-      "PAYMENT_FAILED": "Thanh toán thất bại"
+      "PAYMENT_FAILED": "Thanh toán thất bại",
+      "WAITING_CANCEL": "Chờ hủy"
     },
     "payment_type": {
       "QR_BANKING": "Chuyển khoản QR Banking",
@@ -653,13 +654,17 @@
     "coupon": "Mã giảm giá",
     "discount_price": "Số tiền được giảm",
     "enter_cancel_reason": "Nhập lý do hủy dịch vụ",
+    "cancel_service_reason": "Lý do hủy dịch vụ",
     "execution_date": "Ngày thực hiện",
     "start": "Bắt đầu",
     "end": "Kết thúc",
     "final_price": "Giá cuối cùng",
-    "customer_notes": "Ghi chú chung từ khách hàng",
+    "customer_notes": "Ghi chú từ khách hàng",
     "original_price": "Giá gốc",
     "address_notes": "Ghi chú địa chỉ",
+    "no_customer_notes": "Không có ghi chú từ khách hàng",
+    "no_cancel_reason": "Không có lý do hủy",
+    "cancel_pending_note": "Yêu cầu hủy sẽ được gửi đến quản trị viên để xét duyệt.",
     "notification": {
       "booking_end_title": "Hết giờ làm dịch vụ",
       "booking_end_body": "Thời gian làm dịch vụ đã kết thúc"

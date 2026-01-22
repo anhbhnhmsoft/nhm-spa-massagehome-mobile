@@ -21,6 +21,7 @@ export enum _BookingStatus {
   COMPLETED = 4,
   CANCELED = 5,
   PAYMENT_FAILED = 6,
+  WAITING_CANCEL,
 }
 
 export const _BookingStatusMap = {
@@ -30,6 +31,7 @@ export const _BookingStatusMap = {
   [_BookingStatus.COMPLETED]: 'enum.booking_status.COMPLETED',
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
+  [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.WAITING_CANCEL',
 } as const;
 
 export const getStatusColor = (status: _BookingStatus) => {

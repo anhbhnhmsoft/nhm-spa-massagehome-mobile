@@ -340,6 +340,20 @@ export const BookingDetailModal = ({ isVisible, onClose, item }: BookingDetailMo
                 </Text>
               </View>
             </View>
+            {/* 5. Note cancel */}
+            {(item.status === _BookingStatus.CANCELED ||
+              item.status === _BookingStatus.WAITING_CANCEL) && (
+              <View className="mb-8">
+                <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
+                  {t('booking.cancel_reasons')}
+                </Text>
+                <View className="p-3">
+                  <Text className="text-sm text-slate-700">
+                    {item.reason_cancel ? item.reason_cancel : t('booking.no_cancel_reason')}
+                  </Text>
+                </View>
+              </View>
+            )}
 
             {/* Spacer bottom */}
             <View className="h-10" />
