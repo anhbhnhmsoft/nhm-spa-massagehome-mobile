@@ -4,10 +4,10 @@ import { getTabBarHeight, tabBarStyle } from '@/components/styles/style';
 import { TabIcon } from '@/components/app/tab-icon';
 import {
   Briefcase,
-  Home,
   CalendarDays,
-  MessageCircle,
   ChartColumnBigIcon,
+  Home,
+  MessageCircle,
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';

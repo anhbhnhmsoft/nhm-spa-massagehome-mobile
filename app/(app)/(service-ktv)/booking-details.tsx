@@ -30,7 +30,6 @@ export default function BookingDetails() {
     isLoadingBooking,
     isStartBookingPending,
     isCancelBookingPending,
-    isFinishBookingPending,
   } = useBooking(id);
 
   const statusStyle = getStatusColor(booking?.status ?? _BookingStatus.PENDING);
@@ -39,6 +38,7 @@ export default function BookingDetails() {
     return Number(booking?.price_before_discount ?? 0) - Number(booking?.price ?? 0);
   }, [booking?.price_before_discount, booking?.price]);
   const hasDiscount = useMemo(() => discountAmount > 0, [discountAmount]);
+
   return (
     <View className="flex-1 bg-white">
       <HeaderBack title="Chi tiết Booking" />
