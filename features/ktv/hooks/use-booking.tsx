@@ -9,21 +9,36 @@ import useToast from '@/features/app/hooks/use-toast';
 import { _BookingStatus } from '@/features/service/const';
 import { Alert } from 'react-native';
 import { calculateEndTime, getMessageError, getRemainingTime } from '@/lib/utils';
-import { StartBookingResponse } from '@/features/ktv/types';
+import { FinishBooking, StartBookingResponse } from '@/features/ktv/types';
 import useAuthStore from '@/features/auth/store';
 import { _UserRole } from '@/features/auth/const';
+
+/**
+ * Hook dùng để clear booking start
+ */
+
+export const useClearBooking = () => {
+  const { t } = useTranslation();
+  const { success } = useToast();
+  const clearBookingStart = useBookingStore((s) => s.clearBookingStart);
+  return async (data: FinishBooking) => {
+    if (data.already_finished) {
+      await clearBookingStart();
+    } else {
+      await clearBookingStart();
+      success({ message: t('booking.booking_end_success') });
+    }
+  };
+};
 
 /**
  * Hook dùng để đếm bộ bắt đầu (dùng ở layout toàn cục)
  */
 export const useBookingCountdown = () => {
-  const { t } = useTranslation();
-  const { success } = useToast();
-
   // store
   const bookingStart = useBookingStore((s) => s.booking_start);
   const setTimeLeft = useBookingStore((s) => s.setTimeLeft);
-  const clearBookingStart = useBookingStore((s) => s.clearBookingStart);
+  const clearBookingStart = useClearBooking();
   const hydrate = useBookingStore((s) => s.hydrate);
   const _hydrated = useBookingStore((s) => s._hydrated);
 
@@ -43,12 +58,13 @@ export const useBookingCountdown = () => {
     const timer = setInterval(() => {
       const remaining = getRemainingTime(endTime);
       setTimeLeft(remaining);
+
       if (remaining.isOver) {
         clearInterval(timer);
         setTimeLeft(null);
 
         finishBookingMutate(bookingStart.booking_id, {
-          onSuccess: async () => {
+          onSuccess: async (res) => {
             const prevNotif = useBookingStore.getState().notification_booking_start_id;
 
             if (prevNotif) {
@@ -66,9 +82,7 @@ export const useBookingCountdown = () => {
             await queryClient.invalidateQueries({
               queryKey: ['ktvApi-dashboard'],
             });
-            await clearBookingStart();
-
-            success({ message: t('booking.booking_end_success') });
+            await clearBookingStart(res.data);
           },
         });
       }
@@ -76,7 +90,7 @@ export const useBookingCountdown = () => {
 
     // cleanup khi unmount hoặc bookingStart đổi
     return () => clearInterval(timer);
-  }, [bookingStart, _hydrated]);
+  }, [bookingStart, _hydrated, user]);
 };
 
 /**
@@ -139,6 +153,7 @@ export const useBooking = (id: string) => {
 
   const bookingStart = useBookingStore((s) => s.booking_start);
   const timeLeft = useBookingStore((s) => s.time_left);
+  const clearBookingStart = useBookingStore((s) => s.clearBookingStart);
 
   const setBookingStart = useSetBookingStart();
 
@@ -148,6 +163,13 @@ export const useBooking = (id: string) => {
       hydrate();
     }
   }, [_hydrated]);
+
+  useEffect(() => {
+    if (!data || !bookingStart) return;
+    if (bookingStart?.booking_id === data.id && data.status === _BookingStatus.COMPLETED) {
+      clearBookingStart();
+    }
+  }, [data, bookingStart]);
 
   // bắt đầu dịch vụ
   const handleStartBooking = async () => {

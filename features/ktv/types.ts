@@ -152,6 +152,11 @@ export type KTVConfigSchedule = {
   }[];
   is_working: boolean;
 };
+export interface FinishBooking {
+  booking_id: number;
+  end_time: string; // ISO string: "2026-01-23T02:15:30.000Z"
+  already_finished: boolean;
+}
 
 export type ConfigSchedulesResponse = ResponseDataSuccessType<KTVConfigSchedule>;
 export type ListOptionCategoriesResponse = ResponseDataSuccessType<OptionCategory[]>;
@@ -164,3 +169,4 @@ export type EditConfigScheduleRequest = {
   }[];
   is_working: boolean;
 };
+export type FinishBookingResponse = ResponseDataSuccessType<FinishBooking>;
