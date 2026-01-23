@@ -10,6 +10,7 @@ import {
   DetailServiceRequest,
   EditConfigScheduleRequest,
   EditProfileKtvRequest,
+  FinishBookingResponse,
   ListOptionCategoriesResponse,
   ListServiceRequest,
   ListServiceResponse,
@@ -84,11 +85,11 @@ const ktvApi = {
     });
     return response.data;
   },
-  cancelBooking: async (data: CancelBookingRequest) => {
+  cancelBooking: async (data: CancelBookingRequest): Promise<ResponseSuccessType> => {
     const response = await client.post(`${defaultUri}/cancel-booking`, data); // Sửa lại
     return response.data;
   },
-  finishBooking: async (id: string) => {
+  finishBooking: async (id: string): Promise<FinishBookingResponse> => {
     const response = await client.post(`${defaultUri}/finish-booking`, {
       booking_id: id,
     });
