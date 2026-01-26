@@ -15,9 +15,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Masa Home cần truy cập vị trí để tìm kiếm các Spa và Kỹ thuật viên gần bạn nhất.",
-        "NSPhotoLibraryUsageDescription": "Masa Home cần truy cập thư viện ảnh của bạn để bạn có thể tải ảnh đại diện cá nhân.",
-        "NSCameraUsageDescription": "Masa Home cần sử dụng camera để bạn có thể chụp ảnh đại diện trực tiếp.",
+        "NSPhotoLibraryUsageDescription": "Masa Home cần truy cập thư viện ảnh để bạn có thể chọn và tải lên ảnh đại diện cá nhân, cũng như cung cấp các hình ảnh hồ sơ chuyên môn cần thiết khi thực hiện đăng ký trở thành kỹ thuật viên của hệ thống.",
+        "NSCameraUsageDescription": "Masa Home cần sử dụng Camera để bạn có thể chụp ảnh đại diện trực tiếp hoặc chụp ảnh các giấy tờ, bằng cấp liên quan để hoàn tất hồ sơ đăng ký làm kỹ thuật viên ngay trên ứng dụng.",
+        "NSPhotoLibraryAddUsageDescription": "Masa Home cần quyền lưu ảnh vào thư viện để bạn có thể lưu lại các thông tin xác nhận đăng ký hoặc hình ảnh từ dịch vụ.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
