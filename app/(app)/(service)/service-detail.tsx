@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useServiceDetail } from '@/features/service/hooks';
-import { formatBalance } from '@/lib/utils';
+import { formatBalance, goBack } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { Image } from 'expo-image';
 import { Icon } from '@/components/ui/icon';
@@ -62,7 +62,7 @@ export default function ServiceDetailScreen() {
 
             {/* Nút Đóng  */}
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => goBack()}
               className="absolute left-4 top-12 rounded-full bg-white/80 p-2">
               {/* Icon Back ở đây nếu cần */}
               <Icon as={ChevronLeft} size={20} className="text-primary-color-2" />

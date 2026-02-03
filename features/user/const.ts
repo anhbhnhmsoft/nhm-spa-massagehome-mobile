@@ -5,3 +5,9 @@ export enum _PartnerFileType {
   KTV_IMAGE_DISPLAY = 5,
   FACE_WITH_IDENTITY_CARD = 6,
 }
+
+export enum _ReviewApplicationStatus {
+  PENDING = 1,
+  APPROVED = 2,
+  REJECTED = 3,
+}

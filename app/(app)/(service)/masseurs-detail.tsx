@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { formatDistance, getCurrentDayKey } from '@/lib/utils';
+import { formatDistance, getCurrentDayKey, goBack } from '@/lib/utils';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
@@ -138,7 +138,7 @@ const MasseurDetailScreen = () => {
 
                 {/* Nút Back hoặc Action phía trên (Optional) */}
                 <TouchableOpacity
-                  onPress={() => router.back()}
+                  onPress={() => goBack()}
                   className="absolute left-4 top-12 rounded-full bg-white/80 p-2">
                   {/* Icon Back ở đây nếu cần */}
                   <Icon as={ChevronLeft} size={20} className="text-primary-color-2" />

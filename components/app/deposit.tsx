@@ -29,7 +29,7 @@ import {
   X,
 } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
 import useSaveFileImage from '@/features/app/hooks/use-save-image';
 import { _UserRole } from '@/features/auth/const';
@@ -40,8 +40,12 @@ import { useWalletStore } from '@/features/payment/stores';
 export default function Deposit({ useFor }: { useFor: _UserRole }) {
   const { t } = useTranslation();
 
+  // giá đổi tiền giữa VND và CNY (nếu chọn nạp qua Wechat)
+  const [exchangePriceCny, setExchangePriceCny] = useState<number>(0);
+
   const { configPayment, form, submitDeposit, visibleModalWechat, handleCloseWechat } =
     useDeposit();
+
 
   const {
     control,
@@ -54,6 +58,15 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
   // Watch giá trị để update giao diện (đổi màu border, tính point...)
   const watchedAmount = watch('amount');
   const watchedPayment = watch('payment_type');
+
+  useEffect(() => {
+    if (configPayment?.exchange_rate_vnd_cny && watchedPayment === _PaymentType.WECHAT_PAY) {
+      const priceCny = Number(watchedAmount) / Number(configPayment?.exchange_rate_vnd_cny);
+      setExchangePriceCny(priceCny);
+    }else{
+      setExchangePriceCny(0);
+    }
+  }, [watchedAmount, watchedPayment]);
 
   // Logic tính toán quy đổi
   // const receivedPoints = Math.floor(
@@ -124,6 +137,15 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                   </TouchableOpacity>
                 ))}
               </View>
+
+              {/* Hiển thị giá đổi tiền CNY */}
+              {watchedPayment === _PaymentType.WECHAT_PAY && (
+                <Text className="mt-2 text-xs text-gray-500">
+                  {t('payment.exchange_rate_wechat_pay', {
+                    priceCny: formatBalance(exchangePriceCny),
+                  })}
+                </Text>
+              )}
             </View>
             {/* --- 3. PHƯƠNG THỨC THANH TOÁN --- */}
             <Text className="mb-4 font-inter-bold text-lg text-gray-900">
@@ -232,11 +254,19 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
 
         {/* --- BOTTOM BUTTON --- */}
         <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
-          <View className="mb-2 flex-row justify-between">
+          <View className="mb-2 flex-row justify-between items-center">
             <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
-            <Text className="font-inter-bold text-lg text-gray-900">
-              {watchedAmount ? formatBalance(watchedAmount) : '0'} đ
-            </Text>
+            <View className="flex-row items-center justify-center gap-2">
+              {watchedPayment === _PaymentType.WECHAT_PAY && (
+                <Text className="mt-2 text-xs text-gray-500">
+                  ({formatBalance(exchangePriceCny)} CNY)
+                </Text>
+              )}
+              <Text className="font-inter-bold text-lg text-gray-900">
+                {watchedAmount ? formatBalance(watchedAmount) : '0'} {t('common.currency')}
+              </Text>
+            </View>
+
           </View>
           <TouchableOpacity
             className={`items-center justify-center rounded-full py-3.5 ${
@@ -508,7 +538,7 @@ export const WeChatPaymentModal = ({ visible, onClose }: WeChatPaymentModalProps
 
   if (!qrWechatData) return null;
 
-  const { qr_image, amount, description } = qrWechatData as QRWechatData;
+  const { qr_image, amount, description, amount_cny } = qrWechatData as QRWechatData;
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
@@ -567,8 +597,11 @@ export const WeChatPaymentModal = ({ visible, onClose }: WeChatPaymentModalProps
                   <Text className="mb-1 text-xs uppercase tracking-wider text-gray-500">
                     {t('payment.amount')}
                   </Text>
-                  <Text className="font-inter-bold text-2xl text-gray-900">
-                    {formatBalance(amount)} <Text className="font-inter-medium text-sm">VNĐ</Text>
+                  <Text className="font-inter-bold text-2xl mb-2 text-gray-900">
+                    {formatBalance(amount_cny)} <Text className="font-inter-medium text-sm"> CNY</Text>
+                  </Text>
+                  <Text className="font-inter-bold text-sm text-slate-500">
+                    {formatBalance(amount)} {t('common.currency')}
                   </Text>
                 </View>
                 <CircleDollarSign size={28} color="#07C160" />

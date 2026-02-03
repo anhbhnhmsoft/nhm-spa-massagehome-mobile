@@ -17,6 +17,7 @@ dayjs.extend(duration);
 
 import { _KTVConfigSchedules } from '@/features/ktv/consts'; // Cần cho uuid
 import * as WebBrowser from 'expo-web-browser';
+import { router } from 'expo-router';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -228,3 +229,9 @@ export const getRemainingTime = (endTime: dayjs.Dayjs) => {
     isOver: false,
   };
 };
+
+export const goBack = () => {
+  if (router.canGoBack()) {
+    router.back();
+  }
+}

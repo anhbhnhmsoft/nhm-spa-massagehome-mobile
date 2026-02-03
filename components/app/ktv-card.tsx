@@ -22,8 +22,9 @@ import { Text } from '@/components/ui/text';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import {  _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
+import { _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
 import { Icon } from '@/components/ui/icon';
+
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 
@@ -95,7 +96,7 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
 
   const distance = calculateDistance(
     item.review_application.latitude,
-    item.review_application.longitude
+    item.review_application.longitude,
   );
 
   const setKtv = useSetKtv();
@@ -159,7 +160,6 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
         </View>
 
         <View className="mt-3 w-full flex-row items-center justify-between pt-2">
-          <View />
           <View className="rounded-md bg-primary-color-2 px-4 py-2 shadow-sm">
             <Text className="font-inter-bold text-xs text-white">{t('services.btn_booking')}</Text>
           </View>
@@ -206,7 +206,10 @@ export const KTVServiceCardSkeleton = () => {
 /**
  * Hiển thị thông tin lịch làm việc của massager
  */
-export const ScheduleSection = ({ schedule, isOnlineRealtime }: { schedule: KTVWorkSchedule, isOnlineRealtime: boolean }) => {
+export const ScheduleSection = ({ schedule, isOnlineRealtime }: {
+  schedule: KTVWorkSchedule,
+  isOnlineRealtime: boolean
+}) => {
   const { t } = useTranslation();
   const currentDayKey = getCurrentDayKey();
 
@@ -234,12 +237,12 @@ export const ScheduleSection = ({ schedule, isOnlineRealtime }: { schedule: KTVW
         <View
           className={cn(
             'rounded-md px-2 py-1',
-            isOnlineRealtime ? 'bg-green-100' : 'bg-gray-100'
+            isOnlineRealtime ? 'bg-green-100' : 'bg-gray-100',
           )}>
           <Text
             className={cn(
               'text-xs',
-              isOnlineRealtime ? 'font-inter-bold text-green-700' : 'text-gray-500'
+              isOnlineRealtime ? 'font-inter-bold text-green-700' : 'text-gray-500',
             )}>
             {isOnlineRealtime ? t('common.online') : t('common.offline')}
           </Text>
@@ -263,7 +266,7 @@ export const ScheduleSection = ({ schedule, isOnlineRealtime }: { schedule: KTVW
                 <Text
                   className={cn(
                     'text-sm',
-                    isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700'
+                    isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700',
                   )}>
                   {t(_KTVConfigSchedulesLabel[item.day_key])}
                 </Text>
@@ -275,7 +278,7 @@ export const ScheduleSection = ({ schedule, isOnlineRealtime }: { schedule: KTVW
                   <Text
                     className={cn(
                       'text-sm',
-                      isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700'
+                      isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700',
                     )}>
                     {item.start_time} - {item.end_time}
                   </Text>

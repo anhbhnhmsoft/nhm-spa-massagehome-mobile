@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useGetBookingList } from '@/features/booking/hooks';
-import { cn } from '@/lib/utils';
+import { cn, goBack } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import Empty from '@/components/empty';
 import { BookingCard } from '@/components/app/booking';
@@ -64,7 +64,7 @@ export default function OrdersScreen() {
               {t('header_app.orders_description')}
             </Text>
           </View>
-          <TouchableOpacity onPress={() => router.back()} className="rounded-full bg-white/80 p-2">
+          <TouchableOpacity onPress={() => goBack()} className="rounded-full bg-white/80 p-2">
             {/* Icon Back ở đây nếu cần */}
             <Icon as={X} size={20} className="text-primary-color-2" />
           </TouchableOpacity>

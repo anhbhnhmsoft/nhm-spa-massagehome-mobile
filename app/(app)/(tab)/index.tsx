@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { useGetListKTVHomepage } from '@/features/user/hooks';
 import { useGetCategoryList } from '@/features/service/hooks';
@@ -25,9 +25,29 @@ export default function UserDashboard() {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const redirectAuth = useCheckAuthToRedirect();
   const locationUser = useLocationUser();
+
   const bannerQuery = useListBannerQuery();
 
   const queryCategory = useGetCategoryList({ page: 1, per_page: 5 }, true);
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      // Đợi tất cả các query chạy xong
+      await Promise.all([
+        queryKTV.refetch(),
+        queryCategory.refetch(),
+        bannerQuery.refetch(),
+      ]);
+    } catch {
+      // do nothing
+    } finally {
+      // Tắt loading sau khi xong (dù thành công hay thất bại)
+      setIsRefreshing(false);
+    }
+  }, [queryKTV, queryCategory, bannerQuery]);
 
   return (
     <View className="flex-1 bg-base-color-3">
@@ -41,14 +61,9 @@ export default function UserDashboard() {
         contentContainerStyle={{ paddingBottom: 120 }}
         refreshControl={
           <RefreshControl
-            refreshing={
-              queryKTV.isRefetching || queryCategory.isRefetching || bannerQuery.isRefetching
-            }
-            onRefresh={() => {
-              queryKTV.refetch();
-              queryCategory.refetch();
-              bannerQuery.refetch();
-            }}
+            // Chỉ hiện loading khi biến local state = true
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
           />
         }>
         {/* --- 1. BANNER CAROUSEL --- */}

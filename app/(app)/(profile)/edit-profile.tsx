@@ -18,7 +18,7 @@ import { useEditProfile, useLockAccount } from '@/features/auth/hooks';
 import React, { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerInput from '@/components/date-time-input';
-import { cn } from '@/lib/utils';
+import { cn, goBack } from '@/lib/utils';
 import HeaderBack from '@/components/header-back';
 import { Trash2 } from 'lucide-react-native';
 
@@ -201,7 +201,7 @@ export default function EditProfileScreen() {
       {/* Submit Button */}
       <View className="flex-row items-center gap-4 px-4 py-4">
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => goBack()}
           disabled={isSubmitting}
           className={`flex-1 flex-row items-center justify-center rounded-lg bg-base-color-3 py-3`}>
           {isSubmitting ? <ActivityIndicator color="white" className="mr-2" /> : null}

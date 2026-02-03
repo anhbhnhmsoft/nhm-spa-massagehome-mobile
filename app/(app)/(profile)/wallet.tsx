@@ -60,6 +60,7 @@ export default function WalletScreen() {
             }}
             contentContainerStyle={{
               gap: 12,
+              paddingTop: 12,
               paddingHorizontal: 16,
               paddingBottom: 100,
             }}
@@ -103,6 +104,7 @@ export default function WalletScreen() {
             }}
             contentContainerStyle={{
               gap: 12,
+              paddingTop: 12,
               paddingHorizontal: 16,
               paddingBottom: 100,
             }}

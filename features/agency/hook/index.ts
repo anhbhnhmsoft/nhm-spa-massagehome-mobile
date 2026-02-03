@@ -14,6 +14,7 @@ import useToast from '@/features/app/hooks/use-toast';
 import useApplicationStore from '@/lib/store';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils';
 
 /**
  * Hook để quản lý dashboard của đại lý
@@ -172,7 +173,7 @@ export const useUpdateProfileAgency = () => {
       onSuccess: (res) => {
         toastSuccess({ message: res.message });
         query.refetch();
-        router.back();
+        goBack();
       },
       onError: (err) => {
         errorToast(err);

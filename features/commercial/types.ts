@@ -5,6 +5,7 @@ import { CouponItem } from '@/features/service/types';
 export type BannerItem = {
   id: string;
   image_url: string;
+  order: number;
 }
 
 export type BannerResponse = ResponseDataSuccessType<BannerItem[]>;

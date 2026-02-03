@@ -7,7 +7,7 @@ import {
 import { _LanguageCode } from '@/lib/const';
 import { _Gender, _UserRole } from '@/features/auth/const';
 import { _BookingStatus } from '@/features/service/const';
-import { _PartnerFileType } from './const';
+import { _PartnerFileType, _ReviewApplicationStatus } from './const';
 import { _KTVConfigSchedules } from '@/features/ktv/consts';
 
 export type KTVWorkSchedule = {
@@ -86,13 +86,21 @@ export type DashboardProfile = {
 };
 export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>;
 
+export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
+  can_apply: boolean;
+  apply_role: _UserRole.KTV | _UserRole.AGENCY;
+  apply_status: _ReviewApplicationStatus;
+}>;
+
+
 export type ApplyPartnerRequest = {
   role: _UserRole.KTV | _UserRole.AGENCY;
+  nickname?: string;
   referrer_id?: string | undefined;
   province_code: string;
   address: string;
-  latitude?: string | undefined;
-  longitude?: string | undefined;
+  latitude: string;
+  longitude: string;
   experience: number;
   is_leader?: boolean;
   bio: IMultiLangField;

@@ -5,7 +5,7 @@ import {
   ListKTVRequest,
   ListKTVResponse,
   ApplyPartnerRequest,
-  ApplyPartnerResponse,
+  ApplyPartnerResponse, CheckApplyPartnerResponse,
 } from '@/features/user/types';
 import { ListKtvResponse } from '@/features/agency/type';
 
@@ -25,6 +25,11 @@ const userApi = {
   // Lấy thông tin dashboard profile
   dashboardProfile: async (): Promise<DashboardProfileResponse> => {
     const response = await client.get(`${defaultUri}/dashboard-profile`);
+    return response.data;
+  },
+  // Kiểm tra thông tin đăng ký đối tác (KTV hoặc Agency)
+  checkApplyPartner: async (): Promise<CheckApplyPartnerResponse> => {
+    const response = await client.get(`${defaultUri}/check-apply-partner`);
     return response.data;
   },
   // User hiện tại đăng ký làm đối tác

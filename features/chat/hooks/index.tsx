@@ -29,6 +29,7 @@ import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
 import { _ChatConstant } from '@/features/chat/consts';
+import { goBack } from '@/lib/utils';
 
 // Hook để lấy thông tin phòng chat
 export const useGetRoomChat = () => {
@@ -238,7 +239,7 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
   useEffect(() => {
     if (joinStatus === 'error') {
       errorToast({ message: t('chat.error_join_room') });
-      router.back();
+      goBack();
     }
   }, [joinStatus]);
 

@@ -114,7 +114,8 @@
     "offline_service_title": "Kĩ thuật viên đang nghỉ",
     "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?",
     "save_qr_code": "Lưu mã QR",
-    "total": "Tổng"
+    "total": "Tổng",
+    "nickname": "Biệt danh"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -331,6 +332,7 @@
     "technician_suggest": "Kĩ thuật viên được đề xuất",
     "services": "Dịch vụ nổi bật",
     "features_trust": "Cam kết của chúng tôi",
+    "no_ktv_available": "Hiện tại không có kỹ thuật viên nào có sẵn.",
     "invite_ktv": {
       "title": "Đăng ký",
       "description": "Kĩ thuật viên"
@@ -416,6 +418,7 @@
       "follow_agency_desc": "Nhập mã đã giới thiệu bạn.",
       "follow_agency_placeholder": "Nhập mã Code",
       "field_experience_placeholder": "Nhập số năm kinh nghiệm",
+      "field_nickname_placeholder": "Nhập tên hiển thị",
       "button_submit": "Gửi đăng ký",
       "alert_location_permission_title": "Quyền truy cập vị trí",
       "alert_location_permission_message": "Vui lòng cho phép ứng dụng truy cập vị trí của bạn.",
@@ -428,7 +431,7 @@
       "alert_max_images_title": "Quá số lượng ảnh",
       "alert_max_images_message": "Bạn chỉ được chọn tối đa 5 ảnh hiển thị.",
       "alert_missing_degrees_title": "Thiếu bằng cấp",
-      "alert_missing_degrees_message": "Vui lòng thêm ít nhất một ảnh bằng cấp.",
+      "alert_missing_degrees_message": "Bằng cấp chỉ định là 1 ảnh.",
       "alert_temp_title": "Tạm thời",
       "alert_temp_message": "Form đã validate thành công (chưa gửi lên server).",
       "alert_success_title": "Đăng ký thành công",
@@ -443,7 +446,15 @@
       "face_with_id": "Chụp ảnh khuôn mặt cùng CCCD",
       "alert_missing_face_with_card_title": "Thiếu ảnh khuôn mặt cùng CCCD",
       "alert_missing_face_with_card_message": "Vui lòng thêm ảnh chụp khuôn mặt cùng CCCD.",
-      "register_success": "Đơn đăng ký của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."
+      "register_success": "Đơn đăng ký của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.",
+      "error_nickname_required": "Vui lòng nhập tên hiển thị.",
+      "error_bio_required": "Vui lòng nhập giới thiệu bản thân (ít nhất {{ min }} ký tự).",
+      "error_file_invalid": "Vui lòng chọn ảnh, hoặc ảnh tải lên không hợp lệ.",
+      "alert_images_display_message": "Vui lòng thêm ít nhất {{ min }} ảnh và tối đa {{ max }} ảnh để hiển thị cho khách hàng.",
+      "error_check_apply_partner": "Có lỗi xảy ra khi kiểm tra đăng ký đối tác. Vui lòng thử lại sau.",
+      "info_apply_pending": "Bạn đã đăng ký đối tác, đang chờ Quản trị viên duyệt, vui lòng chờ đợi thông tin mới nhất.",
+      "info_apply_approved": "Bạn đã đăng ký đối tác, đã được duyệt.",
+      "info_apply_rejected": "Đơn đăng ký đối tác của bạn đã bị từ chối, bạn không thể đăng ký lại được nữa."
     },
     "partner_register": {
       "title": "Bạn muốn đăng ký làm gì?",
@@ -490,6 +501,7 @@
     "transfer_note": "Nội dung chuyển khoản",
     "note_important": "Vui lòng nhập chính xác nội dung này",
     "processing_transaction": "Hệ thống đang xử lý thanh toán WeChat. Quá trình này có thể mất từ 15–30 phút",
+    "exchange_rate_wechat_pay": "Quy đổi thành {{priceCny}} CNY",
     "withdraw": {
       "title_modal": "Chọn tài khoản rút tiền",
       "add_new_account": "Liên kết tài khoản mới",
@@ -614,7 +626,7 @@
     "primary": "Mặc định",
     "no_desc": "Không có ghi chú",
     "get_current_location": "Lấy vị trí hiện tại",
-    "loading": "Đang lưu...",
+    "loading": "Đang xử lý...",
     "error": {
       "title": "Lỗi địa chỉ",
       "invalid_address": "Vui lòng chọn địa chỉ hợp lệ từ gợi ý",
@@ -678,8 +690,6 @@
   },
   "affiliate": {
     "title": "Giới thiệu bạn bè",
-    "title_1": "Mời bạn bè để nhận đến",
-    "title_2": "{{ percent }}% hoa hồng trọn đời",
     "referral_link": "Liên kết giới thiệu",
     "share": "Mời ngay",
     "share_error": "Lỗi khi chia sẻ liên kết giới thiệu, vui lòng thử lại sau.",

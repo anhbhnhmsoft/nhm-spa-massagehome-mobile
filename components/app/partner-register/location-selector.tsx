@@ -27,8 +27,10 @@ export function LocationSelector<T extends FieldValues>({
   const { location: currentLocation } = useLocationAddress();
   const { t } = useTranslation();
 
-  const handleGetCurrentLocation = useCallback(async () => {
+  const handleGetCurrentLocation = async () => {
+
     const hasPermission = await getPermission();
+    console.log(hasPermission)
 
     if (!hasPermission) {
       Alert.alert(
@@ -60,7 +62,7 @@ export function LocationSelector<T extends FieldValues>({
         { shouldDirty: true }
       );
     }
-  }, []);
+  };
 
   return (
     <View>

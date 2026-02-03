@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { cn } from '@/lib/utils';
+import { cn, goBack } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { AlertCircle, Check, ChevronLeft, Clock, Send } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +88,7 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
       <FocusAwareStatusBar hidden={true} />
       {/* --- A. HEADER --- */}
       <View className="flex-row items-center p-4 border-b border-gray-100 bg-white">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
+        <TouchableOpacity onPress={() => goBack()} className="mr-3">
           <ChevronLeft size={24} color={DefaultColor.gray[800]} />
         </TouchableOpacity>
 

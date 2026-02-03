@@ -114,7 +114,8 @@
     "offline_service_title": "技师休息中",
     "offline_service_message": "该技师当前正在休息。你想要...？",
     "save_qr_code": "保存二维码",
-    "total": "总计"
+    "total": "总计",
+    "nickname": "昵称"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -331,6 +332,7 @@
     "technician_suggest": "推荐技师",
     "services": "特色服务",
     "features_trust": "我们的承诺",
+    "no_ktv_available": "当前暂无可用技师。",
     "invite_ktv": {
       "title": "注册",
       "description": "成为技师"
@@ -388,7 +390,7 @@
     },
     "partner_form": {
       "title": "技师注册",
-      "title_technician_leader": "渠道合作商",
+      "title_technician_leader": "技师管理团队长",
       "images_title": "您展示给客户的图片",
       "images_min_note": "最少 3 张，最多 5 张照片",
       "images_warning": "请勿使用虚假或不雅照片。照片必须清晰、露脸、正面、严肃且适合工作。严禁包含个人信息（电话、社交媒体、详细地址...）。",
@@ -416,7 +418,7 @@
       "follow_agency_desc": "输入推荐您的代理的代码。",
       "follow_agency_placeholder": "输入代码",
       "field_experience_placeholder": "输入经验年限",
-      "button_submit": "提交注册",
+      "field_nickname_placeholder": "输入显示名称",
       "alert_location_permission_title": "位置权限",
       "alert_location_permission_message": "请允许应用访问您的位置。",
       "alert_photo_permission_title": "照片权限",
@@ -428,7 +430,7 @@
       "alert_max_images_title": "图片过多",
       "alert_max_images_message": "您最多只能选择 5 张展示图片。",
       "alert_missing_degrees_title": "缺少证书",
-      "alert_missing_degrees_message": "请添加至少一张学位/证书照片。",
+      "alert_missing_degrees_message": "请添加 1 张证书照片。",
       "alert_temp_title": "临时",
       "alert_temp_message": "表单验证成功（尚未发送至服务器）。",
       "alert_success_title": "注册成功",
@@ -443,11 +445,19 @@
       "face_with_id": "手持身份证自拍",
       "alert_missing_face_with_card_title": "缺少手持身份证自拍",
       "alert_missing_face_with_card_message": "请添加一张手持身份证的自拍照片。",
-      "register_success": "您的申请已成功发送。我们将尽快与您联系。"
+      "register_success": "您的申请已成功发送。我们将尽快与您联系。",
+      "error_nickname_required": "请输入显示名称。",
+      "error_bio_required": "请输入您的简介（至少 {{ min }} 个字符）。",
+      "error_file_invalid": "请选择一张图片，或上传的图片无效。",
+      "alert_images_display_message": "请添加至少 {{ min }} 张且最多 {{ max }} 张照片以展示给客户。",
+      "error_check_apply_partner": "检查合作伙伴申请时发生错误。请稍后重试。",
+      "info_apply_pending": "您已注册成为合作伙伴，正在等待管理员审核，请耐心等待最新消息。",
+      "info_apply_approved": "您的合作伙伴注册已获得批准。",
+      "info_apply_rejected": "您的合作伙伴申请已被拒绝，无法再次申请。"
     },
     "partner_register": {
       "title": "您想注册为什么角色？",
-      "individual_title": "技师团长",
+      "individual_title": "技师管理团队长",
       "individual_desc": "按摩和水疗技师团队的负责人正在寻找新的收入来源",
       "agency_title": "城市区域代理",
       "agency_desc": "我们帮助代理商接触数百万客户"
@@ -614,7 +624,7 @@
     "primary": "默认",
     "no_desc": "无备注",
     "get_current_location": "获取当前位置",
-    "loading": "正在保存...",
+    "loading": "处理中...",
     "error": {
       "title": "地址错误",
       "invalid_address": "请从建议中选择有效的地址",
@@ -677,8 +687,6 @@
   },
   "affiliate": {
     "title": "邀请好友",
-    "title_1": "邀请好友最高可得",
-    "title_2": "{{ percent }}% 终身佣金",
     "referral_link": "推荐链接",
     "share": "立即邀请",
     "share_error": "分享推荐链接出错，请稍后重试。",

@@ -37,7 +37,9 @@ export const InputField = <T extends FieldValues = any>({
             placeholder={placeholder}
             placeholderTextColor="#9CA3AF"
             onBlur={onBlur}
-            onChangeText={onChange}
+            onChangeText={keyboardType === 'numeric' ? (value) => {
+              onChange(Number(value))
+            }: onChange}
             value={value}
             multiline={multiline}
             numberOfLines={numberOfLines}

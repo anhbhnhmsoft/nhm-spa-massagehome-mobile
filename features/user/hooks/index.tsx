@@ -17,6 +17,7 @@ import { useProfileQuery } from '@/features/auth/hooks/use-query';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
+import { goBack } from '@/lib/utils';
 
 export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form'; // ?
 
@@ -142,7 +143,7 @@ export const useKTVDetail = () => {
   useEffect(() => {
     // Nếu không có massager, quay lại màn hình trước
     if (!ktv) {
-      router.back();
+      goBack();
     }
   }, [ktv]);
 

@@ -26,7 +26,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Alert } from 'react-native';
-import { getMessageError } from '@/lib/utils';
+import { getMessageError, goBack } from '@/lib/utils';
 
 // Hook quản lý tìm kiếm location
 export const useSearchLocation = () => {
@@ -149,7 +149,7 @@ export const useListLocation = () => {
   useEffect(() => {
     // Nếu không auth, quay lại trang trước
     if (!checkAuth) {
-      router.back();
+      goBack();
       return;
     }
   }, [checkAuth]);

@@ -9,6 +9,7 @@ import { useEditAvatar } from '@/features/auth/hooks';
 import { useEditImage } from '@/features/ktv/hooks';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { useChangeImage } from '@/features/ktv/hooks';
+import { goBack } from '@/lib/utils';
 
 export default function TakePictureScreen() {
   // khai báo camera
@@ -34,7 +35,7 @@ export default function TakePictureScreen() {
 
     try {
       uploadImages(form, () => {
-        router.back();
+        goBack();
       });
     } catch (e) {
       // noop - uploadImages handles errors via hooks
@@ -50,7 +51,7 @@ export default function TakePictureScreen() {
         facing={facing}
       />
       <View className="flex-row items-center justify-between bg-base-color-3 px-10 py-10">
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={goBack}>
           <Entypo name="chevron-left" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={takePicture}>

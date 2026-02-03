@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  View,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import { Controller, useWatch } from 'react-hook-form';
-import { z } from 'zod';
+import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
-import { _UserRole } from '@/features/auth/const';
 import { useProvinces } from '@/features/location/hooks/use-query';
-import useAuthStore from '@/features/auth/store';
 import { useImagePicker } from '@/features/app/hooks/use-image-picker';
-import {
-  getFilesByType,
-  usePartnerRegisterForm,
-} from '@/features/user/hooks/use-partner-register-form';
+import { getFilesByType, usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
 import { ImageSlot } from '@/components/app/partner-register/image-slot';
 import { InputField } from '@/components/app/partner-register/input-field';
 import { ProvinceSelector } from '@/components/app/partner-register/province-selector';
@@ -65,16 +55,21 @@ export default function PartnerRegisterIndividualScreen() {
   const { referrer_id , is_leader} = useLocalSearchParams<{ referrer_id?: string, is_leader?: string }>();
 
   const { data: provincesData, isLoading: isLoadingProvinces } = useProvinces();
+
   const { pickImage } = useImagePicker();
 
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
-  const { form, onSubmit, onInvalidSubmit } = usePartnerRegisterForm();
+
+  const { form, onSubmit, onInvalidSubmit, loading } = usePartnerRegisterForm();
+
   const {
     control,
     formState: { errors },
     setValue,
     handleSubmit,
   } = form;
+
+
   useEffect(() => {
     if (referrer_id) {
       form.setValue('referrer_id', referrer_id, {
@@ -86,6 +81,7 @@ export default function PartnerRegisterIndividualScreen() {
       form.setValue('is_leader', true);
     }
   }, [referrer_id, is_leader]);
+
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -108,7 +104,7 @@ export default function PartnerRegisterIndividualScreen() {
             {t('profile.partner_form.images_title')} <Text className="text-red-500">*</Text>
           </Text>
 
-          {/* List ảnh demo */}
+          {/* List ảnh KTV_IMAGE_DISPLAY */}
           <Controller
             control={control}
             name="file_uploads"
@@ -143,9 +139,8 @@ export default function PartnerRegisterIndividualScreen() {
                       }}
                     />
                   ))}
-
                   {/* ADD NEW LICENSE IMAGE */}
-                  <ImageSlot
+                  {licenseFiles.length < 5 && <ImageSlot
                     uri={null}
                     label={t('profile.partner_form.add_photo')}
                     onAdd={() =>
@@ -160,10 +155,10 @@ export default function PartnerRegisterIndividualScreen() {
                               type: 'image/jpeg',
                             },
                           },
-                        ])
+                        ]),
                       )
                     }
-                  />
+                  />}
                 </View>
               );
             }}
@@ -179,6 +174,7 @@ export default function PartnerRegisterIndividualScreen() {
           <Text className="mb-2 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.id_title')} <Text className="text-red-500">*</Text>
           </Text>
+
           {/* Ảnh căn cước công dân  */}
           <Controller
             control={control}
@@ -255,9 +251,10 @@ export default function PartnerRegisterIndividualScreen() {
             }}
           />
 
-          <Text className="mb-2 font-inter-bold text-base text-slate-900">
+          <Text className="my-2 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.face_with_id')} <Text className="text-red-500">*</Text>
           </Text>
+
           {/* Ảnh khuôn  mặt và cccd */}
           <Controller
             control={control}
@@ -303,7 +300,7 @@ export default function PartnerRegisterIndividualScreen() {
             }}
           />
 
-          <Text className="mb-2 font-inter-bold text-base text-slate-900">
+          <Text className="my-2 font-inter-bold text-base text-slate-900">
             {t('profile.partner_form.degrees_title')} <Text className="text-red-500">*</Text>
           </Text>
 
@@ -312,61 +309,48 @@ export default function PartnerRegisterIndividualScreen() {
             control={control}
             name="file_uploads"
             render={({ field: { value = [], onChange } }) => {
-              const degreeFiles = getFilesByType(value, _PartnerFileType.LICENSE);
+              const faceWithCardFile = getFilesByType(
+                value,
+                _PartnerFileType.LICENSE
+              )[0];
 
               return (
-                <View className="mb-4 flex-row flex-wrap gap-3">
-                  {degreeFiles.map((item, index) => (
-                    <ImageSlot
-                      key={item.file.uri + index}
-                      uri={item.file.uri}
-                      label={t('profile.partner_form.degree_photo')}
-                      onAdd={() =>
-                        pickImage((newUri) => {
-                          const updated = value.map((f) =>
-                            f === item
-                              ? {
-                                  ...f,
-                                  file: {
-                                    ...f.file,
-                                    uri: newUri,
-                                  },
-                                }
-                              : f
-                          );
-                          onChange(updated);
-                        })
-                      }
-                      onRemove={() => onChange(value.filter((f) => f !== item))}
-                    />
-                  ))}
+                <ImageSlot
+                  uri={faceWithCardFile?.file.uri || null}
+                  label={t('profile.partner_form.add_photo')}
+                  onAdd={() =>
+                    pickImage((uri) => {
+                      const filtered = value.filter(
+                        (f) => f.type_upload !== _PartnerFileType.LICENSE
+                      );
 
-                  {/* ADD NEW DEGREE IMAGE */}
-                  <ImageSlot
-                    uri={null}
-                    label={t('profile.partner_form.add_photo')}
-                    onAdd={() =>
-                      pickImage((uri) =>
-                        onChange([
-                          ...value,
-                          {
-                            type_upload: _PartnerFileType.LICENSE,
-                            file: {
-                              uri,
-                              name: 'degree.jpg',
-                              type: 'image/jpeg',
-                            },
+                      onChange([
+                        ...filtered,
+                        {
+                          type_upload: _PartnerFileType.LICENSE,
+                          file: {
+                            uri,
+                            name: 'face_with_card.jpg',
+                            type: 'image/jpeg',
                           },
-                        ])
+                        },
+                      ]);
+                    })
+                  }
+                  onRemove={() =>
+                    onChange(
+                      value.filter(
+                        (f) => f.type_upload !== _PartnerFileType.LICENSE
                       )
-                    }
-                  />
-                </View>
+                    )
+                  }
+                />
               );
             }}
           />
 
-          <View className="mb-4">
+          {/* Mã giới thiệu */}
+          <View className="my-4">
             <Text className="mb-1 font-inter-bold text-base text-slate-900">
               {t('profile.partner_form.follow_agency_label')}
             </Text>
@@ -377,6 +361,19 @@ export default function PartnerRegisterIndividualScreen() {
               keyboardType="numeric"
               error={errors.referrer_id?.message}
               editable={!referrer_id}
+            />
+          </View>
+
+          <View className="mb-4">
+            <Text className="mb-1 font-inter-bold text-base text-slate-900">
+              {t('common.nickname')} <Text className="text-red-500">*</Text>
+            </Text>
+            <InputField
+              control={control}
+              name="nickname"
+              placeholder={t('profile.partner_form.field_nickname_placeholder')}
+              keyboardType="default"
+              error={errors.nickname?.message}
             />
           </View>
 
@@ -395,7 +392,7 @@ export default function PartnerRegisterIndividualScreen() {
 
           <View className="mb-4">
             <Text className="mb-1 font-inter-bold text-base text-slate-900">
-              {t('profile.partner_form.field_bio_label')}
+              {t('profile.partner_form.field_bio_label')} <Text className="text-red-500">*</Text>
             </Text>
             <Controller
               control={control}
@@ -512,13 +509,13 @@ export default function PartnerRegisterIndividualScreen() {
         </View>
         <TouchableOpacity
           onPress={handleSubmit(onSubmit, onInvalidSubmit)}
-          disabled={!isAgreed}
+          disabled={!isAgreed || loading}
           className={cn(
             'items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200',
             isAgreed ? 'bg-primary-color-2' : 'bg-[#E0E0E0]'
           )}>
           <Text className="font-inter-bold text-base text-white">
-            {t('profile.partner_form.button_submit')}
+            {loading ? t('common.loading') : t('profile.partner_form.button_submit')}
           </Text>
         </TouchableOpacity>
       </View>

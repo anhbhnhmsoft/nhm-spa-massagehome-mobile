@@ -33,6 +33,7 @@ export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTran
 
 export type ConfigPaymentItem = {
   currency_exchange_rate: string; // Tỷ giá đổi tiền giữa VND và point
+  exchange_rate_vnd_cny: string; // Tỷ giá đổi tiền giữa VND và CNY
   allow_payment: {
     qrcode: boolean; // Cho phép nạp qua QRCode
     zalopay: boolean; // Cho phép nạp qua ZaloPay
@@ -68,6 +69,8 @@ export interface QRWechatData {
   qr_image: string;
   amount: string;
   description: string;
+  amount_cny: string;
+  exchange_rate: string;
 }
 
 export type DepositResponse = ResponseDataSuccessType<DepositItem>;

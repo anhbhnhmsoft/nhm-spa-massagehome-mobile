@@ -47,6 +47,7 @@ import { computePercentChange } from './useDashboardChart';
 import useAuthStore from '@/features/auth/store';
 import { useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
+import { goBack } from '@/lib/utils';
 
 // Hook cho chỉnh sửa dịch vụ
 export const useSetService = () => {
@@ -88,7 +89,7 @@ export const useSetService = () => {
   });
 
   // Hook cho xóa dịch vụ
-  const deleteService = useSingleTouch((id: string, goBack: boolean = false) => {
+  const deleteService = useSingleTouch((id: string, needBack: boolean = false) => {
     Alert.alert(t('ktv.services.delete.confirm.title'), t('ktv.services.delete.confirm.message'), [
       {
         text: t('ktv.services.delete.confirm.cancel'),
@@ -103,8 +104,8 @@ export const useSetService = () => {
             onSuccess: () => {
               successToast({ message: t('ktv.services.delete.success') });
               setReloadListService(true);
-              if (goBack) {
-                router.back();
+              if (needBack) {
+                goBack();
               }
             },
             onError: (err) => {
@@ -217,7 +218,7 @@ export const useFormService = () => {
   useEffect(() => {
     if (query.error) {
       handleError(query.error);
-      router.back();
+      goBack();
     }
   }, [query.error]);
 

@@ -16,12 +16,11 @@ import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
 import { _LanguageCode, _LanguagesMap } from '@/lib/const';
-import { cn, formatBalance } from '@/lib/utils';
+import { cn, formatBalance, goBack } from '@/lib/utils';
 import { useFormService } from '@/features/ktv/hooks';
 import { Controller } from 'react-hook-form';
 import { Image } from 'expo-image';
 import SelectModal from '@/components/select-modal';
-import { router } from 'expo-router';
 
 export default function FormScreen() {
   const [langName, setLangName] = useState<_LanguageCode>(_LanguageCode.VI);
@@ -61,9 +60,9 @@ export default function FormScreen() {
   const handleBack = useCallback(() => {
     if (isEdit) {
       setServiceEdit(null);
-      router.back();
+      goBack();
     } else {
-      router.back();
+      goBack();
     }
   }, []);
   return (

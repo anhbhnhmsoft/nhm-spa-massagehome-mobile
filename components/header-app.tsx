@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from '@/components/styles/gradient-background';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
-import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
+import {  useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
 import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
@@ -25,7 +25,6 @@ export function HeaderApp({
   textSearch,
 }: HeaderAppProps) {
   const insets = useSafeAreaInsets();
-  const checkAuth = useCheckAuth();
   const { t } = useTranslation();
   const [showLocationModal, setShowLocationModal] = React.useState(false);
   const redirectAuth = useCheckAuthToRedirect();
@@ -63,11 +62,7 @@ export function HeaderApp({
           <TouchableOpacity
             className="relative"
             onPress={() => {
-              if (!checkAuth) {
-                router.push('/(auth)');
-                return;
-              }
-              router.push('/(app)/(notification)/notificaton');
+              redirectAuth(() => router.push('/(app)/(notification)/notificaton'));
             }}>
             <Icon as={Bell} size={24} className="text-white" />
           </TouchableOpacity>

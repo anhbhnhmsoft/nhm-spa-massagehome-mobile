@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { useGetLocation, useLocation } from '@/features/app/hooks/use-location';
+import { PermissionStatus } from 'expo-location';
 
 export default function RequestLocationModal() {
   const { t } = useTranslation();
@@ -14,10 +15,10 @@ export default function RequestLocationModal() {
 
   const { locationPermission, completeCheck } = useLocation();
 
-  const checkShowLocation = useMemo(() => {
-    return locationPermission === null && completeCheck
-  }, [locationPermission, completeCheck]);
 
+  const checkShowLocation = useMemo(() => {
+    return (locationPermission === null || locationPermission === PermissionStatus.UNDETERMINED) && completeCheck
+  }, [locationPermission, completeCheck]);
 
   useEffect(() => {
     setIsVisible(checkShowLocation);

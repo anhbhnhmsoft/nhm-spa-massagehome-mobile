@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm, type Resolver } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,11 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { _UserRole } from '@/features/auth/const';
 import useApplicationStore from '@/lib/store';
 import useAuthStore from '@/features/auth/store';
-import { _PartnerFileType } from '../const';
+import { _PartnerFileType, _ReviewApplicationStatus } from '../const';
 import { ApplyPartnerRequest } from '../types';
 import useToast from '@/features/app/hooks/use-toast';
 import { useMutationApplyPartner } from './use-mutation';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils';
+import { useQueryCheckApplyPartner } from '@/features/user/hooks/use-query';
 
 const FileSchema = z.object({
   uri: z.string().min(1, 'Thiếu uri ảnh'),
@@ -74,10 +76,36 @@ const buildApplyPartnerFormData = (data: ApplyPartnerRequest): FormData => {
 
 export const usePartnerRegisterAgency = () => {
   const { t } = useTranslation();
-  const user = useAuthStore((state) => state.user);
   const setLoading = useApplicationStore((s) => s.setLoading);
   const { mutate } = useMutationApplyPartner();
-  const { error: errorToast, success: successToast } = useToast();
+  const { error: errorToast, success: successToast, info: infoToast } = useToast();
+
+  const queryCheck = useQueryCheckApplyPartner();
+
+  useEffect(() => {
+    if (queryCheck.isError) {
+      errorToast({ message: t('profile.partner_form.error_check_apply_partner') });
+      return;
+    }
+    if (queryCheck.data){
+      const data = queryCheck.data;
+      if (!data.can_apply){
+        switch (data.apply_status){
+          case _ReviewApplicationStatus.PENDING:
+            infoToast({ message: t('profile.partner_form.info_apply_pending') });
+            break;
+          case _ReviewApplicationStatus.APPROVED:
+            infoToast({ message: t('profile.partner_form.info_apply_approved') });
+            break;
+          case _ReviewApplicationStatus.REJECTED:
+            errorToast({ message: t('profile.partner_form.info_apply_rejected') });
+            break;
+        }
+        goBack();
+      }
+    }
+  }, [queryCheck.data, queryCheck.isError, t]);
+
   // hàm validate và xử lý form đăng ký đối tác
   const schemas = z
     .object({
@@ -100,7 +128,7 @@ export const usePartnerRegisterAgency = () => {
     })
     .superRefine((data, ctx) => {
       const files = data.file_uploads;
-      //    Mặt trước
+      // Mặt trước
       if (countByType(files, _PartnerFileType.IDENTITY_CARD_FRONT) !== 1) {
         addFileError(
           ctx,
@@ -163,7 +191,7 @@ export const usePartnerRegisterAgency = () => {
       onSuccess: (res) => {
         setLoading(false);
         successToast({ message: t('profile.partner_form.register_success') });
-        router.back();
+        goBack();
       },
       onError: (error) => {
         setLoading(false);

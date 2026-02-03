@@ -178,6 +178,8 @@ export const useDeposit = () => {
   const setQrBankData = useWalletStore((state) => state.setQrBankData);
   // State lưu trữ dữ liệu QRWechatData khi nạp tiền qua Wechat Pay
   const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
+  const refreshWallet = useWalletStore((state) => state.refreshWallet);
+
   const [visibleModalWechat, setVisibleModalWechat] = useState<boolean>(false);
   // Mutate function dùng để gọi API nạp tiền
   const { mutate: mutateDeposit } = useDepositMutation();
@@ -221,6 +223,8 @@ export const useDeposit = () => {
     ),
   });
 
+
+
   // Hàm submit nạp tiền
   const submitDeposit = (data: DepositRequest) => {
     setLoading(true);
@@ -262,6 +266,7 @@ export const useDeposit = () => {
   const handleCloseWechat = useCallback(() => {
     setVisibleModalWechat(false);
     setQrWechatData(null);
+    refreshWallet(true);
     router.back();
   }, []);
   return {

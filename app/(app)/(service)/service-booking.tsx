@@ -16,7 +16,7 @@ import DateTimePickerInput from '@/components/date-time-input';
 import { Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { cn, formatBalance } from '@/lib/utils';
+import { cn, formatBalance, goBack } from '@/lib/utils';
 import { CouponCardBooking } from '@/components/app/coupon-card';
 import { Icon } from '@/components/ui/icon';
 import React, { useState } from 'react';
@@ -59,7 +59,7 @@ export default function ServiceBooking() {
               )}
             </View>
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={goBack}
               className="rounded-full bg-gray-100 p-2">
               <X size={20} color="#6B7280" />
             </TouchableOpacity>

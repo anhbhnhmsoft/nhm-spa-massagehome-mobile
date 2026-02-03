@@ -219,7 +219,9 @@ export const HomePageKTVSection = ({
             ) : (
               // <Empty /> component của bạn
               <View className="items-center justify-center py-10">
-                <Text>No Data</Text>
+                <Text className="font-inter-bold text-sm text-slate-400">
+                  {t('homepage.no_ktv_available')}
+                </Text>
               </View>
             )}
           </>

@@ -8,6 +8,7 @@ import useApplicationStore from '@/lib/store';
 import { _APP_NAME, _LanguagesMap } from '@/lib/const';
 import SelectLanguage from '@/components/select-language';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils';
 
 
 export default function Index() {
@@ -36,7 +37,7 @@ export default function Index() {
           {/* Header: Close & Language */}
           <View className="flex-row items-center justify-between px-5 pt-4">
             {/* Close Button */}
-            <TouchableOpacity className="p-2" onPress={() => router.back()}>
+            <TouchableOpacity className="p-2" onPress={goBack}>
               <X color="white" size={28} />
             </TouchableOpacity>
 
@@ -74,7 +75,7 @@ export default function Index() {
           </TouchableOpacity>
 
           {/* Nút Skip (Ghost Button) */}
-          <TouchableOpacity className="mt-5 py-2" onPress={() => router.back()}>
+          <TouchableOpacity className="mt-5 py-2" onPress={goBack}>
             <Text className="text-lg font-inter-medium text-primary-color-2">{t('common.skip')}</Text>
           </TouchableOpacity>
 

@@ -56,10 +56,10 @@ export const useGetUserLocation = () => {
  */
 export const useLocationUser = () => {
   const locationUser = useStoreLocation((state) => state.location_user);
+
   const setLocationUser = useStoreLocation(state => state.setLocationUser);
 
   const getLocationUser = useGetUserLocation();
-
   useEffect(() => {
     let isMounted = true;
 

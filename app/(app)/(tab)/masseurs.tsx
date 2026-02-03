@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
+import { View,  FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import {HeaderApp} from '@/components/header-app';
 import { useGetListKTV } from '@/features/user/hooks';
 import Empty from '@/components/empty';
@@ -10,8 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
 import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 import { getTabBarHeight } from '@/components/styles/style';
-
-
+import {Text} from "@/components/ui/text"
 export default function MasseursScreen() {
   const {t} = useTranslation();
   // State lưu text hiển thị trên Header (để input không bị lag/giật)
@@ -51,16 +50,12 @@ export default function MasseursScreen() {
 
   return (
     <View className="flex-1 bg-base-color-3">
-
-      {/* --- HEADER --- */}
       <HeaderApp
         showSearch={true}
         forSearch={"massage"}
         textSearch={keyword}
         setTextSearch={(text: string) => {
-          // Cập nhật state UI ngay lập tức (để người dùng thấy chữ mình gõ)
           setKeyword(text);
-          // Gọi hàm debounce để set filter sau 500ms (không gọi liên tục khi người dùng gõ)
           if (text && text.length > 2) {
             debouncedSearch(text);
           }
@@ -70,7 +65,6 @@ export default function MasseursScreen() {
         }}
       />
 
-      {/* --- CONTENT --- */}
       <View className="p-4 flex-1">
         {isLoading || isRefetching ? (
           Array.from({ length: 6 }).map((_, index) => (
@@ -103,7 +97,7 @@ export default function MasseursScreen() {
                     {t('services.total_masseurs')}
                   </Text>
                 </View>
-                {params?.filter?.category_id && params?.filter?.category_name &&
+                {(params?.filter?.category_id && params?.filter?.category_name) &&
                   (
                     <TouchableOpacity
                       className="p-2 rounded-xl items-center flex-row gap-2 bg-blue-200"

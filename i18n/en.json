@@ -114,7 +114,8 @@
     "offline_service_title": "Technician is on break",
     "offline_service_message": "This technician is currently on break. Would you like to...?",
     "save_qr_code": "Save QR Code",
-    "total": "Total"
+    "total": "Total",
+    "nickname": "Nickname"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -331,6 +332,7 @@
     "technician_suggest": "Suggested Technicians",
     "services": "Featured Services",
     "features_trust": "Our Commitment",
+    "no_ktv_available": "No available technicians at the moment.",
     "invite_ktv": {
       "title": "Register",
       "description": "Technician"
@@ -416,6 +418,7 @@
       "follow_agency_desc": "Enter the code of the Agency that referred you.",
       "follow_agency_placeholder": "Enter Code",
       "field_experience_placeholder": "Enter years of experience",
+      "field_nickname_placeholder": "Enter display name",
       "button_submit": "Submit Registration",
       "alert_location_permission_title": "Location Access",
       "alert_location_permission_message": "Please allow the app to access your location.",
@@ -428,7 +431,7 @@
       "alert_max_images_title": "Too Many Images",
       "alert_max_images_message": "You can only select up to 5 display photos.",
       "alert_missing_degrees_title": "Missing Degrees",
-      "alert_missing_degrees_message": "Please add at least one degree/certificate photo.",
+      "alert_missing_degrees_message": "Please add 1 degree/certificate photo.",
       "alert_temp_title": "Temporary",
       "alert_temp_message": "Form validated successfully (not yet sent to server).",
       "alert_success_title": "Registration Successful",
@@ -443,7 +446,15 @@
       "face_with_id": "Selfie with ID Card",
       "alert_missing_face_with_card_title": "Missing Selfie with ID",
       "alert_missing_face_with_card_message": "Please add a photo of your face with your ID card.",
-      "register_success": "Your application has been sent successfully. We will contact you as soon as possible."
+      "register_success": "Your application has been sent successfully. We will contact you as soon as possible.",
+      "error_nickname_required": "Please enter display name.",
+      "error_bio_required": "Please enter your bio (at least {{ min }} characters).",
+      "error_file_invalid": "Please select an image, or the uploaded image is invalid.",
+      "alert_images_display_message": "Please add at least {{ min }} images and up to {{ max }} images to display to customers.",
+      "error_check_apply_partner": "An error occurred while checking partner application. Please try again later.",
+      "info_apply_pending": "You have registered as a partner and are awaiting administrator approval. Please stay tuned for the latest updates.",
+      "info_apply_approved": "Your partner registration has been approved.",
+      "info_apply_rejected": "Your partner application has been rejected, and you cannot re-apply."
     },
     "partner_register": {
       "title": "What do you want to register as?",
@@ -614,7 +625,7 @@
     "primary": "Default",
     "no_desc": "No note",
     "get_current_location": "Get Current Location",
-    "loading": "Saving...",
+    "loading": "Processing...",
     "error": {
       "title": "Address Error",
       "invalid_address": "Please select a valid address from suggestions",
@@ -677,8 +688,6 @@
   },
   "affiliate": {
     "title": "Invite Friends",
-    "title_1": "Invite friends to receive up to",
-    "title_2": "{{ percent }}% lifetime commission",
     "referral_link": "Referral Link",
     "share": "Invite Now",
     "share_error": "Failed to share the referral link. Please try again later.",

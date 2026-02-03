@@ -36,6 +36,7 @@ export default function AppLayout() {
   // kiểm tra affiliate link khi user login
   useCheckMatchAffiliate();
 
+  // đếm booking start (chỉ dùng cho KTV) (dùng ở layout toàn cục)
   useBookingCountdown();
 
   return (

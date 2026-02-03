@@ -3,10 +3,9 @@ import {CameraType, CameraView} from "expo-camera";
 import {TouchableOpacity, View} from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import {router} from "expo-router";
-
 import { useEditAvatar } from '@/features/auth/hooks';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
+import { goBack } from '@/lib/utils';
 
 
 export default function TakePictureScreen(){
@@ -42,7 +41,7 @@ export default function TakePictureScreen(){
       />
       <View className="flex-row items-center justify-between px-10 py-10 bg-base-color-3">
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={goBack}
         >
           <Entypo name="chevron-left" size={24} color="black" />
         </TouchableOpacity>

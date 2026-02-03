@@ -14,7 +14,11 @@ export const SecureStorage = {
   async setItem<T>(key: _StorageKey, value: T, options?: SecureStore.SecureStoreOptions): Promise<boolean> {
     try {
       const jsonValue = JSON.stringify(value);
-      await SecureStore.setItemAsync(key, jsonValue, options);
+      const finalOptions = {
+        keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+        ...options
+      };
+      await SecureStore.setItemAsync(key, jsonValue, finalOptions);
       return true;
     } catch {
       return false;

@@ -37,7 +37,7 @@ import useAuthStore from '@/features/auth/store';
 import { useImmer } from 'use-immer';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import useToast from '@/features/app/hooks/use-toast';
-import { formatBalance, getMessageError } from '@/lib/utils';
+import { formatBalance, getMessageError, goBack } from '@/lib/utils';
 
 /**
  * Lấy danh sách danh mục dịch vụ
@@ -163,7 +163,7 @@ export const useServiceDetail = () => {
   useEffect(() => {
     // Nếu không có service, quay lại màn hình trước
     if (!service || !service.is_active) {
-      router.back();
+      goBack();
     }
   }, [service]);
 
