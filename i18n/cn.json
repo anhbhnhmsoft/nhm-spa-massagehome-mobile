@@ -183,7 +183,8 @@
       "RETRIEVE_PAYMENT_REFUND_KTV": "提取退款",
       "REFERRAL_KTV": "推荐给技师",
       "REFERRAL_PARTNER": "推荐合作伙伴",
-      "DEPOSIT_WECHAT_PAY": "Wechat Pay 充值"
+      "DEPOSIT_WECHAT_PAY": "Wechat Pay 充值",
+      "FEE_WITHDRAW": "提现手续费"
     },
     "transaction_status": {
       "PENDING": "处理中",
@@ -472,7 +473,8 @@
     "transactions": "交易记录",
     "deposit": "充值",
     "withdraw": "提现",
-    "no_transactions": "暂无交易"
+    "no_transactions": "暂无交易记录",
+    "frozen_balance": "冻结余额"
   },
   "payment": {
     "deposit_title": "充值到钱包",
@@ -500,12 +502,17 @@
     "transfer_note": "转账备注",
     "note_important": "请务必填写正确的转账备注",
     "processing_transaction": "微信支付正在处理中，系统确认可能需要 15–30 分钟",
+    "exchange_rate_wechat_pay": "兑换率: {{priceCny}} CNY",
     "withdraw": {
       "title_modal": "选择提现账户",
       "add_new_account": "关联新账户",
       "no_account": "尚无账户",
       "title_modal_request": "申请提现",
-      "enter_withdraw_money": "请输入要提取的金额"
+      "enter_withdraw_money": "请输入要提取的金额",
+      "note": "备注（可选）",
+      "placeholder_note": "输入备注（可选）",
+      "withdraw_fee": "提现手续费",
+      "total_withdraw": "提现金额"
     },
     "confirm": {
       "delete_withdraw_info": "您确定要删除吗？",

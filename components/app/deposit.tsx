@@ -269,7 +269,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
 
           </View>
           <TouchableOpacity
-            className={`items-center justify-center rounded-full py-3.5 ${
+            className={`items-center justify-center rounded-full py-4 ${
               watchedAmount && Number(watchedAmount) > 0 && watchedPayment
                 ? 'bg-primary-color-2'
                 : 'bg-gray-300'

@@ -183,7 +183,8 @@
       "RETRIEVE_PAYMENT_REFUND_KTV": "Thu hồi tiền thanh toán cho KTV khi hủy booking",
       "REFERRAL_KTV": "Hoa hồng từ kĩ thuật viên",
       "REFERRAL_INVITE_KTV_REWARD": "Hoa hồng từ kĩ thuật viên khi đăng ký",
-      "DEPOSIT_WECHAT_PAY": "Nạp tiền qua Wechat Pay"
+      "DEPOSIT_WECHAT_PAY": "Nạp tiền qua Wechat Pay",
+      "FEE_WITHDRAW": "Phí rút tiền"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -473,7 +474,8 @@
     "transactions": "Lịch sử giao dịch",
     "deposit": "Nạp tiền",
     "withdraw": "Rút tiền",
-    "no_transactions": "Chưa có giao dịch nào"
+    "no_transactions": "Chưa có giao dịch nào",
+    "frozen_balance": "Số dư tạm dữ"
   },
   "payment": {
     "deposit_title": "Nạp tiền vào ví",
@@ -507,7 +509,11 @@
       "add_new_account": "Liên kết tài khoản mới",
       "no_account": "Chưa có tài khoản nào",
       "title_modal_request": "Yêu cầu rút tiền",
-      "enter_withdraw_money": "Nhập số tiền muốn rút"
+      "enter_withdraw_money": "Nhập số tiền muốn rút",
+      "note": "Ghi chú (Tùy chọn)",
+      "placeholder_note": "Nhập nội dung ghi chú...",
+      "withdraw_fee": "Phí rút tiền",
+      "total_withdraw": "Số tiền rút được"
     },
     "confirm": {
       "delete_withdraw_info": "Bạn có chắc chắn muốn xóa",

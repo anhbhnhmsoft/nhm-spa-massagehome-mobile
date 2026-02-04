@@ -9,6 +9,7 @@ import {
 export type WalletItem = {
   id: string;
   user_id: string;
+  frozen_balance: string; // Số dư tạm dừng dạng string để tránh lỗi tràn số khi tính toán
   balance: string; // Số dư hiện tại dạng string để tránh lỗi tràn số khi tính toán
   is_active: boolean;
   total_deposit: string; // Tổng số tiền nạp vào ví dạng string để tránh lỗi tràn số khi tính toán
@@ -34,6 +35,7 @@ export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTran
 export type ConfigPaymentItem = {
   currency_exchange_rate: string; // Tỷ giá đổi tiền giữa VND và point
   exchange_rate_vnd_cny: string; // Tỷ giá đổi tiền giữa VND và CNY
+  fee_withdraw_percentage: string; // Phần trăm phí rút tiền
   allow_payment: {
     qrcode: boolean; // Cho phép nạp qua QRCode
     zalopay: boolean; // Cho phép nạp qua ZaloPay

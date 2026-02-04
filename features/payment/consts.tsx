@@ -42,6 +42,7 @@ export enum _TransactionType {
   REFERRAL_KTV = 10, // Nhận hoa hồng từ người giới thiệu KTV
   REFERRAL_INVITE_KTV_REWARD = 11, // Nhận hoa hồng từ người giới thiệu KTV khi đăng ký KTV
   DEPOSIT_WECHAT_PAY = 12, // Nạp tiền qua Wechat Pay
+  FEE_WITHDRAW = 13, // Phí rút tiền
 }
 
 export const _TransactionTypeMap = {
@@ -53,11 +54,11 @@ export const _TransactionTypeMap = {
   [_TransactionType.AFFILIATE]: 'enum.transaction_type.AFFILIATE',
   [_TransactionType.PAYMENT_FOR_KTV]: 'enum.transaction_type.PAYMENT_FOR_KTV',
   [_TransactionType.REFUND]: 'enum.transaction_type.REFUND',
-  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]:
-    'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
+  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]: 'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
   [_TransactionType.REFERRAL_KTV]: 'enum.transaction_type.REFERRAL_KTV',
   [_TransactionType.REFERRAL_INVITE_KTV_REWARD]: 'enum.transaction_type.REFERRAL_INVITE_KTV_REWARD',
   [_TransactionType.DEPOSIT_WECHAT_PAY]: 'enum.transaction_type.DEPOSIT_WECHAT_PAY',
+  [_TransactionType.FEE_WITHDRAW]: 'enum.transaction_type.FEE_WITHDRAW',
 };
 
 export enum _TransactionStatus {
@@ -93,6 +94,7 @@ export const _TransactionInType = [
 
 export const _TransactionOutType = [
   _TransactionType.WITHDRAWAL,
+  _TransactionType.FEE_WITHDRAW,
   _TransactionType.PAYMENT,
   _TransactionType.RETRIEVE_PAYMENT_REFUND_KTV,
 ] as readonly _TransactionType[];

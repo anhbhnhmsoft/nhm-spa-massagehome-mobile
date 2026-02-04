@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -6,7 +6,6 @@ import {
   Platform,
   RefreshControl,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -35,6 +34,7 @@ import { Controller } from 'react-hook-form';
 import SelectModal from '@/components/select-modal';
 import { cn, formatBalance, formatCurrency } from '@/lib/utils';
 import {
+
   _QUICK_WITHDRAW_AMOUNTS,
   _TransactionInType,
   _TransactionOutType,
@@ -50,6 +50,8 @@ import { TFunction } from 'i18next';
 import GradientBackground from '@/components/styles/gradient-background';
 import dayjs from 'dayjs';
 import { CouponUserItem } from '@/features/service/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {Text} from '@/components/ui/text'
 
 // Modal Rút Tiền
 type WithdrawModalProps = {
@@ -69,6 +71,8 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
     onClose
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
     <ModalToast
       animationType="slide"
@@ -83,7 +87,7 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
             <View className="w-full rounded-t-3xl bg-white shadow-2xl" style={{ height: '80%' }}>
               {/* Header Modal */}
               <View className="flex-row items-center justify-between border-b border-gray-100 p-5">
-                <Text className="text-lg font-bold text-gray-800">
+                <Text className="text-lg font-inter-bold text-gray-800">
                   {t('payment.withdraw.title_modal')}
                 </Text>
                 <TouchableOpacity
@@ -162,12 +166,15 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
               </View>
 
               {/* Footer: Thêm mới */}
-              <View className="safe-area-bottom border-t border-gray-100 p-5">
+              <View
+                style={{ paddingBottom: Math.max(insets.bottom, 20) }}
+                className="border-t border-gray-100 p-5"
+              >
                 <TouchableOpacity
                   className="flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3.5"
                   onPress={() => setShowModalCreateInfo(true)}>
                   <Plus size={22} color="white" />
-                  <Text className="ml-2 text-base font-bold text-white">
+                  <Text className="ml-2 text-base font-inter-bold text-white">
                     {t('payment.withdraw.add_new_account')}
                   </Text>
                 </TouchableOpacity>
@@ -213,6 +220,7 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
     onClose,
     onSuccess
   );
+  const insets = useSafeAreaInsets();
 
   // State quản lý dropdown chọn ngân hàng
   const [openSelectBank, setOpenSelectBank] = useState<boolean>(false);
@@ -250,7 +258,7 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
               <View className="h-[85%] w-full rounded-t-3xl bg-white shadow-2xl">
                 {/* Header */}
                 <View className="flex-row items-center justify-between border-b border-gray-100 p-5">
-                  <Text className="text-xl font-bold text-gray-800">
+                  <Text className="text-xl font-inter-bold text-gray-800">
                     {t('payment.withdraw.add_new_account')}
                   </Text>
                   <TouchableOpacity
@@ -281,7 +289,7 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
                               : 'border-gray-200'
                           )}>
                           {bankName ? (
-                            <Text className="font-bold text-gray-900">{bankName}</Text>
+                            <Text className="font-inter-bold text-gray-900">{bankName}</Text>
                           ) : (
                             <Text className="text-gray-400">{t('payment.bank')}</Text>
                           )}
@@ -373,7 +381,10 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
                   <View className="h-10" />
                 </ScrollView>
                 {/* Footer: Submit Button */}
-                <View className="safe-area-bottom border-t border-gray-100 bg-white p-5">
+                <View
+                  style={{ paddingBottom: Math.max(insets.bottom, 20) }}
+                  className="border-t border-gray-100 bg-white p-5"
+                >
                   <TouchableOpacity
                     onPress={submitCreateWithdrawInfo}
                     disabled={loading}
@@ -415,10 +426,31 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
 
   const watchedAmount = watch('amount');
 
-  // Tính số tiền rút thực tế (số point * tỉ giá)
-  const withdrawMoney = Math.floor(
-    Number(watchedAmount) * Number(configPayment?.currency_exchange_rate)
-  );
+  const insets = useSafeAreaInsets();
+
+  // Tính toán số tiền rút thực tế và phí
+  const withdrawCalculation = useMemo(() => {
+    // Chuyển đổi và xử lý fallback để tránh lỗi NaN
+    const amount = Number(watchedAmount || 0);
+    const exchangeRate = Number(configPayment?.currency_exchange_rate || 1);
+    const feePercent = Number(configPayment?.fee_withdraw_percentage || 0);
+
+    //  Quy đổi Point sang tiền mặt (Gross)
+    const grossAmount = amount * exchangeRate;
+
+    // Tính số tiền phí dựa trên %
+    const feeAmount = (grossAmount * feePercent) / 100;
+
+    // Số tiền thực nhận sau khi trừ phí
+    const withdrawMoney = Math.floor(grossAmount - feeAmount);
+
+    return {
+      feeAmount,
+      exchangeRate,
+      withdrawMoney,
+      feePercent
+    };
+  }, [watchedAmount, configPayment?.currency_exchange_rate, configPayment?.fee_withdraw_percentage]);
 
   return (
     <ModalToast
@@ -498,18 +530,25 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
                         </TouchableOpacity>
                       ))}
                     </View>
+                    <View className="mt-4 flex-row flex-wrap gap-2">
+                      <Text className="font-inter-bold text-base text-primary-color-1">
+                        {t('payment.withdraw.withdraw_fee')}: {formatBalance(Number(withdrawCalculation.feePercent))} %
+                      </Text>
+                    </View>
                   </View>
 
                   {/* Ghi chú */}
                   <View className="mb-8">
-                    <Text className="mb-2 font-bold text-gray-700">Ghi chú (Tùy chọn)</Text>
+                    <Text className="mb-2 font-inter-bold text-gray-700">
+                      {t('payment.withdraw.note')}
+                    </Text>
                     <Controller
                       control={control}
                       name="note"
                       render={({ field: { onChange, value } }) => (
                         <TextInput
                           className="min-h-[100px] rounded-xl border border-gray-200 bg-gray-50 p-4 text-base text-gray-800"
-                          placeholder="Nhập nội dung ghi chú..."
+                          placeholder={t('payment.withdraw.placeholder_note')}
                           multiline
                           textAlignVertical="top"
                           value={value}
@@ -521,13 +560,25 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
                 </ScrollView>
 
                 {/* Footer Submit */}
-                <View className="safe-area-bottom border-t border-gray-100 bg-white p-5">
+                <View
+                  style={{ paddingBottom: Math.max(insets.bottom, 20) }}
+                  className="border-t border-gray-100 bg-white p-5"
+                >
+                  <View className="mb-2 flex-row justify-between items-center">
+                    <Text className="text-sm text-gray-500">{t('payment.withdraw.total_withdraw')}:</Text>
+                    <View className="flex-row items-center justify-center gap-2">
+                      <Text className="font-inter-bold text-lg text-gray-900">
+                        {withdrawCalculation.withdrawMoney ? formatBalance(withdrawCalculation.withdrawMoney) : '0'} {t('common.currency')}
+                      </Text>
+                    </View>
+
+                  </View>
                   <TouchableOpacity
                     onPress={submitRequestWithdraw}
                     disabled={loading}
                     className={cn(
                       'w-full flex-row items-center justify-center rounded-xl py-4',
-                      loading ? 'bg-gray-400' : 'bg-primary-color-2'
+                      loading ? 'bg-gray-300' : 'bg-primary-color-2'
                     )}>
                     {loading && <ActivityIndicator size="small" color="white" className="mr-2" />}
                     <Text className="font-inter-bold text-lg text-white">
@@ -563,6 +614,8 @@ export const HeaderWallet = ({
                         goToDepositScreen,
                         setVisibleWithdraw,
                       }: HeaderWalletProps) => {
+
+
   return (
     <View>
       {/* HEADER WALLET */}
@@ -576,16 +629,24 @@ export const HeaderWallet = ({
         <View className="flex-row items-start justify-between">
           <View>
             <Text className="mb-1 text-sm text-white">{t('wallet.balance')}</Text>
-            <View className="flex-row items-end gap-1">
-              {queryWallet.isLoading || queryWallet.isRefetching ? (
-                <Skeleton className="h-8 w-2/3" />
-              ) : (
-                <Text className="font-inter-bold text-3xl text-white">
-                  {formatBalance(queryWallet.data?.balance || 0)}
-                </Text>
-              )}
-              <Text className="font-inter-bold text-sm text-white">{t('common.currency')}</Text>
-            </View>
+            {queryWallet.isLoading || queryWallet.isRefetching ? (
+              <Skeleton className="h-8 w-[180px]" />
+            ) : (
+              <View>
+                <View className="flex-row items-end gap-1">
+                  <Text className="font-inter-bold text-3xl text-white">
+                    {formatBalance(queryWallet.data?.balance || 0)}
+                  </Text>
+                  <Text className="font-inter-bold text-sm text-white">{t('common.currency')}</Text>
+                </View>
+                {queryWallet.data?.frozen_balance && Number(queryWallet.data?.frozen_balance) > 0 && (
+                  <View className="flex-row items-end gap-1 mt-2">
+                    <Text className="text-xs text-slate-100 font-inter-italic">
+                      {t('wallet.frozen_balance')}: {formatBalance(queryWallet.data?.frozen_balance || 0)} {t('common.currency')}
+                  </Text>
+                </View>)}
+              </View>
+            )}
           </View>
         </View>
         {/* TOTAL EARNINGS & WITHDRAWN */}

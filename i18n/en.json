@@ -183,7 +183,8 @@
       "RETRIEVE_PAYMENT_REFUND_KTV": "Retrieve Payment Refund KTV",
       "REFERRAL_KTV": "Referral KTV",
       "REFERRAL_INVITE_KTV_REWARD": "Referral Invite KTV Reward",
-      "DEPOSIT_WECHAT_PAY": "Deposit via Wechat Pay"
+      "DEPOSIT_WECHAT_PAY": "Deposit via Wechat Pay",
+      "FEE_WITHDRAW": "Withdrawal Fee"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -473,7 +474,8 @@
     "transactions": "Transaction History",
     "deposit": "Deposit",
     "withdraw": "Withdraw",
-    "no_transactions": "No transactions yet"
+    "no_transactions": "No transactions yet",
+    "frozen_balance": "Frozen Balance"
   },
   "payment": {
     "deposit_title": "Deposit into Wallet",
@@ -501,12 +503,17 @@
     "transfer_note": "Transfer note",
     "note_important": "Please enter this note exactly as shown",
     "processing_transaction": "WeChat payment is being processed. This may take 15–30 minutes to complete",
+    "exchange_rate_wechat_pay": "Exchange Rate: {{priceCny}} CNY",
     "withdraw": {
       "title_modal": "Select Withdrawal Account",
       "add_new_account": "Link New Account",
       "no_account": "No account yet",
       "title_modal_request": "Request Withdrawal",
-      "enter_withdraw_money": "Enter the amount you want to withdraw"
+      "enter_withdraw_money": "Enter the amount you want to withdraw",
+      "note": "Note (Optional)",
+      "placeholder_note": "Enter note (optional)",
+      "withdraw_fee": "Withdrawal Fee",
+      "total_withdraw": "Total Withdrawn"
     },
     "confirm": {
       "delete_withdraw_info": "Are you sure you want to delete?",
