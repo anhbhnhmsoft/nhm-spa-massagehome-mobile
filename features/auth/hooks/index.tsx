@@ -1,6 +1,6 @@
 import useAuthStore from '@/features/auth/store';
 import { _AuthStatus, _Gender } from '@/features/auth/const';
-import { useHeartbeatQuery } from '@/features/auth/hooks/use-query';
+import { useConfigApplicationQuery, useHeartbeatQuery } from '@/features/auth/hooks/use-query';
 import useToast from '@/features/app/hooks/use-toast';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,13 +33,14 @@ import { z } from 'zod';
 import { Href, router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useCameraPermissions } from 'expo-camera';
-import { Alert } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
 import * as Updates from 'expo-updates';
 import { queryClient } from '@/lib/provider/query-provider';
 import { useReferralStore } from '@/features/affiliate/store';
-
+import Constants from 'expo-constants';
+import { compareVersion } from '@/lib/utils';
 /**
  * Hàm để xác thực user xem là login hay register
  */
@@ -561,6 +562,80 @@ export const useHeartbeat = () => {
 };
 
 /**
+ * Hook để kiểm tra xem ứng dụng có được bảo trì hay không
+ */
+export const useCheckConfigApplicationUpdate = () => {
+  const {t} = useTranslation();
+  const [isMaintained, setMaintained] = useState<boolean>(false);
+
+  const {data: dataConfig} = useConfigApplicationQuery();
+
+  const { isUpdatePending } = Updates.useUpdates();
+
+  // Update OTA
+  useEffect(() => {
+    // Nếu đang Dev thì bỏ qua
+    if (__DEV__) return;
+
+    if (isUpdatePending) {
+      Alert.alert(
+        t('common_update.update_available.title'),
+        t('common_update.update_available.message'),
+        [
+          {
+            text: t('common.later'),
+            style: 'cancel',
+          },
+          {
+            text: t('common.yes'),
+            onPress: async () => {
+              await Updates.reloadAsync();
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  }, [isUpdatePending, t]);
+
+  // Kiểm tra xem ứng dụng có được bảo trì hay không
+  useEffect(() => {
+    if (dataConfig){
+      setMaintained(Boolean(dataConfig.maintenance ?? false));
+
+      const currentVersion = Constants.expoConfig?.version || '1.0.0';
+
+      let serverVersion = Platform.OS === 'ios' ? dataConfig.ios_version : dataConfig.android_version;
+      let storeUrl = Platform.OS === 'ios' ? dataConfig.appstore_url : dataConfig.chplay_url;
+
+      if (serverVersion && compareVersion(currentVersion, serverVersion) === -1) {
+        Alert.alert(
+          t('update.update_available.title'),
+          t('update.update_available.message_update_version'),
+          [
+            {
+              text: t('update.update_available.button_update'),
+              onPress: () => {
+                Linking.openURL(storeUrl)
+              },
+            },
+            {
+              text: t('update.update_available.button_later'),
+              style: 'cancel',
+            }
+          ],
+          { cancelable: false }
+        );
+      }
+    }
+  }, [dataConfig, t]);
+
+  return {
+    isMaintained,
+  }
+}
+
+/**
  * Xử lý thay đổi avatar
  */
 export const useChangeAvatar = () => {
@@ -781,6 +856,9 @@ export const useEditProfile = () => {
   };
 };
 
+/**
+ * Hook để đăng xuất
+ */
 export const useLogout = () => {
   const mutationLogout = useLogoutMutation();
   const logout = useAuthStore((s) => s.logout);
@@ -807,7 +885,6 @@ export const useLogout = () => {
 /**
  * Hook để xóa tài khoản
  */
-
 export const useLockAccount = () => {
   const { t } = useTranslation(); // Khởi tạo hàm dịch t
   const { mutate, isPending } = useLockAccountMutation();

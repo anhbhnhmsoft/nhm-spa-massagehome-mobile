@@ -92,7 +92,14 @@ export const InviteKtv = ({ onPress }: { onPress: (redirectTo: Href) => void }) 
       {/* === BUTTON 1: KỸ THUẬT VIÊN (KTV) === */}
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => onPress('/(app)/(profile)/partner-register-individual')}
+        onPress={() => {
+          router.push({
+            pathname: '/(app)/(profile)/partner-register-individual',
+            params: {
+              forWho: 'ktv',
+            },
+          });
+        }}
         className="w-50 flex-row items-center gap-2">
         {/* Bao ngoài icon để tạo hình tròn/bo góc đẹp hơn */}
         <Image
@@ -112,7 +119,14 @@ export const InviteKtv = ({ onPress }: { onPress: (redirectTo: Href) => void }) 
       {/* === BUTTON 2: ĐỐI TÁC (PARTNER) === */}
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => onPress('/(app)/(profile)/partner-register-agency')}
+        onPress={() => {
+          router.push({
+            pathname: '/(app)/(profile)/partner-register-individual',
+            params: {
+              forWho: 'agency',
+            },
+          });
+        }}
         className="w-50 flex-row items-center gap-2">
         <Image
           source={require('../../assets/images/image_agency.png')}

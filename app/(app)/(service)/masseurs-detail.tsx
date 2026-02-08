@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { formatDistance, getCurrentDayKey, goBack } from '@/lib/utils';
+import { formatBalance, formatDistance, getCurrentDayKey, goBack } from '@/lib/utils';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
@@ -55,6 +55,14 @@ const MasseurDetailScreen = () => {
     }
     return null;
   }, [detail]);
+
+  // Tính giá tiền di chuyển tạm thời
+  const priceTransportation = useMemo(() => {
+    if (detail && distance) {
+      return Math.round(detail.price_transportation * distance);
+    }
+    return null;
+  }, [detail, distance]);
 
   // Kiểm tra xem KTV có đang làm việc trong thời gian hiện tại không
   const currentDayKey = getCurrentDayKey();
@@ -184,6 +192,7 @@ const MasseurDetailScreen = () => {
                     {t('masseurs_detail.sales_count', { count: detail.jobs_received_count })}
                   </Text>
                 </View>
+
                 {/* Giới thiệu */}
                 <View className="mt-3">
                   <Text className="font-inter-bold text-lg text-primary-color-2">
@@ -237,49 +246,12 @@ const MasseurDetailScreen = () => {
                   </View>
                   {/* Khoảng cách */}
                   <View className="items-center gap-1">
-                    <Text className="text-xs text-gray-400">{t('masseurs_detail.distance')}</Text>
+                    <Text className="text-xs text-gray-400">{t('masseurs_detail.price_transportation')}</Text>
                     <Text className="font-inter-medium">
-                      {distance ? formatDistance(distance) : '-'}
+                      {priceTransportation ? formatBalance(priceTransportation) : '-'} {t('common.currency')}
                     </Text>
                   </View>
                 </View>
-              </View>
-
-              {/* Lịch làm việc */}
-              {detail.schedule && (
-                <ScheduleSection schedule={detail.schedule} isOnlineRealtime={isOnlineRealtime} />
-              )}
-
-              {/* --- Review Section --- */}
-              <View className="mt-2 bg-white p-4">
-                {/* --- Header Review --- */}
-                <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="font-inter-bold text-base text-gray-800">
-                    {t('masseurs_detail.review_by_customer')}
-                  </Text>
-                </View>
-
-                {/* --- Disclaimer (Dòng chữ cam) --- */}
-                <View className="mb-3 rounded bg-orange-50 px-2 py-1.5">
-                  <Text className="text-[10px] leading-4 text-orange-500">
-                    {t('masseurs_detail.review_disclaimer')}
-                  </Text>
-                </View>
-
-                {/* --- Nội dung Review ( comment) --- */}
-                <ReviewFistItem item={detail.first_review} />
-
-                {/* --- Button Xem tất cả --- */}
-                {detail.review_count > 1 && (
-                  <TouchableOpacity
-                    className="mt-4 flex-row items-center justify-center rounded-full bg-gray-50 py-2"
-                    onPress={() => setShowReviewList(true)}>
-                    <Text className="font-inter-medium text-xs text-gray-500">
-                      {t('masseurs_detail.see_all_reviews', { count: detail.review_count - 1 })}
-                    </Text>
-                    <Icon as={ChevronRight} size={12} className="ml-2 text-gray-500" />
-                  </TouchableOpacity>
-                )}
               </View>
 
               {/* --- DANH SÁCH DỊCH VỤ --- */}
@@ -305,12 +277,51 @@ const MasseurDetailScreen = () => {
           }}
           ListEmptyComponent={<Empty className={'bg-white'} />}
           ListFooterComponent={
+          <View>
+            {/* Lịch làm việc */}
+            {detail.schedule && (
+              <ScheduleSection schedule={detail.schedule} isOnlineRealtime={isOnlineRealtime} />
+            )}
+
+            {/* --- Review Section --- */}
+            <View className="mt-2 bg-white p-4">
+              {/* --- Header Review --- */}
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="font-inter-bold text-base text-gray-800">
+                  {t('masseurs_detail.review_by_customer')}
+                </Text>
+              </View>
+
+              {/* --- Disclaimer (Dòng chữ cam) --- */}
+              <View className="mb-3 rounded bg-orange-50 px-2 py-1.5">
+                <Text className="text-[10px] leading-4 text-orange-500">
+                  {t('masseurs_detail.review_disclaimer')}
+                </Text>
+              </View>
+
+              {/* --- Nội dung Review ( comment) --- */}
+              <ReviewFistItem item={detail.first_review} />
+
+              {/* --- Button Xem tất cả --- */}
+              {detail.review_count > 1 && (
+                <TouchableOpacity
+                  className="mt-4 flex-row items-center justify-center rounded-full bg-gray-50 py-2"
+                  onPress={() => setShowReviewList(true)}>
+                  <Text className="font-inter-medium text-xs text-gray-500">
+                    {t('masseurs_detail.see_all_reviews', { count: detail.review_count - 1 })}
+                  </Text>
+                  <Icon as={ChevronRight} size={12} className="ml-2 text-gray-500" />
+                </TouchableOpacity>
+              )}
+            </View>
             <View
               style={{
                 backgroundColor: 'white',
                 paddingBottom: insets.bottom,
               }}
             />
+          </View>
+
           }
         />
       </View>

@@ -38,7 +38,6 @@ export type AddressItem = {
   latitude: string;
   longitude: string;
   desc: string;
-  is_primary: boolean;
 }
 export type ListAddressResponse = ResponseDataSuccessType<Paginator<AddressItem>>;
 
@@ -48,7 +47,12 @@ export type SaveAddressRequest = {
   latitude: number;
   longitude: number;
   desc?: string;
-  is_primary: boolean;
+}
+
+export type SetDefaultAddressRequest = {
+  address: string;
+  latitude: number;
+  longitude: number;
 }
 
 export type EditAddressRequest = SaveAddressRequest & {

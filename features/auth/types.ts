@@ -103,3 +103,11 @@ export type EditProfileRequest = {
   old_password?: string;
   new_password?: string;
 };
+
+export type ConfigApplicationResponse = ResponseDataSuccessType<{
+  maintenance: boolean;
+  ios_version: string;
+  android_version: string;
+  appstore_url: string;
+  chplay_url: string;
+}>

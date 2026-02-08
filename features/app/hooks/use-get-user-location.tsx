@@ -1,13 +1,13 @@
 import useAuthStore from '@/features/auth/store';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { fetchAndFormatLocation } from '@/features/app/hooks/use-location';
 import { LocationPrimaryUser } from '@/features/location/types';
 import useStoreLocation from '@/features/location/stores';
 
 const isSignificantChange = (oldLoc: LocationPrimaryUser | null, newLoc: LocationPrimaryUser) => {
   if (!oldLoc) return true;
-  // Chỉ update nếu lệch quá 0.0001 độ (khoảng 11 mét) hoặc address thay đổi
-  const threshold = 0.0001;
+  // Chỉ update nếu lệch quá 0.001 độ (khoảng 100 mét) hoặc address thay đổi
+  const threshold = 0.001;
   const isLatDiff = Math.abs(oldLoc.lat - newLoc.lat) > threshold;
   const isLngDiff = Math.abs(oldLoc.lng - newLoc.lng) > threshold;
 

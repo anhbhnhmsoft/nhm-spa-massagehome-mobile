@@ -63,6 +63,7 @@ export type KTVDetail = ListKTVItem & {
     created_at: string;
   } | null;
   booking_soon: string | null; // Thời gian hẹn sớm nhất
+  price_transportation: number ; // Giá vận chuyển
 };
 
 export type ListKTVRequest = BaseSearchRequest<{
@@ -88,8 +89,24 @@ export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>
 
 export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
   can_apply: boolean;
-  apply_role: _UserRole.KTV | _UserRole.AGENCY;
-  apply_status: _ReviewApplicationStatus;
+  review_application: {
+    id: string;
+    user_id: string;
+    nickname: string;
+    referrer_id: string | null;
+    experience: number;
+    reason_cancel?: string;
+    status: _ReviewApplicationStatus;
+    role: _UserRole.KTV | _UserRole.AGENCY;
+    bio: IMultiLangField;
+    is_leader: boolean;
+    application_date: string; // ISO Date String
+    gallery: string[] | null; // Array of image URLs
+    cccd_front: string | null; // URL of front side of CCCD
+    cccd_back: string | null; // URL of back side of CCCD
+    face_with_identity_card: string | null; // URL of face with identity card
+    certificate: string | null; // URL of certificate
+  } | null;
 }>;
 
 
@@ -97,11 +114,7 @@ export type ApplyPartnerRequest = {
   role: _UserRole.KTV | _UserRole.AGENCY;
   nickname?: string;
   referrer_id?: string | undefined;
-  province_code: string;
-  address: string;
-  latitude: string;
-  longitude: string;
-  experience: number;
+  experience?: number;
   is_leader?: boolean;
   bio: IMultiLangField;
   file_uploads: {
@@ -110,6 +123,7 @@ export type ApplyPartnerRequest = {
       uri: string; // local uri
       name: string; // filename
       type: string; // mime type
+      token?: string; // token for private image upload
     };
   }[];
 };

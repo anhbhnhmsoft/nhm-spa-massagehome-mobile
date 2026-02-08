@@ -52,6 +52,7 @@
     "photo": "Ảnh",
     "unknown": "Không xác định",
     "yes": "Có",
+    "later": "Để sau",
     "no": "Không",
     "close": "Đóng",
     "select_language": "Chọn ngôn ngữ",
@@ -121,6 +122,19 @@
     "save_image_success": "Lưu trữ ảnh thành công",
     "copied_to_clipboard": "Đã sao chép vào clipboard"
   },
+  "update": {
+    "update_available": {
+      "title": "Cập nhật phiên bản mới",
+      "message": "Phiên bản mới đã sẵn sàng. Khởi động lại ngay để áp dụng?",
+      "message_update_version": "Đã có phiên bản mới. Hãy cập nhật ngay để có trải nghiệm tốt hơn.",
+      "button_update": "Cập nhật",
+      "button_later": "Để sau"
+    },
+    "maintenance": {
+      "title": "Hệ thống đang bảo trì",
+      "message": "Chúng tôi đang nâng cấp hệ thống để mang lại trải nghiệm tốt hơn cho bạn. Vui lòng quay lại sau ít phút."
+    }
+  },
   "permission": {
     "picture_lib": {
       "title": "Cần cấp quyền truy cập vào thư viện ảnh",
@@ -130,6 +144,11 @@
     "camera": {
       "title": "Cần cấp quyền truy cập vào camera",
       "message": "Vui lòng cấp quyền truy cập vào camera để xử lý tác vụ."
+    },
+    "location": {
+      "title": "Cần cấp quyền truy cập vào định vị",
+      "message": "Vui lòng cấp quyền truy cập vào định vị để sử dụng chức năng này, hãy vào cài đặt app và cấp quyền truy cập.",
+      "error": "Lỗi khi truy cập vào định vị, vui lòng thử lại sau."
     }
   },
   "common_error": {
@@ -224,6 +243,11 @@
       "FRIDAY": "Thứ 6",
       "SATURDAY": "Thứ 7",
       "SUNDAY": "Chủ nhật"
+    },
+    "review_application_status": {
+      "PENDING": "Chờ xác nhận",
+      "APPROVED": "Đã chấp nhận",
+      "REJECTED": "Đã từ chối"
     }
   },
   "tab": {
@@ -455,7 +479,34 @@
       "error_check_apply_partner": "Có lỗi xảy ra khi kiểm tra đăng ký đối tác. Vui lòng thử lại sau.",
       "info_apply_pending": "Bạn đã đăng ký đối tác, đang chờ Quản trị viên duyệt, vui lòng chờ đợi thông tin mới nhất.",
       "info_apply_approved": "Bạn đã đăng ký đối tác, đã được duyệt.",
-      "info_apply_rejected": "Đơn đăng ký đối tác của bạn đã bị từ chối, bạn không thể đăng ký lại được nữa."
+      "info_apply_rejected": "Đơn đăng ký đối tác của bạn đã bị từ chối, bạn không thể đăng ký lại được nữa.",
+      "status_pending_for_ktv": "Bạn đã đăng ký làm Kỹ thuật viên, đang chờ Quản trị viên duyệt, vui lòng chờ đợi thông tin mới nhất.",
+      "status_pending_for_ktv_leader": "Bạn đã đăng ký làm Trưởng nhóm Kỹ thuật viên, đang chờ Quản trị viên duyệt, vui lòng chờ đợi thông tin mới nhất.",
+      "status_pending_for_agency": "Bạn đã đăng ký đối tác, đang chờ Quản trị viên duyệt, vui lòng chờ đợi thông tin mới nhất.",
+      "cancel_reason_title": "Đăng ký của bạn đã bị hủy",
+      "error_check_application": "Có lỗi xảy ra khi kiểm tra đơn đăng ký. Vui lòng thử lại sau.",
+      "show_application": "Xem lại đơn đăng ký",
+      "modal_application": {
+        "title": "Chi tiết đơn đăng ký",
+        "status": "Từ chối",
+        "reason": "Lý do",
+        "information": "Thông tin",
+        "nickname": "Tên hiển thị",
+        "experience": "Kinh nghiệm",
+        "year": "năm",
+        "role": "Vai trò",
+        "ktv": "Kỹ thuật viên",
+        "agency": "Đối tác",
+        "leader": "Trưởng nhóm",
+        "referrer_id": "Mã giới thiệu",
+        "bio": "Giới thiệu bản thân (Bio)",
+        "identity": "Giấy tờ định danh",
+        "cccd_front": "CCCD Mặt trước",
+        "cccd_back": "CCCD Mặt sau",
+        "face_with_identity_card": "Ảnh cầm thẻ cùng CCCD",
+        "certificate": "Bằng cấp",
+        "gallery": "Ảnh hiển thị cho Khách hàng"
+      }
     },
     "partner_register": {
       "title": "Bạn muốn đăng ký làm gì?",
@@ -559,7 +610,8 @@
     "sales_count_item_service": "Đã bán {{ count }}",
     "price_service_sub": "Chỉ từ",
     "booking_soon": "Lịch hẹn sớm nhất sau {{ time }}",
-    "working_hours": "Giờ làm việc"
+    "working_hours": "Giờ làm việc",
+    "price_transportation": "Cước di chuyển"
   },
   "services": {
     "total_services": "dịch vụ có sẵn",

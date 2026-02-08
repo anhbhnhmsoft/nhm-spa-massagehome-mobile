@@ -6,22 +6,27 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "EXPO_PUBLIC_BACKEND_URL": "https://massagehome.com.vn",
         "EXPO_PUBLIC_SOCKET_URL": "https://massagehome.vn"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "env": {
         "EXPO_PUBLIC_BACKEND_URL": "https://massagehome.com.vn",
         "EXPO_PUBLIC_SOCKET_URL": "https://massagehome.vn"
       },
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {

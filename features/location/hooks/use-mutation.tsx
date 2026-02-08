@@ -3,7 +3,7 @@ import {
   SearchLocationRequest,
   DetailLocationRequest,
   SaveAddressRequest,
-  EditAddressRequest,
+  EditAddressRequest, SetDefaultAddressRequest,
 } from '@/features/location/types';
 import locationApi from '@/features/location/api';
 
@@ -25,20 +25,36 @@ export const useMutationDetailLocation = () => {
   });
 }
 
+/**
+ * Mutation lưu địa chỉ
+ */
 export const useMutationSaveAddress = () => {
   return useMutation({
     mutationFn: (params: SaveAddressRequest) => locationApi.saveAddress(params),
   });
 }
-
+/**
+ * Mutation cập nhật địa chỉ
+ */
 export const useMutationEditAddress = () => {
   return useMutation({
     mutationFn: (params: EditAddressRequest) => locationApi.editAddress(params),
   });
 }
 
+/**
+ * Mutation xóa địa chỉ
+ */
 export const useMutationDeleteAddress = () => {
   return useMutation({
     mutationFn: (params: { id: string }) => locationApi.deleteAddress(params),
+  });
+}
+/**
+ * Mutation đặt địa chỉ mặc định
+ */
+export const useMutationSetDefaultAddress = () => {
+  return useMutation({
+    mutationFn: (params: SetDefaultAddressRequest) => locationApi.setDefaultAddress(params),
   });
 }

@@ -18,7 +18,6 @@ export const _DefaultValueFormService: ServiceForm = {
     type: '',
     name: '',
   },
-  options: [],
 };
 
 export enum _KTVConfigSchedules {

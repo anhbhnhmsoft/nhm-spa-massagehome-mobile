@@ -23,31 +23,19 @@ export const LocationSelector = <T extends FieldValues = FieldValues>({
   error,
 }: LocationSelectorProps<T>) => {
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const { getPermission } = useGetLocation();
-  const { location: currentLocation } = useLocationAddress();
+  const getLocation = useGetLocation();
   const { t } = useTranslation();
 
   const handleGetCurrentLocation = async () => {
-    const hasPermission = await getPermission();
-    if (hasPermission && currentLocation?.address) {
-      setValue(name, currentLocation.address as any);
-      // Set latitude and longitude
-      if (
-        currentLocation?.location?.coords?.latitude !== undefined &&
-        currentLocation?.location?.coords?.latitude !== null
-      ) {
-        setValue('lat' as any, currentLocation.location.coords.latitude as any);
-      }
-      if (
-        currentLocation?.location?.coords?.longitude !== undefined &&
-        currentLocation?.location?.coords?.longitude !== null
-      ) {
-        setValue('lng' as any, currentLocation.location.coords.longitude as any);
-      }
-    } else if (!hasPermission) {
+    const location = await getLocation();
+    if (location && location?.address) {
+      setValue(name, location.address as any);
+      setValue('lat' as any, location.location.coords.latitude as any);
+      setValue('lng' as any, location.location.coords.longitude as any);
+    } else {
       Alert.alert(
-        t('profile.partner_form.alert_location_permission_title'),
-        t('profile.partner_form.alert_location_permission_message')
+        t('permission.location.title'),
+        t('permission.location.error')
       );
     }
   };

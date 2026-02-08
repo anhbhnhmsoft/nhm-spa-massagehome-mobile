@@ -29,7 +29,7 @@ export default function PartnerRegisterTypeScreen() {
             router.push({
               pathname: '/(app)/(profile)/partner-register-individual',
               params: {
-                is_leader: 'true',
+                forWho: 'leader-ktv',
               },
             });
           }}>
@@ -50,7 +50,12 @@ export default function PartnerRegisterTypeScreen() {
         <TouchableOpacity
           className="mb-4 flex-row items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           onPress={() => {
-            router.push('/(app)/(profile)/partner-register-agency');
+            router.push({
+              pathname: '/(app)/(profile)/partner-register-individual',
+              params: {
+                forWho: 'agency',
+              },
+            });
           }}>
           <View className="flex-1 pr-3">
             <Text className="mb-1 font-inter-bold text-base text-slate-900">

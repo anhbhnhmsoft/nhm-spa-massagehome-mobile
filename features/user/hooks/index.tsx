@@ -14,12 +14,8 @@ import useAuthStore from '@/features/auth/store';
 import { useCheckAuth, useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { KTVDetail } from '@/features/user/types';
 import { useProfileQuery } from '@/features/auth/hooks/use-query';
-import { Alert } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
 import { goBack } from '@/lib/utils';
 
-export { usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form'; // ?
 
 /**
  * Dùng để lấy list KTV theo filter
@@ -139,6 +135,7 @@ export const useKTVDetail = () => {
   const { mutate } = useMutationKtvDetail();
   const handleError = useErrorToast();
   const setLoading = useApplicationStore((s) => s.setLoading);
+
 
   useEffect(() => {
     // Nếu không có massager, quay lại màn hình trước

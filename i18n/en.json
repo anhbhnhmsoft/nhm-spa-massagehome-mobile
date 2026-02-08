@@ -52,6 +52,7 @@
     "photo": "Photo",
     "unknown": "Unknown",
     "yes": "Yes",
+    "later": "Later",
     "no": "No",
     "close": "Close",
     "select_language": "Select Language",
@@ -121,6 +122,19 @@
     "save_image_success": "Image saved successfully",
     "copied_to_clipboard": "Copied to clipboard"
   },
+  "update": {
+    "update_available": {
+      "title": "Update Available",
+      "message": "A new version of the app is available. Would you like to update?",
+      "message_update_version": "A new version of the app is available. Would you like to update?",
+      "button_update": "Update",
+      "button_later": "Later"
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "message": "We are currently performing maintenance. Please check back soon."
+    }
+  },
   "permission": {
     "picture_lib": {
       "title": "Photo Library Access Required",
@@ -130,6 +144,11 @@
     "camera": {
       "title": "Camera Access Required",
       "message": "Please grant access to the camera to proceed."
+    },
+    "location": {
+      "title": "Location Access Required",
+      "message": "Please grant access to your location to use this feature.",
+      "error": "Error accessing location, please try again later."
     }
   },
   "common_error": {
@@ -224,6 +243,11 @@
       "FRIDAY": "Friday",
       "SATURDAY": "Saturday",
       "SUNDAY": "Sunday"
+    },
+    "review_application_status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
     }
   },
   "tab": {
@@ -455,7 +479,34 @@
       "error_check_apply_partner": "An error occurred while checking partner application. Please try again later.",
       "info_apply_pending": "You have registered as a partner and are awaiting administrator approval. Please stay tuned for the latest updates.",
       "info_apply_approved": "Your partner registration has been approved.",
-      "info_apply_rejected": "Your partner application has been rejected, and you cannot re-apply."
+      "info_apply_rejected": "Your partner application has been rejected, and you cannot re-apply.",
+      "status_pending_for_ktv": "You have registered as a Technician, and are awaiting administrator approval. Please stay tuned for the latest updates.",
+      "status_pending_for_ktv_leader": "You have registered as a Technician Leader, and are awaiting administrator approval. Please stay tuned for the latest updates.",
+      "status_pending_for_agency": "You have registered as an Agency, and are awaiting administrator approval. Please stay tuned for the latest updates.",
+      "cancel_reason_title": "Registration Cancellation",
+      "error_check_application": "An error occurred while checking partner application. Please try again later.",
+      "show_application": "Show Application",
+      "modal_application": {
+        "title": "Application Details",
+        "status": "Rejected",
+        "reason": "Reason",
+        "information": "Information",
+        "nickname": "Display Name",
+        "experience": "Experience",
+        "year": "years",
+        "role": "Role",
+        "ktv": "Technician",
+        "agency": "Partner",
+        "leader": "Leader",
+        "referrer_id": "Referral Code",
+        "bio": "Self-introduction (Bio)",
+        "identity": "Identification Documents",
+        "cccd_front": "ID Card (Front)",
+        "cccd_back": "ID Card (Back)",
+        "face_with_identity_card": "Photo holding ID Card",
+        "certificate": "Certificates",
+        "gallery": "Gallery for Customers"
+      }
     },
     "partner_register": {
       "title": "What do you want to register as?",
@@ -559,7 +610,8 @@
     "sales_count_item_service": "Sold {{ count }}",
     "price_service_sub": "From only",
     "booking_soon": "Earliest booking in {{ time }}",
-    "working_hours": "Working Hours"
+    "working_hours": "Working Hours",
+    "price_transportation": "Price Transportation"
   },
   "services": {
     "total_services": "services available",

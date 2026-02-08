@@ -20,7 +20,6 @@ import useApplicationStore from '@/lib/store';
 import { useInfinityAddressList } from '@/features/location/hooks/use-query';
 import { useTranslation } from 'react-i18next';
 import { useCheckAuth, useGetProfile } from '@/features/auth/hooks';
-import { router } from 'expo-router';
 import useStoreLocation from '@/features/location/stores';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -237,7 +236,6 @@ export const useSaveLocation = (onSuccess: () => void) => {
       latitude: Number(item_address?.latitude) || undefined,
       longitude: Number(item_address?.longitude) || undefined,
       desc: item_address?.desc || '',
-      is_primary: item_address?.is_primary || false,
     },
     resolver: zodResolver(
       z.object({
@@ -254,7 +252,6 @@ export const useSaveLocation = (onSuccess: () => void) => {
           .min(-180)
           .max(180),
         desc: z.string().optional(),
-        is_primary: z.boolean(),
       })
     ),
   });
@@ -266,7 +263,6 @@ export const useSaveLocation = (onSuccess: () => void) => {
       latitude: Number(item_address?.latitude) || undefined,
       longitude: Number(item_address?.longitude) || undefined,
       desc: item_address?.desc || '',
-      is_primary: item_address?.is_primary || false,
     });
   }, [item_address]);
 

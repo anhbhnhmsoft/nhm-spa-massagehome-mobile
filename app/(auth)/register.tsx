@@ -238,7 +238,7 @@ export default function RegisterScreen() {
                           className="font-inter-bold text-primary-color-2 underline"
                           onPress={() =>
                             router.push({
-                              pathname: '/term-or-use-pdf',
+                              pathname: '/(auth)/term-or-use-pdf',
                               params: {
                                 type: ContractFileType.TERM_OF_USE.toString(), // ✅ number OK
                               },
@@ -251,7 +251,7 @@ export default function RegisterScreen() {
                           className="font-inter-bold text-primary-color-2 underline"
                           onPress={() =>
                             router.push({
-                              pathname: '/term-or-use-pdf',
+                              pathname: '/(auth)/term-or-use-pdf',
                               params: {
                                 type: ContractFileType.POLICY_PRIVACY.toString(), // ✅ number OK
                               },

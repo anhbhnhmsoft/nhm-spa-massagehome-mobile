@@ -1,7 +1,7 @@
 import { client } from '@/lib/axios-client';
 import {
   AuthenticateRequest,
-  AuthenticateResponse,
+  AuthenticateResponse, ConfigApplicationResponse,
   DeviceInfoRequest,
   EditProfileRequest,
   LoginRequest,
@@ -84,6 +84,16 @@ const authApi = {
     const response = await client.post(`${defaultUri}/heartbeat`);
     return response.data;
   },
+
+  /**
+   * Hàm để check các thông số mà server gửi về client
+   */
+  configApplication: async (): Promise<ConfigApplicationResponse> => {
+    const response = await client.get(`${defaultUri}/config-application`);
+    return response.data;
+  },
+
+
   /**
    * Hàm để set device info cho user
    */

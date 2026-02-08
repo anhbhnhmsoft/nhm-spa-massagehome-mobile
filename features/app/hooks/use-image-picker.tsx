@@ -17,7 +17,7 @@ export const useImagePicker = () => {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
+      quality: 0.5,
     });
     if (!result.canceled) {
       onPicked(result.assets[0].uri);

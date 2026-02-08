@@ -37,10 +37,16 @@ export const InputField = <T extends FieldValues = any>({
             placeholder={placeholder}
             placeholderTextColor="#9CA3AF"
             onBlur={onBlur}
-            onChangeText={keyboardType === 'numeric' ? (value) => {
-              onChange(Number(value))
-            }: onChange}
-            value={value}
+            onChangeText={(text) => {
+              // Nếu là numeric, gửi số về cho Hook Form, nếu không gửi string
+              if (keyboardType === 'numeric') {
+                // Chỉ gửi số nếu chuỗi không rỗng, tránh gửi NaN khi xóa hết
+                onChange(text === '' ? '' : Number(text));
+              } else {
+                onChange(text);
+              }
+            }}
+            value={value !== undefined && value !== null ? String(value) : ''}
             multiline={multiline}
             numberOfLines={numberOfLines}
             textAlignVertical={multiline ? 'top' : 'center'}

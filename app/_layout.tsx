@@ -99,7 +99,6 @@ const AppContainer = () => {
           <Stack.Screen name="index" />
         </Stack.Protected>
         <Stack.Protected guard={complete}>
-          {/* Hiển thị màn hình request location nếu chưa có quyền location, và không nhấn bỏ qua */}
           <Stack.Screen name="(app)" />
           <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
             <Stack.Screen name="(auth)" />

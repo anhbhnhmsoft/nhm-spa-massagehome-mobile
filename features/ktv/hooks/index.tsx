@@ -249,7 +249,7 @@ export const useFormService = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        quality: 0.8,
+        quality: 0.5,
       });
       if (!result.canceled) {
         const image = result.assets[0];
@@ -598,7 +598,7 @@ export const useChangeImage = () => {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.7,
+        quality: 0.5,
         allowsMultipleSelection: true,
         selectionLimit: remain,
       });

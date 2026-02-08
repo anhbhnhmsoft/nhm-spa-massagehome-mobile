@@ -235,3 +235,7 @@ export const goBack = () => {
     router.back();
   }
 }
+
+export const compareVersion = (v1: string, v2: string): number => {
+  return v1.localeCompare(v2, undefined, { numeric: true, sensitivity: 'base' });
+};

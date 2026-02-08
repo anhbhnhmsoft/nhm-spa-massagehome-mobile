@@ -52,6 +52,7 @@
     "photo": "照片",
     "unknown": "未知",
     "yes": "是",
+    "later": "稍后",
     "no": "否",
     "close": "关闭",
     "select_language": "选择语言",
@@ -121,6 +122,19 @@
     "save_image_success": "图片保存成功",
     "copied_to_clipboard": "已复制到剪贴板"
   },
+  "update": {
+    "update_available": {
+      "title": "更新可用",
+      "message": "新的应用版本已准备就绪。是否立即更新？",
+      "message_update_version": "已发现新的应用版本。是否立即更新？",
+      "button_update": "更新",
+      "button_later": "稍后"
+    },
+    "maintenance": {
+      "title": "维护中",
+      "message": "我们当前正在进行维护。请稍后再试。"
+    }
+  },
   "permission": {
     "picture_lib": {
       "title": "需要访问照片库",
@@ -130,6 +144,11 @@
     "camera": {
       "title": "需要访问相机",
       "message": "请允许访问相机以继续。"
+    },
+    "location": {
+      "title": "需要访问定位",
+      "message": "请允许访问定位以使用此功能。",
+      "error": "访问定位出错，请稍后重试。"
     }
   },
   "common_error": {
@@ -224,6 +243,11 @@
       "FRIDAY": "星期五",
       "SATURDAY": "星期六",
       "SUNDAY": "星期日"
+    },
+    "review_application_status": {
+      "PENDING": "待确认",
+      "APPROVED": "已确认",
+      "REJECTED": "已拒绝"
     }
   },
   "tab": {
@@ -454,7 +478,34 @@
       "error_check_apply_partner": "检查合作伙伴申请时发生错误。请稍后重试。",
       "info_apply_pending": "您已注册成为合作伙伴，正在等待管理员审核，请耐心等待最新消息。",
       "info_apply_approved": "您的合作伙伴注册已获得批准。",
-      "info_apply_rejected": "您的合作伙伴申请已被拒绝，无法再次申请。"
+      "info_apply_rejected": "您的合作伙伴申请已被拒绝，无法再次申请。",
+      "status_pending_for_ktv": "您已注册成为技师，正在等待管理员审核，请耐心等待最新消息。",
+      "status_pending_for_ktv_leader": "您已注册成为城市区域代理，正在等待管理员审核，请耐心等待最新消息。",
+      "status_pending_for_agency": "您已注册成为城市区域代理，正在等待管理员审核，请耐心等待最新消息。",
+      "cancel_reason_title": "注册取消",
+      "error_check_application": "检查合作伙伴申请时发生错误。请稍后重试。",
+      "show_application": "查看申请详情",
+      "modal_application": {
+        "title": "申請詳情",
+        "status": "已拒絕",
+        "reason": "原因",
+        "information": "基本資訊",
+        "nickname": "顯示名稱",
+        "experience": "工作經驗",
+        "year": "年",
+        "role": "角色",
+        "ktv": "技術員",
+        "agency": "合作夥伴",
+        "leader": "組長",
+        "referrer_id": "推薦碼",
+        "bio": "自我介紹 (Bio)",
+        "identity": "身份證明文件",
+        "cccd_front": "身分證正面",
+        "cccd_back": "身分證反面",
+        "face_with_identity_card": "手持身分證照片",
+        "certificate": "相關證書",
+        "gallery": "展示照片 (供客戶查看)"
+      }
     },
     "partner_register": {
       "title": "您想注册为什么角色？",
@@ -558,7 +609,8 @@
     "sales_count_item_service": "已售 {{ count }}",
     "price_service_sub": "起价",
     "booking_soon": "最早预订时间 {{ time }}",
-    "working_hours": "工作时间"
+    "working_hours": "工作时间",
+    "price_transportation": "价格运输"
   },
   "services": {
     "total_services": "项服务可用",

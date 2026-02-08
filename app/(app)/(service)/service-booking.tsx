@@ -11,7 +11,6 @@ import { useServiceBooking } from '@/features/service/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ChevronRight, MapPin, X } from 'lucide-react-native';
-import { router } from 'expo-router';
 import DateTimePickerInput from '@/components/date-time-input';
 import { Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';

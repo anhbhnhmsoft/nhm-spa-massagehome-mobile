@@ -29,7 +29,7 @@ export const useHeartbeatQuery = (enabled: boolean) => {
     queryKey: ['authApi-heartbeat'],
     queryFn: authApi.heartbeat,
     enabled,
-    refetchInterval: 1000 * 60 * 2, // 2 phút
+    refetchInterval: 1000 * 60 * 5, // 5 phút
     // Không refetch khi ứng dụng đang chạy trong background
     refetchIntervalInBackground: false,
 
@@ -44,3 +44,23 @@ export const useHeartbeatQuery = (enabled: boolean) => {
     },
   });
 };
+
+/**
+ * Hook để check các thông số mà server gửi về client
+ */
+export const useConfigApplicationQuery = () => {
+  return useQuery({
+    queryKey: ['authApi-configApplication'],
+    queryFn: authApi.configApplication,
+    select: (res) => res.data,
+    refetchOnWindowFocus: true, // Refetch khi ứng dụng quay lại focus
+    // --- CẤU HÌNH KHÔNG CACHE ---
+    gcTime: 0, // (Garbage Collection Time) = 0: Xóa khỏi bộ nhớ ngay khi component unmount
+    staleTime: 0, // = 0: Luôn coi data là "ũ" -> Gọi API mới mỗi khi mount lại
+    retry: 0, // Check token lỗi thì fail luôn, đừng thử lại (để logout luôn)
+    // --- Đánh dấu để không lưu xuống AsyncStorage ---
+    meta: {
+      persist: false,
+    },
+  });
+}

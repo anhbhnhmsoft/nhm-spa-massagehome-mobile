@@ -7,25 +7,33 @@ import { ImagePlus, Trash2 } from 'lucide-react-native';
 
 type ImageSlotProps = {
   uri: string | null;
+  token?: string;
   label: string;
   onAdd: () => void;
   onRemove?: () => void;
+  disabled?: boolean;
 };
 
-export const ImageSlot: React.FC<ImageSlotProps> = ({ uri, label, onAdd, onRemove }) => {
+export const ImageSlot: React.FC<ImageSlotProps> = ({ uri, token, label, onAdd, onRemove, disabled }) => {
   return (
     <TouchableOpacity
-      onPress={onAdd}
+      disabled={disabled}
+      onPress={!disabled ? onAdd : undefined}
       className="relative h-32 w-28 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 overflow-hidden">
       {uri ? (
         <>
           <Image
-            source={{ uri }}
+            source={{
+              uri: uri,
+              headers: token ? {
+                Authorization: `Bearer ${token}`,
+              } : undefined,
+            }}
             style={{ width: '100%', height: '100%' }}
             contentFit="cover"
             className="rounded-xl"
           />
-          {onRemove && (
+          {!disabled && onRemove && (
             <TouchableOpacity
               onPress={(e) => {
                 e.stopPropagation();
