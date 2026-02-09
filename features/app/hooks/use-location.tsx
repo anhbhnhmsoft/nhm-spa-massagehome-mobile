@@ -87,7 +87,7 @@ export const useLocation = () => {
   // Gửi vị trí lên server
   const sendLocation = () => {
     // Kiểm tra có vị trí và auth hay không
-    if (currentLocation.current && checkAuth) {
+    if (currentLocation.current) {
       const newLocation = currentLocation.current;
       const oldLocation = useApplicationStore.getState().location;
       const check = isSignificantChange(oldLocation?.location ?? null, newLocation.location);
@@ -97,11 +97,13 @@ export const useLocation = () => {
         // Cập nhật vị trí mới vào store
         setAppLocation(newLocation);
         // Gửi lên server
-        mutation.mutate({
-          address: newLocation.address,
-          latitude: newLocation.location.coords.latitude,
-          longitude: newLocation.location.coords.longitude,
-        });
+        if (checkAuth){
+          mutation.mutate({
+            address: newLocation.address,
+            latitude: newLocation.location.coords.latitude,
+            longitude: newLocation.location.coords.longitude,
+          });
+        }
       }
     }
   };

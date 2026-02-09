@@ -395,6 +395,7 @@
     "notification": "通知",
     "affiliate": "推荐佣金",
     "config_schedule": "日程配置",
+    "emergency_contact": "紧急联系人",
     "inviteTechnician": "邀请技师",
     "scanReferral": "扫描推荐",
     "delete_account_confirm_title": "确认删除账户",
@@ -925,5 +926,9 @@
       "invalid_day": "请选择有效的日期",
       "something_went_wrong": "发生错误，请重试"
     }
+  },
+  "danger_support": {
+    "success": "您的危险支持请求已发送",
+    "error": "发生错误，请稍后重试"
   }
 }

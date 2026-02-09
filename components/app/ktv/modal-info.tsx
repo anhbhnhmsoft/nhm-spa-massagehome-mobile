@@ -18,6 +18,7 @@ import {
   LogOut,
   UserPen,
   Wallet,
+  OctagonAlert
 } from 'lucide-react-native';
 import { ListLocationModal } from '@/components/app/location';
 import SelectLanguage from '@/components/select-language';
@@ -25,6 +26,7 @@ import SupportModal from '@/components/app/support-modal';
 import Dialog from '@/components/dialog';
 import { router } from 'expo-router';
 import { openAboutPage } from '@/lib/utils';
+import { useSendDangerSupport } from '@/features/ktv/hooks';
 
 type ModalInfoProps = {
   isVisible: boolean;
@@ -90,6 +92,9 @@ export const FeatureList = ({
     supportChanel,
   } = useGetSupport();
 
+  // Gửi yêu cầu hỗ trợ
+  const { sendDangerSupport } = useSendDangerSupport();
+
   // Xử lý ngôn ngữ
   const selectedLang = useApplicationStore((state) => state.language);
   const langConfig = useMemo(
@@ -105,6 +110,19 @@ export const FeatureList = ({
         <View className="mb-3 w-full">
           <Text className="font-inter-bold text-gray-800">{t('profile.common_features')}</Text>
         </View>
+
+        {/* Cầu cứu */}
+        <TouchableOpacity
+          className="mb-2 w-[25%] items-center"
+          onPress={() => {
+            onClose();
+            sendDangerSupport()
+          }}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={OctagonAlert} size={24} className="text-red-500" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">{t('profile.emergency_contact')}</Text>
+        </TouchableOpacity>
 
         {/* Quản lý lịch */}
         <TouchableOpacity

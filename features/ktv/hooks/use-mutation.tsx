@@ -4,7 +4,7 @@ import {
   CancelBookingRequest,
   DetailServiceRequest,
   EditConfigScheduleRequest,
-  EditProfileKtvRequest,
+  EditProfileKtvRequest, SendDangerSupportRequest,
 } from '@/features/ktv/types';
 
 // Thêm dịch vụ
@@ -93,5 +93,13 @@ export const useUpdateConfigScheduleMutation = () => {
 export const useLinkReferrerMutation = () => {
   return useMutation({
     mutationFn: (referrer_id: string) => ktvApi.linkReferrer(referrer_id),
+  });
+};
+
+
+// gửi hỗ trợ khẩn cấp
+export const useSendDangerSupportMutation = () => {
+  return useMutation({
+    mutationFn: (data: SendDangerSupportRequest) => ktvApi.sendDangerSupport(data),
   });
 };

@@ -170,3 +170,10 @@ export type EditConfigScheduleRequest = {
   is_working: boolean;
 };
 export type FinishBookingResponse = ResponseDataSuccessType<FinishBooking>;
+
+
+export type SendDangerSupportRequest = {
+  message?: string;
+  lat?: string;
+  lng?: string;
+}

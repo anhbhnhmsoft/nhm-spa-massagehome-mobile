@@ -59,7 +59,6 @@ export default function AppLayout() {
           <Stack.Screen name="maintaince" />
         </Stack.Protected>
 
-
         <Stack.Protected guard={!isMaintained}>
           {/* --- TAB KTV SCREEN --- */}
           <Stack.Protected guard={checkAuth && user?.role === _UserRole.KTV}>

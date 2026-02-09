@@ -19,7 +19,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Masa Home cần truy cập thư viện ảnh để bạn có thể chọn và tải lên ảnh đại diện cá nhân, cũng như cung cấp các hình ảnh hồ sơ chuyên môn cần thiết khi thực hiện đăng ký trở thành kỹ thuật viên của hệ thống.",
         "NSCameraUsageDescription": "Masa Home cần sử dụng Camera để bạn có thể chụp ảnh đại diện trực tiếp hoặc chụp ảnh các giấy tờ, bằng cấp liên quan để hoàn tất hồ sơ đăng ký làm kỹ thuật viên ngay trên ứng dụng.",

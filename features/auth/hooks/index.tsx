@@ -579,8 +579,8 @@ export const useCheckConfigApplicationUpdate = () => {
 
     if (isUpdatePending) {
       Alert.alert(
-        t('common_update.update_available.title'),
-        t('common_update.update_available.message'),
+        t('update.update_available.title'),
+        t('update.update_available.message'),
         [
           {
             text: t('common.later'),

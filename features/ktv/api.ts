@@ -13,7 +13,7 @@ import {
   FinishBookingResponse,
   ListOptionCategoriesResponse,
   ListServiceRequest,
-  ListServiceResponse,
+  ListServiceResponse, SendDangerSupportRequest,
   ServiceDetailResponse,
   StartBookingResponse,
   TotalIncomeResponse,
@@ -151,6 +151,11 @@ const ktvApi = {
     });
     return response.data;
   },
+
+  sendDangerSupport: async (data: SendDangerSupportRequest): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/danger-support`, data);
+    return response.data;
+  }
 };
 
 export default ktvApi;

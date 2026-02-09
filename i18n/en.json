@@ -395,6 +395,7 @@
     "notification": "Notifications",
     "affiliate": "Referral Commission",
     "config_schedule": "Schedule Configuration",
+    "emergency_contact": "Emergency Contact",
     "scanReferral": "Scan Referral",
     "inviteTechnician": "Invite Technician",
     "delete_account_confirm_title": "Confirm Account Deletion",
@@ -926,5 +927,9 @@
       "invalid_day": "Please select a valid day",
       "something_went_wrong": "Something went wrong, please try again"
     }
+  },
+  "danger_support": {
+    "success": "Your danger support request has been sent",
+    "error": "An error occurred, please try again later"
   }
 }

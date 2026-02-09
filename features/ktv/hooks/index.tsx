@@ -25,7 +25,7 @@ import {
   useDeleteImageMutation,
   useDeleteServiceMutation,
   useDetailServiceMutation,
-  useLinkReferrerMutation,
+  useLinkReferrerMutation, useSendDangerSupportMutation,
   useUpdateConfigScheduleMutation,
   useUpdateProfileKtvMutation,
   useUpdateServiceMutation,
@@ -837,3 +837,35 @@ export const useConfigSchedule = () => {
     loadingSave: form.formState.isSubmitting,
   };
 };
+
+export const useSendDangerSupport = () => {
+  const { t } = useTranslation();
+  const { error: errorToast, success } = useToast();
+  const setLoading = useApplicationStore((state) => state.setLoading);
+  const userLocation = useApplicationStore((state) => state.location);
+  const { mutate } = useSendDangerSupportMutation();
+
+  const sendDangerSupport = () => {
+    setLoading(true);
+    mutate({
+      message: '',
+      lat: userLocation?.location?.coords?.latitude?.toString(),
+      lng: userLocation?.location?.coords?.longitude?.toString(),
+    }, {
+      onSuccess: () => {
+        success({ message: t('danger_support.success') });
+      },
+      onError: (err) => {
+        console.log(err)
+        errorToast({ message: t('danger_support.error') });
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  };
+
+  return {
+    sendDangerSupport,
+  }
+}

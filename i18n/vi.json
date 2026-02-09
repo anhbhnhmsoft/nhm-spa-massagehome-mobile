@@ -395,6 +395,7 @@
     "notification": "Thông báo",
     "affiliate": "Giới thiệu hoa hồng",
     "config_schedule": "Cấu hình lịch làm việc",
+    "emergency_contact": "Liên hệ khẩn cấp",
     "scanReferral": "Quét mã giới thiệu",
     "inviteTechnician": "Mời kỹ thuật viên",
     "delete_account_confirm_title": "Xác nhận xóa tài khoản",
@@ -927,5 +928,9 @@
       "invalid_day": "Vui lòng chọn ngày hợp lệ",
       "something_went_wrong": "Đã xảy ra lỗi, vui lòng thử lại"
     }
+  },
+  "danger_support": {
+    "success": "Bạn đã gửi yêu cầu hỗ trợ!",
+    "error": "Đã xảy ra lỗi, vui lòng thử lại sau"
   }
 }
