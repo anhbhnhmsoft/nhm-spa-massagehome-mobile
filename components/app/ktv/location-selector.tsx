@@ -6,7 +6,7 @@ import { Icon } from '@/components/ui/icon';
 import { MapPin } from 'lucide-react-native';
 import { AddressItem } from '@/features/location/types';
 import { ListLocationModal } from '@/components/app/location';
-import { useGetLocation, useLocationAddress } from '@/features/app/hooks/use-location';
+import { useGetLocation } from '@/features/app/hooks/use-location';
 import { useTranslation } from 'react-i18next';
 
 type LocationSelectorProps<T extends FieldValues = FieldValues> = {

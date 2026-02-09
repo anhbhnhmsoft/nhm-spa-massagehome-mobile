@@ -5,60 +5,7 @@ import { Alert, AppState } from 'react-native';
 import { useMutationSetDefaultAddress } from '@/features/location/hooks/use-mutation';
 import { useCheckAuth } from '@/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
-
-export const fetchAndFormatLocation = async (): Promise<LocationApp> => {
-  let location = await Location.getLastKnownPositionAsync();
-
-  if (!location) {
-    location = await Location.getCurrentPositionAsync({
-      accuracy: Location.LocationAccuracy.Balanced, // Dùng Balanced để đỡ nhảy hơn High
-    });
-  }
-
-  const reverseGeocode = await Location.reverseGeocodeAsync({
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-  });
-
-  let addressString = '';
-  if (reverseGeocode.length > 0) {
-    const place = reverseGeocode[0];
-    if (place.formattedAddress) {
-      addressString = place.formattedAddress;
-    } else {
-      const parts: string[] = [];
-
-      if (place.name) {
-        parts.push(place.name);
-      } else if (place.street) {
-        parts.push(place.street);
-      }
-
-      if (place.subregion) {
-        parts.push(place.subregion);
-      } else if (place.district) {
-        parts.push(place.district);
-      }
-
-      if (place.region) {
-        parts.push(place.region);
-      } else if (place.city) {
-        parts.push(place.city);
-      }
-
-      addressString = parts.filter(Boolean).join(', ');
-    }
-
-    // Xử lý cleanup dấu phẩy thừa nếu dữ liệu thiếu
-    addressString = addressString.replace(/^, /, '').replace(/, $/, '');
-  }
-
-  return {
-    location,
-    address: addressString,
-  };
-};
-
+import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 
 /**
  * Kiểm tra có phải là sự thay đổi đáng kể hay không
@@ -74,7 +21,6 @@ const isSignificantChange = (oldLoc: Location.LocationObject | null, newLoc: Loc
 
   return isLatDiff || isLngDiff;
 };
-
 
 /**
  * format địa chỉ tọa độ
@@ -137,7 +83,6 @@ export const useLocation = () => {
   const mutation = useMutationSetDefaultAddress();
   // Kiểm tra auth
   const checkAuth = useCheckAuth();
-
 
   // Gửi vị trí lên server
   const sendLocation = () => {
@@ -242,7 +187,7 @@ export const useLocation = () => {
     // Gửi vị trí ngay khi component mount
     const timeoutId = setTimeout(() => {
       sendLocation();
-    }, 1000 * 5); // Gửi sau 5 giây (để đảm bảo có vị trí)
+    }, _TIME_OUT_LOADING_SCREEN_LAYOUT); // Gửi sau _TIME_OUT_LOADING_SCREEN_LAYOUT (để đảm bảo có vị trí)
 
     // Gửi vị trí mỗi 1 phút khi có auth
     const intervalId = setInterval(() => {
@@ -275,9 +220,9 @@ export const useGetLocation = () => {
         );
       }
 
-      // Có quyền -> Lấy vị trí (Dùng Helper)
+      // Có quyền -> Lấy vị trí
       const newLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.LocationAccuracy.High, // Dùng Balanced để đỡ nhảy hơn High
+        accuracy: Location.LocationAccuracy.High,
       });
       const location = await formatLocation(newLocation);
       setAppLocation(location);
@@ -290,29 +235,5 @@ export const useGetLocation = () => {
       );
       return null;
     }
-  };
-};
-
-
-export const useLocationAddress = () => {
-  const location = useApplicationStore((s) => s.location);
-  const [locationPermission, setLocationPermission] = useState<Location.PermissionStatus | null>(null);
-
-  useEffect(() => {
-    const checkPermission = async () => {
-      try {
-        const { status } = await Location.getForegroundPermissionsAsync();
-        setLocationPermission(status);
-      } catch (error) {
-        // Fallback an toàn
-        setLocationPermission(null);
-      }
-    };
-    checkPermission();
-  }, []);
-
-  return {
-    location,
-    permission: locationPermission,
   };
 };

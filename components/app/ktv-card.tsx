@@ -94,10 +94,15 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
 
   const calculateDistance = useCalculateDistance();
 
-  const distance = calculateDistance(
-    item.review_application.latitude,
-    item.review_application.longitude,
-  );
+  const distance = useMemo(() => {
+    if (item.location.latitude && item.location.longitude) {
+      return calculateDistance(
+        item.location.latitude,
+        item.location.longitude,
+      );
+    }
+    return null;
+  }, [item.location, calculateDistance]);
 
   const setKtv = useSetKtv();
 
@@ -145,12 +150,10 @@ export const KTVServiceCard = ({ item }: { item: ListKTVItem }) => {
               {item.review_application.experience} {t('common.year')}
             </Text>
           </View>
-          {distance && (
-            <View className="flex-row items-center gap-1">
-              <MapPin size={10} color="#64748b" />
-              <Text className="text-[10px] text-slate-500">{formatDistance(distance)}</Text>
-            </View>
-          )}
+          <View className="flex-row items-center gap-1">
+            <MapPin size={10} color="#64748b" />
+            <Text className="text-[10px] text-slate-500">{distance ? formatDistance(distance) : '-'} </Text>
+          </View>
           <View className="flex-row items-center gap-1">
             <TrendingUp size={10} color="#64748b" />
             <Text className="text-[10px] text-slate-500">

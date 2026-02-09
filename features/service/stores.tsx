@@ -1,14 +1,14 @@
 import { create } from 'zustand';
-import { PickBookingItem, ServiceItem } from '@/features/service/types';
+import { PickBookingItem, PrepareBookingResponse, ServiceItem } from '@/features/service/types';
 
 
 interface IServiceStore {
   service: ServiceItem | null;
-  pick_service_booking: PickBookingItem | null;
+  pick_service_booking: PrepareBookingResponse['data'] | null;
 
 
   setService: (service: ServiceItem | null) => void;
-  setPickServiceBooking: (pick_service_booking: PickBookingItem | null) => void,
+  setPickServiceBooking: (pick_service_booking: PrepareBookingResponse['data'] | null) => void,
 }
 
 

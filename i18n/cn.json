@@ -606,9 +606,8 @@
     "service_list": "服务列表",
     "available": "可预订",
     "unavailable": "不可用",
-    "sales_count_item_service": "已售 {{ count }}",
+    "sales_count_item_service": "已服务 {{ count }} 单",
     "price_service_sub": "起价",
-    "booking_soon": "最早预订时间 {{ time }}",
     "working_hours": "工作时间",
     "price_transportation": "价格运输"
   },
@@ -646,6 +645,18 @@
     "booking_total_price": "支付总额",
     "booking_failed_title": "预订失败",
     "booking_failed_message": "处理预约时发生错误。很抱歉给您带来不便。请重试。",
+    "booking_today": "今日预约",
+    "booking_conflict": "请选择一个不与现有预约重叠的时间槽，每个预约之间的最小间隔为 {{ min }} 分钟",
+    "booking_empty": "今日暂无预约",
+    "booking_empty_2": "您可以在任何时间预约",
+    "busy_slot": "已预订",
+    "confirmed": "日历已确认",
+    "subtotal": "临时总金额",
+
+    "distance": "距离",
+    "distance_price": "每公里价格",
+    "discount": "折扣",
+
     "review": {
       "title": "评价服务",
       "rating": "满意度",
@@ -681,6 +692,7 @@
     "is_primary_desc": "预订服务时将默认选择此地址",
     "save_address": "保存地址",
     "primary": "默认",
+    "primary_address": "当前地址",
     "no_desc": "无备注",
     "get_current_location": "获取当前位置",
     "loading": "处理中...",

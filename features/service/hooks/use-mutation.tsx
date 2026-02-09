@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import serviceApi from '@/features/service/api';
-import { BookingServiceRequest, SendReviewRequest } from '@/features/service/types';
+import { BookingServiceRequest, PrepareBookingRequest, SendReviewRequest } from '@/features/service/types';
 
 /**
  * Lấy thông tin chi tiết dịch vụ
@@ -28,3 +28,12 @@ export const useMutationSendReview = () => {
     mutationFn: (data: SendReviewRequest) => serviceApi.sendReview(data),
   });
 };
+
+/**
+ * Lấy thông tin trước khi đặt lịch dịch vụ
+ */
+export const useMutationPrepareBooking = () => {
+  return useMutation({
+    mutationFn: (data: PrepareBookingRequest) => serviceApi.prepareBooking(data),
+  })
+}

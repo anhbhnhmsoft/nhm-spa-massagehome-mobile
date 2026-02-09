@@ -8,8 +8,8 @@ import { Text } from '@/components/ui/text';
 import {  useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
-import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 import { router } from 'expo-router';
+import useApplicationStore from '@/lib/store';
 
 type HeaderAppProps = {
   showSearch?: boolean;
@@ -28,7 +28,7 @@ export function HeaderApp({
   const { t } = useTranslation();
   const [showLocationModal, setShowLocationModal] = React.useState(false);
   const redirectAuth = useCheckAuthToRedirect();
-  const locationUser = useLocationUser();
+  const locationUser = useApplicationStore((state) => state.location);
 
   return (
     <>

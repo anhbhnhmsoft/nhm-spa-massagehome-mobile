@@ -31,6 +31,13 @@ export type DetailLocationResponse = ResponseDataSuccessType<DetailLocation>;
 
 export type ListAddressRequest = BaseSearchRequest<object>;
 
+export type SelectAddress = {
+  address: string;
+  latitude: string;
+  longitude: string;
+  desc: string;
+};
+
 export type AddressItem = {
   id: string;
   user_id: string;

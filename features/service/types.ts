@@ -65,10 +65,7 @@ export type BookingServiceRequest = {
 // Pick only required fields for booking
 export type PickBookingItem = {
   service_id: string;
-  service_name: string;
   option_id: string;
-  duration: number;
-  price: string;
 };
 
 // Pick only required fields for booking requirement
@@ -87,6 +84,34 @@ export type BookingServiceResponse = ResponseDataSuccessType<{
   success?: {
     booking_id: string;
   };
+}>;
+
+// Lấy thông tin trước khi đặt lịch dịch vụ
+export type PrepareBookingRequest = {
+  service_id: string;
+  option_id: string;
+}
+
+export type PrepareBookingResponse = ResponseDataSuccessType<{
+  break_time_gap: number; // Thời gian tắt móc giữa các dịch vụ (phút)
+  price_transportation: number; // Giá di chuyển (dạng float)
+  bookings: {
+    booking_time: string; // Thời gian đặt lịch (dạng string)
+  }[];
+  service: {
+    name: string;
+    id: string;
+  },
+  option: {
+    id: string;
+    price: string;
+    duration: number;
+  };
+  location_ktv: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null;
 }>;
 
 export type CouponItem = {

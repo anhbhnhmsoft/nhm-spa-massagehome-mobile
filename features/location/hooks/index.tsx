@@ -7,7 +7,7 @@ import {
   useMutationSearchLocation,
 } from '@/features/location/hooks/use-mutation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchAndFormatLocation, useLocationAddress } from '@/features/app/hooks/use-location';
+import { useGetLocation } from '@/features/app/hooks/use-location';
 import {
   AddressItem,
   DetailLocation,
@@ -32,7 +32,7 @@ export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [results, setResults] = useState<SearchLocation[]>([]);
   const handleError = useErrorToast();
-  const { location } = useLocationAddress();
+  const location = useApplicationStore((s) => s.location);
 
   const {
     mutate: mutateSearchLocation,
@@ -144,6 +144,7 @@ export const useListLocation = () => {
   const checkAuth = useCheckAuth();
   const handleError = useErrorToast();
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const location = useApplicationStore((s) => s.location);
 
   useEffect(() => {
     // Nếu không auth, quay lại trang trước
@@ -180,6 +181,7 @@ export const useListLocation = () => {
     setShowSaveModal(true);
   };
 
+  // Xử lý đóng modal
   const closeSaveModal = () => {
     setItemAddress(null); // Clear dữ liệu cũ
     setShowSaveModal(false);
@@ -205,6 +207,8 @@ export const useListLocation = () => {
     );
   };
 
+  const getCurrentLocation = useGetLocation();
+
   return {
     queryList,
     createHandler,
@@ -212,6 +216,8 @@ export const useListLocation = () => {
     deleteHandler,
     showSaveModal,
     closeSaveModal,
+    location,
+    getCurrentLocation
   };
 };
 
@@ -222,6 +228,8 @@ export const useSaveLocation = (onSuccess: () => void) => {
   const setItemAddress = useStoreLocation((s) => s.setItemAddress);
   const getProfile = useGetProfile();
 
+  const getCurrentLocation = useGetLocation();
+
   const { t } = useTranslation();
 
   // Mutation lưu địa chỉ
@@ -230,6 +238,7 @@ export const useSaveLocation = (onSuccess: () => void) => {
   // Mutation sửa địa chỉ
   const { mutate: mutateEditAddress, isPending: isEditing } = useMutationEditAddress();
 
+  // Form validation
   const form = useForm<SaveAddressRequest>({
     defaultValues: {
       address: item_address?.address || '',
@@ -315,7 +324,7 @@ export const useSaveLocation = (onSuccess: () => void) => {
 
   const setLocationCurrent = async () => {
     try {
-      const location = await fetchAndFormatLocation();
+      const location = await getCurrentLocation();
       if (location) {
         form.setValue('address', location.address);
         form.setValue('latitude', location.location.coords.latitude);

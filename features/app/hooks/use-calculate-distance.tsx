@@ -1,15 +1,18 @@
 import { useCallback } from 'react';
 import { getDistanceFromLatLonInKm } from '@/lib/utils';
-import { useGetUserLocation, useLocationUser } from '@/features/app/hooks/use-get-user-location';
+import useApplicationStore from '@/lib/store';
 
+/**
+ * Hook để tính khoảng cách giữa user và provider.
+ */
 const useCalculateDistance = () => {
-  const userLocation = useLocationUser();
+  const userLocation = useApplicationStore((state) => state.location);
   return useCallback(
     (latProvider: number, lonProvider: number) => {
       if (userLocation) {
         return getDistanceFromLatLonInKm(
-          userLocation.lat,
-          userLocation.lng,
+          userLocation.location.coords.latitude,
+          userLocation.location.coords.longitude,
           latProvider,
           lonProvider
         );

@@ -13,7 +13,7 @@ import {
   CouponUserListResponse,
   SendReviewRequest,
   ListReviewRequest,
-  ListReviewResponse,
+  ListReviewResponse, PrepareBookingRequest, PrepareBookingResponse,
 } from '@/features/service/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -33,6 +33,11 @@ const serviceApi = {
   // Lấy chi tiết dịch vụ
   detailService: async (serviceId: string): Promise<ServiceDetailResponse> => {
     const response = await client.get(`${defaultUri}/detail/${serviceId}`);
+    return response.data;
+  },
+  // Lấy thông tin trước khi đặt lịch dịch vụ
+  prepareBooking: async (data: PrepareBookingRequest): Promise<PrepareBookingResponse> => {
+    const response = await client.post(`${defaultUri}/prepare-booking`, data);
     return response.data;
   },
   // Lấy danh sách coupon

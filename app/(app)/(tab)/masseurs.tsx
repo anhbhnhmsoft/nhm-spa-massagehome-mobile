@@ -8,15 +8,15 @@ import {  KTVServiceCard, KTVServiceCardSkeleton } from '@/components/app/ktv-ca
 import useDebounce from '@/features/app/hooks/use-debounce';
 import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
-import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 import { getTabBarHeight } from '@/components/styles/style';
 import {Text} from "@/components/ui/text"
+import useApplicationStore from '@/lib/store';
 export default function MasseursScreen() {
   const {t} = useTranslation();
   // State lưu text hiển thị trên Header (để input không bị lag/giật)
   const [keyword, setKeyword] = useState('');
 
-  const locationUser = useLocationUser();
+  const locationUser = useApplicationStore((state) => state.location);
 
   const bottomPadding = getTabBarHeight() + 20;
   // Lấy danh sách masseur với hook
@@ -37,8 +37,8 @@ export default function MasseursScreen() {
     if (locationUser) {
       setFilter(
         {
-          lat: locationUser.lat,
-          lng: locationUser.lng,
+          lat: locationUser.location.coords.latitude,
+          lng: locationUser.location.coords.longitude,
         }
       )
     }

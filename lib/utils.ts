@@ -18,6 +18,7 @@ dayjs.extend(duration);
 import { _KTVConfigSchedules } from '@/features/ktv/consts'; // Cần cho uuid
 import * as WebBrowser from 'expo-web-browser';
 import { router } from 'expo-router';
+import { CouponItem } from '@/features/service/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -236,6 +237,53 @@ export const goBack = () => {
   }
 }
 
+/**
+ * So sánh hai phiên bản ứng dụng
+ * @param v1 Phiên bản 1
+ * @param v2 Phiên bản 2
+ * @returns -1 nếu v1 < v2, 0 nếu v1 = v2, 1 nếu v1 > v2
+ */
 export const compareVersion = (v1: string, v2: string): number => {
   return v1.localeCompare(v2, undefined, { numeric: true, sensitivity: 'base' });
+};
+
+/**
+ * Tính toán giá tiền dựa trên giá tiền/km và khoảng cách
+ * @param priceDistance Giá tiền/km
+ * @param distance Khoảng cách (km)
+ * @returns Giá tiền tính toán
+ */
+export const calculatePriceDistance = (priceDistance: number, distance: number) => {
+  if (!priceDistance || isNaN(priceDistance)) return 0;
+  const rawPrice = priceDistance * distance;
+  return Math.ceil(rawPrice / 500) * 500;
+};
+
+/**
+ * Tính toán số tiền giảm dựa trên tổng tiền và coupon
+ * @param totalPrice Tổng tiền
+ * @param coupon CouponItem hoặc null
+ * @returns Số tiền giảm
+ */
+export const calculateDiscountAmount = (totalPrice: number, coupon: CouponItem | null) => {
+  if (!coupon) return 0;
+
+  let discount = 0;
+  const discountValue = Number(coupon.discount_value);
+  const maxDiscount = Number(coupon.max_discount);
+
+  if (coupon.is_percentage) {
+    // Tính số tiền giảm theo %
+    discount = (totalPrice * discountValue) / 100;
+    // Nếu vượt quá số tiền giảm tối đa thì chỉ lấy max_discount
+    if (maxDiscount > 0 && discount > maxDiscount) {
+      discount = maxDiscount;
+    }
+  } else {
+    // Giảm theo số tiền cố định
+    discount = discountValue;
+  }
+
+  // Đảm bảo số tiền giảm không lớn hơn tổng tiền
+  return Math.min(discount, totalPrice);
 };

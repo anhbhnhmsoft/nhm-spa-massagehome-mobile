@@ -607,9 +607,8 @@
     "service_list": "Danh sách dịch vụ",
     "available": "Sẵn sàng",
     "unavailable": "Tạm ngưng",
-    "sales_count_item_service": "Đã bán {{ count }}",
+    "sales_count_item_service": "Đã phục vụ {{ count }} đơn hàng",
     "price_service_sub": "Chỉ từ",
-    "booking_soon": "Lịch hẹn sớm nhất sau {{ time }}",
     "working_hours": "Giờ làm việc",
     "price_transportation": "Cước di chuyển"
   },
@@ -647,6 +646,18 @@
     "booking_total_price": "Tổng thanh toán",
     "booking_failed_title": "Đặt lịch thất bại",
     "booking_failed_message": "Đã có lỗi xảy ra trong quá trình xử lý lịch hẹn. Xin lỗi vì sự bất tiện này. Vui lòng thử lại.",
+    "booking_today": "Lịch hẹn hôm nay",
+    "booking_conflict": "Vui lòng chọn khung giờ không trùng với lịch trên, mỗi lịch cách nhau ít nhất {{ min }} phút",
+    "booking_empty": "Hôm nay KTV chưa có lịch hẹn",
+    "booking_empty_2": "Bạn có thể thoải mái chọn giờ",
+    "busy_slot": "Đã có khách đặt",
+    "confirmed": "Lịch đã xác nhận",
+    "subtotal": "Tổng tiền tạm tính",
+
+    "distance": "Khoảng cách tới bạn",
+    "distance_price": "Cước di chuyển / km",
+    "discount": "Giảm giá",
+
     "review": {
       "title": "Đánh giá dịch vụ",
       "rating": "Mức độ hài lòng",
@@ -682,6 +693,7 @@
     "is_primary_desc": "Địa chỉ mặc định sẽ được chọn khi bạn đặt dịch vụ",
     "save_address": "Lưu địa chỉ",
     "primary": "Mặc định",
+    "primary_address": "Địa chỉ hiện tại",
     "no_desc": "Không có ghi chú",
     "get_current_location": "Lấy vị trí hiện tại",
     "loading": "Đang xử lý...",

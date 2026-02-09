@@ -12,7 +12,7 @@ import {
   CouponUserListRequest,
   ListReviewRequest,
   PickBookingItem,
-  PickBookingRequirement,
+  PickBookingRequirement, PrepareBookingResponse,
   SendReviewRequest,
   ServiceItem,
   ServiceListRequest,
@@ -22,7 +22,7 @@ import useApplicationStore from '@/lib/store';
 import useServiceStore from '@/features/service/stores';
 import { router } from 'expo-router';
 import {
-  useMutationBookingService,
+  useMutationBookingService, useMutationPrepareBooking,
   useMutationSendReview,
   useMutationServiceDetail,
 } from '@/features/service/hooks/use-mutation';
@@ -32,8 +32,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useLocationAddress } from '@/features/app/hooks/use-location';
-import useAuthStore from '@/features/auth/store';
 import { useImmer } from 'use-immer';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 import useToast from '@/features/app/hooks/use-toast';
@@ -158,6 +156,9 @@ export const useSetService = () => {
 export const useServiceDetail = () => {
   const service = useServiceStore((s) => s.service);
   const setPickServiceBooking = useServiceStore((s) => s.setPickServiceBooking);
+  const setLoading = useApplicationStore((s) => s.setLoading);
+  const handleError = useErrorToast();
+  const { mutate } = useMutationPrepareBooking();
 
   // Kiểm tra xem dịch vụ có tồn tại và đang hoạt động hay không
   useEffect(() => {
@@ -168,8 +169,19 @@ export const useServiceDetail = () => {
   }, [service]);
 
   const pickServiceToBooking = (data: PickBookingItem) => {
-    setPickServiceBooking(data);
-    router.push('/(app)/(service)/service-booking');
+    setLoading(true);
+    mutate(data, {
+      onSuccess: (res) => {
+        setPickServiceBooking(res.data);
+        router.push('/(app)/(service)/service-booking');
+      },
+      onError: (error) => {
+        handleError(error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
   };
 
   return {
@@ -184,15 +196,15 @@ export const useServiceDetail = () => {
 export const useServiceBooking = () => {
   const pickServiceBooking = useServiceStore((s) => s.pick_service_booking);
   const setPickServiceBooking = useServiceStore((s) => s.setPickServiceBooking);
-  const user = useAuthStore((s) => s.user);
   const mutationBookingService = useMutationBookingService();
   const { t } = useTranslation();
   const setLoading = useApplicationStore((s) => s.setLoading);
-  const { location: storeLocation } = useLocationAddress();
+  const storeLocation = useApplicationStore((s) => s.location);
   const handleError = useErrorToast();
   const { error: errorToast, warning: warningToast } = useToast();
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   const [bookingId, setBookingId] = useState<string | null>(null);
+
   // Thông tin form booking
   const form = useForm<PickBookingRequirement>({
     resolver: zodResolver(
@@ -220,7 +232,7 @@ export const useServiceBooking = () => {
   const queryCoupon = useQueryListCoupon(
     {
       filter: {
-        for_service_id: pickServiceBooking?.service_id,
+        for_service_id: pickServiceBooking?.service.id,
       },
     },
     true
@@ -228,18 +240,12 @@ export const useServiceBooking = () => {
 
   // Auto-fill location
   useEffect(() => {
-    // Nếu có primary_location, tự động điền thông tin vào form
-    if (user && user.primary_location) {
-      form.setValue('address', user.primary_location.address);
-      form.setValue('latitude', Number(user.primary_location.latitude));
-      form.setValue('longitude', Number(user.primary_location.longitude));
-      form.setValue('note_address', user.primary_location.desc || '');
-    } else if (storeLocation) {
+    if (storeLocation) {
       form.setValue('address', storeLocation.address);
       form.setValue('latitude', storeLocation.location.coords.latitude);
       form.setValue('longitude', storeLocation.location.coords.longitude);
     }
-  }, [storeLocation, user]);
+  }, [storeLocation]);
 
   // Kiểm tra xem booking có tồn tại hay không
   useEffect(() => {
@@ -247,18 +253,22 @@ export const useServiceBooking = () => {
     if (!pickServiceBooking) {
       router.back();
     }
-    // Nếu có, reset form khi quay lại màn hình
+    // reset form khi quay lại màn hình
     return () => {
       form.reset();
     };
   }, [pickServiceBooking]);
+
 
   // Xử lý khi nhấn nút "Đặt lịch"
   const handleBooking = (data: PickBookingRequirement) => {
     if (pickServiceBooking) {
       const request: BookingServiceRequest = {
         ...data,
-        ...pickServiceBooking,
+        service_id: pickServiceBooking.service.id,
+        service_name: pickServiceBooking.service.name,
+        option_id: pickServiceBooking.option.id,
+        duration: pickServiceBooking.option.duration,
         book_time: dayjs(data.book_time).format('YYYY-MM-DD HH:mm:ss'),
       };
 
@@ -306,7 +316,7 @@ export const useServiceBooking = () => {
   };
 
   return {
-    detail: pickServiceBooking as PickBookingItem,
+    detail: pickServiceBooking as PrepareBookingResponse['data'],
     form,
     queryCoupon,
     handleBooking,

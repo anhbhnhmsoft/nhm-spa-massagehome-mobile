@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, StatusBar, Alert, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity,  Dimensions } from 'react-native';
 import {
-  X,
-  TrendingUp, // Dùng cho icon "lượt đặt" (zigzag)
+  TrendingUp,
   ImageOff,
-  ChevronLeft, // Icon cho phần Bao gồm
+  ChevronLeft,
 } from 'lucide-react-native';
-import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useServiceDetail } from '@/features/service/hooks';
@@ -26,6 +24,7 @@ export default function ServiceDetailScreen() {
 
   // Lấy thông tin padding top/bottom để tránh bị che khuất bởi StatusBar
   const insets = useSafeAreaInsets();
+
   // Xử lý lỗi ảnh
   const [imageError, setImageError] = useState(false);
 
@@ -114,10 +113,7 @@ export default function ServiceDetailScreen() {
                   onPress={() =>
                     pickServiceToBooking({
                       service_id: detail.id,
-                      service_name: detail.name,
-                      duration: option.duration,
                       option_id: option.id,
-                      price: option.price,
                     })
                   }
                   className={

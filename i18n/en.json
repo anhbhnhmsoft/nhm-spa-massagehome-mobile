@@ -607,9 +607,8 @@
     "service_list": "Service List",
     "available": "Available",
     "unavailable": "Unavailable",
-    "sales_count_item_service": "Sold {{ count }}",
+    "sales_count_item_service": "Served {{ count }} orders",
     "price_service_sub": "From only",
-    "booking_soon": "Earliest booking in {{ time }}",
     "working_hours": "Working Hours",
     "price_transportation": "Price Transportation"
   },
@@ -647,6 +646,18 @@
     "booking_total_price": "Total Payment",
     "booking_failed_title": "Booking Failed",
     "booking_failed_message": "An error occurred while processing the appointment. Sorry for the inconvenience. Please try again.",
+    "booking_today": "Today's Appointments",
+    "booking_conflict": "Please select a time slot that does not overlap with existing appointments, with a minimum gap of {{ min }} minutes between each appointment.",
+    "booking_empty": "No appointments scheduled for today",
+    "booking_empty_2": "You can book appointments at any time",
+    "busy_slot": "Already booked",
+    "confirmed": "Calendar confirmed",
+    "subtotal": "Subtotal",
+
+    "distance": "Distance to you",
+    "distance_price": "Price per km",
+    "discount": "Discount",
+
     "review": {
       "title": "Review Service",
       "rating": "Satisfaction Level",
@@ -682,6 +693,7 @@
     "is_primary_desc": "Default address will be selected when you book service",
     "save_address": "Save Address",
     "primary": "Default",
+    "primary_address": "Current Address",
     "no_desc": "No note",
     "get_current_location": "Get Current Location",
     "loading": "Processing...",

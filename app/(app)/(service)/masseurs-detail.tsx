@@ -11,9 +11,8 @@ import {
 } from '@/components/app/masseurs-detail';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
-import { router } from 'expo-router';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
-import { formatBalance, formatDistance, getCurrentDayKey, goBack } from '@/lib/utils';
+import { calculatePriceDistance, formatBalance, getCurrentDayKey, goBack } from '@/lib/utils';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
@@ -47,10 +46,10 @@ const MasseurDetailScreen = () => {
 
   // Tính toán khoảng cách
   const distance = useMemo(() => {
-    if (detail) {
+    if (detail && detail.location.longitude && detail.location.latitude) {
       return calculateDistance(
-        detail.review_application.latitude,
-        detail.review_application.longitude
+        detail.location.latitude,
+        detail.location.longitude
       );
     }
     return null;
@@ -59,10 +58,11 @@ const MasseurDetailScreen = () => {
   // Tính giá tiền di chuyển tạm thời
   const priceTransportation = useMemo(() => {
     if (detail && distance) {
-      return Math.round(detail.price_transportation * distance);
+      return calculatePriceDistance(detail.price_transportation, distance);
     }
     return null;
   }, [detail, distance]);
+
 
   // Kiểm tra xem KTV có đang làm việc trong thời gian hiện tại không
   const currentDayKey = getCurrentDayKey();
@@ -162,13 +162,6 @@ const MasseurDetailScreen = () => {
                   <AvatarKTV source={detail.profile.avatar_url} />
                   <View>
                     <Text className="font-inter-bold text-2xl text-gray-800">{detail.name}</Text>
-                    {detail.booking_soon && (
-                      <View className="mt-1.5 self-start rounded-md bg-orange-100 px-2 py-0.5">
-                        <Text className="font-inter-bold text-[10px] text-orange-600">
-                          {t('masseurs_detail.booking_soon', { time: detail.booking_soon })}
-                        </Text>
-                      </View>
-                    )}
                   </View>
                 </View>
 

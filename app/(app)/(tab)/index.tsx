@@ -10,13 +10,13 @@ import {
   InviteKtv,
 } from '@/components/app/carousel-homepage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocationUser } from '@/features/app/hooks/use-get-user-location';
 import { MapPin } from 'lucide-react-native';
 import { Text } from 'moti';
 import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { ListLocationModal } from '@/components/app/location';
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
+import useApplicationStore from '@/lib/store';
 
 export default function UserDashboard() {
   const queryKTV = useGetListKTVHomepage();
@@ -24,7 +24,8 @@ export default function UserDashboard() {
   const { t } = useTranslation();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const redirectAuth = useCheckAuthToRedirect();
-  const locationUser = useLocationUser();
+
+  const locationUser = useApplicationStore((state) => state.location);
 
   const bannerQuery = useListBannerQuery();
 

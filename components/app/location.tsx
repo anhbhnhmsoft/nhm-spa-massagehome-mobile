@@ -20,28 +20,36 @@ import { Icon } from '@/components/ui/icon';
 import { ChevronLeft, Map, MapPin, PlusCircle, Star, Tag, Trash2, X } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
-import { AddressItem, DetailLocation } from '@/features/location/types';
+import { AddressItem, DetailLocation, SelectAddress } from '@/features/location/types';
 import { Controller } from 'react-hook-form';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 
+// Component hiển thị danh sách location
 type ListLocationModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSelect?: (location: AddressItem) => void;
+  onSelect?: (location: SelectAddress) => void;
 };
-
 export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationModalProps) => {
   const { t } = useTranslation();
 
-  const { queryList, createHandler, editHandler, deleteHandler, closeSaveModal, showSaveModal } =
-    useListLocation();
+  const {
+    queryList,
+    createHandler,
+    editHandler,
+    deleteHandler,
+    closeSaveModal,
+    showSaveModal,
+    location,
+    getCurrentLocation
+  } = useListLocation();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } = queryList;
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <SafeAreaView className="flex-1 bg-white">
-        <FocusAwareStatusBar hidden={true} />
+        <FocusAwareStatusBar style={"dark"} />
         <HeaderBack title={'location.title'} onBack={onClose} />
 
         <FlatList
@@ -60,6 +68,52 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
             paddingTop: 16,
           }}
           onEndReachedThreshold={0.5}
+          ListHeaderComponent={() => (
+            <View className="pb-4 border-b-2 border-b-gray-100">
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (location) {
+                    if (onSelect) {
+                      onSelect({
+                        address: location.address,
+                        latitude: location.location.coords.latitude.toString(),
+                        longitude: location.location.coords.longitude.toString(),
+                        desc: location.address,
+                      });
+                    }
+                  } else {
+                    getCurrentLocation();
+                  }
+                }}
+                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-gray-50">
+                {/* ICON BÊN TRÁI */}
+                <View
+                  className={'mr-4 h-10 w-10 items-center justify-center rounded-full bg-orange-100'}>
+                  <Icon
+                    as={Star}
+                    size={20}
+                    className={'text-orange-500'}
+                    fill={'currentColor'}
+                  />
+                </View>
+                {/* NỘI DUNG TEXT */}
+                <View className="flex-1 pr-2">
+                  <View className="flex-row items-center gap-2">
+                    {/* Tên gợi nhớ (Ví dụ: Nhà riêng) */}
+                    <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
+                      {location ? location.address.split(',')[0] : t('header_app.need_location')}
+                    </Text>
+                  </View>
+
+                  {/* Địa chỉ chi tiết */}
+                  <Text className="text-sm text-orange-500">
+                    {t('location.primary_address')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
           ListFooterComponent={() => {
             // 1. Nếu list rỗng -> Không hiện footer (để ListEmptyComponent lo)
             if (!data || data.length === 0) return null;
@@ -93,23 +147,20 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                 // Nếu có onSelect thì gọi hàm đó (chọn địa chỉ), không thì mở modal chỉnh sửa
                 if (onSelect) {
                   onSelect(item);
-                }else{
-                  editHandler(item)
+                } else {
+                  editHandler(item);
                 }
               }}
               className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm active:bg-gray-50">
               {/* ICON BÊN TRÁI */}
               <View
-                className={cn(
-                  'mr-4 h-10 w-10 items-center justify-center rounded-full',
-                  item.is_primary ? 'bg-orange-100' : 'bg-gray-100'
-                )}>
+                className={"mr-4 h-10 w-10 items-center justify-center rounded-full bg-gray-100"}>
                 <Icon
-                  as={item.is_primary ? Star : MapPin}
+                  as={MapPin}
                   size={20}
                   // Nếu là primary thì tô màu cam, thường thì màu xám
-                  className={item.is_primary ? 'text-orange-500' : 'text-slate-500'}
-                  fill={item.is_primary ? 'currentColor' : 'none'} // Tô đặc ngôi sao nếu là primary
+                  className={"text-slate-500"}
+                  fill={"none"} // Tô đặc ngôi sao nếu là primary
                 />
               </View>
 
@@ -184,11 +235,11 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
   );
 };
 
+// Component hiển thị modal để lưu địa chỉ mới
 type SaveLocationModalProps = {
   visible: boolean;
   onClose: () => void;
 };
-
 export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) => {
   const { t } = useTranslation();
   const [showSearch, setShowSearch] = useState(false);
@@ -218,7 +269,7 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
 
   return (
     <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
-      <FocusAwareStatusBar hidden={true} />
+      <FocusAwareStatusBar style={"dark"} />
       <SafeAreaView className="flex-1 bg-white">
         {/* HEADER */}
         <HeaderBack
@@ -243,8 +294,6 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
                   </Text>
                 </TouchableOpacity>
               </View>
-
-
 
               <TouchableOpacity
                 onPress={() => setShowSearch(true)}
@@ -303,31 +352,6 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
               />
             </View>
 
-            {/* 3. SECTION SWITCH IS_PRIMARY */}
-            <View className="mb-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <Controller
-                control={control}
-                name="is_primary"
-                render={({ field: { onChange, value } }) => (
-                  <View className="flex-row items-center justify-between">
-                    <View className="mr-4 flex-1">
-                      <Text className="font-inter-semibold text-base text-slate-800">
-                        {t('location.is_primary')}
-                      </Text>
-                      <Text className="mt-1 text-sm text-gray-500">
-                        {t('location.is_primary_desc')}
-                      </Text>
-                    </View>
-                    <Switch
-                      trackColor={{ false: '#e2e8f0', true: '#bae6fd' }} // blue-200
-                      thumbColor={value ? '#0ea5e9' : '#f4f4f5'} // blue-500
-                      onValueChange={onChange}
-                      value={value}
-                    />
-                  </View>
-                )}
-              />
-            </View>
           </ScrollView>
         </TouchableWithoutFeedback>
 
@@ -353,24 +377,24 @@ export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) 
   );
 };
 
+// Component hiển thị modal để tìm kiếm địa chỉ
 type LocationSearchModalProps = {
   visible: boolean;
   onClose: () => void;
   onSelectLocation: (location: DetailLocation) => void;
 };
-
 export const SearchLocationModal: FC<LocationSearchModalProps> = ({
-  visible,
-  onClose,
-  onSelectLocation,
-}) => {
+                                                                    visible,
+                                                                    onClose,
+                                                                    onSelectLocation,
+                                                                  }) => {
   const { t } = useTranslation();
   const { keyword, results, loading, handleChangeText, clearKeyword, handleSelect } = useSearchLocation();
 
   return (
     <>
       <Modal visible={visible} animationType="slide" onRequestClose={onClose} transparent>
-        <FocusAwareStatusBar hidden={true} />
+        <FocusAwareStatusBar style={"dark"} />
         <SafeAreaView className="flex-1 bg-white">
           {/* HEADER: Nút Back + Input */}
           <View className="flex-row items-center gap-3 border-b border-gray-100 px-4 py-3 pb-4">
