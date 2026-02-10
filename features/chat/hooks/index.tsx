@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
 import { _ChatConstant } from '@/features/chat/consts';
 import { goBack } from '@/lib/utils';
+import { AppState, AppStateStatus } from 'react-native';
 
 // Hook để lấy thông tin phòng chat
 export const useGetRoomChat = () => {
@@ -189,6 +190,7 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
 
     let isMounted = true; // Cờ để tránh set state khi unmount
 
+    // Hàm khởi tạo socket khi join room
     const initSocket = async () => {
       try {
         if (isMounted) setJoinStatus('joining');
@@ -201,30 +203,46 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
         // Sau khi đã có connection -> Mới Join Room
         await SocketService.joinRoom(room.id);
 
+        // Lắng nghe tin nhắn mới
+        SocketService.onMessageNew((newMsg: PayloadNewMessage) => {
+          updateCache(newMsg);
+        });
+
         if (isMounted) setJoinStatus('joined');
       } catch (error: any) {
         if (isMounted) setJoinStatus('error');
       }
     };
 
-    initSocket();
+    // Hàm ngắt kết nối socket
+    const handleDisconnect = () => {
+      SocketService.leaveRoom(room?.id); // Gửi tin hiệu leave
+      SocketService.disconnect();        // Ngắt kết nối socket ngay lập tức
+    };
 
-    SocketService.onMessageNew((newMsg: PayloadNewMessage) => {
-      updateCache(newMsg);
+    // Lắng nghe trạng thái App
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      // Nếu App chuyển sang background (ẩn) hoặc inactive (iOS swipe)
+      if (nextAppState.match(/inactive|background/)) {
+        handleDisconnect();
+      }
+      // Nếu App active trở lại (Foreground)
+      else if (nextAppState === 'active') {
+        initSocket();
+      }
     });
+
+    initSocket();
 
     return () => {
       isMounted = false;
-      SocketService.leaveRoom(room?.id);
+      handleDisconnect();
+      subscription.remove();
       SocketService.offMessageNew();
-      // Cập nhật cache tin nhắn KTV khi leave room
+
       if (useFor === 'ktv') {
-        queryClient.invalidateQueries({
-          queryKey: ['chatApi-listKTVConversations'],
-        });
+        queryClient.invalidateQueries({ queryKey: ['chatApi-listKTVConversations'] });
       }
-      // Không cần disconnect khi leave room
-      // SocketService.disconnect();
     };
   }, [room?.id, token, useFor]);
 
@@ -362,7 +380,7 @@ export const useGetKTVConversations = () => {
     return () => {
       socket.off(_ChatConstant.CHAT_CONVERSATION_UPDATE, handleSocketUpdate);
       // Không cần ngắt kết nối socket
-      // SocketService.disconnect();
+      SocketService.disconnect();
     };
   }, [token, paramsSearch]); // Dependencies quan trọng
 

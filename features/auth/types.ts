@@ -47,6 +47,7 @@ export type AuthenticateResponse = ResponseDataSuccessType<{
   need_register: boolean;
   expire_minutes: number | null; // Thời gian hết hạn của OTP
   number_of_attempts: number; // Số lần nhập sai OTP
+  need_enter_otp: boolean;
 }>;
 
 export type ResendRegisterOTPResponse = ResponseDataSuccessType<{

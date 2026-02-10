@@ -40,7 +40,7 @@ import { useLockAccount } from '@/features/auth/hooks';
 export default function EditInfoScreen() {
   const { form, profileData, onSubmit, user, isLoading } = editProfileKTV();
   const { removeImage } = useEditImage();
-  const { control, handleSubmit, setValue } = form;
+  const { control, handleSubmit } = form;
   const { handleLockAccount, isPending } = useLockAccount();
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
   const bottomShetImagePicker = useRef<BottomSheetModal>(null);
@@ -197,21 +197,11 @@ export default function EditInfoScreen() {
                     )}
                   />
 
-                  <LocationSelector
-                    control={control}
-                    name="address"
-                    setValue={setValue as any}
-                    error={form.formState.errors.address?.message as string | undefined}
-                  />
-
-                  {/* Số năm kinh nghiệm (Disabled) */}
-
                   <Text className="my-4 mt-2 text-base font-bold text-gray-800">
                     {t('common.bio')}
                   </Text>
 
                   {/* Giới thiệu (Tiếng Việt) */}
-
                   <Controller
                     control={control}
                     name="bio.vi"

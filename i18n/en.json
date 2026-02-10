@@ -120,7 +120,8 @@
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
-    "copied_to_clipboard": "Copied to clipboard"
+    "copied_to_clipboard": "Copied to clipboard",
+    "profile_update_success": "Profile updated successfully"
   },
   "update": {
     "update_available": {

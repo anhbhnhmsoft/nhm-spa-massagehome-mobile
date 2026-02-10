@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import {
   DashboardQueryParams,
-  EditConfigScheduleRequest,
+  EditConfigScheduleRequest, EditProfileKtvRequest,
   PercentChangeResult,
   ServiceForm,
 } from '@/features/ktv/types';
@@ -48,6 +48,7 @@ import useAuthStore from '@/features/auth/store';
 import { useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
 import { goBack } from '@/lib/utils';
+import { _Gender } from '@/features/auth/const';
 
 // Hook cho chỉnh sửa dịch vụ
 export const useSetService = () => {
@@ -440,72 +441,70 @@ export const useDashboardTotalIncome = () => {
 export const editProfileKTV = () => {
   const { t } = useTranslation();
   const errorHandle = useErrorToast();
+  const {success: successToast} = useToast();
   const { data: profileData, refetch, isLoading } = useProfileKtvQuery();
   const { mutate: editProfile } = useUpdateProfileKtvMutation();
   const user = useAuthStore((state) => state.user);
   const setLoading = useApplicationStore((state) => state.setLoading);
 
-  const schema = z
-    .object({
-      address: z.string().min(1, t('profile.error.invalid_address')).max(255),
-      // Sửa lỗi xóa không được: Dùng preprocess để biến chuỗi rỗng thành undefined
-      experience: z.preprocess(
-        (val) => (val === '' || val === null ? undefined : val),
-        z.coerce.number().min(1, t('profile.error.invalid_experience')).max(60)
-      ),
-      bio: z.object({
-        vi: z.string().min(1, t('profile.error.bio_required')),
-        en: z.string().min(1, t('profile.error.bio_required')),
-        cn: z.string().min(1, t('profile.error.bio_required')),
-      }),
-      lat: z.coerce.number().optional(),
-      lng: z.coerce.number().optional(),
-      gender: z.coerce.number().optional(),
-      date_of_birth: z
-        .string()
-        .optional()
-        .refine((val) => dayjs(val).isValid(), {
-          error: t('profile.error.invalid_date_of_birth'),
-        })
-        .refine(
-          (val) => {
-            const inputTime = dayjs(val);
-            // Ngày sinh phải trước ngày hiện tại
-            return inputTime.isBefore(dayjs());
-          },
-          {
-            error: t('profile.error.invalid_date_of_birth'), // "Ngày sinh phải trước ngày hiện tại"
-          }
-        ),
-      old_pass: z.string().optional(),
-      new_pass: z
-        .string()
-        .min(8, { message: t('auth.error.password_invalid') })
-        .regex(/[a-z]/)
-        .regex(/[A-Z]/)
-        .regex(/[0-9]/)
-        .optional()
-        .or(z.literal('')), // Cho phép chuỗi rỗng nếu không đổi mật khẩu
-    })
-    .refine((data) => !data.new_pass || !!data.old_pass, {
-      path: ['old_pass'],
-      message: t('profile.error.old_password_min'),
-    });
+  const form = useForm<EditProfileKtvRequest>({
+    resolver: zodResolver(z
+      .object({
+        // SỬA 1: Thêm .optional() cho experience
+        experience: z.number().optional(),
 
-  const form = useForm<any>({
-    resolver: zodResolver(schema),
+        // SỬA 2: Thêm .optional() cho bio và các trường con nếu cần
+        bio: z.object({
+          vi: z.string().min(1, t('profile.error.bio_required')),
+          // Nếu interface IMultiLangField cho phép en, cn là optional thì ở đây cũng nên để optional
+          en: z.string().optional(),
+          cn: z.string().optional(),
+        }).optional(), // <--- Quan trọng: Để khớp với bio?: IMultiLangField
+
+        gender: z.enum(_Gender).optional(),
+
+        date_of_birth: z
+          .string()
+          .optional()
+          .refine((val) => !val || dayjs(val).isValid(), { // Thêm !val để tránh lỗi khi undefined
+            error: t('profile.error.invalid_date_of_birth'),
+          })
+          .refine(
+            (val) => {
+              if (!val) return true; // Bỏ qua nếu không nhập
+              const inputTime = dayjs(val);
+              return inputTime.isBefore(dayjs());
+            },
+            {
+              error: t('profile.error.invalid_date_of_birth'),
+            }
+          ),
+
+        old_pass: z.string().optional(),
+
+        // Phần new_pass giữ nguyên logic của bạn
+        new_pass: z
+          .string()
+          .min(8, { message: t('auth.error.password_invalid') })
+          .regex(/[a-z]/)
+          .regex(/[A-Z]/)
+          .regex(/[0-9]/)
+          .optional()
+          .or(z.literal('')),
+      })
+      .refine((data) => !data.new_pass || !!data.old_pass, {
+        path: ['old_pass'],
+        message: t('profile.error.old_password_min'),
+      })),
     mode: 'onSubmit',
     defaultValues: {
-      address: '',
-      experience: '',
+      experience: 0,
       bio: {
         vi: '',
         en: '',
         cn: '',
       },
-      lat: 0,
-      lng: 0,
-      gender: 1,
+      gender: _Gender.MALE,
       date_of_birth: '',
     },
   });
@@ -516,41 +515,30 @@ export const editProfileKTV = () => {
   useEffect(() => {
     if (profileData) {
       reset({
-        address: profileData.address || '',
         experience: profileData.experience,
         bio: {
           vi: profileData.bio?.vi || '',
           en: profileData.bio?.en || '',
           cn: profileData.bio?.cn || '',
         },
-        lat: profileData.lat || 0,
-        lng: profileData.lng || 0,
         gender: profileData.gender || 1,
         date_of_birth: profileData.date_of_birth || '',
       });
     }
   }, [profileData, reset]);
 
-  const onSubmit = useCallback(
-    (data: any) => {
-      setLoading(true);
-      const payload = {
-        ...data,
-        lat: String(data.lat || '0'),
-        lng: String(data.lng || '0'),
-        experience: Number(data.experience),
-      };
-      editProfile(payload, {
-        onSuccess: () => {
-          refetch();
-          router.back();
-        },
-        onError: (error) => errorHandle(error),
-        onSettled: () => setLoading(false),
-      });
-    },
-    [editProfile, refetch, setLoading, errorHandle]
-  );
+  const onSubmit = (data: EditProfileKtvRequest) => {
+    setLoading(true);
+    editProfile(data, {
+      onSuccess: () => {
+        refetch();
+        successToast({ message: t('common_success.profile_update_success') });
+        goBack();
+      },
+      onError: (error) => errorHandle(error),
+      onSettled: () => setLoading(false),
+    });
+  };
 
   return { form, profileData, onSubmit, user, isLoading, refetch };
 };

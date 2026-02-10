@@ -113,23 +113,17 @@ export type DetailInfoKTV = {
   }[];
   gender: _Gender;
   dob: string | null;
-  lat: string;
-  lng: string;
-  address: string;
   experience: number;
   date_of_birth: string;
   phone: string;
 };
 
 export type EditProfileKtvRequest = {
-  address?: string;
   experience?: number;
   bio?: IMultiLangField;
-  lat?: string;
-  lng?: string;
 
   /** Giới tính (1: Nam, 2: Nữ, 3: Khác – tùy BE) */
-  gender?: number;
+  gender?: _Gender;
 
   /** Ngày sinh (YYYY-MM-DD) */
   date_of_birth?: string;

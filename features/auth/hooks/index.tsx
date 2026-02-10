@@ -83,6 +83,9 @@ export const useHandleAuthenticate = () => {
           setExpireMinutes(expireMinutes);
           // Nếu cần đăng ký thì redirect đến màn hình xác thực OTP
           router.replace('/(auth)/verify-otp');
+        } else if (res.data?.need_enter_otp) {
+          // Nếu cần đăng ký thì redirect đến màn hình xác thực OTP
+          router.replace('/(auth)/verify-otp');
         } else {
           // Nếu không cần đăng ký thì redirect đến màn hình login
           router.replace('/(auth)/login');

@@ -120,7 +120,8 @@
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
-    "copied_to_clipboard": "Đã sao chép vào clipboard"
+    "copied_to_clipboard": "Đã sao chép vào clipboard",
+    "profile_update_success": "Cập nhật hồ sơ thành công"
   },
   "update": {
     "update_available": {

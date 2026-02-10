@@ -24,7 +24,6 @@ export default function AuthScreen() {
     formState: { errors },
   } = form;
 
-
   return (
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

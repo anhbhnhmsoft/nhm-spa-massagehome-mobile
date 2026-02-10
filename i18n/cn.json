@@ -120,7 +120,8 @@
   },
   "common_success": {
     "save_image_success": "图片保存成功",
-    "copied_to_clipboard": "已复制到剪贴板"
+    "copied_to_clipboard": "已复制到剪贴板",
+    "profile_update_success": "个人信息更新成功"
   },
   "update": {
     "update_available": {

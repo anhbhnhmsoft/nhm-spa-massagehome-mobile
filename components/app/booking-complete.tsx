@@ -196,12 +196,20 @@ const BookingResultModal = ({
       transparent={false}
       visible={isVisible}
       // Chỉ cho phép đóng bằng nút cứng Android nếu KHÔNG PHẢI đang xử lý
-      onRequestClose={() => status !== 'waiting' && onClose()}>
+      onRequestClose={() => {
+        if(status === 'waiting') {
+          resetNav('/(app)/(tab)');
+          onClose();
+        }
+      }}>
       <SafeAreaView className="flex-1 bg-white">
         {/* Header: Chỉ hiện nút Đóng (X) khi KHÔNG PHẢI đang xử lý */}
         {status !== 'waiting' && (
           <View className="flex-row justify-end px-4 pt-2">
-            <TouchableOpacity onPress={onClose} className="rounded-full bg-gray-100 p-2">
+            <TouchableOpacity onPress={() => {
+              resetNav('/(app)/(tab)');
+              onClose();
+            }} className="rounded-full bg-gray-100 p-2">
               <Icon as={X} size={24} className="text-gray-700" />
             </TouchableOpacity>
           </View>

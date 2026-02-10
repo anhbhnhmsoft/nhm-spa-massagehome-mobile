@@ -64,7 +64,6 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
     historyQuery,
     user,
     room,
-    // isPartnerOnline,
   } = useChat(useFor);
 
   // Xử lý gửi tin
@@ -97,11 +96,6 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
           <Text className="font-inter-bold text-gray-800" numberOfLines={1}>
             {room?.partner_name || "Chat Room"}
           </Text>
-          {/*{isPartnerOnline ? (*/}
-          {/*  <Text className="text-xs text-green-600">{t('chat.online')}</Text>*/}
-          {/*) : (*/}
-          {/*  <Text className="text-xs text-gray-400">{t('chat.offline')}</Text>*/}
-          {/*)}*/}
         </View>
       </View>
 
@@ -116,7 +110,7 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
           keyExtractor={(item) => item.temp_id || item.id || Math.random().toString()}
 
           renderItem={({ item }) => (
-            <MessageItem item={item} currentUserId={user?.id || ''} />
+            <MessageItem item={item} currentUserId={user?.id || ''} key={item.temp_id || item.id || Math.random().toString()} />
           )}
 
           // QUAN TRỌNG: Đảo ngược danh sách (Tin mới nhất ở dưới cùng)

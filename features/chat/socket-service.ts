@@ -93,7 +93,11 @@ class SocketService {
    */
   onMessageNew(callback: (message: any) => void) {
     if (this.socket) {
-      this.socket.on('message:new', callback);
+      // Xóa listener cũ để tránh duplicate nếu component re-render
+      this.socket.off('message:new');
+      this.socket.on('message:new', (data) => {
+        callback(data);
+      });
     }
   }
 

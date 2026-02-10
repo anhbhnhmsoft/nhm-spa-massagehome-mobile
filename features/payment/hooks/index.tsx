@@ -36,6 +36,7 @@ import { useGetCouponUserList } from '@/features/service/hooks';
 import { getMessageError } from '@/lib/utils';
 import { Alert } from 'react-native';
 import { _UserRole } from '@/features/auth/const';
+import useResetNav from '@/features/app/hooks/use-reset-nav';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
@@ -301,6 +302,8 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
     setVisible(!!transactionId && !!qrBankData);
   }, [transactionId, qrBankData]);
 
+  const resetNav = useResetNav();
+
   useEffect(() => {
     // Kiểm tra nếu is_completed = true
     if (pollData?.data?.is_completed) {
@@ -312,13 +315,13 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
       refreshWallet(true);
       switch (useFor) {
         case _UserRole.KTV:
-          router.push('/(app)/(service-ktv)/wallet');
+          resetNav('/(app)/(service-ktv)/wallet');
           break;
         case _UserRole.CUSTOMER:
-          router.push('/(app)/(profile)/wallet');
+          resetNav('/(app)/(profile)/wallet');
           break;
         case _UserRole.AGENCY:
-          router.push('/(app)/(tab-agency)/wallet');
+          resetNav('/(app)/(tab-agency)/wallet');
           break;
         default:
           break;
