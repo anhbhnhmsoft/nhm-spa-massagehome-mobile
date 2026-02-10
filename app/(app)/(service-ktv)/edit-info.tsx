@@ -28,7 +28,6 @@ import { Icon } from '@/components/ui/icon';
 import { editProfileKTV, useEditImage } from '@/features/ktv/hooks';
 import { Controller } from 'react-hook-form';
 import { BottomEditImage } from '@/components/app/ktv/profile-tab';
-import { LocationSelector } from '@/components/app/ktv/location-selector';
 import dayjs from 'dayjs';
 import DateTimePickerInput from '@/components/app/ktv/date-time-input';
 import { BottomEditAvatar } from '@/components/app/profile-tab';

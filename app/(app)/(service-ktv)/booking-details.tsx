@@ -41,7 +41,7 @@ export default function BookingDetails() {
 
   return (
     <View className="flex-1 bg-white">
-      <HeaderBack title="Chi tiết Booking" />
+      <HeaderBack title="booking.detail_title" />
 
       <ScrollView
         className="flex-1 px-4 pt-4"

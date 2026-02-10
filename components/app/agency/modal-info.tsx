@@ -98,33 +98,33 @@ export const FeatureList = ({
 
         {/* Edit info */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
             router.push('/(app)/(service-agency)/edit-info');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={UserPen} size={24} className="text-primary-color-1" />
+            <Icon as={UserPen} size={30} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.edit_info')}</Text>
         </TouchableOpacity>
 
         {/* Affiliate */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
             router.push('/(app)/(service-agency)/affiliate');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={HandCoins} size={24} className="text-primary-color-1" />
+            <Icon as={HandCoins} size={30} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.affiliate')}</Text>
         </TouchableOpacity>
 
         {/* Ngôn ngữ */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => setModalLangVisible(true)}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Image
@@ -139,46 +139,46 @@ export const FeatureList = ({
         </TouchableOpacity>
 
         {/* Thông tin ứng dụng */}
-        <TouchableOpacity className="mb-2 w-[25%] items-center" onPress={() => openAboutPage()}>
+        <TouchableOpacity className="mb-2 w-[33%] items-center" onPress={() => openAboutPage()}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={Info} size={24} className="text-primary-color-1" />
+            <Icon as={Info} size={30} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.app_info')}</Text>
         </TouchableOpacity>
 
         {/* Hỗ trợ khách hàng */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => {
             openSupportModal();
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={Headphones} size={24} className="text-primary-color-1" />
+            <Icon as={Headphones} size={30} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.support')}</Text>
         </TouchableOpacity>
 
         {/* Thông báo */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
             router.push('/(app)/(notification)/notificaton');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={Bell} size={24} className="text-primary-color-1" />
+            <Icon as={Bell} size={30} className="text-primary-color-1" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
         </TouchableOpacity>
         {/* Đăng xuất */}
         <TouchableOpacity
-          className="mb-2 w-[25%] items-center"
+          className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
             setLogoutModalOpen(true);
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
-            <Icon as={LogOut} size={24} className="text-red-500" />
+            <Icon as={LogOut} size={30} className="text-red-500" />
           </View>
           <Text className="text-center text-xs text-gray-600">{t('profile.log_out')}</Text>
         </TouchableOpacity>

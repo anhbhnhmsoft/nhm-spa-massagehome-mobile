@@ -20,7 +20,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import useAuthStore from '@/features/auth/store';
 import { useUpdateProfileAgency } from '@/features/agency/hook';
 import { Controller } from 'react-hook-form';
-import { LocationSelector } from '@/components/app/ktv/location-selector'; // Dùng lại component của KTV
 import DateTimePickerInput from '@/components/app/ktv/date-time-input';
 import dayjs from 'dayjs';
 import { _Gender } from '@/features/auth/const';
@@ -134,14 +133,6 @@ export default function EditInfoScreen() {
                       error={fieldState.error?.message}
                     />
                   )}
-                />
-
-                {/* Component chọn địa chỉ (KTV) bọc trong Controller */}
-                <LocationSelector
-                  control={control}
-                  name="address"
-                  setValue={setValue as any}
-                  error={errors.address?.message}
                 />
 
                 <Text className="my-4 mt-2 text-base font-bold text-gray-800">

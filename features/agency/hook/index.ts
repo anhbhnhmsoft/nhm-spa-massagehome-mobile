@@ -97,9 +97,6 @@ export const useUpdateProfileAgency = () => {
       // Cho phép nhận string, null hoặc undefined
       old_pass: z.string().optional().nullable(),
       new_pass: z.string().optional().nullable(),
-      lat: z.number(),
-      lng: z.number(),
-      address: z.string().min(1, t('profile.error.invalid_address')).max(255),
       gender: z.number(),
       date_of_birth: z.string().nullable().optional(),
     })
@@ -133,9 +130,6 @@ export const useUpdateProfileAgency = () => {
     resolver: zodResolver(updateAgencySchema),
     defaultValues: {
       bio: { vi: '', en: '', cn: '' },
-      lat: 0,
-      lng: 0,
-      address: '',
       gender: 1,
       date_of_birth: '',
     },
@@ -155,9 +149,6 @@ export const useUpdateProfileAgency = () => {
           en: agencyData.bio?.en || '',
           cn: agencyData.bio?.cn || '',
         },
-        lat: agencyData.lat ? Number(agencyData.lat) : 0,
-        lng: agencyData.lng ? Number(agencyData.lng) : 0,
-        address: agencyData.address || '',
         gender: agencyData.gender,
         date_of_birth: agencyData.date_of_birth || '',
       });

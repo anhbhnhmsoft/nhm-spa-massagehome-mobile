@@ -47,9 +47,6 @@ export type Agency = {
   bio: IMultiLangField;
   gender: _Gender;
   date_of_birth: string | null;
-  lat: string | null; // backend trả string
-  lng: string | null; // backend trả string
-  address: string | null;
 };
 
 export type DashboardAgencyResponse = ResponseDataSuccessType<ReferralAffiliateSummary>;
