@@ -6,7 +6,7 @@ import { DashboardTab } from '@/features/service/const';
    Utils
 ======================= */
 
-const DAY_TIME_SLOTS = ['00:00-06:00', '06:00-12:00', '12:00-18:00', '18:00-24:00'];
+const DAY_TIME_SLOTS = ['00:00-06:00', '06:00-12:00', '12:00-18:00', '18:00-00:00'];
 
 const isValidDate = (d: Date) => !isNaN(d.getTime());
 
@@ -207,6 +207,7 @@ export const useDashboardChart = (type: DashboardTab, data: ChartDataItem[]) => 
 
     return [];
   }, [type, data]);
+
 
   const maxValue = useMemo(
     () => Math.max(...chartData.map((i) => Number(i.total)), 1),

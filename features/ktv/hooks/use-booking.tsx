@@ -14,37 +14,20 @@ import useAuthStore from '@/features/auth/store';
 import { _UserRole } from '@/features/auth/const';
 
 /**
- * Hook dùng để clear booking start
- */
-
-export const useClearBooking = () => {
-  const { t } = useTranslation();
-  const { success } = useToast();
-  const clearBookingStart = useBookingStore((s) => s.clearBookingStart);
-  return async (data: FinishBooking) => {
-    if (data.already_finished) {
-      await clearBookingStart();
-    } else {
-      await clearBookingStart();
-      success({ message: t('booking.booking_end_success') });
-    }
-  };
-};
-
-/**
  * Hook dùng để đếm bộ bắt đầu (dùng ở layout toàn cục)
  */
 export const useBookingCountdown = () => {
   // store
   const bookingStart = useBookingStore((s) => s.booking_start);
   const setTimeLeft = useBookingStore((s) => s.setTimeLeft);
-  const clearBookingStart = useClearBooking();
   const hydrate = useBookingStore((s) => s.hydrate);
   const _hydrated = useBookingStore((s) => s._hydrated);
-
+  const { t } = useTranslation();
+  const { success } = useToast();
   const { mutate: finishBookingMutate } = useFinishBookingMutation();
 
   const user = useAuthStore((state) => state.user);
+  const clearBookingStart = useBookingStore((s) => s.clearBookingStart);
 
   useEffect(() => {
     if (!_hydrated) {
@@ -55,34 +38,36 @@ export const useBookingCountdown = () => {
     if (!bookingStart || !_hydrated || user?.role !== _UserRole.KTV) return;
 
     const endTime = calculateEndTime(bookingStart.start_time, bookingStart.duration);
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       const remaining = getRemainingTime(endTime);
       setTimeLeft(remaining);
-
       if (remaining.isOver) {
         clearInterval(timer);
         setTimeLeft(null);
+        // Clear store
+        const prevNotif = useBookingStore.getState().notification_booking_start_id;
+        if (prevNotif) {
+          try {
+            await Notifications.cancelScheduledNotificationAsync(prevNotif);
+          } catch {}
+        }
+        await queryClient.invalidateQueries({
+          queryKey: ['bookingApi-details-ktv', bookingStart.booking_id],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['ktvApi-bookings'],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['ktvApi-dashboard'],
+        });
+        await clearBookingStart();
 
+        // Call API finish booking
         finishBookingMutate(bookingStart.booking_id, {
           onSuccess: async (res) => {
-            const prevNotif = useBookingStore.getState().notification_booking_start_id;
-
-            if (prevNotif) {
-              try {
-                await Notifications.cancelScheduledNotificationAsync(prevNotif);
-              } catch {}
+            if (!res.data?.already_finished) {
+              success({ message: t('booking.booking_end_success') });
             }
-
-            await queryClient.invalidateQueries({
-              queryKey: ['bookingApi-details-ktv', bookingStart.booking_id],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ['ktvApi-bookings'],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ['ktvApi-dashboard'],
-            });
-            await clearBookingStart(res.data);
           },
         });
       }
@@ -241,6 +226,7 @@ export const useBooking = (id: string) => {
   const canStartBooking = useMemo(() => {
     return data?.status === _BookingStatus.CONFIRMED && bookingStart === null;
   }, [data?.status, bookingStart]);
+
 
   // có thể hủy dịch vụ
   const canCancelBooking = useMemo(() => {

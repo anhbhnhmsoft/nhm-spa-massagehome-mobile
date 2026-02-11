@@ -844,7 +844,6 @@ export const useSendDangerSupport = () => {
         success({ message: t('danger_support.success') });
       },
       onError: (err) => {
-        console.log(err)
         errorToast({ message: t('danger_support.error') });
       },
       onSettled: () => {
