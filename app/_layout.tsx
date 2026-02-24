@@ -1,22 +1,9 @@
 import '@/global.css';
-import { PortalHost } from '@rn-primitives/portal';
 import {  Stack } from 'expo-router';
-import QueryProvider from '@/lib/provider/query-provider';
-import ThemeProvider from '@/lib/provider/theme-provider';
-import useFontInter from '@/lib/provider/font-inter';
-import { useEffect, useState } from 'react';
-import initI18n from '@/lib/provider/i18n';
-import * as SplashScreen from 'expo-splash-screen';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useColorScheme } from 'nativewind';
-import ToastManager from 'toastify-react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHydrateAuth } from '@/features/auth/hooks';
-import { _AuthStatus } from '@/features/auth/const';
-import useAuthStore from '@/features/auth/store';
 import useHandleLinking from '@/features/app/hooks/use-handle-linking';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import { AppProvider } from '@/features/app/providers';
+import { AuthBootstrapProvider } from '@/features/auth/providers';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -28,83 +15,32 @@ export {
   ErrorBoundary,
 } from 'expo-router';
 
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [ready, setReady] = useState(false);
-  // Khởi tạo font Inter
-  const [loaded, error] = useFontInter();
-  // Set màu scheme
-  const { setColorScheme } = useColorScheme();
-
-  useEffect(() => {
-    async function initial() {
-      try {
-        // Mặc định là light theme
-        setColorScheme('light');
-        // Khởi tạo i18n
-        await initI18n();
-      } finally {
-        setReady(true);
-      }
-    }
-
-    initial();
-  }, []);
-
-  useEffect(() => {
-    if (ready && loaded && !error) {
-      SplashScreen.hideAsync();
-    }
-  }, [ready, loaded, error]);
-
-  if (!ready) {
-    return null;
-  }
-
   return (
-    <SafeAreaProvider>
-      <QueryProvider>
-        <ThemeProvider>
-          <GestureHandlerRootView className="flex-1">
-            <BottomSheetModalProvider>
-              {/* Stack Navigator */}
-              <AppContainer />
-              {/* Portal Host */}
-              <PortalHost />
-              {/* Toast Manager */}
-              <ToastManager />
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
-        </ThemeProvider>
-      </QueryProvider>
-    </SafeAreaProvider>
+    <AppProvider>
+      <AppContainer/>
+    </AppProvider>
   );
 }
 
 const AppContainer = () => {
-  const complete = useHydrateAuth();
-  const status = useAuthStore((state) => state.status);
-
   // Xử lý linking
-  useHandleLinking(complete);
+  useHandleLinking(true);
 
   return (
     <>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Protected guard={!complete}>
+      <AuthBootstrapProvider>
+        <Stack
+          initialRouteName="index"
+          screenOptions={{
+            headerShown: false,
+          }}>
           <Stack.Screen name="index" />
-        </Stack.Protected>
-        <Stack.Protected guard={complete}>
           <Stack.Screen name="(app)" />
-          <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
-        </Stack.Protected>
-      </Stack>
+        </Stack>
+      </AuthBootstrapProvider>
+
     </>
   );
 };

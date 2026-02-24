@@ -897,10 +897,10 @@
           "active_ktv": "Active technicians"
         },
         "items": {
-          "reviews": "{{count}} đánh giá",
-          "revenue": "Doanh thu",
-          "orders": "Đơn hàng",
-          "customers": "Khách hàng"
+          "reviews": "{{count}} Reviews",
+          "revenue": "Revenue",
+          "orders": "Orders",
+          "customers": "Customers"
         },
         "performance_title": "Technician performance"
       }

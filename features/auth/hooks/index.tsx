@@ -41,6 +41,12 @@ import { queryClient } from '@/lib/provider/query-provider';
 import { useReferralStore } from '@/features/affiliate/store';
 import Constants from 'expo-constants';
 import { compareVersion } from '@/lib/utils';
+
+
+
+export * from './use-hydrate-auth';
+
+
 /**
  * Hàm để xác thực user xem là login hay register
  */

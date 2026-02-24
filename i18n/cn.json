@@ -896,10 +896,10 @@
           "active_ktv": "有订单的技师"
         },
         "items": {
-          "reviews": "{{count}} đánh giá",
-          "revenue": "Doanh thu",
-          "orders": "Đơn hàng",
-          "customers": "Khách hàng"
+          "reviews": "{{count}} 条评价",
+          "revenue": "收入",
+          "orders": "订单",
+          "customers": "客户"
         },
         "performance_title": "技师绩效"
       }

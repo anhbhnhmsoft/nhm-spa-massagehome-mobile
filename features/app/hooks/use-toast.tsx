@@ -32,6 +32,7 @@ const useToast = (forModal: boolean = false) => {
         type: type,
         text1: set.title,
         text2: set.message,
+        useModal: forModal,
         ...defaultAppOptions
       });
     }
