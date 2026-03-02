@@ -4,9 +4,9 @@ import { X, ChevronDown } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import { _APP_NAME, _LanguagesMap } from '@/lib/const';
-import SelectLanguage from '@/components/select-language';
+import SelectLanguage from '@/components/app/select-language';
 import { router } from 'expo-router';
 import { goBack } from '@/lib/utils';
 
@@ -25,7 +25,7 @@ export default function Index() {
 
   return (
     <>
-      <View className="flex-1 bg-[#4A3B32]">
+      <SafeAreaView className="flex-1 bg-[#4A3B32]">
         {/* 1. BACKGROUND LAYER */}
         <Image
           source={require('@/assets/images/bg-index.png')}
@@ -35,7 +35,7 @@ export default function Index() {
         {/* 2. MAIN CONTENT LAYER */}
         <SafeAreaView className="flex-1">
           {/* Header: Close & Language */}
-          <View className="flex-row items-center justify-between px-5 pt-4">
+          <View className="flex-row items-center justify-between px-5">
             {/* Close Button */}
             <TouchableOpacity className="p-2" onPress={goBack}>
               <X color="white" size={28} />
@@ -84,7 +84,8 @@ export default function Index() {
             {t('auth.index_label_2')}
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
+      {/* Modal: Select Language */}
       <SelectLanguage
         visible={modalLangVisible}
         onClose={() => setModalLangVisible(false)}

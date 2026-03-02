@@ -11,7 +11,7 @@ import { goBack } from '@/lib/utils';
 import { useQueryCheckApplyPartner } from '@/features/user/hooks/use-query';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 
 
 const countByType = (files: { type_upload: _PartnerFileType }[], type: _PartnerFileType) =>

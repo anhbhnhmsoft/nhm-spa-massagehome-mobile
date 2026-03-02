@@ -116,7 +116,8 @@
     "offline_service_message": "This technician is currently on break. Would you like to...?",
     "save_qr_code": "Save QR Code",
     "total": "Total",
-    "nickname": "Nickname"
+    "nickname": "Nickname",
+    "password_description": "Password must be at least 8 characters long, include uppercase, lowercase, numbers, and special characters."
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -204,7 +205,9 @@
       "REFERRAL_KTV": "Referral KTV",
       "REFERRAL_INVITE_KTV_REWARD": "Referral Invite KTV Reward",
       "DEPOSIT_WECHAT_PAY": "Deposit via Wechat Pay",
-      "FEE_WITHDRAW": "Withdrawal Fee"
+      "FEE_WITHDRAW": "Withdrawal Fee",
+      "FEE_TRANSPORT": "Transport Fee",
+      "EARN_TRANSPORT": "Earn Transport Fee"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -655,9 +658,12 @@
     "busy_slot": "Already booked",
     "confirmed": "Calendar confirmed",
     "subtotal": "Subtotal",
-
+    "time_to_go_to_place": "The technician will arrive at your location in approximately {{ break_time }} minutes",
+    "service_name": "Service Name",
+    "duration": "Duration",
     "distance": "Distance to you",
-    "distance_price": "Price per km",
+    "distance_price": "Distance Price",
+    "service_price": "Service Price",
     "discount": "Discount",
 
     "review": {

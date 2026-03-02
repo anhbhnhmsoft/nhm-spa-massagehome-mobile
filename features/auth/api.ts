@@ -1,7 +1,7 @@
 import { client } from '@/lib/axios-client';
 import {
   AuthenticateRequest,
-  AuthenticateResponse, ConfigApplicationResponse,
+  AuthenticateResponse,
   DeviceInfoRequest,
   EditProfileRequest,
   LoginRequest,
@@ -12,7 +12,6 @@ import {
   ResendRegisterOTPResponse,
   SetLanguageRequest,
   VerifyRegisterOTPRequest,
-  VerifyRegisterOTPResponse,
 } from '@/features/auth/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -38,7 +37,7 @@ const authApi = {
   /**
    * Hàm để xác thực user xem là login hay register
    */
-  verifyRegisterOTP: async (data: VerifyRegisterOTPRequest): Promise<VerifyRegisterOTPResponse> => {
+  verifyRegisterOTP: async (data: VerifyRegisterOTPRequest): Promise<ResponseSuccessType> => {
     const response = await client.post(`${defaultUri}/verify-otp-register`, data);
     return response.data;
   },
@@ -84,15 +83,6 @@ const authApi = {
     const response = await client.post(`${defaultUri}/heartbeat`);
     return response.data;
   },
-
-  /**
-   * Hàm để check các thông số mà server gửi về client
-   */
-  configApplication: async (): Promise<ConfigApplicationResponse> => {
-    const response = await client.get(`${defaultUri}/config-application`);
-    return response.data;
-  },
-
 
   /**
    * Hàm để set device info cho user

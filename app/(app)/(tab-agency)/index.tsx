@@ -7,7 +7,7 @@ import {
   AgencyListHeader,
   InviteKTVModal,
 } from '@/components/app/agency/agency-card';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { HeaderAppAgency } from '@/components/app/agency/header-app';
 import { useGetListKTVManager } from '@/features/user/hooks';
 

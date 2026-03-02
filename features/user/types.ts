@@ -48,6 +48,20 @@ export type ListKTVItem = {
   };
   schedule: KTVWorkSchedule;
 };
+
+
+export type ServiceCategoryItem = {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string | null;
+  booking_count: number;
+  prices: {
+    id: string;
+    price: string;
+    duration: number;
+  }[];
+}
 export type KTVDetail = ListKTVItem & {
   display_image: {
     id: string;
@@ -65,6 +79,7 @@ export type KTVDetail = ListKTVItem & {
     created_at: string;
   } | null;
   price_transportation: number ; // Giá vận chuyển
+  service_categories: ServiceCategoryItem[];
 };
 
 export type ListKTVRequest = BaseSearchRequest<{
@@ -79,14 +94,6 @@ export type ListKTVResponse = ResponseDataSuccessType<Paginator<ListKTVItem>>;
 
 export type DetailKTVResponse = ResponseDataSuccessType<KTVDetail>;
 
-export type DashboardProfile = {
-  booking_count: {
-    [key in _BookingStatus]: number;
-  };
-  wallet_balance: string;
-  coupon_user_count: number;
-};
-export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfile>;
 
 export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
   can_apply: boolean;

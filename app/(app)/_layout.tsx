@@ -1,40 +1,26 @@
 import { Stack } from 'expo-router';
-import useAuthStore from '@/features/auth/store';
-import { _UserRole } from '@/features/auth/const';
-import { useCheckAuth, useCheckConfigApplicationUpdate, useHeartbeat } from '@/features/auth/hooks';
-import useApplicationStore from '@/lib/store';
+import { useAuthStore } from '@/features/auth/stores';
+import { _AuthStatus, _UserRole } from '@/features/auth/const';
+import { useApplicationStore } from '@/features/app/stores';
 import FullScreenLoading from '@/components/full-screen-loading';
-import { useNotification } from '@/features/app/hooks/use-notification';
-import { NotificationPermissionModal } from '@/components/notification-permission-modal';
+import { NotificationPermissionModal } from '@/components/app/notification-permission-modal';
 import { useEffect, useState } from 'react';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { useCheckMatchAffiliate } from '@/features/affiliate/hooks';
 import { useBookingCountdown } from '@/features/ktv/hooks/use-booking';
 import { useLocation } from '@/features/app/hooks/use-location';
+import { useCheckConfigApplicationUpdate } from '@/features/config/hooks';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
-  const [notReady, setNotReady] = useState(true);
 
-  const checkAuth = useCheckAuth();
+
+  const status = useAuthStore((state) => state.status);
+
   const user = useAuthStore((state) => state.user);
-
-  useEffect(() => {
-    // Chờ _TIME_OUT_LOADING_SCREEN_LAYOUT để đảm bảo rằng checkAuth đã có giá trị
-    const timeout = setTimeout(() => {
-      setNotReady(false);
-    }, _TIME_OUT_LOADING_SCREEN_LAYOUT);
-    return () => clearTimeout(timeout);
-  }, []);
 
   // Lấy vị trí người dùng khi ứng dụng được mở
   useLocation();
-
-  // Kiểm tra heartbeat khi user có đang được xác thực hay không
-  useHeartbeat();
-
-  // Tự động sync device token lên server khi user login
-  useNotification();
 
   // kiểm tra affiliate link khi user login
   useCheckMatchAffiliate();
@@ -47,9 +33,13 @@ export default function AppLayout() {
 
   return (
     <>
-      <FullScreenLoading loading={loading || notReady} whiteBg={notReady} />
+      {/* --- LOADING SCREEN --- */}
+      <FullScreenLoading loading={loading} />
+
       {/* --- NOTIFICATION PERMISSION MODAL --- */}
       <NotificationPermissionModal />
+
+      {/* --- STACK SCREEN --- */}
       <Stack
         screenOptions={{
           headerShown: false,
@@ -61,28 +51,26 @@ export default function AppLayout() {
 
         <Stack.Protected guard={!isMaintained}>
           {/* --- TAB KTV SCREEN --- */}
-          <Stack.Protected guard={checkAuth && user?.role === _UserRole.KTV}>
+          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.KTV}>
             <Stack.Screen name="(tab-ktv)" />
             <Stack.Screen name="(service-ktv)" />
           </Stack.Protected>
 
           {/* --- TAB KTV SCREEN --- */}
-          <Stack.Protected guard={checkAuth && user?.role === _UserRole.AGENCY}>
+          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.AGENCY}>
             <Stack.Screen name="(tab-agency)" />
             <Stack.Screen name="(service-agency)" />
           </Stack.Protected>
 
           {/* --- TAB CUSTOMER SCREEN --- */}
-          <Stack.Protected guard={user?.role !== _UserRole.KTV && user?.role !== _UserRole.AGENCY}>
-            <Stack.Screen name="(tab)" />
-            <Stack.Protected guard={checkAuth}>
-              <Stack.Screen name="(service)" />
-              <Stack.Screen name="(profile)" />
-            </Stack.Protected>
-          </Stack.Protected>
-          <Stack.Protected guard={checkAuth}>
+          <Stack.Screen name="(customer)" />
+
+          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED}>
             <Stack.Screen name="take-picture-avatar" />
           </Stack.Protected>
+
+          {/* --- PDF SCREEN --- */}
+          <Stack.Screen name="term-or-use-pdf" />
         </Stack.Protected>
       </Stack>
     </>

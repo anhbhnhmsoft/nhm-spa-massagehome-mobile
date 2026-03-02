@@ -16,7 +16,7 @@ import {
   SearchLocation,
 } from '@/features/location/types';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import { useInfinityAddressList } from '@/features/location/hooks/use-query';
 import { useTranslation } from 'react-i18next';
 import { useCheckAuth, useGetProfile } from '@/features/auth/hooks';

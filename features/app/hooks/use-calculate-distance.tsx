@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { getDistanceFromLatLonInKm } from '@/lib/utils';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 
 /**
  * Hook để tính khoảng cách giữa user và provider.

@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import { useEffect } from 'react';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { router } from 'expo-router';
 import { useScanQRCodeKtv } from '@/features/ktv/hooks';
 import { _UserRole } from '@/features/auth/const';

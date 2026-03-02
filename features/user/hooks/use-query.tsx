@@ -48,16 +48,7 @@ export const useInfiniteListManageKTV = (params: ListKTVRequest) => {
   });
 };
 
-// Lấy thông tin dashboard profile
-export const useQueryDashboardProfile = () => {
-  return useQuery({
-    queryKey: ['userApi-dashboardProfile'],
-    queryFn: async () => {
-      return userApi.dashboardProfile();
-    },
-    select: res => res.data
-  });
-};
+
 
 // Kiểm tra thông tin đăng ký đối tác (KTV hoặc Agency)
 export const useQueryCheckApplyPartner = () => {

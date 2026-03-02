@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from '@/components/styles/gradient-background';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { TouchableOpacity, View } from 'react-native';
 import {Text} from '@/components/ui/text';
 import { Image } from 'expo-image';

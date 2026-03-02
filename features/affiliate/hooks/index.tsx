@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { getMessageError, goBack } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { router } from 'expo-router';
 import useToast from '@/features/app/hooks/use-toast';
 import { useReferralStore } from '@/features/affiliate/store';

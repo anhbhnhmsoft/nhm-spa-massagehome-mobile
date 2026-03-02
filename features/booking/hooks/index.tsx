@@ -7,24 +7,14 @@ import { useCancelBookingCustomerMutation } from '@/features/booking/hooks/use-m
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import { getMessageError } from '@/lib/utils';
 
-// Lấy thông tin đặt lịch
-export const useCheckBooking = (id: string | null) => {
-  const query = useQueryBookingCheck(id);
-  const status = useMemo(() => {
-    return query.data?.status || 'waiting';
-  }, [query.data]);
+export * from './use-booking';
+export * from './use-check-booking';
 
-  return {
-    status,
-    data: query.data,
-  };
-};
 
 // Lấy danh sách đặt lịch
-
 export const useGetBookingList = () => {
   const { t } = useTranslation();
   const [params, setParams] = useImmer<ListBookingRequest>({

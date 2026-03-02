@@ -8,7 +8,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
 import { _UserRole } from '@/features/auth/const';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { _ReviewApplicationStatus, _ReviewApplicationStatusMap } from '@/features/user/const';
 
 type ModalApplicationProps = {

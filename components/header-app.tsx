@@ -9,7 +9,7 @@ import {  useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
 import { router } from 'expo-router';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 
 type HeaderAppProps = {
   showSearch?: boolean;
@@ -27,7 +27,9 @@ export function HeaderApp({
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [showLocationModal, setShowLocationModal] = React.useState(false);
+
   const redirectAuth = useCheckAuthToRedirect();
+
   const locationUser = useApplicationStore((state) => state.location);
 
   return (
@@ -63,7 +65,8 @@ export function HeaderApp({
             className="relative"
             onPress={() => {
               redirectAuth(() => router.push('/(app)/(notification)/notificaton'));
-            }}>
+            }}
+          >
             <Icon as={Bell} size={24} className="text-white" />
           </TouchableOpacity>
         </View>

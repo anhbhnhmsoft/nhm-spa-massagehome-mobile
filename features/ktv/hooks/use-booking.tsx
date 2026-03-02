@@ -10,7 +10,7 @@ import { _BookingStatus } from '@/features/service/const';
 import { Alert } from 'react-native';
 import { calculateEndTime, getMessageError, getRemainingTime } from '@/lib/utils';
 import { FinishBooking, StartBookingResponse } from '@/features/ktv/types';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { _UserRole } from '@/features/auth/const';
 
 /**

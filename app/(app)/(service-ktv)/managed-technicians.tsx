@@ -7,7 +7,7 @@ import {
   AgencyListHeader,
   InviteKTVModal,
 } from '@/components/app/agency/agency-card';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import HeaderBack from '@/components/header-back';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGetListKTVManager } from '@/features/user/hooks';

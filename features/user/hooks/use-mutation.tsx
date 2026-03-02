@@ -13,3 +13,5 @@ export const useMutationApplyPartner = () => {
     mutationFn: (payload: FormData) => userApi.applyPartner(payload),
   });
 };
+
+

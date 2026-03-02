@@ -116,7 +116,8 @@
     "offline_service_message": "该技师当前正在休息。你想要...？",
     "save_qr_code": "保存二维码",
     "total": "总计",
-    "nickname": "昵称"
+    "nickname": "昵称",
+    "password_description": "密码必须至少包含8个字符，包括大写字母、小写字母、数字和特殊字符。"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -204,7 +205,9 @@
       "REFERRAL_KTV": "推荐给技师",
       "REFERRAL_PARTNER": "推荐合作伙伴",
       "DEPOSIT_WECHAT_PAY": "Wechat Pay 充值",
-      "FEE_WITHDRAW": "提现手续费"
+      "FEE_WITHDRAW": "提现手续费",
+      "FEE_TRANSPORT": "运输手续费",
+      "EARN_TRANSPORT": "运输奖励"
     },
     "transaction_status": {
       "PENDING": "处理中",
@@ -654,11 +657,13 @@
     "busy_slot": "已预订",
     "confirmed": "日历已确认",
     "subtotal": "临时总金额",
-
+    "time_to_go_to_place": "技术人员将在 {{ break_time }} 分钟后到达",
+    "service_name": "服务名称",
+    "duration": "服务时间",
     "distance": "距离",
-    "distance_price": "每公里价格",
+    "distance_price": "距离价格",
+    "service_price": "服务价格",
     "discount": "折扣",
-
     "review": {
       "title": "评价服务",
       "rating": "满意度",

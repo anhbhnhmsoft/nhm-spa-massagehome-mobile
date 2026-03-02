@@ -240,7 +240,7 @@ type SaveLocationModalProps = {
   visible: boolean;
   onClose: () => void;
 };
-export const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) => {
+const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) => {
   const { t } = useTranslation();
   const [showSearch, setShowSearch] = useState(false);
 
@@ -383,7 +383,7 @@ type LocationSearchModalProps = {
   onClose: () => void;
   onSelectLocation: (location: DetailLocation) => void;
 };
-export const SearchLocationModal: FC<LocationSearchModalProps> = ({
+const SearchLocationModal: FC<LocationSearchModalProps> = ({
                                                                     visible,
                                                                     onClose,
                                                                     onSelectLocation,

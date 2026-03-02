@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import HeaderBack from '@/components/header-back';
 import FullScreenLoading from '@/components/full-screen-loading';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 
 export default function AuthLayout() {
   const loading = useApplicationStore((s) => s.loading);

@@ -15,7 +15,7 @@ import {
   useRequestWithdrawMutation,
 } from '@/features/payment/hooks/use-mutation';
 import { useWalletStore } from '@/features/payment/stores';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import {
   ConfigPaymentItem,

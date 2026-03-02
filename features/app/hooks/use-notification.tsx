@@ -4,8 +4,9 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import authApi from '@/features/auth/api';
 import { getInfoDevice } from '@/lib/utils';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { User } from '@/features/auth/types';
+import { _AuthStatus } from '@/features/auth/const';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -52,12 +53,14 @@ export const useGetExpoPushToken = async () => {
 
 // Đồng bộ token lên server khi user login hoặc app mở
 export const useSyncTokenToServer =  () => {
-  const user = useAuthStore((state) => state.user);
+  const statusAuth = useAuthStore((state) => state.status);
+
   return useCallback(async () => {
-    if (!user) return; // Chưa login thì không gửi
     try {
       const data = await useGetExpoPushToken();
-      if (data) {
+
+      // Chỉ đồng bộ khi user đã login
+      if (data && statusAuth === _AuthStatus.AUTHORIZED) {
         await authApi.setDeviceInfo({
           platform: data.deviceInfo.platform,
           device_id: data.deviceInfo.deviceId,
@@ -68,12 +71,12 @@ export const useSyncTokenToServer =  () => {
     } catch {
       // do nothing
     }
-  }, [user])
+  }, [statusAuth])
 };
 
 // Quản lý thông báo
 export const useNotification = () => {
-  const user = useAuthStore((state) => state.user);
+  const statusAuth = useAuthStore((state) => state.status);
   const notificationListener = useRef<Notifications.EventSubscription>(null);
   const responseListener = useRef<Notifications.EventSubscription>(null);
   const syncTokenToServer = useSyncTokenToServer();
@@ -100,12 +103,13 @@ export const useNotification = () => {
         responseListener.current.remove();
       }
     };
-  }, [user]); // Chạy lại khi user thay đổi (login/logout)
+  }, [statusAuth]); // Chạy lại khi user thay đổi (login/logout)
 };
 
 // Kiểm tra quyền thông báo
 export const useCheckNotificationPermission =  () => {
   const user = useAuthStore((state) => state.user);
+
   return useCallback(async () => {
     const { status } = await Notifications.getPermissionsAsync();
     return status === 'granted';

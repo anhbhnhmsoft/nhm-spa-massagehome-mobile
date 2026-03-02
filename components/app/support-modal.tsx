@@ -8,6 +8,7 @@ import { _ConfigKey, _ConfigKeyLabel } from '@/features/config/consts';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
 import {Image} from "expo-image";
 import DefaultColor from '@/components/styles/color';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
   isVisible: boolean;
@@ -19,7 +20,7 @@ type Props = {
 const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
   const {t} = useTranslation();
   const copyClipboard = useCopyClipboard();
-
+  const inset = useSafeAreaInsets();
   // Hàm lấy Icon và Tên hiển thị dựa trên Key
   const getInfo = useCallback((key: _ConfigKey) => {
     switch (key) {
@@ -63,11 +64,11 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-[32px] p-6 pb-10">
+        <View className="bg-white rounded-t-[32px] p-4" style={{paddingBottom: inset.bottom + 16}}>
           {/* Header */}
           <View className="flex-row justify-between items-center mb-6">
             <View>
-              <Text className="text-xl font-inter-bold text-slate-800">{t('support.title')}</Text>
+              <Text className="text-lg font-inter-bold text-slate-800">{t('support.title')}</Text>
               <Text className="text-slate-400 text-sm">{t('support.description')}</Text>
             </View>
             <TouchableOpacity

@@ -44,14 +44,14 @@ export type AuthenticateRequest = {
 };
 
 export type AuthenticateResponse = ResponseDataSuccessType<{
-  need_register: boolean;
-  expire_minutes: number | null; // Thời gian hết hạn của OTP
-  number_of_attempts: number; // Số lần nhập sai OTP
-  need_enter_otp: boolean;
+  case: "need_login" | "need_re_enter_otp" | "need_register" | "need_re_enter_register";
+  last_sent_at?: string; // Thời gian cuối cùng OTP được gửi
+  retry_after_seconds?: number; // Thời gian chờ trước khi có thể gửi lại OTP
 }>;
 
 export type ResendRegisterOTPResponse = ResponseDataSuccessType<{
-  expire_minutes: number | null; // Thời gian hết hạn của OTP
+  last_sent_at: string; // Thời gian cuối cùng OTP được gửi
+  retry_after_seconds: number;
 }>;
 
 export type VerifyRegisterOTPRequest = {
@@ -59,12 +59,9 @@ export type VerifyRegisterOTPRequest = {
   otp: string;
 };
 
-export type VerifyRegisterOTPResponse = ResponseDataSuccessType<{
-  token: string;
-}>;
 
 export type RegisterRequest = {
-  token: string;
+  phone: string;
   name: string;
   password: string;
   referral_code?: string | null;
@@ -105,10 +102,3 @@ export type EditProfileRequest = {
   new_password?: string;
 };
 
-export type ConfigApplicationResponse = ResponseDataSuccessType<{
-  maintenance: boolean;
-  ios_version: string;
-  android_version: string;
-  appstore_url: string;
-  chplay_url: string;
-}>

@@ -12,7 +12,7 @@ import { X } from 'lucide-react-native';
 import { useCommercialCoupon } from '@/features/commercial/hooks';
 import { Image } from 'expo-image';
 import { cn } from '@/lib/utils';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

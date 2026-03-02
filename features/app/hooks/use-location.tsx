@@ -1,11 +1,12 @@
-import useApplicationStore, { LocationApp } from '@/lib/store';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { LocationApp, useApplicationStore } from '@/features/app/stores';
+import { useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import { Alert, AppState } from 'react-native';
 import { useMutationSetDefaultAddress } from '@/features/location/hooks/use-mutation';
-import { useCheckAuth } from '@/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
+import { useAuthStore } from '@/features/auth/stores';
+import { _AuthStatus } from '@/features/auth/const';
 
 /**
  * Kiểm tra có phải là sự thay đổi đáng kể hay không
@@ -71,8 +72,6 @@ export const formatLocation = async (locationObject: Location.LocationObject): P
 export const useLocation = () => {
   // Lưu vị trí hiện tại vào store
   const setAppLocation = useApplicationStore((s) => s.setLocation);
-  // ref lưu vị trí hiện tại
-  const currentLocation = useRef<LocationApp | null>(null);
   // Lưu subscription
   const locationSubscription = useRef<Location.LocationSubscription | null>(null);
   // Lưu trạng thái ứng dụng
@@ -81,30 +80,20 @@ export const useLocation = () => {
   const isStarting = useRef(false);
   // Mutation để set địa chỉ mặc định
   const mutation = useMutationSetDefaultAddress();
-  // Kiểm tra auth
-  const checkAuth = useCheckAuth();
+
+  const statusAuth = useAuthStore((state) => state.status);
 
   // Gửi vị trí lên server
   const sendLocation = () => {
     // Kiểm tra có vị trí và auth hay không
-    if (currentLocation.current) {
-      const newLocation = currentLocation.current;
-      const oldLocation = useApplicationStore.getState().location;
-      const check = isSignificantChange(oldLocation?.location ?? null, newLocation.location);
+    const location = useApplicationStore.getState().location;
 
-      // Chỉ update nếu có sự thay đổi đáng kể về vị trí
-      if (check) {
-        // Cập nhật vị trí mới vào store
-        setAppLocation(newLocation);
-        // Gửi lên server
-        if (checkAuth){
-          mutation.mutate({
-            address: newLocation.address,
-            latitude: newLocation.location.coords.latitude,
-            longitude: newLocation.location.coords.longitude,
-          });
-        }
-      }
+    if (location && statusAuth === _AuthStatus.AUTHORIZED) {
+      mutation.mutate({
+        address: location.address,
+        latitude: location.location.coords.latitude,
+        longitude: location.location.coords.longitude,
+      });
     }
   };
 
@@ -139,10 +128,16 @@ export const useLocation = () => {
           timeInterval: 1000 * 60, // Cập nhật mỗi 1 phút
           distanceInterval: 100, // Hoặc đi được 100 mét
         },
-        async (newLocation) => {
-          const location = await formatLocation(newLocation);
-          if (location) {
-            currentLocation.current = location;
+        async (locationObject) => {
+          const oldLocation = useApplicationStore.getState().location;
+          const newLocation = await formatLocation(locationObject);
+
+          if (newLocation) {
+            // So sánh vị trí mới với vị trí cũ
+            const check = isSignificantChange(oldLocation?.location ?? null, newLocation.location);
+            if (check) {
+              setAppLocation(newLocation);
+            }
           }
         },
       );
@@ -200,7 +195,7 @@ export const useLocation = () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
-  }, [checkAuth]);
+  }, [statusAuth]);
 
 };
 

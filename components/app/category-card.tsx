@@ -67,21 +67,7 @@ const CategoryCard = ({ item }: { item: CategoryItem }) => {
     </TouchableOpacity>
   )
 }
-/**
- * Card Skeleton hiển thị thông tin của category trong trang dịch vụ
- * @constructor
- */
-export const CategorySkeletonCard = () => {
-  return(
-    <View className="flex-row rounded-xl border border-slate-100 bg-white p-3 shadow-sm mb-3">
-      <Skeleton className="mr-3 h-24 w-24 rounded-lg bg-slate-200" />
-      <View className="flex-1 justify-center">
-        <Skeleton className="mb-2 h-5 w-3/4 rounded-lg bg-slate-200" />
-        <Skeleton className="h-12 w-full rounded-lg bg-slate-200" />
-      </View>
-    </View>
-  )
-}
+
 
 
 

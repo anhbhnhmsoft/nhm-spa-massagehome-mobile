@@ -1,136 +1,77 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { MotiView } from 'moti';
-import { Easing } from 'react-native-reanimated';
+import { View, StyleSheet, ActivityIndicator, Modal } from 'react-native';
+import { Image } from 'expo-image';
 import DefaultColor from '@/components/styles/color';
+import { useTranslation } from 'react-i18next';
+import { Text } from '@/components/ui/text';
 
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 9999999,
-  },
-  outerCircle: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  middleCircle: {
-    position: 'absolute',
-    width: 160,
-    height: 160,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerCircle: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleRing: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 999,
-    borderWidth: 3,
-    borderColor: '#2B7BBE',
-    borderTopColor: 'rgba(156, 163, 175, 0.4)',
-    borderRightColor: 'rgba(156, 163, 175, 0.4)',
-  },
-  middleRing: {
-    borderWidth: 2.5,
-    borderColor: '#2B7BBE',
-    borderTopColor: 'rgba(156, 163, 175, 0.3)',
-    borderLeftColor: 'rgba(156, 163, 175, 0.3)',
-  },
-  innerRing: {
-    borderWidth: 2,
-    borderColor: '#2B7BBE',
-    borderBottomColor: 'rgba(156, 163, 175, 0.3)',
-    borderRightColor: 'rgba(156, 163, 175, 0.3)',
-  },
-  logoContainer: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
-const FullScreenLoading = ({ loading, whiteBg }: { loading: boolean, whiteBg?: boolean }) => {
+const FullScreenLoading = ({ loading }: { loading: boolean }) => {
   if (!loading) return null;
 
+  const { t } = useTranslation();
+
   return (
-    <View style={[styles.overlay, whiteBg && { backgroundColor: DefaultColor.white }]}>
-      {/* Vòng tròn ngoài cùng */}
-      <MotiView
-        from={{ rotate: '0deg' }}
-        animate={{ rotate: '360deg' }}
-        transition={{
-          type: 'timing',
-          duration: 3000,
-          easing: Easing.linear,
-          loop: true,
-        }}
-        style={styles.outerCircle}
-      >
-        <View style={styles.circleRing} />
-      </MotiView>
+    // Dùng Modal để đảm bảo nó luôn nằm trên cùng của mọi lớp UI
+    <Modal transparent visible={loading} animationType="fade">
+      <View style={styles.fixedOverlay}>
 
-      {/* Vòng tròn giữa */}
-      <MotiView
-        from={{ rotate: '0deg' }}
-        animate={{ rotate: '-360deg' }}
-        transition={{
-          type: 'timing',
-          duration: 2500,
-          easing: Easing.linear,
-          loop: true,
-        }}
-        style={styles.middleCircle}
-      >
-        <View style={[styles.circleRing, styles.middleRing]} />
-      </MotiView>
+        {/* Card Loading chính */}
+        <View
+          className="bg-white rounded-[40px] p-10 items-center justify-center shadow-2xl"
+          style={styles.cardContainer}
+        >
+          {/* Logo Container với vòng tròn bao quanh nhẹ */}
+          <View className="mb-6 bg-slate-50 p-4 rounded-full border border-slate-100">
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={styles.logoImage}
+              contentFit="contain"
+            />
+          </View>
 
-      {/* Vòng tròn trong */}
-      <MotiView
-        from={{ rotate: '0deg' }}
-        animate={{ rotate: '360deg' }}
-        transition={{
-          type: 'timing',
-          duration: 2000,
-          easing: Easing.linear,
-          loop: true,
-        }}
-        style={styles.innerCircle}
-      >
-        <View style={[styles.circleRing, styles.innerRing]} />
-      </MotiView>
+          {/* Spinner & Text Group */}
+          <View className="items-center">
+            <ActivityIndicator
+              size="large"
+              color={DefaultColor.base['primary-color-2']}
+              className="mb-4"
+            />
 
-      {/* Logo ở giữa với hiệu ứng pulse nhẹ */}
-      <MotiView
-        from={{ scale: 1 }}
-        animate={{ scale: 1.2 }}
-        transition={{
-          type: 'timing',
-          duration: 1500,
-          easing: Easing.inOut(Easing.ease),
-          loop: true,
-        }}
-        style={styles.logoContainer}
-      >
-        <Image
-          source={require('@/assets/images/logo.png')}
-          style={{ width: 60, height: 60 }}
-          resizeMode="contain"
-        />
-      </MotiView>
-    </View>
+            <Text
+              style={{ color: DefaultColor.base['primary-color-1'] }}
+              className="font-inter-bold text-[15px] tracking-[1px] uppercase opacity-80"
+            >
+              {t('common.loading')}
+            </Text>
+          </View>
+        </View>
+
+      </View>
+    </Modal>
   );
 };
 
 export default FullScreenLoading;
+
+const styles = StyleSheet.create({
+  fixedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)", // Làm nền tối lại một chút để nổi bật Card trắng
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+  },
+  cardContainer: {
+    width: 240, // Cố định chiều rộng để Card trông cân đối
+    minHeight: 280,
+    elevation: 10, // Đổ bóng cho Android
+    shadowColor: '#000', // Đổ bóng cho iOS
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+  },
+});

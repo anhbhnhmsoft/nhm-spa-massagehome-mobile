@@ -116,7 +116,8 @@
     "offline_service_message": "Kĩ thuật viên này đang trong thời gian nghỉ. Bạn?",
     "save_qr_code": "Lưu mã QR",
     "total": "Tổng",
-    "nickname": "Biệt danh"
+    "nickname": "Biệt danh",
+    "password_description": "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt."
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -204,7 +205,9 @@
       "REFERRAL_KTV": "Hoa hồng từ kĩ thuật viên",
       "REFERRAL_INVITE_KTV_REWARD": "Hoa hồng từ kĩ thuật viên khi đăng ký",
       "DEPOSIT_WECHAT_PAY": "Nạp tiền qua Wechat Pay",
-      "FEE_WITHDRAW": "Phí rút tiền"
+      "FEE_WITHDRAW": "Phí rút tiền",
+      "FEE_TRANSPORT": "Chi phí di chuyển",
+      "EARN_TRANSPORT": "Nhận tiền phí di chuyển "
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -655,9 +658,12 @@
     "busy_slot": "Đã có khách đặt",
     "confirmed": "Lịch đã xác nhận",
     "subtotal": "Tổng tiền tạm tính",
-
+    "time_to_go_to_place": "Kỹ thuật viên sẽ đến tới bạn sau khoảng {{ break_time }} phút",
+    "service_name": "Tên dịch vụ",
+    "duration": "Thời gian",
     "distance": "Khoảng cách tới bạn",
-    "distance_price": "Cước di chuyển / km",
+    "distance_price": "Cước di chuyển",
+    "service_price": "Giá dịch vụ",
     "discount": "Giảm giá",
 
     "review": {

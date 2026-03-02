@@ -3,7 +3,7 @@ import { Text } from '@/components/ui/text';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetSupport } from '@/features/config/hooks';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import { _LanguagesMap } from '@/lib/const';
 import { useLogout } from '@/features/auth/hooks';
 import { Image } from 'expo-image';
@@ -21,9 +21,9 @@ import {
   OctagonAlert
 } from 'lucide-react-native';
 import { ListLocationModal } from '@/components/app/location';
-import SelectLanguage from '@/components/select-language';
+import SelectLanguage from '@/components/app/select-language';
 import SupportModal from '@/components/app/support-modal';
-import Dialog from '@/components/dialog';
+import Dialog from '@/components/ui/dialog';
 import { router } from 'expo-router';
 import { openAboutPage } from '@/lib/utils';
 import { useSendDangerSupport } from '@/features/ktv/hooks';

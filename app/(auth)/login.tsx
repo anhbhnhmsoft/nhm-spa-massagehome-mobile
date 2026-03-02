@@ -12,18 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
 import { cn } from '@/lib/utils';
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Icon } from '@/components/ui/icon';
-import { Eye, EyeOff } from 'lucide-react-native';
+import { FormInput } from '@/components/ui/form-input';
 
 
 export default function LoginScreen() {
   const {t} = useTranslation();
 
   const { form, onSubmit, loading } = useHandleLogin();
-
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
   const {
     control,
@@ -54,37 +49,19 @@ export default function LoginScreen() {
                 control={control}
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <View className="gap-2">
-                    <View className="relative">
-                      <Input
-                        id="password"
-                        value={value}
-                        placeholder={'**********'}
-                        className={cn('h-12 w-full rounded-2xl bg-white overflow-hidden px-4', {
-                          'border-red-500': errors.password,
-                        })}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        secureTextEntry={!passwordVisible}
-                        textContentType={"password"}
-                      />
-                      <TouchableOpacity
-                        className="absolute bottom-0 right-4 top-0 justify-center"
-                        onPress={() => setPasswordVisible(!passwordVisible)}>
-                        <Icon
-                          as={passwordVisible ? EyeOff : Eye}
-                          size={24}
-                          opacity={0.6}
-                        />
-                      </TouchableOpacity>
-                    </View>
-
-                    {errors.password && (
-                      <Text className="text-sm text-red-500">
-                        {errors.password.message}
-                      </Text>
-                    )}
-                  </View>
+                  <FormInput
+                    id="password"
+                    required
+                    description={t('common.password_description')}
+                    placeholder={t('common.password')}
+                    label={t('common.password')}
+                    error={errors.password?.message}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    textContentType={'password'}
+                    isPassword={true}
+                  />
                 )}
               />
             </View>

@@ -4,7 +4,7 @@ import { SecureStorage, Storage } from '@/lib/storages';
 import { _StorageKey } from '@/lib/storages/key';
 import ErrorAPIServer, { IValidationErrors } from '@/lib/types';
 import i18next from 'i18next';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 
 
 

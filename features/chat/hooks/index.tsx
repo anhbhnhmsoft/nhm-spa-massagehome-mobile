@@ -4,7 +4,7 @@ import {
   useMutationSendMessage,
 } from '@/features/chat/hooks/use-mutation';
 import useChatStore from '@/features/chat/stores';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import {
   JoinRoomRequest,
   KTVConversationItem,
@@ -20,7 +20,7 @@ import {
   useInfiniteQueryListMessage,
 } from '@/features/chat/hooks/use-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import SocketService from '@/features/chat/socket-service';
 import { queryClient } from '@/lib/provider/query-provider';
 import dayjs from 'dayjs';

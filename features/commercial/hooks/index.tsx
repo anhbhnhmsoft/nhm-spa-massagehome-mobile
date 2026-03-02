@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCollectCouponMutation } from '@/features/commercial/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { router } from 'expo-router';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { _UserRole } from '@/features/auth/const';
 

@@ -4,7 +4,7 @@ import {  Stack } from 'expo-router';
 import QueryProvider from '@/lib/provider/query-provider';
 import ThemeProvider from '@/lib/provider/theme-provider';
 import useFontInter from '@/lib/provider/font-inter';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import initI18n from '@/lib/provider/i18n';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -12,11 +12,11 @@ import { useColorScheme } from 'nativewind';
 import ToastManager from 'toastify-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHydrateAuth } from '@/features/auth/hooks';
 import { _AuthStatus } from '@/features/auth/const';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import useHandleLinking from '@/features/app/hooks/use-handle-linking';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import { HydrateAuthProvider } from '@/features/auth/providers';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -83,18 +83,19 @@ export default function RootLayout() {
 }
 
 const AppContainer = () => {
-  const complete = useHydrateAuth();
   const status = useAuthStore((state) => state.status);
 
+  const complete = useMemo(() => ![_AuthStatus.HYDRATE, _AuthStatus.INITIAL].includes(status), [status]);
   // Xử lý linking
   useHandleLinking(complete);
 
   return (
-    <>
+    <HydrateAuthProvider>
       <Stack
         screenOptions={{
           headerShown: false,
-        }}>
+        }}
+      >
         <Stack.Protected guard={!complete}>
           <Stack.Screen name="index" />
         </Stack.Protected>
@@ -105,6 +106,6 @@ const AppContainer = () => {
           </Stack.Protected>
         </Stack.Protected>
       </Stack>
-    </>
+    </HydrateAuthProvider>
   );
 };

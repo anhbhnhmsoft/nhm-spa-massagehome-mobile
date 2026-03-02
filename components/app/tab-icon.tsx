@@ -21,7 +21,7 @@ export const TabIcon = ({
       {/* Khối nền của Icon */}
       <View
         className={`mb-1 h-8 w-8 items-center justify-center rounded-xl ${
-          focused ? 'bg-blue-600' : 'bg-transparent'
+          focused ? 'bg-primary-color-2' : 'bg-transparent'
         }`}>
         <IconComponent
           size={16}

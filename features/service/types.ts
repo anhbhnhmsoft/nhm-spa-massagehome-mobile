@@ -1,5 +1,4 @@
 import { BaseSearchRequest, ResponseDataSuccessType, Paginator } from '@/lib/types';
-import { ServiceOption } from '../ktv/types';
 
 export type CategoryItem = {
   id: string;
@@ -21,46 +20,21 @@ export type CategoryListResponse = ResponseDataSuccessType<Paginator<CategoryIte
 
 export type ServiceItem = {
   id: string;
-  name: string;
   category_id: string;
-  bookings_count: number; // Số lần đặt lịch
-  avg_rating: number; // Đánh giá trung bình
-  is_active: boolean;
+  name: string;
+  bookings_count: number;
   image_url: string | null;
   description: string | null;
-  category: {
+  options: {
     id: string;
-    name: string;
-  };
-  provider: {
-    id: string;
-    name: string;
-  };
-  options: ServiceOption[];
+    duration: number;
+    price: string;
+  }[];
 };
-
-export type ServiceListRequest = BaseSearchRequest<{
-  category_id?: string;
-  user_id?: string;
-}>;
-
-export type ServiceListResponse = ResponseDataSuccessType<Paginator<ServiceItem>>;
 
 export type ServiceDetailResponse = ResponseDataSuccessType<ServiceItem>;
 
-export type BookingServiceRequest = {
-  service_id: string;
-  service_name: string;
-  option_id: string;
-  duration: number;
-  book_time: string; // Thời gian đặt lịch
-  note?: string;
-  note_address?: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  coupon_id?: string;
-};
+
 
 // Pick only required fields for booking
 export type PickBookingItem = {
@@ -68,51 +42,9 @@ export type PickBookingItem = {
   option_id: string;
 };
 
-// Pick only required fields for booking requirement
-export type PickBookingRequirement = Omit<
-  BookingServiceRequest,
-  'service_id' | 'service_name' | 'option_id' | 'duration'
->;
 
-export type BookingServiceResponse = ResponseDataSuccessType<{
-  status: boolean;
-  failed?: {
-    not_enough_money: boolean;
-    final_price: string;
-    balance_customer: string;
-  };
-  success?: {
-    booking_id: string;
-  };
-}>;
 
-// Lấy thông tin trước khi đặt lịch dịch vụ
-export type PrepareBookingRequest = {
-  service_id: string;
-  option_id: string;
-}
 
-export type PrepareBookingResponse = ResponseDataSuccessType<{
-  break_time_gap: number; // Thời gian tắt móc giữa các dịch vụ (phút)
-  price_transportation: number; // Giá di chuyển (dạng float)
-  bookings: {
-    booking_time: string; // Thời gian đặt lịch (dạng string)
-  }[];
-  service: {
-    name: string;
-    id: string;
-  },
-  option: {
-    id: string;
-    price: string;
-    duration: number;
-  };
-  location_ktv: {
-    latitude: number;
-    longitude: number;
-    address: string;
-  } | null;
-}>;
 
 export type CouponItem = {
   id: string; // ID coupon
@@ -131,7 +63,6 @@ export type CouponItem = {
   banners: string | null; // Banner hiển thị khi áp dụng coupon (null nếu không có)
 };
 export type ListCouponRequest = BaseSearchRequest<{
-  for_service_id?: string; // Dịch vụ áp dụng (null nếu áp dụng cho tất cả dịch vụ)
 }>;
 
 export type ListCouponResponse = ResponseDataSuccessType<CouponItem[]>;

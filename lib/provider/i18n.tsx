@@ -2,7 +2,7 @@ import vi from '@/i18n/vi.json';
 import en from '@/i18n/en.json';
 import cn from '@/i18n/cn.json';
 import { getLocales } from 'expo-localization';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import { _LanguageCode } from '@/lib/const';
 import { _StorageKey } from '@/lib/storages/key';
 import { Storage } from '@/lib/storages';

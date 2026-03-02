@@ -21,3 +21,13 @@ export type SupportChanel = [
 ];
 
 export type SupportChanelResponse = ResponseDataSuccessType<SupportChanel>;
+
+
+export type ConfigApplicationResponse = ResponseDataSuccessType<{
+  maintenance: boolean;
+  ios_version: string;
+  android_version: string;
+  appstore_url: string;
+  chplay_url: string;
+}>
+

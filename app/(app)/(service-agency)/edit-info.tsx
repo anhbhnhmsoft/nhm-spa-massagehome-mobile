@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/ui/icon';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import useAuthStore from '@/features/auth/store';
+import { useAuthStore } from '@/features/auth/stores';
 import { useUpdateProfileAgency } from '@/features/agency/hook';
 import { Controller } from 'react-hook-form';
 import DateTimePickerInput from '@/components/app/ktv/date-time-input';

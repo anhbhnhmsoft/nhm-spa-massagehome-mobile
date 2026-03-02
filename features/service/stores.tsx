@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PickBookingItem, PrepareBookingResponse, ServiceItem } from '@/features/service/types';
+import { PickBookingItem, ServiceItem } from '@/features/service/types';
 
 
 interface IServiceStore {

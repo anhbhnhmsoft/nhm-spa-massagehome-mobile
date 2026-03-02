@@ -1,6 +1,8 @@
 
 
 export enum _AuthStatus {
+  INITIAL = 'INITIAL',
+  HYDRATE = 'HYDRATE',
   AUTHORIZED = 'AUTHORIZED',
   UNAUTHORIZED = 'UNAUTHORIZED',
 }

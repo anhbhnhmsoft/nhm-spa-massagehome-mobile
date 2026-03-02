@@ -3,17 +3,13 @@ import {
   CategoryListRequest,
   CategoryListResponse,
   ServiceDetailResponse,
-  ServiceListRequest,
-  ServiceListResponse,
   ListCouponRequest,
   ListCouponResponse,
-  BookingServiceRequest,
-  BookingServiceResponse,
   CouponUserListRequest,
   CouponUserListResponse,
   SendReviewRequest,
   ListReviewRequest,
-  ListReviewResponse, PrepareBookingRequest, PrepareBookingResponse,
+  ListReviewResponse,
 } from '@/features/service/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -25,19 +21,9 @@ const serviceApi = {
     const response = await client.get(`${defaultUri}/list-category`, { params });
     return response.data;
   },
-  // Lấy danh sách dịch vụ
-  listService: async (params: ServiceListRequest): Promise<ServiceListResponse> => {
-    const response = await client.get(`${defaultUri}/list`, { params });
-    return response.data;
-  },
   // Lấy chi tiết dịch vụ
   detailService: async (serviceId: string): Promise<ServiceDetailResponse> => {
     const response = await client.get(`${defaultUri}/detail/${serviceId}`);
-    return response.data;
-  },
-  // Lấy thông tin trước khi đặt lịch dịch vụ
-  prepareBooking: async (data: PrepareBookingRequest): Promise<PrepareBookingResponse> => {
-    const response = await client.post(`${defaultUri}/prepare-booking`, data);
     return response.data;
   },
   // Lấy danh sách coupon
@@ -48,11 +34,6 @@ const serviceApi = {
   // Lấy danh sách coupon user
   listCouponUser: async (params: CouponUserListRequest): Promise<CouponUserListResponse> => {
     const response = await client.get(`${defaultUri}/my-list-coupon`, { params });
-    return response.data;
-  },
-  // Đặt lịch dịch vụ
-  bookingService: async (data: BookingServiceRequest): Promise<BookingServiceResponse> => {
-    const response = await client.post(`${defaultUri}/booking`, data);
     return response.data;
   },
   // Gửi đánh giá dịch vụ

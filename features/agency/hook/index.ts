@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEditProfileAgencyMutation } from '@/features/agency/hook/use-mutaion';
 import useToast from '@/features/app/hooks/use-toast';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { router } from 'expo-router';
 import { goBack } from '@/lib/utils';

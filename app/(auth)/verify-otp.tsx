@@ -25,8 +25,8 @@ export default function VerifyOTPScreen() {
   const {t} = useTranslation();
 
   const {
-    phoneAuthen,
-    timer,
+    phone,
+    secondsLeft,
     form,
     onSubmit,
     resendOTP,
@@ -75,7 +75,7 @@ export default function VerifyOTPScreen() {
                 <Text className="text-gray-500 text-center text-base px-4 leading-6">
                   {t('auth.auth_verify_description')}
                 </Text>
-                <Text className="font-inter-bold text-primary-color-1">{phoneAuthen}</Text>
+                <Text className="font-inter-bold text-primary-color-1">{phone}</Text>
               </View>
 
 
@@ -126,14 +126,14 @@ export default function VerifyOTPScreen() {
               {/* Text Gửi lại SMS */}
               <TouchableOpacity
                 onPress={resendOTP}
-                disabled={timer > 0 || loading}
+                disabled={secondsLeft > 0 || loading}
                 className="items-center mb-6"
               >
                 <Text className={cn(
                   "text-base font-inter-medium",
-                  timer > 0 ? "text-primary-color-2" : "text-gray-500"
+                  secondsLeft > 0 ? "text-primary-color-2" : "text-gray-500"
                 )}>
-                  {timer > 0 ? `${t('auth.resend_otp')} (${timer})` : t('auth.resend_otp')}
+                  {secondsLeft > 0 ? `${t('auth.resend_otp')} (${secondsLeft})` : t('auth.resend_otp')}
                 </Text>
               </TouchableOpacity>
 
@@ -145,7 +145,7 @@ export default function VerifyOTPScreen() {
                   "w-full py-4 rounded-full items-center justify-center",
                   isValid
                     ? "bg-primary-color-2"
-                    : "bg-[#E0E0E0]"
+                    : "bg-slate-100"
                 )}
               >
                 <Text className="text-white text-lg font-inter-bold">

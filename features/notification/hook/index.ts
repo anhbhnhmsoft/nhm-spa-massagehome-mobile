@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNotificationQuery } from './use-query';
 import { useReadNotificationMutation } from './use-mutation';
-import useApplicationStore from '@/lib/store';
+import { useApplicationStore } from '@/features/app/stores';
 
 export const useNotificationScreen = () => {
   const setLoading = useApplicationStore((state) => state.setLoading);

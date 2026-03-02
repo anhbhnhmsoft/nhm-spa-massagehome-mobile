@@ -2,9 +2,7 @@ import serviceApi from '@/features/service/api';
 import {
   CategoryListRequest,
   CategoryListResponse, CouponUserListRequest, CouponUserListResponse,
-  ListCouponRequest, ListCouponResponse, ListReviewRequest, ListReviewResponse,
-  ServiceListRequest,
-  ServiceListResponse,
+  ListCouponRequest, ListReviewRequest, ListReviewResponse,
 } from '@/features/service/types';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
@@ -36,35 +34,6 @@ export const useInfiniteCategoryList = (
   });
 };
 
-/**
- * Lấy danh sách service với pagination
- * @param params
- * @param enabled
- */
-export const useInfiniteServiceList = (
-  params: ServiceListRequest, enabled?: boolean
-) => {
-  return useInfiniteQuery<ServiceListResponse>({
-    queryKey: ['serviceApi-listService', params],
-    queryFn: async ({ pageParam }) => {
-      return serviceApi.listService({
-        ...params,
-        page: pageParam as number,
-        per_page: params.per_page,
-      });
-    },
-    enabled,
-    getNextPageParam: (lastPage) => {
-      const currentPage = lastPage.data?.meta?.current_page ?? 1;
-      const lastPageNum = lastPage.data?.meta?.last_page ?? 1;
-      if (currentPage < lastPageNum) {
-        return currentPage + 1;
-      }
-      return undefined;
-    },
-    initialPageParam: 1,
-  });
-};
 
 
 /**
