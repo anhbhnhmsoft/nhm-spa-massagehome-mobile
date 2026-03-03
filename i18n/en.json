@@ -276,7 +276,7 @@
     "view_all": "View All",
     "stats": {
       "customers": "Customers",
-      "received_income": "Revenue Received",
+      "transportation_income": "Transportation Income",
       "affiliate": "Commission",
       "reviews": "Reviews"
     },
@@ -756,6 +756,9 @@
     "no_customer_notes": "No notes from the customer",
     "no_cancel_reason": "No cancellation reason",
     "cancel_pending_note": "The cancellation request will be sent to the administrator for review.",
+    "start_error_booking": "An error occurred while starting the service. Please try again.",
+    "warning_alert_service_booking_confirm": "You have 1 service confirmed at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",
+    "warning_alert_service_booking_ongoing": "You have 1 service ongoing at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",
     "notification": {
       "booking_end_title": "End of Service",
       "booking_end_body": "The service has ended"
@@ -800,7 +803,8 @@
       "waiting": "Waiting",
       "new_reviews": "New Reviews Today",
       "no_review_new_today": "No new reviews today",
-      "order_in_progress": "Order in progress"
+      "order_in_progress": "Order in progress",
+      "ktv_had_order_in_progress": "Technician had order in progress at {{time}}"
     },
     "services": {
       "add_new_service": "Add New Service",

@@ -276,7 +276,7 @@
     "view_all": "查看全部",
     "stats": {
       "customers": "客户数",
-      "received_income": "实收收入",
+      "transportation_income": "运输收入",
       "affiliate": "佣金",
       "reviews": "评价数"
     },
@@ -754,6 +754,9 @@
     "no_customer_notes": "没有客户备注",
     "no_cancel_reason": "没有取消原因",
     "cancel_pending_note": "取消请求将发送给管理员进行审核。",
+    "start_error_booking": "开始服务时出错，请稍后重试。",
+    "warning_alert_service_booking_confirm": "您有 1 个服务已确认在 {{time}}，请联系技师确认或联系客户服务转移订单",
+    "warning_alert_service_booking_ongoing": "您有 1 个服务正在进行中在 {{time}}，请联系技师确认或联系客户服务转移订单",
     "notification": {
       "booking_end_title": "服务结束",
       "booking_end_body": "服务已结束"
@@ -798,7 +801,8 @@
       "waiting": "等待中",
       "new_reviews": "今日新评价",
       "no_review_new_today": "今日暂无新评价",
-      "order_in_progress": "进行中的订单"
+      "order_in_progress": "进行中的订单",
+      "ktv_had_order_in_progress": "技师已在 {{time}} 有订单在进行中"
     },
     "services": {
       "add_new_service": "添加新服务",

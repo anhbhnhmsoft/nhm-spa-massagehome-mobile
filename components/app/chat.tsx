@@ -30,7 +30,8 @@ const MessageItem = React.memo(({ item, currentUserId }: { item: PayloadNewMessa
           isMe ? 'bg-blue-600 rounded-br-none' : 'bg-gray-200 rounded-bl-none'
         )}
       >
-        <Text className={cn('text-[15px]', isMe ? 'text-white' : 'text-black')}>
+        <Text className={cn('text-[15px]', isMe ? 'text-white' : 'text-black')}
+              selectable={true}>
           {item.content}
         </Text>
         {/* Status Line */}

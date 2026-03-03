@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { BookingServiceRequest, PrepareBookingResponse } from '@/features/booking/types';
 import { useQueryListCoupon } from '@/features/service/hooks/use-query';
 import { useMutationBookingService, useMutationPrepareBooking } from '@/features/booking/hooks/use-mutation';
+import { useBookingStore } from '@/features/booking/stores';
+import { router } from 'expo-router';
 
 
 /**
@@ -21,8 +23,7 @@ export const useBooking = () => {
 
   const userLocation = useApplicationStore((s) => s.location);
 
-  const [showModalResult, setShowModalResult] = useState<boolean>(false);
-  const [bookingId, setBookingId] = useState<string | null>(null);
+  const setBookingId = useBookingStore((s) => s.setBookingId);
 
   const setLoading = useApplicationStore((s) => s.setLoading);
 
@@ -83,7 +84,6 @@ export const useBooking = () => {
 
   const queryCoupon = useQueryListCoupon({ filter: {} }, true);
 
-
   const { mutate: mutateBookingService, isPending: loadingBookingService } = useMutationBookingService();
 
   const [dataPricing, setDataPricing] =
@@ -97,7 +97,6 @@ export const useBooking = () => {
   const longitude = useWatch({ control: form.control, name: 'longitude' });
 
   const coupon_id = useWatch({ control: form.control, name: 'coupon_id' });
-
 
   useEffect(() => {
     if (item && latitude && longitude) {
@@ -128,8 +127,8 @@ export const useBooking = () => {
     setLoading(true);
     mutateBookingService(data, {
       onSuccess: (res) => {
-        setShowModalResult(true);
         setBookingId(res.data.booking_id);
+        router.push('/(app)/(customer)/(service)/service-booking-result');
       },
       onError: (err) => {
         const message = getMessageError(err, t);
@@ -145,11 +144,6 @@ export const useBooking = () => {
     setLoading(loadingBookingService || loadingPrepareBooking);
   }, [loadingBookingService, loadingPrepareBooking]);
 
-  const closeResultModal = useCallback(() => {
-    setShowModalResult(false);
-    setBookingId(null);
-  }, []);
-
   return {
     item,
     userLocation,
@@ -158,9 +152,6 @@ export const useBooking = () => {
     dataPricing,
     error,
     handleBookingService,
-    showModalResult,
-    closeResultModal,
-    bookingId,
   };
 };
 

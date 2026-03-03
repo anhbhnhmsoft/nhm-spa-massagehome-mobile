@@ -276,7 +276,7 @@
     "view_all": "Xem tất cả",
     "stats": {
       "customers": "Số khách",
-      "received_income": "Doanh thu nhận được",
+      "transportation_income": "Phí di chuyển nhận được",
       "affiliate": "Hoa hồng",
       "reviews": "Lượt đánh giá"
     },
@@ -757,6 +757,8 @@
     "no_cancel_reason": "Không có lý do hủy",
     "cancel_pending_note": "Yêu cầu hủy sẽ được gửi đến quản trị viên để xét duyệt.",
     "start_error_booking": "Đã xảy ra lỗi khi bắt đầu dịch vụ. Vui lòng thử lại.",
+    "warning_alert_service_booking_confirm": "Bạn đang có 1 dịch vụ đã xác nhận làm vào lúc {{time}}, vui lòng liên hệ với Kĩ thuật viên để xác nhận hoặc liên hệ với tổng đài để chuyển đơn",
+    "warning_alert_service_booking_ongoing": "Bạn đang có 1 dịch vụ đang diễn ra bắt đầu vào lúc {{time}}",
     "notification": {
       "booking_end_title": "Hết giờ làm dịch vụ",
       "booking_end_body": "Thời gian làm dịch vụ đã kết thúc"
@@ -801,7 +803,8 @@
       "waiting": "Đang chờ",
       "new_reviews": "Đánh giá mới hôm nay",
       "no_review_new_today": "Chưa có đánh giá mới hôm nay",
-      "order_in_progress": "Đơn đang làm"
+      "order_in_progress": "Đơn đang làm",
+      "ktv_had_order_in_progress": "Thời gian sớm nhất có thể phục vụ là {{time}}"
     },
     "services": {
       "add_new_service": "Thêm dịch vụ mới",

@@ -89,8 +89,8 @@ export type ServiceDetailItem = {
   options: ServiceOption[];
 };
 export interface DashboardStats {
-  total_income: string;
-  received_income: string;
+  total_income: number;
+  transportation_income: number;
   total_customers: number;
   affiliate_income: number;
   total_reviews: number;

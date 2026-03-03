@@ -1,6 +1,5 @@
 import {
   useInfiniteListReview,
-  useQueryListCoupon,
   useQueryListCouponUser,
 } from '@/features/service/hooks/use-query';
 import {
@@ -8,22 +7,17 @@ import {
   ListReviewRequest,
   SendReviewRequest,
 } from '@/features/service/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useApplicationStore } from '@/features/app/stores';
-import useServiceStore from '@/features/service/stores';
-import { router } from 'expo-router';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   useMutationSendReview,
 } from '@/features/service/hooks/use-mutation';
-import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 import useToast from '@/features/app/hooks/use-toast';
-import { formatBalance, getMessageError } from '@/lib/utils';
+import {  getMessageError } from '@/lib/utils';
 
 export * from './use-get-category-list';
 

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { View, TouchableOpacity, ViewProps } from 'react-native';
+import { View, TouchableOpacity, ViewProps, Platform } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react-native';
@@ -25,9 +25,22 @@ export const Card = ({
   return (
     <View
       className={cn(
-        "bg-white rounded-xl p-4 shadow-xl shadow-slate-200 border border-slate-100",
+        "bg-white rounded-xl p-4 border border-slate-100",
         containerClassName
       )}
+      style={{
+        ...Platform.select({
+          ios: {
+            shadowColor: DefaultColor.slate['200'],
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.5,
+            shadowRadius: 20,
+          },
+          android: {
+            elevation: 3,
+          },
+        }),
+      }}
       {...props}
     >
       {/* HEADER CỦA CARD */}

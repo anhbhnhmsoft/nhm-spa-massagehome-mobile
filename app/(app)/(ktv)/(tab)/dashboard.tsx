@@ -1,16 +1,17 @@
 import React, { ComponentType, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { CreditCard, Share2, Star, TrendingUp, Users } from 'lucide-react-native';
+import { CreditCard, Motorbike, Share2, Star, TrendingUp, Users } from 'lucide-react-native';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useDashboardTotalIncome } from '@/features/ktv/hooks';
-import { formatBalance } from '@/lib/utils';
+import { cn, formatBalance } from '@/lib/utils';
 import { _DashboardTabMap, DASHBOARD_TABS, DashboardTab } from '@/features/service/const';
 import DashboardChart from '@/components/app/ktv/dashboard_chart';
 import Empty from '@/components/empty';
 import { router } from 'expo-router';
 import { TransactionItem } from '@/components/app/wallet';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 interface StatCardProps {
   icon: ComponentType<{
@@ -22,7 +23,7 @@ interface StatCardProps {
   iconBgColor: string;
 }
 const StatCard = ({ icon: Icon, label, value, iconBgColor }: StatCardProps) => (
-  <View className="mb-4 w-[48%] rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-gray-200">
+  <Card containerClassName="mb-4 w-[48%]">
     <View className={`mb-3 h-11 w-11 items-center justify-center rounded-2xl ${iconBgColor}`}>
       <Icon size={22} color="#044984" />
     </View>
@@ -30,7 +31,7 @@ const StatCard = ({ icon: Icon, label, value, iconBgColor }: StatCardProps) => (
     <Text className="mb-1 font-inter-medium text-[13px] text-gray-400">{label}</Text>
 
     <Text className="font-inter-bold text-xl text-primary-color-1">{value}</Text>
-  </View>
+  </Card>
 );
 
 const DashboardScreen = () => {
@@ -46,6 +47,7 @@ const DashboardScreen = () => {
   } = useDashboardTotalIncome();
 
   const [refreshing, setRefreshing] = useState(false);
+
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
@@ -127,7 +129,7 @@ const DashboardScreen = () => {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-slate-50">
       <HeaderAppKTV />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -135,7 +137,7 @@ const DashboardScreen = () => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         contentContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT }}>
         {/* Header Tabs */}
-        <View className="mb-8 mt-4 rounded-2xl bg-gray-100/80 p-1.5">
+        <View className="mb-8 mt-4 rounded-2xl bg-white p-1.5">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -146,13 +148,17 @@ const DashboardScreen = () => {
                 <TouchableOpacity
                   key={tab}
                   onPress={() => handleSetTab(tab)}
-                  className={`rounded-xl px-5 py-2.5 ${isActive ? 'bg-white' : ''}`}>
+                  className={cn(
+                    'rounded-xl px-5 py-2.5',
+                    isActive ? 'bg-primary-color-2' : ''
+                  )}>
                   <Text
-                    className={`text-center text-[13px] ${
+                    className={cn(
+                      'text-center text-[13px]',
                       isActive
-                        ? 'font-inter-bold text-primary-color-1'
+                        ? 'font-inter-bold text-white'
                         : 'font-inter-medium text-gray-500'
-                    }`}>
+                    )}>
                     {t(_DashboardTabMap[tab])}
                   </Text>
                 </TouchableOpacity>
@@ -161,57 +167,59 @@ const DashboardScreen = () => {
           </ScrollView>
         </View>
 
-        {/* Tổng doanh thu */}
-        <View className="mb-8 items-center">
-          <Text className="mb-2 font-inter-semibold text-[13px] uppercase tracking-[2px] text-gray-400">
-            {t('dashboard.total_income_label')}
-          </Text>
-          <View className="flex-row items-end gap-1">
-            <Text className="font-inter-extrabold text-[36px] text-primary-color-1">
-              {formatBalance(data?.total_income || 0)}
+        <Card containerClassName="mb-8">
+          {/* Tổng doanh thu */}
+          <View className="mb-8 items-center">
+            <Text className="mb-2 font-inter-semibold text-[13px] uppercase tracking-[2px] text-gray-400">
+              {t('dashboard.total_income_label')}
             </Text>
-            <Text className="font-inter-bold text-sm text-primary-color-1">
-              {t('common.currency')}
-            </Text>
-          </View>
-
-          {percentChangeText && activeTab !== DashboardTab.DAY && (
-            <View className="mt-3 flex-row items-center rounded-full bg-green-50 px-4 py-1.5">
-              <TrendingUp size={14} color="#22c55e" />
-              <Text className="ml-1.5 text-sm font-semibold text-green-600">
-                {percentChangeText}
+            <View className="flex-row items-end gap-1">
+              <Text className="font-inter-extrabold text-[36px] text-primary-color-1">
+                {formatBalance(data?.total_income || 0)}
+              </Text>
+              <Text className="font-inter-bold text-sm text-primary-color-1">
+                {t('common.currency')}
               </Text>
             </View>
-          )}
-        </View>
 
-        {/* Biểu đồ doanh thu (Placeholder) */}
-        <DashboardChart type={activeTab} data={data ? data.chart_data : []} />
+            {percentChangeText && activeTab !== DashboardTab.DAY && (
+              <View className="mt-3 flex-row items-center rounded-full bg-green-50 px-4 py-1.5">
+                <TrendingUp size={14} color="#22c55e" />
+                <Text className="ml-1.5 text-sm font-inter-medium text-green-600">
+                  {percentChangeText}
+                </Text>
+              </View>
+            )}
+          </View>
+          {/* Biểu đồ doanh thu (Placeholder) */}
+          <DashboardChart type={activeTab} data={data ? data.chart_data : []} />
+        </Card>
+
 
         {/* Grid Stats */}
         <View className="flex-row flex-wrap justify-between">
           <StatCard
             icon={Users}
             label={t('dashboard.stats.customers')}
-            value={data ? data.total_customers : '0'}
+            value={data?.total_customers ? data.total_customers : '0'}
             iconBgColor="bg-blue-50"
           />
           <StatCard
-            icon={CreditCard}
-            label={t('dashboard.stats.received_income')}
-            value={data ? formatBalance(data.received_income) : '0'}
+            icon={Motorbike}
+            label={t('dashboard.stats.transportation_income')}
+            value={data?.transportation_income ? formatBalance(data.transportation_income) : '0'}
             iconBgColor="bg-green-50"
           />
           <StatCard
             icon={Share2}
             label={t('dashboard.stats.affiliate')}
-            value={data ? formatBalance(data.affiliate_income) : '0'}
+            value={data?.affiliate_income ? formatBalance(data.affiliate_income) : '0'}
             iconBgColor="bg-purple-50"
           />
           <StatCard
             icon={Star}
             label={t('dashboard.stats.reviews')}
-            value={data ? data.total_reviews : '0'}
+            value={data?.total_reviews ? data.total_reviews : '0'}
             iconBgColor="bg-orange-50"
           />
         </View>
@@ -224,7 +232,7 @@ const DashboardScreen = () => {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push('/(app)/(service-ktv)/wallet');
+                router.push('/(app)/(ktv)/(service)/wallet');
               }}>
               <Text className="font-inter-bold text-[13px] text-primary-color-2">
                 {t('common.see_all')}

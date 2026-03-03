@@ -80,6 +80,12 @@ export type KTVDetail = ListKTVItem & {
   } | null;
   price_transportation: number ; // Giá vận chuyển
   service_categories: ServiceCategoryItem[];
+  on_going_booking: { // Dịch vụ đang diễn ra (nếu có)
+    id: string;
+    start_time: string; // ISO Date String
+    duration: number;
+    expect_end_time: string; // ISO Date String
+  } | null;
 };
 
 export type ListKTVRequest = BaseSearchRequest<{

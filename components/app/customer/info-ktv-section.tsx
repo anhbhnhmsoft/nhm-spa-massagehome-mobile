@@ -75,6 +75,16 @@ export const InfoKtvSection:FC<Props> = ({t, detail}) => {
         </Text>
       </View>
 
+      {/* Dịch vụ đang diễn ra */}
+      {detail.on_going_booking && (
+        <View className="mt-3 flex-row rounded bg-blue-50 px-2 py-1 self-start">
+          <Text className="font-inter-bold text-xs text-primary-color-2">
+            {t('ktv.index.ktv_had_order_in_progress', { time: dayjs(detail.on_going_booking.expect_end_time).format('HH:mm') })}
+          </Text>
+        </View>
+      )}
+
+
       {/* Giới thiệu */}
       <View className="mt-3">
         <Text className="font-inter-bold text-lg text-primary-color-2">

@@ -81,6 +81,12 @@ export type PrepareBookingResponse = ResponseDataSuccessType<{
   discount_coupon: number; // Giảm giá coupon
   final_price: number; // Giá cuối cùng sau khi áp dụng coupon
   distance: number; // Khoảng cách từ kỹ thuật viên đến khách hàng
+  booking_today: {
+    id: string;
+    status: _BookingStatus.ONGOING | _BookingStatus.CONFIRMED;
+    booking_time: string;
+    start_time: string | null;
+  }
 }>;
 
 export type BookingServiceRequest =  PrepareBookingRequest & {
