@@ -804,7 +804,9 @@
     },
     "services": {
       "add_new_service": "Add New Service",
-      "edit_service": "Edit Service",
+      "enable_service": "Enable Service",
+      "disable_service": "Disable Service",
+      "set_service_success": "Service updated",
       "delete_service": "Delete Service",
       "detail_title": "Service Details",
       "bookings_count": "orders received",

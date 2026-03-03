@@ -7,7 +7,6 @@ import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
 import { useImagePicker } from '@/features/app/hooks/use-image-picker';
 import { getFilesByType, usePartnerRegisterForm } from '@/features/user/hooks/use-partner-register-form';
-import { ImageSlot } from '@/components/app/partner-register/image-slot';
 import { InputField } from '@/components/app/partner-register/input-field';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -20,6 +19,7 @@ import { Icon } from '@/components/ui/icon';
 import { _UserRole } from '@/features/auth/const';
 import { LanguageTextArea } from '@/components/app/language-text-area';
 import ModalApplication from '@/components/app/partner-register/modal-application';
+import { ImageRegisterPartnerSlot } from '@/components/app/customer';
 
 export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
@@ -156,7 +156,7 @@ export default function PartnerRegisterIndividualScreen() {
                       </Text>
                       <View className="mb-4 flex-row flex-wrap gap-3">
                         {/* CCCD FRONT */}
-                        <ImageSlot
+                        <ImageRegisterPartnerSlot
                           uri={idFrontFile?.file.uri || null}
                           token={idFrontFile?.file.token || undefined}
                           label={t('profile.partner_form.id_front')}
@@ -188,7 +188,7 @@ export default function PartnerRegisterIndividualScreen() {
                         />
 
                         {/* CCCD BACK */}
-                        <ImageSlot
+                        <ImageRegisterPartnerSlot
                           uri={idBackFile?.file.uri || null}
                           token={idBackFile?.file.token || undefined}
                           label={t('profile.partner_form.id_back')}
@@ -238,7 +238,7 @@ export default function PartnerRegisterIndividualScreen() {
                       <Text className="my-2 font-inter-bold text-base text-slate-900">
                         {t('profile.partner_form.face_with_id')} <Text className="text-red-500">*</Text>
                       </Text>
-                      <ImageSlot
+                      <ImageRegisterPartnerSlot
                         uri={faceWithCardFile?.file.uri || null}
                         token={faceWithCardFile?.file.token || undefined}
                         label={t('profile.partner_form.add_photo')}
@@ -291,7 +291,7 @@ export default function PartnerRegisterIndividualScreen() {
                           </Text>
                           <View className="mb-2 flex-row flex-wrap gap-3">
                             {licenseFiles.map((item, index) => (
-                              <ImageSlot
+                              <ImageRegisterPartnerSlot
                                 key={item.file.uri + index}
                                 uri={item.file.uri}
                                 label={t('common.degree')}
@@ -318,7 +318,7 @@ export default function PartnerRegisterIndividualScreen() {
                             ))}
                             {/* ADD NEW LICENSE IMAGE */}
                             {licenseFiles.length < 5 &&
-                              <ImageSlot
+                              <ImageRegisterPartnerSlot
                                 uri={null}
                                 label={t('profile.partner_form.add_photo')}
                                 onAdd={() =>
@@ -365,7 +365,7 @@ export default function PartnerRegisterIndividualScreen() {
                           <Text className="my-2 font-inter-bold text-base text-slate-900">
                             {t('profile.partner_form.degrees_title')} <Text className="text-red-500">*</Text>
                           </Text>
-                          <ImageSlot
+                          <ImageRegisterPartnerSlot
                             uri={faceWithCardFile?.file.uri || null}
                             token={faceWithCardFile?.file.token || undefined}
                             disabled={reviewApplication?.status == _ReviewApplicationStatus.PENDING}
@@ -523,7 +523,7 @@ export default function PartnerRegisterIndividualScreen() {
                     className="font-inter-bold text-primary-color-2 underline"
                     onPress={() =>
                       router.push({
-                        pathname: '/(app)/(profile)/term-or-use-pdf',
+                        pathname: '/(app)/term-or-use-pdf',
                         params: {
                           type: forWho === "ktv" || forWho === "leader-ktv" ? ContractFileType.POLICY_FOR_KTV.toString() : ContractFileType.POLICY_FOR_AGENCY.toString(),
                         },
@@ -536,7 +536,7 @@ export default function PartnerRegisterIndividualScreen() {
                     className="font-inter-bold text-primary-color-2 underline"
                     onPress={() =>
                       router.push({
-                        pathname: '/(app)/(profile)/term-or-use-pdf',
+                        pathname: '/(app)/term-or-use-pdf',
                         params: {
                           type: ContractFileType.POLICY_PRIVACY.toString(),
                         },

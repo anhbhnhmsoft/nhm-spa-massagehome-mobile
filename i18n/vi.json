@@ -805,7 +805,9 @@
     },
     "services": {
       "add_new_service": "Thêm dịch vụ mới",
-      "edit_service": "Chỉnh sửa dịch vụ",
+      "enable_service": "Kích hoạt dịch vụ",
+      "disable_service": "Vô hiệu hóa dịch vụ",
+      "set_service_success": "Dịch vụ đã được cập nhật",
       "delete_service": "Xóa dịch vụ",
       "detail_title": "Chi tiết dịch vụ",
       "bookings_count": "lượt nhận",

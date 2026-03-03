@@ -1,11 +1,8 @@
 import {  View } from 'react-native';
-
 import { Skeleton } from '@/components/ui/skeleton';
 
-/**
- * Card Skeleton hiển thị thông tin của massager trong trang dịch vụ
- */
-export const KTVServiceCardSkeleton = () => {
+
+export const ServiceCardSkeleton = () => {
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
       <View className="mr-3 h-20 w-20">
@@ -34,5 +31,3 @@ export const KTVServiceCardSkeleton = () => {
     </View>
   );
 };
-
-

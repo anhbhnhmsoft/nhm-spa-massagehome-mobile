@@ -1,7 +1,7 @@
 import React from 'react';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Text } from '@/components/ui/text';
-import { HeaderAppKTV } from '@/components/app/ktv/header-app';
+import { HeaderAppKTV } from '@/components/app/ktv';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useTranslation } from 'react-i18next';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
@@ -16,12 +16,12 @@ export default function KTVDashboard() {
   const bottomPadding = getTabBarHeight() + 20;
 
   return (
-    <View className="flex-1 bg-base-color-3">
+    <View className="flex-1 bg-slate-50">
       {/* Header */}
       <HeaderAppKTV />
 
       <ScrollView
-        className="flex-1 bg-base-color-3 px-4 pt-4"
+        className="flex-1 px-4 pt-4"
         showsVerticalScrollIndicator={false}
         style={{ paddingBottom: bottomPadding }}
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -35,12 +35,6 @@ export default function KTVDashboard() {
               <Text className="font-inter-bold text-lg text-slate-900">
                 {t('ktv.index.order_in_progress')}
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  router.push('/(app)/(tab-ktv)/schedule');
-                }}>
-                <Text className="text-sm text-primary-color-2">{t('common.see_all')}</Text>
-              </TouchableOpacity>
             </View>
 
             <ServiceOngoingItemCard item={data.booking_ongoing} />
@@ -54,7 +48,7 @@ export default function KTVDashboard() {
             </Text>
             <TouchableOpacity
               onPress={useSingleTouch(() => {
-                router.push('/(app)/(tab-ktv)/schedule');
+                router.push('/(app)/(ktv)/(tab)/schedule');
               })}>
               <Text className="text-sm text-primary-color-2">{t('common.see_all')}</Text>
             </TouchableOpacity>

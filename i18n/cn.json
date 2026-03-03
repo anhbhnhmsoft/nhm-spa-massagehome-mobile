@@ -802,7 +802,9 @@
     },
     "services": {
       "add_new_service": "添加新服务",
-      "edit_service": "编辑服务",
+      "enable_service": "启用服务",
+      "disable_service": "禁用服务",
+      "set_service_success": "服务已更新",
       "delete_service": "删除服务",
       "detail_title": "服务详情",
       "bookings_count": "已接单",

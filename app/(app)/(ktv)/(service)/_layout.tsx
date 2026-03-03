@@ -6,8 +6,6 @@ export default function ServiceKtvLayout() {
     <>
       <FocusAwareStatusBar hidden={true} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="form" />
-        <Stack.Screen name="service-detail" />
         <Stack.Screen name="chat" />
         <Stack.Screen name="booking-details" />
         <Stack.Screen name="edit-info" />

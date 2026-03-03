@@ -32,9 +32,6 @@ export type ServiceItem = {
   }[];
 };
 
-export type ServiceDetailResponse = ResponseDataSuccessType<ServiceItem>;
-
-
 
 // Pick only required fields for booking
 export type PickBookingItem = {

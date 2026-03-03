@@ -41,7 +41,12 @@ export const InputField = <T extends FieldValues = any>({
               // Nếu là numeric, gửi số về cho Hook Form, nếu không gửi string
               if (keyboardType === 'numeric') {
                 // Chỉ gửi số nếu chuỗi không rỗng, tránh gửi NaN khi xóa hết
-                onChange(text === '' ? '' : Number(text));
+                const val = Number(text);
+                if (Number.isNaN(val)) {
+                  onChange(0);
+                }else {
+                  onChange(val);
+                }
               } else {
                 onChange(text);
               }

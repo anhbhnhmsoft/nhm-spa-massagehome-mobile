@@ -4,7 +4,7 @@ import Empty from '@/components/empty';
 import { getTabBarHeight } from '@/components/styles/style';
 import { Text } from '@/components/ui/text';
 import { BookingItem, ListBookingRequest } from '@/features/booking/types';
-import { useSchedule } from '@/features/ktv/hooks/use-list';
+import { useSchedule } from '@/features/ktv/hooks';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
@@ -26,7 +26,7 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
     <View className="mb-4 mt-4 px-4">
       <ScrollView
         horizontal
-        className="bg-white py-2 rounded-lg"
+        className="bg-white py-2 rounded-lg shadow-lg border border-slate-100"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -95,13 +95,13 @@ export default function ScheduleScreen() {
 
   const handleGoDetails = useCallback((item: BookingItem) => {
     router.push({
-      pathname: '/(app)/(service-ktv)/booking-details',
+      pathname: '/(app)/(ktv)/(service)/booking-details',
       params: { id: item.id },
     });
   }, []);
 
   return (
-    <View className="flex-1 bg-base-color-3">
+    <View className="flex-1 bg-slate-50">
       <HeaderAppKTV />
       <View className="flex-1">
         <FlatList

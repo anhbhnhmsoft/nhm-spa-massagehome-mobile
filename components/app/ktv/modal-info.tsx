@@ -38,10 +38,8 @@ export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
 
   // Hàm logout kèm đóng dialog
   const logout = useLogout();
-  const handleLogout = () => {
-    logout();
-    setLogoutModalOpen(false);
-  };
+
+  const {t} = useTranslation();
 
   return (
     <>
@@ -64,9 +62,12 @@ export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
       <Dialog
         isOpen={isLogoutModalOpen}
         onClose={() => setLogoutModalOpen(false)}
-        title="profile.log_out_title"
-        description="profile.log_out_desc"
-        onConfirm={handleLogout}
+        title={t('profile.log_out_title')}
+        description={t('profile.log_out_desc')}
+        onConfirm={() => {
+          setLogoutModalOpen(false)
+          logout();
+        }}
       />
     </>
   );
@@ -129,7 +130,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/config-schedule');
+            router.push('/(app)/(ktv)/(service)/config-schedule');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={CalendarCog} size={30} className="text-primary-color-1" />
@@ -142,7 +143,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/managed-technicians');
+            router.push('/(app)/(ktv)/(service)/managed-technicians');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Handshake} size={30} className="text-primary-color-1" />
@@ -155,7 +156,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/edit-info');
+            router.push('/(app)/(ktv)/(service)/edit-info');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={UserPen} size={30} className="text-primary-color-1" />
@@ -168,7 +169,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/affiliate');
+            router.push('/(app)/(ktv)/(service)/affiliate');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={HandCoins} size={30} className="text-primary-color-1" />
@@ -181,7 +182,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(service-ktv)/wallet');
+            router.push('/(app)/(ktv)/(service)/wallet');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Wallet} size={30} className="text-primary-color-1" />
@@ -230,7 +231,7 @@ export const FeatureList = ({
           className="mb-2 w-[33%] items-center"
           onPress={() => {
             onClose();
-            router.push('/(app)/(notification)/notificaton');
+            router.push('/(app)/(notification)/notification');
           }}>
           <View className="mb-1 rounded-full bg-gray-50 p-3">
             <Icon as={Bell} size={30} className="text-primary-color-1" />

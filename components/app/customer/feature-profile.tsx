@@ -136,7 +136,10 @@ export const FeatureProfile = () => {
         onClose={() => setLogoutModalOpen(false)}
         title={t('profile.log_out_title')}
         description={t('profile.log_out_desc')}
-        onConfirm={logout}
+        onConfirm={() => {
+          setLogoutModalOpen(false)
+          logout();
+        }}
       />
     </>
   );

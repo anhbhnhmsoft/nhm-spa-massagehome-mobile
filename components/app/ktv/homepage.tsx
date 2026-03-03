@@ -36,7 +36,7 @@ export const AppointmentCard = ({ item }: AppointmentCardProps) => {
     <TouchableOpacity
       onPress={() => {
         router.push({
-          pathname: '/(app)/(service-ktv)/booking-details',
+          pathname: '/(app)/(ktv)/(service)/booking-details',
           params: { id: item.id },
         });
       }}
@@ -241,7 +241,6 @@ export const ReviewNewToday = ({ data }: { data?: ReviewItem[] }) => {
 interface ServiceOngoingItemCard {
   item: BookingItem;
 }
-const PRIMARY_BLUE = '#2B7BBE';
 export const ServiceOngoingItemCard = ({ item }: ServiceOngoingItemCard) => {
   const { t } = useTranslation();
 
@@ -262,7 +261,7 @@ export const ServiceOngoingItemCard = ({ item }: ServiceOngoingItemCard) => {
     <TouchableOpacity
       onPress={() => {
         router.push({
-          pathname: '/(app)/(service-ktv)/booking-details',
+          pathname: '/(app)/(ktv)/(service)/booking-details',
           params: { id: item.id },
         });
       }}
@@ -306,7 +305,7 @@ export const ServiceOngoingItemCard = ({ item }: ServiceOngoingItemCard) => {
         <View className="mt-5 flex-row gap-3">
           {/* Box Bắt đầu */}
           <View className="flex-1 flex-row items-center rounded-2xl bg-slate-50 p-3">
-            <Clock size={20} color={PRIMARY_BLUE} />
+            <Clock size={20} color={DefaultColor.base['primary-color-2']} />
             <View className="ml-3">
               <Text className="font-inter-bold text-[10px] text-slate-400">
                 {t('booking.start')}
@@ -320,7 +319,7 @@ export const ServiceOngoingItemCard = ({ item }: ServiceOngoingItemCard) => {
 
           {/* Box Còn lại */}
           <View className="flex-1 flex-row items-center rounded-2xl bg-blue-50/50 p-3">
-            <Hourglass size={20} color={PRIMARY_BLUE} />
+            <Hourglass size={20} color={DefaultColor.base['primary-color-2']} />
 
             <View className="ml-3 items-baseline">
               <Text className="font-inter-bold text-[10px] text-slate-400">

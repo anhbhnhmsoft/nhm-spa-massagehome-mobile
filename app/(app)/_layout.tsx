@@ -4,10 +4,7 @@ import { _AuthStatus, _UserRole } from '@/features/auth/const';
 import { useApplicationStore } from '@/features/app/stores';
 import FullScreenLoading from '@/components/full-screen-loading';
 import { NotificationPermissionModal } from '@/components/app/notification-permission-modal';
-import { useEffect, useState } from 'react';
-import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { useCheckMatchAffiliate } from '@/features/affiliate/hooks';
-import { useBookingCountdown } from '@/features/ktv/hooks/use-booking';
 import { useLocation } from '@/features/app/hooks/use-location';
 import { useCheckConfigApplicationUpdate } from '@/features/config/hooks';
 
@@ -24,9 +21,6 @@ export default function AppLayout() {
 
   // kiểm tra affiliate link khi user login
   useCheckMatchAffiliate();
-
-  // đếm booking start (chỉ dùng cho KTV) (dùng ở layout toàn cục)
-  useBookingCountdown();
 
   // Kiểm tra config application update
   const {isMaintained} = useCheckConfigApplicationUpdate();
@@ -52,18 +46,21 @@ export default function AppLayout() {
         <Stack.Protected guard={!isMaintained}>
           {/* --- TAB KTV SCREEN --- */}
           <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.KTV}>
-            <Stack.Screen name="(tab-ktv)" />
-            <Stack.Screen name="(service-ktv)" />
+            <Stack.Screen name="(ktv)" />
           </Stack.Protected>
 
-          {/* --- TAB KTV SCREEN --- */}
+          {/* --- TAB AGENCY SCREEN --- */}
           <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.AGENCY}>
             <Stack.Screen name="(tab-agency)" />
             <Stack.Screen name="(service-agency)" />
           </Stack.Protected>
 
           {/* --- TAB CUSTOMER SCREEN --- */}
-          <Stack.Screen name="(customer)" />
+          <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED || (
+                status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.CUSTOMER
+          )}>
+            <Stack.Screen name="(customer)" />
+          </Stack.Protected>
 
           <Stack.Protected guard={status === _AuthStatus.AUTHORIZED}>
             <Stack.Screen name="take-picture-avatar" />

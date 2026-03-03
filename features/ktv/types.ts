@@ -6,7 +6,7 @@ import {
   ResponseDataSuccessType,
 } from '@/lib/types';
 import { BookingItem } from '@/features/booking/types';
-import { CategoryItem, ReviewItem, ServiceItem } from '@/features/service/types';
+import {  ReviewItem, ServiceItem } from '@/features/service/types';
 import { _LanguageCode } from '@/lib/const';
 import { _Gender } from '@/features/auth/const';
 import { DashboardTab } from '../service/const';
@@ -28,7 +28,21 @@ export type StartBookingResponse = ResponseDataSuccessType<{
 }>;
 export type BookingDetailsResponse = ResponseDataSuccessType<BookingItem>;
 
-export type AllCategoriesResponse = ResponseDataSuccessType<CategoryItem[]>;
+export type CategoryServiceItem = {
+  id: string;
+  name: string;
+  is_featured: boolean;
+  description: string | null;
+  image_url: string | null;
+  is_registered: boolean;
+  is_active: boolean;
+  prices: {
+    price: string;
+    duration: number;
+  }[]
+}
+
+export type AllCategoriesResponse = ResponseDataSuccessType<CategoryServiceItem[]>;
 
 export type OptionCategory = {
   id: string;

@@ -2,7 +2,6 @@ import { client } from '@/lib/axios-client';
 import {
   CategoryListRequest,
   CategoryListResponse,
-  ServiceDetailResponse,
   ListCouponRequest,
   ListCouponResponse,
   CouponUserListRequest,
@@ -22,8 +21,8 @@ const serviceApi = {
     return response.data;
   },
   // Lấy chi tiết dịch vụ
-  detailService: async (serviceId: string): Promise<ServiceDetailResponse> => {
-    const response = await client.get(`${defaultUri}/detail/${serviceId}`);
+  setService: async (serviceId: string): Promise<ResponseSuccessType> => {
+    const response = await client.get(`${defaultUri}/set-service/${serviceId}`);
     return response.data;
   },
   // Lấy danh sách coupon

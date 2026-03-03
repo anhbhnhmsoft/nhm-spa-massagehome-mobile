@@ -35,39 +35,12 @@ const ktvApi = {
     const response = await client.get(`${defaultUri}/all-categories`);
     return response.data;
   },
-  // api cho màn hình list-service
-  listServices: async (params: ListServiceRequest): Promise<ListServiceResponse> => {
-    const response = await client.get(`${defaultUri}/list-service`, { params });
-    return response.data;
-  },
-  // api cho màn hình detail-service
-  detailService: async (params: DetailServiceRequest): Promise<ServiceDetailResponse> => {
-    const response = await client.get(`${defaultUri}/detail-service/${params.id}`);
-    return response.data;
-  },
-  // api cho màn hình add-booking
-  addService: async (data: FormData): Promise<ResponseSuccessType> => {
-    const response = await client.post(`${defaultUri}/add-service`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  },
   // api cho màn hình update-service
-  updateService: async (data: FormData, id: string): Promise<UpdateServiceResponse> => {
-    const response = await client.post(`${defaultUri}/update-service/${id}`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+  setService: async (id: string): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/set-service/${id}`);
     return response.data;
   },
-  // api cho màn hình delete-service
-  deleteService: async (id: string): Promise<ResponseSuccessType> => {
-    const response = await client.delete(`${defaultUri}/delete-service/${id}`);
-    return response.data;
-  },
+
   // api cho màn hình list-booking
   bookings: async (params: ListBookingRequest): Promise<ListBookingResponse> => {
     const response = await client.get(`${defaultUri}/list-booking`, { params });
@@ -135,12 +108,6 @@ const ktvApi = {
     data: EditConfigScheduleRequest
   ): Promise<ConfigSchedulesResponse> => {
     const response = await client.post(`${defaultUri}/config-schedule`, data);
-    return response.data;
-  },
-
-  // get list danh sách gói dịch vụ của category
-  optionByCategories: async (id: string): Promise<ListOptionCategoriesResponse> => {
-    const response = await client.get(`${defaultUri}/category-price/${id}`);
     return response.data;
   },
 

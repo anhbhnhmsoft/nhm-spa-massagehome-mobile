@@ -16,3 +16,4 @@ export * from './fist-review-ktv-section';
 export * from './service-card-detail-ktv';
 export * from './services-bottom-sheet';
 export * from './booking-complete';
+export * from './image-register-partner-slot';
