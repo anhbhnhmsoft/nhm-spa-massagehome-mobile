@@ -12,6 +12,7 @@ import { _Gender } from '@/features/auth/const';
 import { _LanguageCode } from '@/lib/const';
 import { useCallback } from 'react';
 import { router } from 'expo-router';
+import useResetNav from '@/features/app/hooks/use-reset-nav';
 
 /**
  * Hàm để đăng ký user
@@ -29,7 +30,11 @@ export const useHandleRegister = () => {
   // Lấy phone_authenticate từ auth store khi submit form verify OTP
   const phone = useFormAuthStore((state) => state.phone_authenticate);
 
+  const resetState = useFormAuthStore((state) => state.resetState);
+
   const login = useAuthStore((state) => state.login);
+
+  const resetNav = useResetNav();
 
   // mutate function để gọi API đăng ký user
   const mutationRegister = useRegisterMutation();
@@ -74,10 +79,12 @@ export const useHandleRegister = () => {
         });
         // Sau khi login thành công thì clear user referral
         clearUserReferral();
+        // Reset state form auth store
+        resetState();
         // Lưu user vào auth store
         await login(res.data);
         // Sau khi login thành công thì redirect về màn hình home
-        router.replace('/(app)/(customer)/(tab)');
+        resetNav('/(app)/(customer)/(tab)');
       },
       onError: (err) => {
         handleError(err);

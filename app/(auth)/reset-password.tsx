@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { useHandleLogin } from '@/features/auth/hooks';
 import {
   Keyboard,
   KeyboardAvoidingView,
-  Platform, Pressable,
+  Platform,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -11,14 +10,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { Controller } from 'react-hook-form';
-import { cn } from '@/lib/utils';
 import { FormInput } from '@/components/ui/form-input';
+import { cn } from '@/lib/utils';
+import { useResetPassword } from '@/features/auth/hooks';
 
-
-export default function LoginScreen() {
+export default function ResetPasswordScreen() {
   const { t } = useTranslation();
 
-  const { form, onSubmit, onForgotPassword, loading } = useHandleLogin();
+  const { form, onSubmit, loading } = useResetPassword();
 
   const {
     control,
@@ -37,10 +36,10 @@ export default function LoginScreen() {
           <View>
             {/* Title */}
             <Text className="text-2xl text-center font-inter-bold text-gray-900 mb-2">
-              {t('auth.login_title')}
+              {t('auth.reset_password_title')}
             </Text>
             <Text className="text-gray-500 text-base mb-8 leading-6">
-              {t('auth.login_description')}
+              {t('auth.reset_password_description')}
             </Text>
 
             {/* Password Input */}
@@ -52,8 +51,8 @@ export default function LoginScreen() {
                   id="password"
                   required
                   description={t('common.password_description')}
-                  placeholder={t('common.password')}
-                  label={t('common.password')}
+                  placeholder={t('common.new_password')}
+                  label={t('common.new_password')}
                   error={errors.password?.message}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -66,24 +65,6 @@ export default function LoginScreen() {
           </View>
 
           <View className="mb-6 gap-4">
-
-            {/* Nút Quên mật khẩu */}
-            <View className="flex-row items-center justify-center">
-              <TouchableOpacity
-                onPress={onForgotPassword}
-                disabled={loading}
-                activeOpacity={0.6}
-              >
-                <Text className={cn('font-inter-semibold',
-                  !loading
-                    ? 'text-primary-color-2'
-                    : 'text-gray-400')}>
-                  {loading ? t('common.loading') : t('auth.forgot_password')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Nút Tiếp tục / Xác nhận */}
             <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
               disabled={loading}
@@ -95,7 +76,7 @@ export default function LoginScreen() {
               )}
             >
               <Text className="text-white text-lg font-inter-bold">
-                {loading ? t('common.loading') : t('common.continue')}
+                {loading ? t('common.loading') : t('auth.btn_reset_password')}
               </Text>
             </TouchableOpacity>
 

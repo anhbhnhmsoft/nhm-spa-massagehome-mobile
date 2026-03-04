@@ -1,16 +1,17 @@
 import { router, Tabs } from 'expo-router';
 import { Home, Briefcase, Users, User } from 'lucide-react-native';
-import { useCheckAuth } from '@/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { TabIcon } from '@/components/app/tab-icon';
 import PromoModal from '@/components/app/promo-modal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTabBarHeight, tabBarStyle } from '@/components/styles/style';
+import { useAuthStore } from '@/features/auth/stores';
+import { _AuthStatus } from '@/features/auth/const';
 
 
 export default function TabsLayout() {
-  const checkAuth = useCheckAuth();
+  const status = useAuthStore((s) => s.status);
   const { t } = useTranslation();
   const insets = useSafeAreaInsets(); // Lấy thông tin vùng an toàn
 
@@ -65,7 +66,7 @@ export default function TabsLayout() {
           name="profile"
           listeners={{
             tabPress: (e) => {
-              if (!checkAuth) {
+              if (status === _AuthStatus.UNAUTHORIZED) {
                 e.preventDefault();
                 router.push('/(auth)');
               }

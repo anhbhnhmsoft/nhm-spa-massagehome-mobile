@@ -117,7 +117,7 @@
     "save_qr_code": "Save QR Code",
     "total": "Total",
     "nickname": "Nickname",
-    "password_description": "Password must be at least 8 characters long, include uppercase, lowercase, numbers, and special characters."
+    "password_description": "Password must be at least 8 characters long, include at least 1 uppercase, 1 lowercase, 1 number."
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -206,8 +206,10 @@
       "REFERRAL_INVITE_KTV_REWARD": "Referral Invite KTV Reward",
       "DEPOSIT_WECHAT_PAY": "Deposit via Wechat Pay",
       "FEE_WITHDRAW": "Withdrawal Fee",
-      "FEE_TRANSPORT": "Transport Fee",
-      "EARN_TRANSPORT": "Earn Transport Fee"
+      "PAYMENT_FEE_TRANSPORT": "Payment Fee Transport",
+      "PAYMENT_KTV_EARN_TRANSPORT": "Earn Transport Fee",
+      "REFUND_CUSTOMER_TRANSPORT": "Refund Customer Transport",
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -307,6 +309,10 @@
     "register_description": "Please enter your information to help us verify your account.",
     "login_title": "Log in",
     "login_description": "Please enter your information to help us verify your account.",
+    "reset_password_title": "Reset Password",
+    "reset_password_description": "Please enter your new password.",
+    "btn_reset_password": "Reset Password",
+
     "i_agree_to": "I agree to",
     "terms_and_conditions": "Terms of Service",
     "privacy_policy": "Privacy Policy",
@@ -328,9 +334,10 @@
     },
     "success": {
       "resend_otp": "OTP resent successfully",
-      "verify_register_otp": "OTP verified successfully",
+      "verify_otp": "OTP verified successfully",
       "register_success": "Registration successful, welcome to the app!",
-      "login_success": "Login successful, welcome to the app!"
+      "login_success": "Login successful, welcome to the app!",
+      "reset_password_success": "Reset password successful, you can now log in with your new password."
     }
   },
   "request_location": {
@@ -923,7 +930,8 @@
     "invalid_message": "Invalid or expired QR code",
     "processing": "Processing QR code...",
     "scan_qr": "Scan QR Code",
-    "scan_title": "Move camera to referrer's QR code"
+    "scan_title": "Move camera to referrer's QR code",
+    "link_success": "Link successfully"
   },
   "config_schedule": {
     "loading": "Loading config...",

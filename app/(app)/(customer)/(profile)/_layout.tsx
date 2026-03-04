@@ -11,7 +11,6 @@ export default function ProfileLayout() {
       <Stack.Screen name="partner-register-individual" />
       <Stack.Screen name="orders" />
       <Stack.Screen name="affiliate" />
-      <Stack.Screen name="term-or-use-pdf" options={{ headerShown: false }} />
     </Stack>
   );
 }

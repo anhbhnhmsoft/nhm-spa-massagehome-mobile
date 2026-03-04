@@ -19,13 +19,15 @@ import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useApplicationStore } from '@/features/app/stores';
 import { useInfinityAddressList } from '@/features/location/hooks/use-query';
 import { useTranslation } from 'react-i18next';
-import { useCheckAuth, useGetProfile } from '@/features/auth/hooks';
+import { useGetProfile } from '@/features/auth/hooks';
 import useStoreLocation from '@/features/location/stores';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Alert } from 'react-native';
 import { getMessageError, goBack } from '@/lib/utils';
+import { _AuthStatus } from '@/features/auth/const';
+import { useAuthStore } from '@/features/auth/stores';
 
 // Hook quản lý tìm kiếm location
 export const useSearchLocation = () => {
@@ -141,18 +143,18 @@ export const useListLocation = () => {
   const setRefreshList = useStoreLocation((s) => s.setRefreshList);
   const setLoading = useApplicationStore((s) => s.setLoading);
   const { mutate: mutateDeleteAddress } = useMutationDeleteAddress();
-  const checkAuth = useCheckAuth();
+  const status = useAuthStore((s) => s.status);
   const handleError = useErrorToast();
   const [showSaveModal, setShowSaveModal] = useState(false);
   const location = useApplicationStore((s) => s.location);
 
   useEffect(() => {
     // Nếu không auth, quay lại trang trước
-    if (!checkAuth) {
+    if (status === _AuthStatus.UNAUTHORIZED) {
       goBack();
       return;
     }
-  }, [checkAuth]);
+  }, [status]);
 
   useEffect(() => {
     // Nếu cần refresh danh sách

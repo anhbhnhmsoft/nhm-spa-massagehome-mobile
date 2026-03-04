@@ -37,9 +37,10 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(
 
     return (
       <View className={cn('gap-2', containerClassName)}>
+        {/* Label Section */}
         {label && (
           <View>
-            <Label>
+            <Label className="text-slate-700">
               {label} {required && <Text className="text-red-500">*</Text>}
             </Label>
             {description && (
@@ -50,19 +51,21 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(
           </View>
         )}
 
-        <View className="relative justify-center">
+        <View className="relative w-full justify-center">
           <TextInput
             ref={ref}
             secureTextEntry={isSecure}
             placeholderTextColor="#94a3b8"
-            // Logic Text Area
-            multiline={isTextArea || props.multiline}
-            numberOfLines={isTextArea ? numberOfLines : undefined}
+            multiline={isTextArea}
+            numberOfLines={isTextArea ? numberOfLines : 1}
+            // textAlignVertical cực kỳ quan trọng cho Android TextArea
             textAlignVertical={isTextArea ? 'top' : 'center'}
+            // Thêm includeFontPadding: false để tránh lệch dòng trên Android
+            style={{ includeFontPadding: false }}
             className={cn(
               'w-full rounded-2xl bg-white px-4 border font-inter-medium text-slate-900',
-              // Nếu là TextArea thì để chiều cao tự động + padding top/bottom, ngược lại để h-12
-              isTextArea ? 'min-h-[50px] py-4' : 'h-12',
+              // h-12 cho input thường, min-h cho textarea. py-0 giúp căn giữa chuẩn hơn.
+              isTextArea ? 'min-h-[100px] py-4' : 'h-12 py-0',
               error ? 'border-red-500' : 'border-slate-100',
               (isPassword || rightIcon) ? 'pr-12' : '',
               className
@@ -70,12 +73,18 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(
             {...props}
           />
 
-          {/* Icon chỉ hiển thị khi không phải là TextArea hoặc được cấu hình riêng */}
+          {/* Icon Container: Đảm bảo luôn nằm giữa chiều cao h-12 */}
           {!isTextArea && (
-            <View className="absolute right-4 items-center justify-center">
+            <View className="absolute right-4 h-12 items-center justify-center">
               {isPassword ? (
-                <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-                  {isPasswordVisible ? <EyeOff size={20} color="#64748b" /> : <Eye size={20} color="#64748b" />}
+                <TouchableOpacity
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  {isPasswordVisible ?
+                    <EyeOff size={20} color="#64748b" /> :
+                    <Eye size={20} color="#64748b" />
+                  }
                 </TouchableOpacity>
               ) : rightIcon}
             </View>

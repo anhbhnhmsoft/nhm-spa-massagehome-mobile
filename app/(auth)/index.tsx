@@ -25,7 +25,7 @@ export default function Index() {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-[#4A3B32]">
+      <View className="flex-1 bg-[#4A3B32]">
         {/* 1. BACKGROUND LAYER */}
         <Image
           source={require('@/assets/images/bg-index.png')}
@@ -33,7 +33,7 @@ export default function Index() {
           resizeMode="cover"
         />
         {/* 2. MAIN CONTENT LAYER */}
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1 pt-3" edges={['top','bottom']}>
           {/* Header: Close & Language */}
           <View className="flex-row items-center justify-between px-5">
             {/* Close Button */}
@@ -84,7 +84,7 @@ export default function Index() {
             {t('auth.index_label_2')}
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
       {/* Modal: Select Language */}
       <SelectLanguage
         visible={modalLangVisible}

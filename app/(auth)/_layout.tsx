@@ -14,12 +14,9 @@ export default function AuthLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="auth" options={{ header: () => <HeaderBack /> }} />
         <Stack.Screen name="login" options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="verify-otp" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="register" options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen
-          name="term-or-use-pdf"
-          options={{ headerShown: false, gestureEnabled: false }}
-        />
+        <Stack.Screen name="reset-password" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="verify-otp" options={{ headerShown: false, gestureEnabled: false }} />
       </Stack>
     </>
   );

@@ -43,8 +43,10 @@ export enum _TransactionType {
   REFERRAL_INVITE_KTV_REWARD = 11, // Nhận hoa hồng từ người giới thiệu KTV khi đăng ký KTV
   DEPOSIT_WECHAT_PAY = 12, // Nạp tiền qua Wechat Pay
   FEE_WITHDRAW = 13, // Phí rút tiền
-  FEE_TRANSPORT = 14, // Chi phí di chuyển (Trừ tiền KH)
-  EARN_TRANSPORT = 15, // Nhận tiền từ di chuyển ( Cộng tiền KTV)
+  PAYMENT_FEE_TRANSPORT = 14, // Chi phí di chuyển (Trừ tiền KH)
+  PAYMENT_KTV_EARN_TRANSPORT = 15, // Nhận tiền từ di chuyển ( Cộng tiền KTV)
+  REFUND_CUSTOMER_TRANSPORT = 16, // Hoàn tiền cho customer khi hủy booking
+  PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL = 17, // thu hồi tiền thanh toán cho KTV khi hủy booking
 }
 
 export const _TransactionTypeMap = {
@@ -61,8 +63,10 @@ export const _TransactionTypeMap = {
   [_TransactionType.REFERRAL_INVITE_KTV_REWARD]: 'enum.transaction_type.REFERRAL_INVITE_KTV_REWARD',
   [_TransactionType.DEPOSIT_WECHAT_PAY]: 'enum.transaction_type.DEPOSIT_WECHAT_PAY',
   [_TransactionType.FEE_WITHDRAW]: 'enum.transaction_type.FEE_WITHDRAW',
-  [_TransactionType.FEE_TRANSPORT]: 'enum.transaction_type.FEE_TRANSPORT',
-  [_TransactionType.EARN_TRANSPORT]: 'enum.transaction_type.EARN_TRANSPORT',
+  [_TransactionType.PAYMENT_FEE_TRANSPORT]: 'enum.transaction_type.PAYMENT_FEE_TRANSPORT',
+  [_TransactionType.PAYMENT_KTV_EARN_TRANSPORT]: 'enum.transaction_type.PAYMENT_KTV_EARN_TRANSPORT',
+  [_TransactionType.REFUND_CUSTOMER_TRANSPORT]: 'enum.transaction_type.REFUND_CUSTOMER_TRANSPORT',
+  [_TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL]: 'enum.transaction_type.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL',
 };
 
 export enum _TransactionStatus {
@@ -94,7 +98,9 @@ export const _TransactionInType = [
   _TransactionType.REFUND,
   _TransactionType.REFERRAL_INVITE_KTV_REWARD,
   _TransactionType.REFERRAL_KTV,
-  _TransactionType.EARN_TRANSPORT,
+  _TransactionType.REFUND_CUSTOMER_TRANSPORT,
+  _TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL,
+  _TransactionType.PAYMENT_KTV_EARN_TRANSPORT,
 ] as readonly _TransactionType[];
 
 export const _TransactionOutType = [
@@ -102,7 +108,7 @@ export const _TransactionOutType = [
   _TransactionType.FEE_WITHDRAW,
   _TransactionType.PAYMENT,
   _TransactionType.RETRIEVE_PAYMENT_REFUND_KTV,
-  _TransactionType.FEE_TRANSPORT,
+  _TransactionType.PAYMENT_FEE_TRANSPORT,
 ] as readonly _TransactionType[];
 
 // Các loại thông tin rút tiền

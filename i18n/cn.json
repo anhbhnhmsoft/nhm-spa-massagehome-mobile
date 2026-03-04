@@ -117,7 +117,7 @@
     "save_qr_code": "保存二维码",
     "total": "总计",
     "nickname": "昵称",
-    "password_description": "密码必须至少包含8个字符，包括大写字母、小写字母、数字和特殊字符。"
+    "password_description": "密码必须至少包含8个字符，包括至少1个大写字母、1个小写字母、1个数字。"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -206,8 +206,10 @@
       "REFERRAL_PARTNER": "推荐合作伙伴",
       "DEPOSIT_WECHAT_PAY": "Wechat Pay 充值",
       "FEE_WITHDRAW": "提现手续费",
-      "FEE_TRANSPORT": "运输手续费",
-      "EARN_TRANSPORT": "运输奖励"
+      "PAYMENT_FEE_TRANSPORT": "支付运输手续费",
+      "PAYMENT_KTV_EARN_TRANSPORT": "支付运输奖励",
+      "REFUND_CUSTOMER_TRANSPORT": "退款客户运输",
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "退款KTV运输"
     },
     "transaction_status": {
       "PENDING": "处理中",
@@ -307,6 +309,9 @@
     "register_description": "请输入您的信息以帮助我们验证您的账户。",
     "login_title": "登录",
     "login_description": "请输入您的信息以帮助我们验证您的账户。",
+    "reset_password_title": "重置密码",
+    "reset_password_description": "请输入您的新密码。",
+    "btn_reset_password": "重置密码",
     "i_agree_to": "我同意",
     "terms_and_conditions": "服务条款",
     "privacy_policy": "隐私政策",
@@ -328,9 +333,10 @@
     },
     "success": {
       "resend_otp": "OTP 发送成功",
-      "verify_register_otp": "OTP 验证成功",
+      "verify_otp": "OTP 验证成功",
       "register_success": "注册成功，欢迎使用本应用！",
-      "login_success": "登录成功，欢迎使用本应用！"
+      "login_success": "登录成功，欢迎使用本应用！",
+      "reset_password_success": "重置密码成功，您可以使用新密码登录。"
     }
   },
   "request_location": {
@@ -921,7 +927,8 @@
     "invalid_message": "二维码无效或已过期",
     "processing": "正在处理二维码...",
     "scan_qr": "扫描二维码",
-    "scan_title": "将相机对准推荐人的二维码"
+    "scan_title": "将相机对准推荐人的二维码",
+    "link_success": "链接成功"
   },
   "config_schedule": {
     "loading": "正在加载配置...",

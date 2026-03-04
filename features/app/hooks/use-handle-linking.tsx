@@ -58,7 +58,7 @@ const useHandleLinking = (complete: boolean) => {
         if (referrer_id) {
           if (user.role === _UserRole.CUSTOMER) {
             router.push({
-              pathname: '/(app)/(profile)/partner-register-individual',
+              pathname: '/(app)/(customer)/(profile)/partner-register-individual',
               params: {
                 referrer_id,
                 forWho: "ktv"

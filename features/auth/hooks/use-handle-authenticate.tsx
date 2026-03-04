@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useCallback } from 'react';
 import { router } from 'expo-router';
+import useToast from '@/features/app/hooks/use-toast';
 
 /**
  * Hàm để xác thực user xem là login hay register
@@ -15,6 +16,7 @@ import { router } from 'expo-router';
 export const useHandleAuthenticate = () => {
   const { t } = useTranslation();
   // handle error toast khi gọi API thất bại
+  const {error: errorToast} = useToast();
   const handleError = useErrorToast();
   // set state vào auth store khi submit form
   const updateStateForm = useFormAuthStore((state) => state.updateState);
@@ -56,13 +58,18 @@ export const useHandleAuthenticate = () => {
         }
         // case need_register hoặc need_re_enter_otp: redirect về màn hình verify OTP
         else if (caseHandle === "need_register" || caseHandle === "need_re_enter_otp"){
-          if (dataResponse.retry_after_seconds && dataResponse.last_sent_at){
+          if (dataResponse.last_sent_at && dataResponse.retry_after_seconds) {
             updateStateForm({
+              case_verify_otp: "register",
               last_sent_at: dataResponse.last_sent_at,
               retry_after_seconds: dataResponse.retry_after_seconds,
             });
+            router.replace('/(auth)/verify-otp');
+          }else{
+            errorToast({
+              message: t('common_error.unknown_error'),
+            })
           }
-          router.replace('/(auth)/verify-otp');
         }
       },
       onError: (err) => {

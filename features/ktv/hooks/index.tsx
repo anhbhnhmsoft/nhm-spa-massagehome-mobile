@@ -417,7 +417,7 @@ export const useScanQRCodeKtv = () => {
         router.back();
       },
       onError: (err) => {
-        errorToast({ message: err.message || t('qr_scan.link_error') });
+        errorToast({ message: err.message || t('qr_scan.invalid_message') });
       },
       onSettled: () => {
         setLoading(false);

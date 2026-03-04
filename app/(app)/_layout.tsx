@@ -7,10 +7,10 @@ import { NotificationPermissionModal } from '@/components/app/notification-permi
 import { useCheckMatchAffiliate } from '@/features/affiliate/hooks';
 import { useLocation } from '@/features/app/hooks/use-location';
 import { useCheckConfigApplicationUpdate } from '@/features/config/hooks';
+import { useMemo } from 'react';
 
 export default function AppLayout() {
   const loading = useApplicationStore((s) => s.loading);
-
 
   const status = useAuthStore((state) => state.status);
 
@@ -24,6 +24,18 @@ export default function AppLayout() {
 
   // Kiểm tra config application update
   const {isMaintained} = useCheckConfigApplicationUpdate();
+
+  // Tạo guard để kiểm tra quyền truy cập vào từng screen
+  const guard = useMemo(() => {
+    return {
+      maintained: isMaintained,
+      ktv_screen: status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.KTV,
+      agency_screen: status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.AGENCY,
+      customer_screen: status === _AuthStatus.UNAUTHORIZED || (status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.CUSTOMER),
+      authorized_screen: status === _AuthStatus.AUTHORIZED,
+    }
+  },[isMaintained, status, user])
+
 
   return (
     <>
@@ -39,30 +51,28 @@ export default function AppLayout() {
           headerShown: false,
         }}>
         {/* --- MAINTAINED SCREEN --- */}
-        <Stack.Protected guard={isMaintained}>
+        <Stack.Protected guard={guard.maintained}>
           <Stack.Screen name="maintaince" />
         </Stack.Protected>
 
-        <Stack.Protected guard={!isMaintained}>
+        <Stack.Protected guard={!guard.maintained}>
           {/* --- TAB KTV SCREEN --- */}
-          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.KTV}>
+          <Stack.Protected guard={guard.ktv_screen}>
             <Stack.Screen name="(ktv)" />
           </Stack.Protected>
 
           {/* --- TAB AGENCY SCREEN --- */}
-          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.AGENCY}>
+          <Stack.Protected guard={guard.agency_screen}>
             <Stack.Screen name="(tab-agency)" />
             <Stack.Screen name="(service-agency)" />
           </Stack.Protected>
 
           {/* --- TAB CUSTOMER SCREEN --- */}
-          <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED || (
-                status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.CUSTOMER
-          )}>
+          <Stack.Protected guard={guard.customer_screen}>
             <Stack.Screen name="(customer)" />
           </Stack.Protected>
 
-          <Stack.Protected guard={status === _AuthStatus.AUTHORIZED}>
+          <Stack.Protected guard={guard.authorized_screen}>
             <Stack.Screen name="take-picture-avatar" />
           </Stack.Protected>
 

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {Text} from '@/components/ui/text';
-import { useHandleVerifyRegisterOtp } from '@/features/auth/hooks';
+import { useHandleResendOtp, useHandleVerifyOtp } from '@/features/auth/hooks';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -12,46 +12,30 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller } from 'react-hook-form';
 import { cn } from '@/lib/utils';
-import {
-  CodeField,
-  Cursor,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
+import OtpCodeField from '@/components/ui/otp-code-field';
 
-const CELL_COUNT = 6;
-
-export default function VerifyOTPScreen() {
+export default function VerifyOtpScreen() {
   const {t} = useTranslation();
 
   const {
     phone,
-    secondsLeft,
     form,
     onSubmit,
+    loading: loadingVerifyOTP,
+  } = useHandleVerifyOtp();
+
+  const {
     resendOTP,
-    loading,
-  } = useHandleVerifyRegisterOtp();
+    secondsLeft,
+    loading: loadingResendOTP,
+  } = useHandleResendOtp()
 
   const {
     control,
     handleSubmit,
     formState: { isValid },
-      watch,
     setValue
   } = form;
-
-  // Theo dõi giá trị để hook của thư viện hoạt động
-  const otpValue = watch('otp');
-
-// Hook của thư viện: Tự động ẩn bàn phím khi nhập đủ
-  const ref = useBlurOnFulfill({ value: otpValue, cellCount: CELL_COUNT });
-
-// Hook của thư viện: Xử lý logic focus vào từng ô
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value: otpValue,
-    setValue: (text) => setValue('otp', text, { shouldValidate: true }), // Update React Hook Form
-  });
 
   return (
     <>
@@ -84,38 +68,8 @@ export default function VerifyOTPScreen() {
                 <Controller
                   control={control}
                   name="otp"
-                  render={({ field: { onChange, value } }) => (
-                    <CodeField
-                      ref={ref}
-                      {...props}
-                      value={value}
-                      onChangeText={onChange}
-                      cellCount={CELL_COUNT}
-                      rootStyle={{ marginTop: 0, width: '100%' }} // Style container chính
-                      keyboardType="number-pad"
-                      textContentType="oneTimeCode"
-                      autoFocus={true}
-                      renderCell={({ index, symbol, isFocused }) => (
-                        <View
-                          key={index}
-                          onLayout={getCellOnLayoutHandler(index)}
-                          className={cn(
-                            // Dùng % để không bị vỡ giao diện trên màn hình nhỏ
-                            "w-[14%] aspect-square rounded-xl border justify-center items-center bg-white",
-
-                            // Logic viền:
-                            // - isFocused: Màu xanh (Active)
-                            // - symbol (đã nhập): Màu xám đậm hơn chút (Optional, ở đây giữ nguyên logic cũ)
-                            // - chưa nhập: Màu xám nhạt
-                            isFocused ? "border-primary-color-2 border-[1.5px]" : "border-gray-300"
-                          )}
-                        >
-                          <Text className="text-2xl font-inter-medium text-black">
-                            {symbol || (isFocused ? <Cursor /> : null)}
-                          </Text>
-                        </View>
-                      )}
-                    />
+                  render={({ field: { value } }) => (
+                     <OtpCodeField value={value} setValue={(text) => setValue('otp', text, { shouldValidate: true })} />
                   )}
                 />
               </View>
@@ -126,7 +80,7 @@ export default function VerifyOTPScreen() {
               {/* Text Gửi lại SMS */}
               <TouchableOpacity
                 onPress={resendOTP}
-                disabled={secondsLeft > 0 || loading}
+                disabled={secondsLeft > 0 || loadingVerifyOTP || loadingResendOTP}
                 className="items-center mb-6"
               >
                 <Text className={cn(
@@ -140,7 +94,7 @@ export default function VerifyOTPScreen() {
               {/* Button Tiếp tục */}
               <TouchableOpacity
                 onPress={handleSubmit(onSubmit)}
-                disabled={!isValid || loading}
+                disabled={!isValid || loadingVerifyOTP || loadingResendOTP}
                 className={cn(
                   "w-full py-4 rounded-full items-center justify-center",
                   isValid
@@ -153,7 +107,6 @@ export default function VerifyOTPScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
-
           </KeyboardAvoidingView>
         </SafeAreaView>
       </TouchableWithoutFeedback>

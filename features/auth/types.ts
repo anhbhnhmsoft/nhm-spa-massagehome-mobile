@@ -49,12 +49,22 @@ export type AuthenticateResponse = ResponseDataSuccessType<{
   retry_after_seconds?: number; // Thời gian chờ trước khi có thể gửi lại OTP
 }>;
 
-export type ResendRegisterOTPResponse = ResponseDataSuccessType<{
+export type ForgotPasswordRequest = {
+  phone: string;
+}
+
+export type ForgotPasswordResponse = ResponseDataSuccessType<{
+  case:"need_re_enter_otp" | "need_re_enter_reset_password" | "success";
+  last_sent_at?: string; // Thời gian cuối cùng OTP được gửi
+  retry_after_seconds?: number; // Thời gian chờ trước khi có thể gửi lại OTP
+}>;
+
+export type ResendOTPResponse = ResponseDataSuccessType<{
   last_sent_at: string; // Thời gian cuối cùng OTP được gửi
   retry_after_seconds: number;
 }>;
 
-export type VerifyRegisterOTPRequest = {
+export type VerifyOTPRequest = {
   phone: string;
   otp: string;
 };
@@ -77,6 +87,12 @@ export type LoginRequest = {
 };
 
 export type LoginResponse = ResponseDataSuccessType<AuthData>;
+
+export type ResetPasswordRequest = {
+  phone: string;
+  password: string;
+}
+
 
 export type ProfileResponse = ResponseDataSuccessType<{
   user: User;

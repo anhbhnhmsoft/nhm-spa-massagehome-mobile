@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import {
   AuthenticateRequest,
-  EditProfileRequest,
+  EditProfileRequest, ForgotPasswordRequest,
   LoginRequest,
-  RegisterRequest,
+  RegisterRequest, ResetPasswordRequest,
   SetLanguageRequest,
-  VerifyRegisterOTPRequest,
+  VerifyOTPRequest,
 } from '@/features/auth/types';
 import authApi from '@/features/auth/api';
 
@@ -18,6 +18,9 @@ export const useAuthenticateMutation = () => {
   });
 };
 
+/**
+ * Hook để set language user
+ */
 export const useSetLanguageMutation = () => {
   return useMutation({
     mutationFn: (data: SetLanguageRequest) => authApi.setLanguage(data),
@@ -25,11 +28,11 @@ export const useSetLanguageMutation = () => {
 };
 
 /**
- * Hook để xác thực user xem là login hay register
+ * Hook để xác thực OTP register
  */
 export const useVerifyRegisterOTPMutation = () => {
   return useMutation({
-    mutationFn: (data: VerifyRegisterOTPRequest) => authApi.verifyRegisterOTP(data),
+    mutationFn: (data: VerifyOTPRequest) => authApi.verifyRegisterOTP(data),
   });
 };
 
@@ -59,6 +62,44 @@ export const useLoginMutation = () => {
     mutationFn: (data: LoginRequest) => authApi.login(data),
   });
 };
+
+
+/**
+ * Hook để quên mật khẩu
+ */
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: (data: ForgotPasswordRequest) => authApi.forgotPassword(data),
+  });
+};
+
+/**
+ * Hook để xác thực user xem là login hay register
+ */
+export const useVerifyForgotPasswordOTPMutation = () => {
+  return useMutation({
+    mutationFn: (data: VerifyOTPRequest) => authApi.verifyForgotPasswordOTP(data),
+  });
+};
+
+/**
+ * Hook để resend OTP forgot password
+ */
+export const useResendForgotPasswordOTPMutation = () => {
+  return useMutation({
+    mutationFn: (data: AuthenticateRequest) => authApi.resendForgotPasswordOTP(data),
+  });
+};
+
+/**
+ * Hook để reset password user
+ */
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: (data: ResetPasswordRequest) => authApi.resetPassword(data),
+  });
+};
+
 
 /**
  * Hook để lấy thông tin profile user

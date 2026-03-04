@@ -1,60 +1,40 @@
 import { useAuthStore } from '@/features/auth/stores';
 import { _AuthStatus, _Gender } from '@/features/auth/const';
 import useToast from '@/features/app/hooks/use-toast';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApplicationStore } from '@/features/app/stores';
 import { _LanguageCode } from '@/lib/const';
 import {
-  useAuthenticateMutation,
   useLockAccountMutation,
-  useLoginMutation,
-  useLogoutMutation,
   useMutationDeleteAvatar,
   useMutationEditAvatar,
   useMutationEditProfile,
   useProfileMutation,
-  useRegisterMutation,
-  useResendRegisterOTPMutation,
   useSetLanguageMutation,
-  useVerifyRegisterOTPMutation,
 } from '@/features/auth/hooks/use-mutation';
 import {
-  AuthenticateRequest,
   EditProfileRequest,
-  LoginRequest,
-  RegisterRequest,
-  VerifyRegisterOTPRequest,
 } from '@/features/auth/types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Href, router } from 'expo-router';
+import { router } from 'expo-router';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useCameraPermissions } from 'expo-camera';
-import { Alert, Linking, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
 import { queryClient } from '@/lib/provider/query-provider';
-import { useReferralStore } from '@/features/affiliate/store';
 import * as Updates from 'expo-updates';
 
 export * from './use-handle-authenticate';
 export * from './use-handle-login';
 export * from './use-check-auth-to-redirect';
-export * from './use-handle-verify-register-otp';
+export * from './use-handle-verify-otp';
 export * from './use-handle-register';
 export * from './use-logout';
-
-
-
-/**
- * Hook để kiểm tra xem user có đang được xác thực hay không
- */
-export const useCheckAuth = () => {
-  const status = useAuthStore((state) => state.status);
-  return status === _AuthStatus.AUTHORIZED;
-};
+export * from './use-reset-password';
 
 
 
@@ -105,7 +85,7 @@ export const useSetLanguageUser = (onClose?: () => void) => {
   // loading state
 
   // Kiểm tra xem user đăng nhập chưa
-  const isAuthenticated = useCheckAuth();
+  const status = useAuthStore((state) => state.status);
 
   const syncLanguage = useCallback(async (lang: _LanguageCode) => {
     try {
@@ -126,7 +106,7 @@ export const useSetLanguageUser = (onClose?: () => void) => {
   const setLanguage = useCallback(
     async (lang: _LanguageCode) => {
       // Nếu user đã đăng nhập thì gọi API để set ngôn ngữ
-      if (isAuthenticated) {
+      if (status === _AuthStatus.AUTHORIZED) {
         // Gọi API để set ngôn ngữ
         mutate(
           { lang },
@@ -149,7 +129,7 @@ export const useSetLanguageUser = (onClose?: () => void) => {
         onClose();
       }
     },
-    [isAuthenticated, onClose]
+    [status, onClose]
   );
 
   return {

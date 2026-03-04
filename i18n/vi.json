@@ -117,7 +117,7 @@
     "save_qr_code": "Lưu mã QR",
     "total": "Tổng",
     "nickname": "Biệt danh",
-    "password_description": "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt."
+    "password_description": "Mật khẩu phải có ít nhất 8 ký tự,ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số."
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -206,8 +206,10 @@
       "REFERRAL_INVITE_KTV_REWARD": "Hoa hồng từ kĩ thuật viên khi đăng ký",
       "DEPOSIT_WECHAT_PAY": "Nạp tiền qua Wechat Pay",
       "FEE_WITHDRAW": "Phí rút tiền",
-      "FEE_TRANSPORT": "Chi phí di chuyển",
-      "EARN_TRANSPORT": "Nhận tiền phí di chuyển "
+      "PAYMENT_FEE_TRANSPORT": "Chi phí di chuyển",
+      "PAYMENT_KTV_EARN_TRANSPORT": "Nhận tiền từ di chuyển",
+      "REFUND_CUSTOMER_TRANSPORT": "Hoàn tiền khi hủy booking",
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Hoàn tiền di chuyển"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -307,10 +309,14 @@
     "register_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
     "login_title": "Đăng nhập",
     "login_description": "Hãy nhập thông tin để giúp chúng tôi xác nhận tài khoản của bạn.",
+    "reset_password_title": "Đặt lại mật khẩu",
+    "reset_password_description": "Hãy nhập mật khẩu mới của bạn.",
+    "btn_reset_password": "Đặt lại mật khẩu",
     "i_agree_to": "Tôi đồng ý với",
     "terms_and_conditions": "Điều khoản dịch vụ",
     "privacy_policy": "Chính sách bảo mật",
     "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
+    "forgot_password": "Quên mật khẩu?",
     "error": {
       "phone_required": "Vui lòng nhập số điện thoại",
       "phone_invalid": "Số điện thoại không hợp lệ, vui lòng nhập lại",
@@ -328,9 +334,10 @@
     },
     "success": {
       "resend_otp": "Gửi lại mã OTP thành công",
-      "verify_register_otp": "Xác nhận mã OTP thành công",
+      "verify_otp": "Xác nhận mã OTP thành công",
       "register_success": "Đăng ký thành công, chào mừng bạn đến với ứng dụng!",
-      "login_success": "Đăng nhập thành công, chào mừng bạn đến với ứng dụng!"
+      "login_success": "Đăng nhập thành công, chào mừng bạn đến với ứng dụng!",
+      "reset_password_success": "Đặt lại mật khẩu thành công, bạn có thể đăng nhập lại với mật khẩu mới."
     }
   },
   "request_location": {
@@ -923,7 +930,8 @@
     "invalid_message": "Mã QR không hợp lệ hoặc đã hết hạn",
     "processing": "Đang xử lý mã QR...",
     "scan_qr": "Quét mã QR",
-    "scan_title": " Di chuyển camera đến mã QR của người giới thiệu"
+    "scan_title": " Di chuyển camera đến mã QR của người giới thiệu",
+    "link_success": "Liên kết thành công"
   },
   "config_schedule": {
     "loading": "Đang tải cấu hình...",
