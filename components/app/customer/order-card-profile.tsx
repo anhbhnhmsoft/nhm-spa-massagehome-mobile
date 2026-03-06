@@ -43,21 +43,21 @@ export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => 
       containerClassName="mb-4"
       title={t('profile.my_order')}
       headerRightText={t('common.see_more')}
-      onHeaderRightPress={() => router.push('/(app)/(customer)/(profile)/orders')}
+      onHeaderRightPress={() => router.push('/(app)/(customer)/(tab)/orders')}
       className={"flex-row justify-between gap-2"}
     >
       {ORDER_MENU_ITEMS.map((item) => {
         const count = dashboardData?.booking_count?.[item.status as DashboardBookingStatus] || 0;
         return (
           <TouchableOpacity
-            onPress={useSingleTouch(() =>
+            onPress={() => {
               router.push({
-                pathname: '/(app)/(customer)/(profile)/orders',
+                pathname: '/(app)/(customer)/(tab)/orders',
                 params: {
                   status: item.status,
                 },
-              }),
-            )}
+              })
+            }}
             key={item.status}
             className="relative flex-1 items-center">
             <View className="mb-2">

@@ -1,7 +1,7 @@
 import { LocationApp, useApplicationStore } from '@/features/app/stores';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import { Alert, AppState } from 'react-native';
+import { Alert, AppState, AppStateStatus } from 'react-native';
 import { useMutationSetDefaultAddress } from '@/features/location/hooks/use-mutation';
 import { useTranslation } from 'react-i18next';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
@@ -117,6 +117,28 @@ export const useLocation = () => {
       if (status !== 'granted') {
         return;
       }
+      // --- BƯỚC THÊM MỚI: LẤY VỊ TRÍ TỨC THỜI ---
+      // Lấy nhanh vị trí cuối cùng được ghi nhận hoặc vị trí hiện tại
+      const lastKnown = await Location.getLastKnownPositionAsync({});
+      const currentPos = lastKnown || await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      if (currentPos) {
+        const formatted = await formatLocation(currentPos);
+        if (formatted) {
+          setAppLocation(formatted);
+          // Gửi lên server luôn nếu đã có Auth
+          if (statusAuth === _AuthStatus.AUTHORIZED) {
+            console.log('gửi vị trí lên server')
+            mutation.mutate({
+              address: formatted.address,
+              latitude: formatted.location.coords.latitude,
+              longitude: formatted.location.coords.longitude,
+            });
+          }
+        }
+      }
 
       // Kiểm tra lại lần nữa phòng trường hợp App bị tắt trong lúc đang xin quyền
       if (appState.current.match(/inactive|background/)) return;
@@ -125,8 +147,8 @@ export const useLocation = () => {
       locationSubscription.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 1000 * 60, // Cập nhật mỗi 1 phút
-          distanceInterval: 100, // Hoặc đi được 100 mét
+          timeInterval: 1000 * 60 * 2, // Cập nhật mỗi 2 phút
+          distanceInterval: 500, // Hoặc đi được 500 mét
         },
         async (locationObject) => {
           const oldLocation = useApplicationStore.getState().location;
@@ -177,7 +199,6 @@ export const useLocation = () => {
       subscription.remove();
     };
   }, []);
-
 
   // Effect: Gửi vị trí lên server khi có auth
   useEffect(() => {
@@ -233,4 +254,45 @@ export const useGetLocation = () => {
       return null;
     }
   };
+};
+
+
+/**
+ * Hook kiểm tra và yêu cầu quyền vị trí cho KTV
+ */
+export const useRequireLocationForKTV = () => {
+  const [isLocationReady, setIsLocationReady] = useState<boolean>(false);
+
+  const checkPermission = async () => {
+    try {
+      // 1. Kiểm tra quyền (Permission)
+      const { status } = await Location.getForegroundPermissionsAsync();
+
+      // 2. Kiểm tra GPS có đang bật không (Service)
+      const isServiceEnabled = await Location.hasServicesEnabledAsync();
+
+      if (status === 'granted' && isServiceEnabled) {
+        setIsLocationReady(true);
+      } else {
+        setIsLocationReady(false);
+      }
+    } catch (error) {
+      setIsLocationReady(false);
+    }
+  };
+
+  useEffect(() => {
+    checkPermission();
+
+    // Lắng nghe khi user quay lại app từ Settings
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        checkPermission();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  return { isLocationReady };
 };

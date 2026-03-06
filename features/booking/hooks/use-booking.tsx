@@ -34,7 +34,6 @@ export const useBooking = () => {
         category_id: z.string(),
         option_id: z.string(),
         note: z.string().optional(),
-        note_address: z.string().optional(),
         address: z.string().min(1, {
           error: t('services.error.invalid_address'),
         }),
@@ -47,7 +46,6 @@ export const useBooking = () => {
       category_id: '',
       option_id: '',
       note: '',
-      note_address: '',
       address: '',
       latitude: 0,
       longitude: 0,
@@ -66,7 +64,6 @@ export const useBooking = () => {
       option_id: item.service.price_id,
       ktv_id: item.ktv.id,
       note: '',
-      note_address: '',
       address: '',
       latitude: 0,
       longitude: 0,

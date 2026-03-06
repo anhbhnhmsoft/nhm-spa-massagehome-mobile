@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useBookingDetailsQuery } from './use-query';
-import { useCancelBookingMutation, useFinishBookingMutation, useStartBookingMutation, } from './use-mutation';
+import { useFinishBookingMutation, useStartBookingMutation, } from './use-mutation';
 import * as Notifications from 'expo-notifications';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import useToast from '@/features/app/hooks/use-toast';
 import { _BookingStatus } from '@/features/service/const';
 import { Alert } from 'react-native';
 import { calculateEndTime, getMessageError, getRemainingTime } from '@/lib/utils';
-import { FinishBooking, StartBookingResponse } from '@/features/ktv/types';
+import {  StartBookingResponse } from '@/features/ktv/types';
 import { useAuthStore } from '@/features/auth/stores';
 import { _UserRole } from '@/features/auth/const';
 
@@ -126,13 +126,11 @@ export const useSetBookingStart = () => {
 export const useBooking = (id: string) => {
   // Khai báo các state cần sử dụng
   const { t } = useTranslation();
-  const [showModalCancel, setShowModalCancel] = useState(false);
   const { error } = useToast();
   const { data, refetch, isRefetching, isLoading } = useBookingDetailsQuery(id);
   const { mutate: startBookingMutate, isPending: isStartBookingPending } =
     useStartBookingMutation();
-  const { mutate: cancelBookingMutate, isPending: isCancelBookingPending } =
-    useCancelBookingMutation();
+
   const _hydrated = useBookingStore((s) => s._hydrated);
   const hydrate = useBookingStore((s) => s.hydrate);
 
@@ -177,51 +175,7 @@ export const useBooking = (id: string) => {
     });
   };
 
-  // hủy dịch vụ
-  const handleCancelBooking = (reason: string) => {
-    if (!data || !_hydrated) return;
 
-    if (reason.trim().length === 0) {
-      Alert.alert(t('booking.booking_cancel_reason_required'));
-      return;
-    }
-
-    Alert.alert(
-      t('booking.booking_cancel_confirm_title'),
-      t('booking.booking_cancel_confirm_message'),
-      [
-        {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('common.accept'),
-          style: 'destructive',
-          onPress: () => {
-            cancelBookingMutate(
-              { booking_id: data.id, reason },
-              {
-                onSuccess: async () => {
-                  await queryClient.invalidateQueries({
-                    queryKey: ['bookingApi-details-ktv', data.id],
-                  });
-                  // also invalidate booking list so the list updates
-                  await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
-                  setShowModalCancel(false);
-                },
-                onError: (err) => {
-                  const message = getMessageError(err, t);
-                  if (message) {
-                    error({ message: message });
-                  }
-                },
-              }
-            );
-          },
-        },
-      ]
-    );
-  };
   // có thể bắt đầu dịch vụ
   const canStartBooking = useMemo(() => {
     return data?.status === _BookingStatus.CONFIRMED && bookingStart === null;
@@ -237,15 +191,11 @@ export const useBooking = (id: string) => {
   return {
     booking: data,
     handleStartBooking,
-    handleCancelBooking,
     canStartBooking,
     canCancelBooking,
     refetch,
     timeLeft,
-    showModalCancel,
-    setShowModalCancel,
     isLoadingBooking: isRefetching || isLoading,
     isStartBookingPending,
-    isCancelBookingPending,
   };
 };

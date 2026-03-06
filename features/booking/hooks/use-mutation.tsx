@@ -6,7 +6,7 @@ import { BookingServiceRequest, PrepareBookingRequest } from '@/features/booking
 /**
  * Hủy đặt lịch dịch vụ
  */
-export const useCancelBookingCustomerMutation = () => {
+export const useCancelBookingMutation = () => {
   return useMutation({
     mutationFn: (data: CancelBookingRequest) => bookingApi.cancelBooking(data),
   });

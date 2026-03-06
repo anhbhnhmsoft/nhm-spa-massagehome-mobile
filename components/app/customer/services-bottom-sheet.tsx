@@ -163,7 +163,7 @@ export const ServicesBottomSheet: FC<Props> = ({ ref, serviceData, onDismiss, t,
             </View>
           </View>
         </View>
-      ) : <Fragment />
+      ) : <View />
       }
     </AppBottomSheet>
   );

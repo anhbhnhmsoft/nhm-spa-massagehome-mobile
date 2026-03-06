@@ -23,12 +23,6 @@ export const useStartBookingMutation = () => {
   });
 };
 
-//  hủy booking
-export const useCancelBookingMutation = () => {
-  return useMutation({
-    mutationFn: (data: CancelBookingRequest) => ktvApi.cancelBooking(data),
-  });
-};
 
 //  hoàn thành booking
 export const useFinishBookingMutation = () => {

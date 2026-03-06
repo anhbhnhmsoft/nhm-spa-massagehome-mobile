@@ -117,7 +117,8 @@
     "save_qr_code": "Save QR Code",
     "total": "Total",
     "nickname": "Nickname",
-    "password_description": "Password must be at least 8 characters long, include at least 1 uppercase, 1 lowercase, 1 number."
+    "password_description": "Password must be at least 8 characters long, include at least 1 uppercase, 1 lowercase, 1 number.",
+    "status": "Status"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -150,7 +151,9 @@
     "location": {
       "title": "Location Access Required",
       "message": "Please grant access to your location to use this feature.",
-      "error": "Error accessing location, please try again later."
+      "error": "Error accessing location, please try again later.",
+      "message_for_ktv": "The app needs to access your location so it can show you on the technician list. Please grant permissions in settings.",
+      "go_to_settings": "Go to Settings"
     }
   },
   "common_error": {
@@ -178,6 +181,7 @@
   },
   "enum": {
     "booking_status": {
+      "ALL": "All",
       "PENDING": "Pending",
       "CONFIRMED": "Confirmed",
       "ONGOING": "In Progress",
@@ -315,6 +319,8 @@
 
     "i_agree_to": "I agree to",
     "terms_and_conditions": "Terms of Service",
+    "terms_and_conditions_register_technical": "Terms of Service for Technical",
+    "terms_and_conditions_register_agency": "Terms of Service for Agency",
     "privacy_policy": "Privacy Policy",
     "error_terms_required": "You must agree to the terms to continue",
     "error": {
@@ -431,12 +437,14 @@
       "images_title": "Your images visible to customers",
       "images_min_note": "Minimum 3 and maximum 5 photos",
       "images_warning": "No fake or inappropriate photos. Photos must be clear, showing face, front view, serious, and suitable for work. Personal info (Phone, Social Media, Address...) is strictly prohibited.",
-      "id_title": "ID Card (Front & Back)",
-      "error_agency_id_invalid": "Invalid Agency ID. Please enter a number.",
-      "id_front": "Front",
-      "id_back": "Back",
-      "degrees_title": "Degrees/Certificates",
-      "degree_photo": "Degree",
+      "id_cccd_title": "ID Card (Front & Back & Face with ID Card)",
+      "id_cccd_title_exclude": "ID Card / Citizen ID (front & back)",
+      "id_cccd_front": "ID Card / Citizen ID front",
+      "id_cccd_back": "ID Card / Citizen ID back",
+      "avatar": "Avatar",
+      "field_dob_label": "Date of birth",
+      "real_name": "Full name (matching ID Card)",
+      "address": "Partner's address",
       "add_photo": "Add Photo",
       "field_name_label": "Your Name",
       "field_name_placeholder": "Enter full name",
@@ -499,6 +507,8 @@
       "error_check_application": "An error occurred while checking partner application. Please try again later.",
       "show_application": "Show Application",
       "modal_application": {
+        "real_name": "Full name (matching ID Card)",
+        "address": "Partner's address",
         "title": "Application Details",
         "status": "Rejected",
         "reason": "Reason",
@@ -518,6 +528,22 @@
         "face_with_identity_card": "Photo holding ID Card",
         "certificate": "Certificates",
         "gallery": "Gallery for Customers"
+      },
+      "error": {
+        "invalid_realname_length": "Full name must be between {{ min }} and {{ max }} characters.",
+        "invalid_nickname_length": "Display name must be between {{ min }} and {{ max }} characters.",
+        "error_agency_id_invalid": "Referral code is invalid.",
+        "invalid_experience": "Experience must be between {{ min }} and {{ max }} years.",
+        "bio_required": "Self-introduction (Bio) must be at least {{ min }} characters, up to {{ max }} characters.",
+        "invalid_dob": "Please enter your date of birth.",
+        "avatar_required": "Please select a profile picture.",
+        "avatar_size": "Profile picture must be less than {{ max }}MB.",
+        "invalid_cccd_front": "Only {{ max }} front ID Card images allowed.",
+        "invalid_cccd_back": "Only {{ max }} back ID Card images allowed.",
+        "invalid_license": "Only {{ max }} license images allowed.",
+        "invalid_face_with_id": "Only {{ max }} images allowed for selfie with ID Card.",
+        "invalid_ktv_image_display": "Only {{ min }} - {{ max }} images allowed for customer display.",
+        "invalid_address": "Please enter your address."
       }
     },
     "partner_register": {
@@ -750,7 +776,9 @@
     "booking_cancel_reason_required": "Please enter cancellation reason",
     "booking_end_success": "Service has ended",
     "coupon": "Coupon",
+    "status": "Status",
     "discount_price": "Discount Price",
+    "price_discount": "Price Discount",
     "enter_cancel_reason": "Enter Cancellation Reason",
     "execution_date": "Execution date",
     "start": "Start",
@@ -760,6 +788,7 @@
     "customer_notes": "Customer notes",
     "original_price": "Original price",
     "address_notes": "Address notes",
+    "price_transportation": "Transportation Price",
     "no_customer_notes": "No notes from the customer",
     "no_cancel_reason": "No cancellation reason",
     "cancel_pending_note": "The cancellation request will be sent to the administrator for review.",

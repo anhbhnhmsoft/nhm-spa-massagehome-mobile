@@ -3,13 +3,13 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { TFunction } from 'i18next';
 import AppBottomSheet from '@/components/ui/app-bottom-sheet';
 import { CategoryServiceItem } from '@/features/ktv/types';
-import { TouchableOpacity, View } from 'react-native';
+import {  View } from 'react-native';
 import { Image } from 'expo-image';
 import { cn, formatBalance } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { Banknote, Clock } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
-import { useSetService } from '@/features/ktv/hooks';
+import { Divider } from '@/components/ui/divider';
 
 type Props = {
   ref: React.Ref<BottomSheetModal>,
@@ -21,8 +21,6 @@ type Props = {
 }
 
 export const ServicesBottomSheet: FC<Props> = ({ ref, detail, onDismiss, t }) => {
-
-  const { setService } = useSetService();
 
   return (
     <AppBottomSheet
@@ -63,31 +61,19 @@ export const ServicesBottomSheet: FC<Props> = ({ ref, detail, onDismiss, t }) =>
             </View>
 
             {/* Title */}
-            <Text className="mt-4 font-inter-bold text-xl leading-7 text-gray-900">
-              {detail.name}
-            </Text>
-
-            {/* --- BUTTONS --- */}
-            <View className="mt-4 flex-row gap-3">
-              <TouchableOpacity
-                onPress={async () => {
-                  await setService(detail.id);
-                  onDismiss();
-
-                }}
-                className={cn(
-                  'flex-1 flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3 shadow-md shadow-blue-200',
-                  !detail.is_registered ? 'bg-primary-color-2' : 'bg-gray-400',
-                )}>
-                <Text className="ml-2 font-inter-bold text-sm text-white">
-                  {detail.is_registered ? t('ktv.services.disable_service') : t('ktv.services.enable_service')}
-                </Text>
-              </TouchableOpacity>
+            <View className={'mt-4 flex-col gap-2'}>
+              <Text className="font-inter-bold text-xl text-gray-900">
+                {detail.name}
+              </Text>
+              <Text className="font-inter-bold text-sm text-gray-500">
+                ({detail.total_bookings ?? 0} {t('ktv.services.bookings_count')})
+              </Text>
             </View>
+
           </View>
 
           {/* --- DIVIDER --- */}
-          <View className="h-1 bg-slate-100" />
+          <Divider space={8} thickness={2} />
 
           {/* --- SECTION 2: DESCRIPTION --- */}
           <View className="px-4 py-5">
@@ -100,7 +86,7 @@ export const ServicesBottomSheet: FC<Props> = ({ ref, detail, onDismiss, t }) =>
           </View>
 
           {/* --- DIVIDER --- */}
-          <View className="h-1 bg-slate-100" />
+          <Divider space={8} thickness={2} />
 
           {/* --- SECTION 3: OPTIONS & ACTIONS --- */}
           <View className="px-4 py-5">

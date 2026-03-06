@@ -58,10 +58,10 @@ const useHandleLinking = (complete: boolean) => {
         if (referrer_id) {
           if (user.role === _UserRole.CUSTOMER) {
             router.push({
-              pathname: '/(app)/(customer)/(profile)/partner-register-individual',
+              pathname: '/(app)/(customer)/(profile)/(register-partner)/register-technical',
               params: {
-                referrer_id,
-                forWho: "ktv"
+                referrer_id: referrer_id,
+                isLeader: "0"
               },
             });
           } else if (user.role === _UserRole.KTV) {

@@ -2,12 +2,13 @@ import { ListBookingRequest } from '@/features/booking/types';
 import { useCallback, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 import { useInfiniteBookingList } from '@/features/ktv/hooks/use-query';
+import { _BookingStatus } from '@/features/service/const';
 
 export const useSchedule = () => {
   // React Query handles invalidation; no local `refreshed` flag needed here.
   const [params, setParams] = useImmer<ListBookingRequest>({
     filter: {
-      status: undefined,
+      status: _BookingStatus.ALL,
     },
     page: 1,
     per_page: 10,

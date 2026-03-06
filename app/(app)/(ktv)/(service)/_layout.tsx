@@ -4,7 +4,6 @@ import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 export default function ServiceKtvLayout() {
   return (
     <>
-      <FocusAwareStatusBar hidden={true} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="chat" />
         <Stack.Screen name="booking-details" />

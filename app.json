@@ -29,7 +29,7 @@
       "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",

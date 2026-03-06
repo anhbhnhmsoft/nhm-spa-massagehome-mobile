@@ -17,8 +17,8 @@ export const InviteIndividualHomepage: FC<{ t: TFunction }> = ({ t }) => {
             activeOpacity={0.6}
             onPress={() => {
               redirectAuth({
-                pathname: '/(app)/(customer)/(profile)/partner-register-individual',
-                params: { forWho: 'ktv' },
+                pathname: '/(app)/(customer)/(profile)/(register-partner)/register-technical',
+                params: { isLeader: '0' },
               });
             }}
             className="flex-1 flex-row items-center px-2 gap-2"
@@ -46,10 +46,7 @@ export const InviteIndividualHomepage: FC<{ t: TFunction }> = ({ t }) => {
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={() => {
-              redirectAuth({
-                pathname: '/(app)/(customer)/(profile)/partner-register-individual',
-                params: { forWho: 'agency' },
-              });
+              redirectAuth("/(app)/(customer)/(profile)/(register-partner)/register-agency");
             }}
             className="flex-1 flex-row items-center px-2 gap-2"
           >

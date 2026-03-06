@@ -117,7 +117,8 @@
     "save_qr_code": "Lưu mã QR",
     "total": "Tổng",
     "nickname": "Biệt danh",
-    "password_description": "Mật khẩu phải có ít nhất 8 ký tự,ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số."
+    "password_description": "Mật khẩu phải có ít nhất 8 ký tự,ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số.",
+    "status": "Trạng thái"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -150,7 +151,9 @@
     "location": {
       "title": "Cần cấp quyền truy cập vào định vị",
       "message": "Vui lòng cấp quyền truy cập vào định vị để sử dụng chức năng này, hãy vào cài đặt app và cấp quyền truy cập.",
-      "error": "Lỗi khi truy cập vào định vị, vui lòng thử lại sau."
+      "error": "Lỗi khi truy cập vào định vị, vui lòng thử lại sau.",
+      "message_for_ktv": "Ứng dụng cần truy cập vị trí của bạn để có thể hiển thị bạn lên danh sách kĩ thuật viên. Vui lòng cấp quyền trong cài đặt.",
+      "go_to_settings": "Đi đến Cài đặt"
     }
   },
   "common_error": {
@@ -178,6 +181,7 @@
   },
   "enum": {
     "booking_status": {
+      "ALL": "Tất cả",
       "PENDING": "Chờ xác nhận",
       "CONFIRMED": "Đã xác nhận",
       "ONGOING": "Đang thực hiện",
@@ -314,6 +318,8 @@
     "btn_reset_password": "Đặt lại mật khẩu",
     "i_agree_to": "Tôi đồng ý với",
     "terms_and_conditions": "Điều khoản dịch vụ",
+    "terms_and_conditions_register_technical": "Điều khoản đăng ký kĩ thuật viên",
+    "terms_and_conditions_register_agency": "Điều khoản đăng ký đối tác",
     "privacy_policy": "Chính sách bảo mật",
     "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
     "forgot_password": "Quên mật khẩu?",
@@ -431,12 +437,14 @@
       "images_title": "Hình ảnh của bạn hiển thị cho khách hàng",
       "images_min_note": "Tối thiểu 3 ảnh và tối đa 5 ảnh",
       "images_warning": "Không đăng ảnh ảo, hở hang. Ảnh cần rõ mặt, rõ nét, chính diện, nghiêm túc, phù hợp đi làm. Nghiêm cấm để thông tin cá nhân (Số điện thoại, Trang cá nhân, Địa chỉ chi tiết,...).",
-      "id_title": "CCCD / CMND (trước & sau)",
-      "error_agency_id_invalid": "Mã Agency không hợp lệ. Vui lòng nhập số.",
-      "id_front": "Mặt trước",
-      "id_back": "Mặt sau",
-      "degrees_title": "Bằng cấp",
-      "degree_photo": "Bằng cấp",
+      "id_cccd_title": "CCCD / CMND (trước & sau & ảnh mặt chụp cùng)",
+      "id_cccd_title_exclude": "CCCD / CMND (trước & sau)",
+      "id_cccd_front": "CCCD/CMND mặt trước",
+      "id_cccd_back": "CCCD/CMND mặt sau",
+      "avatar": "Hình ảnh đại diện",
+      "field_dob_label": "Ngày sinh",
+      "real_name": "Họ và tên (trùng với CCCD)",
+      "address": "Địa chỉ đối tác",
       "add_photo": "Thêm ảnh",
       "field_name_label": "Tên của bạn",
       "field_name_placeholder": "Nhập họ và tên",
@@ -499,6 +507,8 @@
       "error_check_application": "Có lỗi xảy ra khi kiểm tra đơn đăng ký. Vui lòng thử lại sau.",
       "show_application": "Xem lại đơn đăng ký",
       "modal_application": {
+        "real_name": "Họ và tên",
+        "address": "Địa chỉ",
         "title": "Chi tiết đơn đăng ký",
         "status": "Từ chối",
         "reason": "Lý do",
@@ -518,6 +528,22 @@
         "face_with_identity_card": "Ảnh cầm thẻ cùng CCCD",
         "certificate": "Bằng cấp",
         "gallery": "Ảnh hiển thị cho Khách hàng"
+      },
+      "error": {
+        "invalid_realname_length": "Họ và tên phải có ít nhất {{ min }} ký tự và tối đa {{ max }} ký tự.",
+        "invalid_nickname_length": "Tên biệt danh phải có ít nhất {{ min }} ký tự và tối đa {{ max }} ký tự.",
+        "error_agency_id_invalid": "Mã Giới thiệu không hợp lệ.",
+        "invalid_experience": "Số năm kinh nghiệm phải từ {{ min }} đến {{ max }} năm.",
+        "bio_required": "Giới thiệu bản thân (Bio) phải có ít nhất {{ min }} ký tự, tối đa {{ max }} ký tự.",
+        "invalid_dob": "Vui lòng nhập ngày sinh.",
+        "avatar_required": "Vui lòng chọn ảnh đại diện.",
+        "avatar_size": "Ảnh đại diện không được vượt quá {{ max }}MB.",
+        "invalid_cccd_front": "Chỉ có thể tải lên {{ max }} ảnh CCCD mặt trước.",
+        "invalid_cccd_back": "Chỉ có thể tải lên {{ max }} ảnh CCCD mặt sau.",
+        "invalid_license": "Chỉ có thể tải lên {{ max }} ảnh giấy phép hoạt động.",
+        "invalid_face_with_id": "Chỉ có thể tải lên {{ max }} ảnh khuôn mặt với CCCD.",
+        "invalid_ktv_image_display": "Chỉ có thể tải lên {{ min }} - {{ max }} ảnh hiển thị cho khách hàng.",
+        "invalid_address": "Vui lòng nhập địa chỉ."
       }
     },
     "partner_register": {
@@ -750,7 +776,9 @@
     "booking_cancel_reason_required": "Vui lòng nhập lý do huỷ lịch hẹn",
     "booking_end_success": "Dịch vụ đã kết thúc",
     "coupon": "Mã giảm giá",
+    "status": "Trạng thái",
     "discount_price": "Số tiền được giảm",
+    "price_discount": "Giảm giá",
     "enter_cancel_reason": "Nhập lý do hủy dịch vụ",
     "cancel_service_reason": "Lý do hủy dịch vụ",
     "execution_date": "Ngày thực hiện",
@@ -760,6 +788,7 @@
     "customer_notes": "Ghi chú từ khách hàng",
     "original_price": "Giá gốc",
     "address_notes": "Ghi chú địa chỉ",
+    "price_transportation": "Tiền di chuyển",
     "no_customer_notes": "Không có ghi chú từ khách hàng",
     "no_cancel_reason": "Không có lý do hủy",
     "cancel_pending_note": "Yêu cầu hủy sẽ được gửi đến quản trị viên để xét duyệt.",

@@ -8,13 +8,15 @@ import { useSchedule } from '@/features/ktv/hooks';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router } from 'expo-router';
-import { t } from 'i18next';
+import { t, TFunction } from 'i18next';
 import { useCallback } from 'react';
 import { FlatList, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
+import { useGetRoomChat } from '@/features/chat/hooks';
 
-/* ================= HEADER FILTER ================= */
 
 interface HeaderFilterProps {
+  t: TFunction;
   params: ListBookingRequest;
   setFilter: (filter: Partial<ListBookingRequest['filter']>) => void;
 }
@@ -32,24 +34,6 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
           paddingHorizontal: 16,
           gap: 8,
         }}>
-        {/* Tất cả */}
-        <TouchableOpacity
-          onPress={() => setFilter({ status: undefined })}
-          className={cn(
-            'flex-row items-center px-4 py-1.5',
-            currentStatus === undefined && 'rounded-sm bg-primary-color-2'
-          )}>
-          <Text
-            className={cn(
-              'text-base',
-              currentStatus === undefined
-                ? 'font-inter-bold text-white'
-                : 'font-inter-medium text-primary-color-3'
-            )}>
-            {t('common.all')}
-          </Text>
-        </TouchableOpacity>
-
         {/* Các trạng thái */}
         {Object.entries(_BookingStatusMap).map(([key, value]) => {
           const status = Number(key) as _BookingStatus;
@@ -91,6 +75,7 @@ export default function ScheduleScreen() {
     setFilter,
     params,
   } = useSchedule();
+
   const TAB_BAR_HEIGHT = getTabBarHeight();
 
   const handleGoDetails = useCallback((item: BookingItem) => {
@@ -99,6 +84,10 @@ export default function ScheduleScreen() {
       params: { id: item.id },
     });
   }, []);
+
+  const calculateDistance = useCalculateDistance();
+
+  const joinRoomChat = useGetRoomChat();
 
   return (
     <View className="flex-1 bg-slate-50">
@@ -109,10 +98,15 @@ export default function ScheduleScreen() {
           keyExtractor={(item) => `schedule-${item.id}`}
           renderItem={({ item }) => (
             <View className="px-4" key={item.id}>
-              <BookingItemKtv item={item} onPress={handleGoDetails} />
+              <BookingItemKtv
+                item={item}
+                onPress={handleGoDetails}
+                calculateDistance={calculateDistance}
+                joinRoomChat={joinRoomChat}
+              />
             </View>
           )}
-          ListHeaderComponent={<HeaderFilter params={params} setFilter={setFilter} />}
+          ListHeaderComponent={<HeaderFilter params={params} setFilter={setFilter} t={t} />}
           ListEmptyComponent={<Empty />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{

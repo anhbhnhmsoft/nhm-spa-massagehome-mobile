@@ -15,7 +15,7 @@ export const RegisterIndividualProfile = () => {
       <TouchableOpacity
         className="w-[48%]"
         onPress={() => {
-          router.push('/(app)/(customer)/(profile)/partner-register-type');
+          router.push('/(app)/(customer)/(profile)/(register-partner)/choose-type');
         }}>
         <Card className="flex-row items-center">
           <View className="mr-3">

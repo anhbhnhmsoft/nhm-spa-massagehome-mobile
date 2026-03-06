@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -9,19 +9,16 @@ import {
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 
 export interface AppBottomSheetProps {
-  /** Nội dung bên trong Bottom Sheet */
   children: React.ReactNode;
-  /** Các mốc chiều cao. Ví dụ: ['25%', '50%'] hoặc [200, 500] */
+  /** Nếu truyền snapPoints thì dùng cố định, nếu không truyền sẽ tự động Fit Content */
   snapPoints?: Array<string | number>;
-  /** Bật true nếu nội dung bên trong dài và cần cuộn */
   isScrollable?: boolean;
-  /** Cho phép vuốt xuống để đóng sheet không? (Mặc định: true) */
   enablePanDownToClose?: boolean;
-  /** Hàm được gọi khi sheet đã đóng hoàn toàn */
   onDismiss?: () => void;
+  /** Bật tính năng tự động giãn theo nội dung (Mặc định: true nếu không có snapPoints) */
+  dynamicSizing?: boolean;
 }
 
-// 2. Gắn type cho forwardRef <Type của Ref, Type của Props>
 const AppBottomSheet = forwardRef<BottomSheetModal, AppBottomSheetProps>((props, ref) => {
   const {
     children,
@@ -29,10 +26,12 @@ const AppBottomSheet = forwardRef<BottomSheetModal, AppBottomSheetProps>((props,
     isScrollable = false,
     enablePanDownToClose = true,
     onDismiss,
+    dynamicSizing = true,
   } = props;
 
+  // Nếu có snapPoints thì dùng, nếu không thì để undefined để kích hoạt dynamic sizing
   const snapPoints = useMemo(
-    () => customSnapPoints || ['30%', '50%'],
+    () => customSnapPoints || undefined,
     [customSnapPoints]
   );
 
@@ -49,20 +48,23 @@ const AppBottomSheet = forwardRef<BottomSheetModal, AppBottomSheetProps>((props,
     []
   );
 
-
-  // Trả về component cuộn hoặc không cuộn
   const ContentWrapper = isScrollable ? BottomSheetScrollView : BottomSheetView;
 
   return (
     <BottomSheetModal
       ref={ref}
-      index={1}
+      // Quan trọng: Nếu không có snapPoints, enableDynamicSizing phải là true
+      enableDynamicSizing={!customSnapPoints && dynamicSizing}
       snapPoints={snapPoints}
+      index={customSnapPoints ? 0 : undefined}
       backdropComponent={renderBackdrop}
       enablePanDownToClose={enablePanDownToClose}
       onDismiss={onDismiss}
       handleIndicatorStyle={styles.indicator}
       backgroundStyle={styles.background}
+      // Hỗ trợ bàn phím khi dùng Form
+      android_keyboardInputMode="adjustResize"
+      keyboardBehavior="fillParent"
     >
       <ContentWrapper contentContainerStyle={styles.contentContainer}>
         {children}
@@ -82,14 +84,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  headerContainer: {
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    marginBottom: 16,
+    paddingBottom: 40, // Tăng padding bottom để ko bị dính sát lề
   },
 });
 

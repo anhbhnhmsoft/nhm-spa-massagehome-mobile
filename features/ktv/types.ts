@@ -36,6 +36,7 @@ export type CategoryServiceItem = {
   image_url: string | null;
   is_registered: boolean;
   is_active: boolean;
+  total_bookings: number;
   prices: {
     price: string;
     duration: number;

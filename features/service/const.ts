@@ -1,20 +1,7 @@
-export enum _ServiceDuration {
-  FIFTEEN_MINUTE = 15,
-  HALF_HOUR = 30,
-  ONE_HOUR = 60,
-  ONE_AND_HALF_HOUR = 90,
-  TWO_HOUR = 120,
-  TWO_AND_HALF_HOUR = 150,
-  THREE_HOUR = 180,
-  FOUR_HOUR = 240,
-}
-
-export enum _StepFormBooking {
-  MAP = 0,
-  FORM = 1,
-}
+import DefaultColor from '@/components/styles/color';
 
 export enum _BookingStatus {
+  ALL = 0, // Ngoài luồng, ko có trong thực tế, dùng để set tìm kiếm tất cả
   PENDING = 1,
   CONFIRMED = 2,
   ONGOING = 3,
@@ -25,6 +12,7 @@ export enum _BookingStatus {
 }
 
 export const _BookingStatusMap = {
+  [_BookingStatus.ALL]: 'enum.booking_status.ALL',
   [_BookingStatus.PENDING]: 'enum.booking_status.PENDING',
   [_BookingStatus.CONFIRMED]: 'enum.booking_status.CONFIRMED',
   [_BookingStatus.ONGOING]: 'enum.booking_status.ONGOING',
@@ -33,6 +21,48 @@ export const _BookingStatusMap = {
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
   [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.WAITING_CANCEL',
 } as const;
+
+export const getBookingStatusStyle = (status: _BookingStatus) => {
+  switch (status) {
+    case _BookingStatus.PENDING:
+      return {
+        background: DefaultColor.yellow[100],
+        text_color: DefaultColor.white[700],
+        label: _BookingStatusMap[status],
+      };
+    case _BookingStatus.CONFIRMED:
+      return {
+        background: DefaultColor.blue[100],
+        text_color: DefaultColor.blue[700],
+        label: _BookingStatusMap[status],
+      };
+    case _BookingStatus.ONGOING:
+      return {
+        background: DefaultColor.purple[100],
+        text_color: DefaultColor.purple[700],
+        label: _BookingStatusMap[status],
+      };
+    case _BookingStatus.COMPLETED:
+      return {
+        background: DefaultColor.green[100],
+        text_color: DefaultColor.green[500],
+        label: _BookingStatusMap[status],
+      };
+    case _BookingStatus.CANCELED:
+    case _BookingStatus.PAYMENT_FAILED:
+      return {
+        background: DefaultColor.red[100],
+        text_color: DefaultColor.red[700],
+        label: _BookingStatusMap[status],
+      };
+    default:
+      return {
+        background: DefaultColor.gray[100],
+        text_color: DefaultColor.gray[700],
+        label: _BookingStatusMap[status],
+      };
+  }
+}
 
 export const getStatusColor = (status: _BookingStatus) => {
   switch (status) {

@@ -17,6 +17,29 @@ interface FormInputProps extends TextInputProps {
   isTextArea?: boolean;
   numberOfLines?: number;
 }
+export const FormLabel = ({ label, required, description }: Pick<FormInputProps, 'label' | 'required' | 'description'>) => {
+  return (
+    <View>
+      <Label className="text-slate-700 font-inter-bold">
+        {label} {required && <Text className="text-red-500">*</Text>}
+      </Label>
+      {description && (
+        <Text className="text-[12px] text-slate-500 mt-0.5 font-inter-italic">
+          {description}
+        </Text>
+      )}
+    </View>
+  )
+}
+
+export const FormError = ({ error }: Pick<FormInputProps, 'error'>) => {
+  if (!error) return null;
+  return (
+    <Text className="text-red-500 text-[12px] font-inter-italic">
+      {error}
+    </Text>
+  )
+}
 
 export const FormInput = React.forwardRef<TextInput, FormInputProps>(
   ({
@@ -39,16 +62,7 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(
       <View className={cn('gap-2', containerClassName)}>
         {/* Label Section */}
         {label && (
-          <View>
-            <Label className="text-slate-700">
-              {label} {required && <Text className="text-red-500">*</Text>}
-            </Label>
-            {description && (
-              <Text className="text-[12px] text-slate-500 mt-0.5 font-inter-italic">
-                {description}
-              </Text>
-            )}
-          </View>
+          <FormLabel label={label} required={required} description={description} />
         )}
 
         <View className="relative w-full justify-center">
@@ -91,11 +105,7 @@ export const FormInput = React.forwardRef<TextInput, FormInputProps>(
           )}
         </View>
 
-        {error && (
-          <Text className="text-sm font-inter-medium text-red-500">
-            {error}
-          </Text>
-        )}
+        <FormError error={error} />
       </View>
     );
   }

@@ -7,6 +7,7 @@ import useToast from '@/features/app/hooks/use-toast';
 import { useCallback } from 'react';
 import { useKtvStore } from '@/features/ktv/stores';
 
+// Tạm thời ko dùng
 export const useSetService = () => {
   const setLoading = useApplicationStore((state) => state.setLoading);
   const errorHandle = useErrorToast();

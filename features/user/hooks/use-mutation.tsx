@@ -14,4 +14,14 @@ export const useMutationApplyPartner = () => {
   });
 };
 
+export const useApplyTechnicalRequest = () => {
+  return useMutation({
+    mutationFn: (payload: FormData) => userApi.applyTechnical(payload),
+  });
+}
 
+export const useApplyAgencyRequest = () => {
+  return useMutation({
+    mutationFn: (payload: FormData) => userApi.applyAgency(payload),
+  });
+}

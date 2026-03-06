@@ -41,15 +41,16 @@ export type BookingItem = {
     avatar_url: string | null;
   };
   address: string;
-  note_address: string | null;
   booking_time: string;
   start_time: string | null;
   end_time: string | null;
   note: string | null;
   duration: number;
   status: _BookingStatus;
-  price: string;
-  price_before_discount: string;
+  price: number;
+  price_discount: number;
+  price_transportation: number;
+  total_price: number;
   coupon: {
     id: string;
     label: string;
@@ -92,7 +93,6 @@ export type PrepareBookingResponse = ResponseDataSuccessType<{
 export type BookingServiceRequest =  PrepareBookingRequest & {
   address: string;
   note?: string;
-  note_address?: string;
 };
 
 export type BookingServiceResponse = ResponseDataSuccessType<{

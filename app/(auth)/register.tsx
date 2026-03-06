@@ -5,20 +5,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/text';
 import { useHandleRegister } from '@/features/auth/hooks';
 import { Controller } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import {
-  Check,
   CheckSquare,
   ChevronDown,
-  Eye,
-  EyeOff,
-  Mars,
   Square,
-  Venus,
 } from 'lucide-react-native';
 import { _Gender } from '@/features/auth/const';
 import { _LanguagesMap } from '@/lib/const';

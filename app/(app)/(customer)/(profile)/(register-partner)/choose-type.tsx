@@ -27,9 +27,9 @@ export default function PartnerRegisterTypeScreen() {
           className="mb-4 flex-row items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           onPress={() => {
             router.push({
-              pathname: '/(app)/(profile)/partner-register-individual',
+              pathname: '/register-technical',
               params: {
-                forWho: 'leader-ktv',
+                isLeader: '1',
               },
             });
           }}>
@@ -50,12 +50,7 @@ export default function PartnerRegisterTypeScreen() {
         <TouchableOpacity
           className="mb-4 flex-row items-center justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
           onPress={() => {
-            router.push({
-              pathname: '/(app)/(profile)/partner-register-individual',
-              params: {
-                forWho: 'agency',
-              },
-            });
+            router.push('/register-agency');
           }}>
           <View className="flex-1 pr-3">
             <Text className="mb-1 font-inter-bold text-base text-slate-900">
@@ -73,5 +68,3 @@ export default function PartnerRegisterTypeScreen() {
     </SafeAreaView>
   );
 }
-
-

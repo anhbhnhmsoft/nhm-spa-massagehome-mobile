@@ -1,73 +1,87 @@
-import React from 'react';
-import { View, Image, Pressable } from 'react-native';
+import React, { useMemo } from 'react';
+import { View,  Pressable } from 'react-native';
 import { Icon } from '@/components/ui/icon';
-import { MapPin, Navigation2, ChevronRight, Timer, User } from 'lucide-react-native';
+import { MapPin, Navigation2, Timer, User, MessageCircle, Map } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { BookingItem } from '@/features/booking/types';
-import { _BookingStatusMap, getStatusColor } from '@/features/service/const';
+import {  getBookingStatusStyle } from '@/features/service/const';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import DefaultColor from '@/components/styles/color';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
-import { openMap } from '@/lib/utils';
+import { formatDistance, openMap } from '@/lib/utils';
+import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
+import { useGetRoomChat } from '@/features/chat/hooks';
 
 export interface BookingItemProps {
   item: BookingItem;
-
   onPress?: (e: BookingItem) => void;
+  calculateDistance: ReturnType<typeof useCalculateDistance>;
+  joinRoomChat: ReturnType<typeof useGetRoomChat>;
 }
 
-export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
+export default function BookingItemKtv({ item, onPress, calculateDistance, joinRoomChat }: BookingItemProps) {
   const { t } = useTranslation();
+
+  const styles = getBookingStatusStyle(item.status);
+
+  const distance = useMemo(() => {
+    if (item?.lat && item?.lng) {
+      return calculateDistance(
+        item.lat,
+        item.lng
+      );
+    }
+    return null;
+  }, [item]);
+
+  // {distance ? formatDistance(distance) : '-'}
 
   return (
     <Pressable
       onPress={useSingleTouch(() => onPress?.(item))}
-      className="shadow-sd overflow-hidden rounded-xl border border-blue-100 bg-white p-4">
-      {/* Badge top-right */}
-      <View className={`absolute right-0 top-0 rounded-bl-lg bg-blue-100 px-3 py-1`}>
-        <Text className={`font-inter-bold text-sm text-primary-color-2`}>
-          {t(_BookingStatusMap[item.status])}
+      className="overflow-hidden rounded-xl border border-blue-100 bg-white p-3">
+      {/* Badge status */}
+      <View className={`absolute right-0 top-0 rounded-bl-lg px-3 py-1`} style={{
+          backgroundColor: styles.background,
+        }}>
+        <Text
+          className={`font-inter-semibold text-sm`}
+          style={{
+            color: styles.text_color,
+          }}
+        >
+          {t(styles.label)}
         </Text>
       </View>
 
-      <View className="flex-row">
-        {/* LEFT: date + time column */}
-        <View className="w-16 items-center">
-          <Text className="mt-3 font-inter-extrabold text-xl text-primary-color-2">
-            {item.start_time ? dayjs(item.start_time).format('HH:mm') : '--:--'}
+      {/* Main content */}
+      <View className="flex-1">
+        {/* title on blue block */}
+        <Text className="font-inter-semibold text-lg text-primary-color-2" numberOfLines={2}>
+          {item.service.name}
+        </Text>
+        <View className="mt-2 flex-row items-start">
+          <Timer size={16} color={DefaultColor.base['primary-color-1']} />
+          <Text className="ml-2 flex-1 text-sm text-primary-color-3">
+            {dayjs(item.booking_time).format('DD/MM/YYYY HH:mm')}
           </Text>
-          <Text className="text-xs text-gray-400">
-            {item.end_time ? dayjs(item.end_time).format('HH:mm') : '--:--'}
-          </Text>
-          <View className="mt-4 rounded-sm bg-slate-100 px-2 py-1">
-            <Text className="font-inter-semibold text-xs text-primary-color-2">
-              {dayjs(item.booking_time).format(' DD/MM')}
-            </Text>
-          </View>
-
-          {/* vertical line */}
-          <View className="mt-3 h-24 w-0.5 bg-gray-200" />
+        </View>
+        <View className="mt-2 flex-row items-start">
+          <Icon as={User} size={16} className="mr-2 mt-0.5 text-primary-color-2" />
+          <Text className="flex-1 text-sm text-primary-color-3">{item.user.name}</Text>
+        </View>
+        <View className="mt-2 flex-row items-start">
+          <Icon as={Map} size={16} className="mr-2 mt-0.5 text-primary-color-2" />
+          <Text className="flex-1 text-sm text-primary-color-3">{item.address}</Text>
         </View>
 
-        {/* CENTER: content */}
-        <View className="mt-4 flex-1 pl-4">
-          {/* title on blue block */}
-          <Text className="font-inter-semibold text-lg text-primary-color-1" numberOfLines={2}>
-            {item.service.name}
-          </Text>
-          <View className="mt-3 flex-row items-start">
-            <Timer size={16} color={DefaultColor.base['primary-color-1']} />
-            <Text className="ml-2 flex-1 text-sm text-primary-color-3">
-              {dayjs(item.booking_time).format('DD/MM/YYYY HH:mm')}
-            </Text>
-          </View>
+        <View className="mt-2 flex-row items-start">
+          <Icon as={MapPin} size={16} className="mr-2 mt-0.5 text-primary-color-2" />
+          <Text className="flex-1 text-sm text-primary-color-3">{distance ? formatDistance(distance) : '-'}</Text>
+        </View>
 
-          <View className="mt-3 flex-row items-start">
-            <Icon as={MapPin} size={16} className="mr-2 mt-0.5 text-primary-color-2" />
-            <Text className="flex-1 text-sm text-primary-color-3">{item.address}</Text>
-          </View>
-
+        <View className="mt-2 flex-row items-center gap-2">
           <Pressable
             className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
             onPress={() => {
@@ -81,30 +95,22 @@ export default function BookingItemKtv({ item, onPress }: BookingItemProps) {
               {t('booking.see_directions')}
             </Text>
           </Pressable>
-
-          {/* bottom row: avatar + name + chevron */}
-          <View className="mt-4 flex-row items-center justify-between pr-8">
-            <View className="flex-row items-center">
-              {item.user.avatar_url ? (
-                <Image source={{ uri: item.user.avatar_url }} className="h-10 w-10 rounded-full" />
-              ) : (
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-200">
-                  <User size={24} color={DefaultColor.slate[400]} />
-                </View>
-              )}
-
-              <Text
-                className="ml-3 flex-1 font-inter-semibold text-sm text-primary-color-3"
-                numberOfLines={1}>
-                {item.user.name}
-              </Text>
-            </View>
-
-            <View className="h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-              <Icon as={ChevronRight} size={18} className="text-blue-600" />
-            </View>
-          </View>
+          <Pressable
+            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
+            onPress={() => {
+              if (item?.user?.id) {
+                joinRoomChat({
+                  user_id: item?.user?.id,
+                },'ktv')
+              }
+            }}>
+            <Icon as={MessageCircle} size={14} className="mr-2 text-white" />
+            <Text className="font-inter-medium text-sm text-white">
+              {t('booking.inbox')}
+            </Text>
+          </Pressable>
         </View>
+
       </View>
     </Pressable>
   );

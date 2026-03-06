@@ -117,7 +117,8 @@
     "save_qr_code": "保存二维码",
     "total": "总计",
     "nickname": "昵称",
-    "password_description": "密码必须至少包含8个字符，包括至少1个大写字母、1个小写字母、1个数字。"
+    "password_description": "密码必须至少包含8个字符，包括至少1个大写字母、1个小写字母、1个数字。",
+    "status": "状态"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -150,7 +151,9 @@
     "location": {
       "title": "需要访问定位",
       "message": "请允许访问定位以使用此功能。",
-      "error": "访问定位出错，请稍后重试。"
+      "error": "访问定位出错，请稍后重试。",
+      "message_for_ktv": "应用需要访问您的定位信息，以便显示在技师列表中。请在设置中授权。",
+      "go_to_settings": "去设置"
     }
   },
   "common_error": {
@@ -178,6 +181,7 @@
   },
   "enum": {
     "booking_status": {
+      "ALL": "全部",
       "PENDING": "待确认",
       "CONFIRMED": "已确认",
       "ONGOING": "进行中",
@@ -314,6 +318,8 @@
     "btn_reset_password": "重置密码",
     "i_agree_to": "我同意",
     "terms_and_conditions": "服务条款",
+    "terms_and_conditions_register_technical": "技术服务条款",
+    "terms_and_conditions_register_agency": "合作服务条款",
     "privacy_policy": "隐私政策",
     "error_terms_required": "您必须同意条款才能继续",
     "error": {
@@ -430,12 +436,13 @@
       "images_title": "您展示给客户的图片",
       "images_min_note": "最少 3 张，最多 5 张照片",
       "images_warning": "请勿使用虚假或不雅照片。照片必须清晰、露脸、正面、严肃且适合工作。严禁包含个人信息（电话、社交媒体、详细地址...）。",
-      "id_title": "身份证（正反面）",
-      "error_agency_id_invalid": "代理 ID 无效。请输入数字。",
-      "id_front": "正面",
-      "id_back": "反面",
-      "degrees_title": "学位/证书",
-      "degree_photo": "证书",
+      "id_cccd_title_exclude": "身份证/公民身份证明 (正面和反面)",
+      "id_cccd_front": "身份证/公民身份证明正面",
+      "id_cccd_back": "身份证/公民身份证明反面",
+      "avatar": "头像",
+      "field_dob_label": "出生日期",
+      "real_name": "姓名 (与身份证/公民身份证明一致)",
+      "address": "合作方地址",
       "add_photo": "添加照片",
       "field_name_label": "您的姓名",
       "field_name_placeholder": "输入全名",
@@ -497,6 +504,8 @@
       "error_check_application": "检查合作伙伴申请时发生错误。请稍后重试。",
       "show_application": "查看申请详情",
       "modal_application": {
+        "real_name": "姓名 (与身份证/公民身份证明一致)",
+        "address": "合作方地址",
         "title": "申請詳情",
         "status": "已拒絕",
         "reason": "原因",
@@ -516,6 +525,22 @@
         "face_with_identity_card": "手持身分證照片",
         "certificate": "相關證書",
         "gallery": "展示照片 (供客戶查看)"
+      },
+      "error": {
+        "invalid_realname_length": "真实姓名必须至少包含 {{ min }} 个字符，最多 {{ max }} 个字符。",
+        "invalid_nickname_length": "昵称必须至少包含 {{ min }} 个字符，最多 {{ max }} 个字符。",
+        "error_agency_id_invalid": "介绍ID无效。",
+        "invalid_experience": "工作经验必须在 {{ min }} 到 {{ max }} 年之间。",
+        "bio_required": "个人简介（Bio）必须至少包含 {{ min }} 个字符，最多 {{ max }} 个字符。",
+        "invalid_dob": "请输入出生日期。",
+        "avatar_required": "请选择头像。",
+        "avatar_size": "头像不能超过 {{ max }}MB。",
+        "invalid_cccd_front": "只能上传 {{ max }} 张身份证正面照片。",
+        "invalid_cccd_back": "只能上传 {{ max }} 张身份证背面照片。",
+        "invalid_license": "只能上传 {{ max }} 张营业执照照片。",
+        "invalid_face_with_id": "只能上传 {{ max }} 张持身份证人脸照片。",
+        "invalid_ktv_image_display": "只能上传 {{ min }} - {{ max }} 张给顾客展示的图片。",
+        "invalid_address": "请输入地址。"
       }
     },
     "partner_register": {
@@ -747,7 +772,9 @@
     "booking_cancel_reason_required": "请输入取消原因",
     "booking_end_success": "服务已结束",
     "coupon": "优惠券",
+    "status": "状态",
     "discount_price": "折扣价格",
+    "price_discount": "价格折扣",
     "enter_cancel_reason": "输入取消原因",
     "cancel_service_reason": "取消服务原因",
     "execution_date": "执行日期",
@@ -757,6 +784,7 @@
     "customer_notes": "客户备注",
     "original_price": "原价",
     "address_notes": "地址备注",
+    "price_transportation": "交通价格",
     "no_customer_notes": "没有客户备注",
     "no_cancel_reason": "没有取消原因",
     "cancel_pending_note": "取消请求将发送给管理员进行审核。",

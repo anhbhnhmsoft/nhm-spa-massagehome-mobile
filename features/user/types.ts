@@ -1,5 +1,5 @@
 import {
-  BaseSearchRequest,
+  BaseSearchRequest, IFileUpload,
   IMultiLangField,
   Paginator,
   ResponseDataSuccessType,
@@ -120,9 +120,16 @@ export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
     cccd_back: string | null; // URL of back side of CCCD
     face_with_identity_card: string | null; // URL of face with identity card
     certificate: string | null; // URL of certificate
+    address: string | null;
+    latitude?: number;
+    longitude?: number;
   } | null;
 }>;
 
+export type FileUploadItem = {
+  type_upload: _PartnerFileType;
+  file: IFileUpload;
+}
 
 export type ApplyPartnerRequest = {
   role: _UserRole.KTV | _UserRole.AGENCY;
@@ -140,6 +147,26 @@ export type ApplyPartnerRequest = {
       token?: string; // token for private image upload
     };
   }[];
+};
+
+
+export type ApplyTechnicalRequest = {
+  nickname: string;
+  referrer_id?: string;
+  is_leader?: boolean;
+  experience: number;
+  bio: string;
+  dob: string;
+  avatar: IFileUpload;
+  file_uploads: FileUploadItem[];
+};
+
+export type ApplyAgencyRequest = {
+  nickname: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  file_uploads: FileUploadItem[];
 };
 
 export type ApplyPartnerResponse = ResponseDataSuccessType<unknown>;

@@ -7,51 +7,54 @@ import { ImagePlus, Trash2 } from 'lucide-react-native';
 
 type ImageSlotProps = {
   uri: string | null;
-  token?: string;
   label: string;
   onAdd: () => void;
   onRemove?: () => void;
   disabled?: boolean;
 };
 
-export const ImageRegisterPartnerSlot: React.FC<ImageSlotProps> = ({ uri, token, label, onAdd, onRemove, disabled }) => {
+export const ImageRegisterPartnerSlot: React.FC<ImageSlotProps> = ({ uri, label, onAdd, onRemove, disabled }) => {
   return (
-    <TouchableOpacity
-      disabled={disabled}
-      onPress={!disabled ? onAdd : undefined}
-      className="relative h-32 w-28 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 overflow-hidden">
+    // Dùng View làm khung bọc ngoài cùng thay vì TouchableOpacity
+    <View className="relative h-32 w-28 overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50">
       {uri ? (
         <>
-          <Image
-            source={{
-              uri: uri,
-              headers: token ? {
-                Authorization: `Bearer ${token}`,
-              } : undefined,
-            }}
-            style={{ width: '100%', height: '100%' }}
-            contentFit="cover"
-            className="rounded-xl"
-          />
+          {/* Nút bấm vào ảnh để đổi ảnh khác */}
+          <TouchableOpacity
+            disabled={disabled}
+            onPress={onAdd}
+            activeOpacity={0.8}
+            className="h-full w-full"
+          >
+            <Image
+              source={{ uri: uri }}
+              style={{ width: '100%', height: '100%' }}
+              contentFit="cover"
+            />
+          </TouchableOpacity>
+
+          {/* Nút Xóa đè lên trên tuyệt đối (Absolute), nằm ngang hàng (sibling) với ảnh */}
           {!disabled && onRemove && (
             <TouchableOpacity
-              onPress={(e) => {
-                e.stopPropagation();
-                onRemove();
-              }}
-              className="absolute right-1 top-1 rounded-full bg-red-500 p-1.5 z-10"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              onPress={onRemove}
+              className="absolute right-1 top-1 z-10 rounded-full bg-red-500 p-1.5 shadow-sm"
+              hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} // Mở rộng vùng bấm cho dễ chạm
+            >
               <Icon as={Trash2} size={14} className="text-white" />
             </TouchableOpacity>
           )}
         </>
       ) : (
-        <View className="items-center justify-center">
+        /* Trạng thái chưa có ảnh */
+        <TouchableOpacity
+          disabled={disabled}
+          onPress={onAdd}
+          className="h-full w-full items-center justify-center"
+        >
           <Icon as={ImagePlus} size={24} className="text-gray-400" />
-          <Text className="mt-1 text-xs text-gray-400">{label}</Text>
-        </View>
+          <Text className="mt-1 text-center text-xs text-gray-400">{label}</Text>
+        </TouchableOpacity>
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
-

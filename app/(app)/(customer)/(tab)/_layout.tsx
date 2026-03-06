@@ -1,5 +1,5 @@
 import { router, Tabs } from 'expo-router';
-import { Home, Briefcase, Users, User } from 'lucide-react-native';
+import { Home, Briefcase, Users, User, CalendarCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { TabIcon } from '@/components/app/tab-icon';
@@ -61,6 +61,17 @@ export default function TabsLayout() {
             ),
           }}
         />
+
+        <Tabs.Protected guard={status === _AuthStatus.AUTHORIZED}>
+          <Tabs.Screen
+            name="orders"
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <TabIcon focused={focused} icon={CalendarCheck} label={t('tab.orders')} />
+              ),
+            }}
+          />
+        </Tabs.Protected>
 
         <Tabs.Screen
           name="profile"

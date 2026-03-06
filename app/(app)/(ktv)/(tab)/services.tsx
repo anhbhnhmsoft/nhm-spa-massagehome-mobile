@@ -17,6 +17,7 @@ export default function ServiceListScreen() {
   const { t } = useTranslation();
 
   const bottomPadding = getTabBarHeight() + 20;
+
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
   const [detail, setDetail] = useState<CategoryServiceItem | null>(null);
