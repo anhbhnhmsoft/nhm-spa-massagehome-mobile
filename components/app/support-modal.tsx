@@ -59,7 +59,6 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
   return (
     <Modal
       animationType="slide"
-      transparent={true}
       visible={isVisible}
       onRequestClose={onClose}
     >

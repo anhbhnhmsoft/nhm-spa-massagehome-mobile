@@ -31,6 +31,12 @@ export const BackgroundLiner = React.forwardRef<ScrollView, BackgroundLinerProps
           className={cn('flex-1', className)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={contentContainerStyle}
+          style={[
+            {
+              zIndex: 999,
+            },
+            props.style,
+          ]}
           {...props}
         >
           {children}
