@@ -19,17 +19,13 @@ export const useGetSupport = () => {
       setVisible(true);
     }
     else{
-      setLoading(true);
+      setVisible(true);
       getListSupportChanel(undefined, {
         onSuccess: (res) => {
           setSupportChanel(res.data);
-          setVisible(true);
         },
         onError: (err) => {
           handleError(err);
-        },
-        onSettled: () => {
-          setLoading(false);
         },
       });
     }
