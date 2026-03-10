@@ -6,7 +6,7 @@ import {
   useWalletQuery,
 } from '@/features/payment/hooks/use-query';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useConfigPaymentMutation,
   useCreateWithdrawInfoMutation,
@@ -37,6 +37,7 @@ import { getMessageError } from '@/lib/utils';
 import { Alert } from 'react-native';
 import { _UserRole } from '@/features/auth/const';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
@@ -135,10 +136,10 @@ export const useWallet = (useFor: _UserRole) => {
         setConfigPayment(res.data);
         switch (useFor) {
           case _UserRole.CUSTOMER:
-            router.push('/(app)/(profile)/deposit');
+            router.push('/(app)/(customer)/(profile)/deposit');
             break;
           case _UserRole.KTV:
-            router.push('/(app)/(service-ktv)/deposit');
+            router.push('/(app)/(ktv)/(service)/deposit');
             break;
           case _UserRole.AGENCY:
             router.push('/(app)/(service-agency)/deposit');
@@ -181,7 +182,7 @@ export const useDeposit = () => {
   const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
 
-  const [visibleModalWechat, setVisibleModalWechat] = useState<boolean>(false);
+
   // Mutate function dùng để gọi API nạp tiền
   const { mutate: mutateDeposit } = useDepositMutation();
 
@@ -224,8 +225,6 @@ export const useDeposit = () => {
     ),
   });
 
-
-
   // Hàm submit nạp tiền
   const submitDeposit = (data: DepositRequest) => {
     setLoading(true);
@@ -242,7 +241,6 @@ export const useDeposit = () => {
           case _PaymentType.WECHAT_PAY:
             const qrWechatData = resData.data_payment as QRWechatData;
             setQrWechatData(qrWechatData);
-            setVisibleModalWechat(true);
             break;
           default:
             break;
@@ -265,16 +263,13 @@ export const useDeposit = () => {
   }, [configPayment]);
 
   const handleCloseWechat = useCallback(() => {
-    setVisibleModalWechat(false);
     setQrWechatData(null);
     refreshWallet(true);
-    router.back();
   }, []);
   return {
     configPayment: configPayment as ConfigPaymentItem,
     form,
     submitDeposit,
-    visibleModalWechat,
     handleCloseWechat,
   };
 };
@@ -285,6 +280,7 @@ export const useDeposit = () => {
 export const useCheckPaymentQRCode = (useFor: _UserRole) => {
   const { t } = useTranslation();
   const { success } = useToast();
+  const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
   // State lưu trữ dữ liệu QRBankData khi nạp tiền chuyển khoản
   const qrBankData = useWalletStore((state) => state.qrBankData);
@@ -294,12 +290,15 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
 
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
 
-  const [visible, setVisible] = useState(false);
-
   const { data: pollData } = useTransactionPolling(transactionId);
 
   useEffect(() => {
-    setVisible(!!transactionId && !!qrBankData);
+    if (!bottomSheetRef.current) {
+      return;
+    }
+    if (transactionId && qrBankData) {
+      bottomSheetRef.current?.present();
+    }
   }, [transactionId, qrBankData]);
 
   const resetNav = useResetNav();
@@ -311,14 +310,14 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
       success({
         message: t('payment.success.deposit'),
       });
-      closeModal(); // Đóng modal
+      closeModal();
       refreshWallet(true);
       switch (useFor) {
         case _UserRole.KTV:
-          resetNav('/(app)/(service-ktv)/wallet');
+          resetNav('/(app)/(ktv)/(service)/wallet');
           break;
         case _UserRole.CUSTOMER:
-          resetNav('/(app)/(profile)/wallet');
+          resetNav('/(app)/(customer)/(profile)/wallet');
           break;
         case _UserRole.AGENCY:
           resetNav('/(app)/(tab-agency)/wallet');
@@ -332,9 +331,10 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
   const closeModal = () => {
     setTransactionId(null);
     setQrBankData(null);
+    bottomSheetRef.current?.dismiss();
   };
   return {
-    visible,
+    bottomSheetRef,
     closeModal,
     qrBankData,
   };
