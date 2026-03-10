@@ -17,6 +17,8 @@ import { useAuthStore } from '@/features/auth/stores';
 import useHandleLinking from '@/features/app/hooks/use-handle-linking';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { HydrateAuthProvider } from '@/features/auth/providers';
+import { useApplicationStore } from '@/features/app/stores';
+import { View } from 'react-native';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -84,28 +86,30 @@ export default function RootLayout() {
 
 const AppContainer = () => {
   const status = useAuthStore((state) => state.status);
-
+  const lang = useApplicationStore((state) => state.language);
   const complete = useMemo(() => ![_AuthStatus.HYDRATE, _AuthStatus.INITIAL].includes(status), [status]);
   // Xử lý linking
   useHandleLinking(complete);
 
   return (
     <HydrateAuthProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Protected guard={!complete}>
-          <Stack.Screen name="index" />
-        </Stack.Protected>
-        <Stack.Protected guard={complete}>
-          <Stack.Screen name="(app)" />
-          <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
-        </Stack.Protected>
-      </Stack>
+     <View style={{ flex: 1 }} key={lang}>
+       <Stack
+         screenOptions={{
+           headerShown: false,
+         }}
+       >
+         <Stack.Protected guard={!complete}>
+           <Stack.Screen name="index" />
+         </Stack.Protected>
+         <Stack.Protected guard={complete}>
+           <Stack.Screen name="(app)" />
+           <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
+             <Stack.Screen name="(auth)" />
+           </Stack.Protected>
+         </Stack.Protected>
+       </Stack>
+     </View>
     </HydrateAuthProvider>
   );
 };

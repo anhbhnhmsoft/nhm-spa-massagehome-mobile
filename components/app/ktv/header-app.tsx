@@ -5,10 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/features/auth/stores';
 import {Image} from "expo-image";
 import dayjs from 'dayjs';
-
-import 'dayjs/locale/vi';
-import 'dayjs/locale/en';
-import 'dayjs/locale/zh-cn';
 import { useTranslation } from 'react-i18next';
 import { useApplicationStore } from '@/features/app/stores';
 import { _LanguageCode } from '@/lib/const';
@@ -16,8 +12,6 @@ import DefaultColor from '@/components/styles/color';
 import { ModalInfo } from '@/components/app/ktv/modal-info';
 import {Text} from "@/components/ui/text";
 
-// Thiết lập ngôn ngữ mặc định là tiếng Việt
-dayjs.locale('vi');
 
 export function HeaderAppKTV() {
   const insets = useSafeAreaInsets();
@@ -34,8 +28,7 @@ export function HeaderAppKTV() {
   },[language])
 
   const displayDate = useMemo(() => {
-    const formatString = language === _LanguageCode.CN ? 'dddd, MM/DD' : 'dddd, DD/MM';
-    const rawDate = dayjs().format(formatString);
+    const rawDate = dayjs().format("DD/MM/YYYY");
     return rawDate.charAt(0).toUpperCase() + rawDate.slice(1);
   }, [language]);
 

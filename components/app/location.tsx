@@ -32,7 +32,7 @@ type ListLocationModalProps = {
 };
 export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationModalProps) => {
   const { t } = useTranslation();
-
+  const [loadingCurrentLocation, setLoadingCurrentLocation] = useState(false);
   const {
     queryList,
     createHandler,
@@ -72,7 +72,7 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
             <View className="pb-4 border-b-2 border-b-gray-100">
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => {
+                onPress={async () => {
                   if (location) {
                     if (onSelect) {
                       onSelect({
@@ -83,10 +83,11 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                       });
                     }
                   } else {
-                    getCurrentLocation();
+                    await getCurrentLocation();
                   }
                 }}
-                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-gray-50">
+                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-gray-50"
+              >
                 {/* ICON BÊN TRÁI */}
                 <View
                   className={'mr-4 h-10 w-10 items-center justify-center rounded-full bg-orange-100'}>
@@ -268,7 +269,7 @@ const SaveLocationModal = ({ visible, onClose }: SaveLocationModalProps) => {
   };
 
   return (
-    <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <FocusAwareStatusBar style={"dark"} />
       <SafeAreaView className="flex-1 bg-white">
         {/* HEADER */}

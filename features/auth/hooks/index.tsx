@@ -1,17 +1,15 @@
 import { useAuthStore } from '@/features/auth/stores';
-import { _AuthStatus, _Gender } from '@/features/auth/const';
+import {  _Gender } from '@/features/auth/const';
 import useToast from '@/features/app/hooks/use-toast';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApplicationStore } from '@/features/app/stores';
-import { _LanguageCode } from '@/lib/const';
 import {
   useLockAccountMutation,
   useMutationDeleteAvatar,
   useMutationEditAvatar,
   useMutationEditProfile,
   useProfileMutation,
-  useSetLanguageMutation,
 } from '@/features/auth/hooks/use-mutation';
 import {
   EditProfileRequest,
@@ -25,8 +23,6 @@ import { useCameraPermissions } from 'expo-camera';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
-import { queryClient } from '@/lib/provider/query-provider';
-import * as Updates from 'expo-updates';
 
 export * from './use-handle-authenticate';
 export * from './use-handle-login';
@@ -35,109 +31,9 @@ export * from './use-handle-verify-otp';
 export * from './use-handle-register';
 export * from './use-logout';
 export * from './use-reset-password';
+export * from './use-set-language-user';
+export * from './use-get-profile';
 
-
-
-/**
- * Hook để lấy profile user
- */
-export const useGetProfile = () => {
-  const { t } = useTranslation();
-  const setUser = useAuthStore((state) => state.setUser);
-  const logout = useAuthStore((state) => state.logout);
-  const { mutate } = useProfileMutation();
-  const { error } = useToast();
-
-  return useCallback(() => {
-    mutate(undefined, {
-      onSuccess: (res) => {
-        setUser(res.data.user);
-      },
-      onError: () => {
-        // Token hết hạn hoặc không hợp lệ
-        error({
-          message: t('common_error.invalid_or_expired_token'),
-        });
-        logout();
-      },
-    });
-  }, []);
-};
-
-
-
-/**
- * Hook để set ngôn ngữ user
- */
-export const useSetLanguageUser = (onClose?: () => void) => {
-  const { t } = useTranslation();
-  // Lấy ngôn ngữ hiện tại từ store
-  const selectedLang = useApplicationStore((state) => state.language);
-
-  // Lấy hàm set ngôn ngữ từ store
-  const setLanguageStore = useApplicationStore((state) => state.setLanguage);
-
-  // Lấy hàm set ngôn ngữ từ API
-  const { mutate, isPending } = useSetLanguageMutation();
-
-  const { error: errorToast } = useToast(!!onClose);
-
-  // loading state
-
-  // Kiểm tra xem user đăng nhập chưa
-  const status = useAuthStore((state) => state.status);
-
-  const syncLanguage = useCallback(async (lang: _LanguageCode) => {
-    try {
-      // Sau khi set ngôn ngữ thành công thì set ngôn ngữ vào store
-      await setLanguageStore(lang);
-      // Sau khi set ngôn ngữ thành công thì clear cache
-      queryClient.clear();
-      // Sau khi set ngôn ngữ thành công thì reset lại các query để cập nhật ngôn ngữ mới
-      await queryClient.resetQueries();
-      // Sau khi set ngôn ngữ thành công thì reload lại app
-      await Updates.reloadAsync();
-    } catch {
-      // do nothing
-    }
-  }, []);
-
-  // Hook để set ngôn ngữ user
-  const setLanguage = useCallback(
-    async (lang: _LanguageCode) => {
-      // Nếu user đã đăng nhập thì gọi API để set ngôn ngữ
-      if (status === _AuthStatus.AUTHORIZED) {
-        // Gọi API để set ngôn ngữ
-        mutate(
-          { lang },
-          {
-            onSuccess: async () => {
-              await syncLanguage(lang);
-            },
-            onError: () => {
-              errorToast({
-                message: t('common_error.failed_to_set_language'),
-              });
-            },
-          }
-        );
-      } else {
-        await syncLanguage(lang);
-      }
-      // Đóng bottom sheet
-      if (onClose) {
-        onClose();
-      }
-    },
-    [status, onClose]
-  );
-
-  return {
-    setLanguage,
-    selectedLang,
-    isPending,
-  };
-};
 
 /**
  * Xử lý thay đổi avatar

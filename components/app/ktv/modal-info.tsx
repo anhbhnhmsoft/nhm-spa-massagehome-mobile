@@ -27,6 +27,7 @@ import Dialog from '@/components/ui/dialog';
 import { router } from 'expo-router';
 import { openAboutPage } from '@/lib/utils';
 import { useSendDangerSupport } from '@/features/ktv/hooks';
+import BaseBottomModal from '@/components/ui/base-bottom-modal';
 
 type ModalInfoProps = {
   isVisible: boolean;
@@ -43,21 +44,13 @@ export const ModalInfo: FC<ModalInfoProps> = ({ isVisible, onClose }) => {
 
   return (
     <>
-      <Modal
-        animationType={'slide'}
-        transparent={true}
+      <BaseBottomModal
         visible={isVisible}
-        onRequestClose={onClose}>
-        <TouchableWithoutFeedback onPress={onClose}>
-          <View className="flex-1 justify-end bg-black/50">
-            <TouchableWithoutFeedback>
-              <View className="w-full rounded-t-3xl bg-white">
-                <FeatureList onClose={onClose} setLogoutModalOpen={setLogoutModalOpen} />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+        onClose={onClose}
+        title={t('profile.common_features')}
+      >
+        <FeatureList onClose={onClose} setLogoutModalOpen={setLogoutModalOpen} />
+      </BaseBottomModal>
       {/* Đưa Dialog ra ngoài Modal để không bị che */}
       <Dialog
         isOpen={isLogoutModalOpen}
@@ -107,11 +100,7 @@ export const FeatureList = ({
 
   return (
     <>
-      <View className="mt-3 flex-row flex-wrap justify-start p-4">
-        <View className="mb-3 w-full">
-          <Text className="font-inter-bold text-gray-800">{t('profile.common_features')}</Text>
-        </View>
-
+      <View className="flex-row flex-wrap justify-start">
         {/* Cầu cứu */}
         <TouchableOpacity
           className="mb-2 w-[33%] items-center"

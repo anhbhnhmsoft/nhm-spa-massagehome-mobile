@@ -512,12 +512,10 @@ export const useConfigSchedule = () => {
 export const useSendDangerSupport = () => {
   const { t } = useTranslation();
   const { error: errorToast, success } = useToast();
-  const setLoading = useApplicationStore((state) => state.setLoading);
   const userLocation = useApplicationStore((state) => state.location);
   const { mutate } = useSendDangerSupportMutation();
 
   const sendDangerSupport = () => {
-    setLoading(true);
     mutate({
       message: '',
       lat: userLocation?.location?.coords?.latitude?.toString(),
@@ -528,9 +526,6 @@ export const useSendDangerSupport = () => {
       },
       onError: (err) => {
         errorToast({ message: t('danger_support.error') });
-      },
-      onSettled: () => {
-        setLoading(false);
       },
     });
   };

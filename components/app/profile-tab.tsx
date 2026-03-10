@@ -35,11 +35,6 @@ import SupportModal from '@/components/app/support-modal';
 import { useGetSupport } from '@/features/config/hooks';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 
-
-
-
-
-
 // Bottom Edit image
 export const BottomEditAvatar = forwardRef<
   BottomSheetModal,
@@ -63,7 +58,6 @@ export const BottomEditAvatar = forwardRef<
     <BottomSheetModal
       ref={ref}
       index={0} // Mở ở snap point đầu tiên (50%)
-      snapPoints={[]}
       enableDynamicSizing={true}
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: '#f5f5f5' }}

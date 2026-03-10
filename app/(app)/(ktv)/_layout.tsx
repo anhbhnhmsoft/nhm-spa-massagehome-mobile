@@ -8,6 +8,7 @@ export default function KTVLayout() {
   useBookingCountdown();
   // Kiểm tra và yêu cầu quyền vị trí cho KTV
   const { isLocationReady } = useRequireLocationForKTV();
+
   return (
     <Stack
       screenOptions={{
