@@ -28,6 +28,8 @@ const MasseurDetailScreen = () => {
     handlePrepareBooking,
   } = useDetailKtv();
 
+  console.log('details', detail);
+
   return (
     <>
       <View className={`flex-1 bg-slate-50`}>

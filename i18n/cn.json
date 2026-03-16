@@ -816,7 +816,17 @@
     "error_join_room": "加入聊天室出错",
     "online": "在线",
     "offline": "离线",
-    "placeholder": "发送消息..."
+    "placeholder": "发送消息...",
+    "translated": "已翻译",
+    "copy": "复制",
+    "translate_message": "翻译消息",
+    "view_original": "查看原文",
+    "view_translation": "查看翻译",
+    "translating": "正在翻译...",
+    "translate_to": "翻译为",
+    "translation": "— 翻译",
+    "original": "— 原文",
+    "chat_room": "聊天室"
   },
   "review": {
     "all_reviews": "所有评价",

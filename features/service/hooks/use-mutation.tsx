@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import serviceApi from '@/features/service/api';
-import { SendReviewRequest } from '@/features/service/types';
-
+import { SendReviewRequest, TranslateReviewRequest } from '@/features/service/types';
 
 /**
  * Gửi đánh giá dịch vụ
@@ -12,3 +11,11 @@ export const useMutationSendReview = () => {
   });
 };
 
+/**
+ * Dich đánh giá dịch vụ
+ */
+export const useMutationTranslateReview = () => {
+  return useMutation({
+    mutationFn: (data: TranslateReviewRequest) => serviceApi.translateReview(data),
+  });
+};

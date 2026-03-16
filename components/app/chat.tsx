@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { AlertCircle, Check, ChevronLeft, Clock, Copy, Languages, Send } from 'lucide-react-native';
+import { ChevronLeft, Send } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-
 import { PayloadNewMessage } from '@/features/chat/types';
 import { useChat } from '@/features/chat/hooks';
 import { cn, goBack } from '@/lib/utils';
@@ -23,7 +20,6 @@ import AppBottomSheet from '@/components/ui/app-bottom-sheet';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import DefaultColor from '@/components/styles/color';
 import { useApplicationStore } from '@/features/app/stores';
-import { useTranslateMessage } from '@/features/chat/hooks/use-traselate';
 import { MessageItem } from './message-item';
 import { MessageSheetContent } from './message-sheet-content';
 
@@ -33,7 +29,7 @@ type TranslationMap = Record<string, string | null>;
 
 type SendButtonProps = { disabled: boolean; onPress: () => void };
 
-const SendButton = React.memo(({ disabled, onPress }: SendButtonProps) => (
+const SendButton = ({ disabled, onPress }: SendButtonProps) => (
   <TouchableOpacity
     onPress={onPress}
     disabled={disabled}
@@ -43,7 +39,7 @@ const SendButton = React.memo(({ disabled, onPress }: SendButtonProps) => (
     )}>
     <Send size={20} color="white" />
   </TouchableOpacity>
-));
+);
 
 export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' }) {
   const { t } = useTranslation();

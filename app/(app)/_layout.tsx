@@ -23,7 +23,7 @@ export default function AppLayout() {
   useCheckMatchAffiliate();
 
   // Kiểm tra config application update
-  const {isMaintained} = useCheckConfigApplicationUpdate();
+  const { isMaintained } = useCheckConfigApplicationUpdate();
 
   // Tạo guard để kiểm tra quyền truy cập vào từng screen
   const guard = useMemo(() => {
@@ -31,11 +31,12 @@ export default function AppLayout() {
       maintained: isMaintained,
       ktv_screen: status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.KTV,
       agency_screen: status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.AGENCY,
-      customer_screen: status === _AuthStatus.UNAUTHORIZED || (status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.CUSTOMER),
+      customer_screen:
+        status === _AuthStatus.UNAUTHORIZED ||
+        (status === _AuthStatus.AUTHORIZED && user?.role === _UserRole.CUSTOMER),
       authorized_screen: status === _AuthStatus.AUTHORIZED,
-    }
-  },[isMaintained, status, user])
-
+    };
+  }, [isMaintained, status, user]);
 
   return (
     <>
@@ -77,7 +78,7 @@ export default function AppLayout() {
           </Stack.Protected>
 
           {/* --- PDF SCREEN --- */}
-          <Stack.Screen name="term-or-use-pdf" />
+          {/* <Stack.Screen name="term-or-use-pdf" /> */}
         </Stack.Protected>
       </Stack>
     </>
