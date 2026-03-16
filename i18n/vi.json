@@ -819,7 +819,17 @@
     "error_join_room": "Lỗi khi tham gia phòng chat",
     "online": "Online",
     "offline": "Offline",
-    "placeholder": "Gửi tin nhắn..."
+    "placeholder": "Gửi tin nhắn...",
+    "translated": "Đã dịch",
+    "copy": "Sao chép",
+    "translate_message": "Dịch tin nhắn",
+    "view_original": "Xem bản gốc",
+    "view_translation": "Xem bản dịch",
+    "translating": "Đang dịch...",
+    "translate_to": "Dịch sang",
+    "translation": "— Bản dịch",
+    "original": "— Bản gốc",
+    "chat_room": "Chat Room"
   },
   "review": {
     "all_reviews": "Tất cả đánh giá",

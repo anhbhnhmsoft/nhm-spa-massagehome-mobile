@@ -1,162 +1,201 @@
-import React, { useState } from 'react';
-import { PayloadNewMessage } from '@/features/chat/types';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { AlertCircle, Check, ChevronLeft, Clock, Copy, Languages, Send } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+
+import { PayloadNewMessage } from '@/features/chat/types';
+import { useChat } from '@/features/chat/hooks';
 import { cn, goBack } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
-import { AlertCircle, Check, ChevronLeft, Clock, Send } from 'lucide-react-native';
-import { useTranslation } from 'react-i18next';
-import { useChat } from '@/features/chat/hooks';
-import DefaultColor from '@/components/styles/color';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { _LanguageCode, _LanguagesMap } from '@/lib/const';
+import AppBottomSheet from '@/components/ui/app-bottom-sheet';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
-import { router } from 'expo-router';
+import DefaultColor from '@/components/styles/color';
+import { useApplicationStore } from '@/features/app/stores';
+import { useTranslateMessage } from '@/features/chat/hooks/use-traselate';
+import { MessageItem } from './message-item';
+import { MessageSheetContent } from './message-sheet-content';
 
+type TranslationMap = Record<string, string | null>;
 
-const MessageItem = React.memo(({ item, currentUserId }: { item: PayloadNewMessage, currentUserId: string }) => {
-  const isMe = item.sender_id === currentUserId;
+// ─── SendButton ───────────────────────────────────────────────
 
-  return (
-    <View className={cn('my-1 px-4 w-full flex-row', isMe ? 'justify-end' : 'justify-start')}>
-      <View
-        className={cn(
-          'max-w-[80%] rounded-2xl px-4 py-3',
-          isMe ? 'bg-blue-600 rounded-br-none' : 'bg-gray-200 rounded-bl-none'
-        )}
-      >
-        <Text className={cn('text-[15px]', isMe ? 'text-white' : 'text-black')}
-              selectable={true}>
-          {item.content}
-        </Text>
-        {/* Status Line */}
-        <View className="flex-row items-center justify-end mt-1 gap-1">
-          <Text className={cn('text-[10px]', isMe ? 'text-blue-200' : 'text-gray-500')}>
-            {/* Format giờ tùy ý, ví dụ dùng dayjs */}
-            {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-          {/* Chỉ hiện trạng thái gửi cho tin nhắn của mình */}
-          {isMe && (
-            <>
-              {item.status_sent === 'pending' && <Clock size={12} color="#BFDBFE" />}
-              {item.status_sent === 'sent' && <Check size={12} color="#BFDBFE" />}
-              {item.status_sent === 'failed' && <AlertCircle size={12} color="#FCA5A5" />}
-            </>
-          )}
-        </View>
-      </View>
-    </View>
-  );
-});
+type SendButtonProps = { disabled: boolean; onPress: () => void };
 
-export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer'  }) {
+const SendButton = React.memo(({ disabled, onPress }: SendButtonProps) => (
+  <TouchableOpacity
+    onPress={onPress}
+    disabled={disabled}
+    className={cn(
+      'h-12 w-12 items-center justify-center rounded-full',
+      disabled ? 'bg-gray-300' : 'bg-blue-600'
+    )}>
+    <Send size={20} color="white" />
+  </TouchableOpacity>
+));
+
+export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' }) {
   const { t } = useTranslation();
+  const defaultLang = useApplicationStore((s) => s.language);
+
   const [inputText, setInputText] = useState('');
+  const [translationMap, setTranslationMap] = useState<TranslationMap>({});
+  const [selectedItem, setSelectedItem] = useState<PayloadNewMessage | null>(null);
+  const [targetLang, setTargetLang] = useState<_LanguageCode>(defaultLang);
 
-  const {
-    messages,
-    submitMessage,
-    joinStatus,
-    historyQuery,
-    user,
-    room,
-  } = useChat(useFor);
+  const sheetRef = useRef<BottomSheetModal>(null);
 
-  // Xử lý gửi tin
-  const handleSend = () => {
-    if (!inputText.trim()) return;
-    submitMessage(inputText.trim());
+  const { messages, submitMessage, joinStatus, historyQuery, user, room } = useChat(useFor);
+
+  const handleLongPress = useCallback((item: PayloadNewMessage) => {
+    setSelectedItem(item);
+    sheetRef.current?.present();
+  }, []);
+
+  const handleSheetDismiss = useCallback(() => setSelectedItem(null), []);
+
+  const handleCloseSheet = useCallback(() => sheetRef.current?.dismiss(), []);
+
+  // Stable update – sử dụng functional update để không phụ thuộc translationMap
+  const handleUpdateTranslation = useCallback(
+    (id: string, translated: string | null) =>
+      setTranslationMap((p) => {
+        if (p[id] === translated) return p;
+        return { ...p, [id]: translated };
+      }),
+    []
+  );
+
+  const handleSend = useCallback(() => {
+    const text = inputText.trim();
+    if (!text) return;
+    submitMessage(text);
     setInputText('');
-  };
+  }, [inputText, submitMessage]);
 
-  // --- UI LOADING KHI MỚI VÀO ---
+  const messagesWithTranslation = useMemo(
+    () =>
+      messages.map((msg) => {
+        const translated = translationMap[msg.id] ?? translationMap[msg.temp_id ?? ''] ?? null;
+        if (translated === (msg.translated_content ?? null)) return msg;
+        return { ...msg, translated_content: translated };
+      }),
+    [messages, translationMap]
+  );
+
+  // initialIsShowing cho sheet: true nếu tin nhắn đang hiển thị bản dịch
+  const initialIsShowing = useMemo(() => {
+    if (!selectedItem) return false;
+    return !!(translationMap[selectedItem.id] ?? translationMap[selectedItem.temp_id ?? '']);
+  }, [selectedItem?.id, selectedItem?.temp_id]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: PayloadNewMessage }) => (
+      <MessageItem item={item} currentUserId={user?.id ?? ''} onLongPress={handleLongPress} t={t} />
+    ),
+    [user?.id, handleLongPress, t]
+  );
+
+  const keyExtractor = useCallback((item: PayloadNewMessage) => item.temp_id ?? item.id, []);
+
+  const listFooter = useMemo(
+    () =>
+      historyQuery.isFetchingNextPage ? (
+        <View className="py-4">
+          <ActivityIndicator size="small" color={DefaultColor.base['primary-color-2']} />
+        </View>
+      ) : null,
+    [historyQuery.isFetchingNextPage]
+  );
+
+  const handleEndReached = useCallback(() => {
+    if (historyQuery.hasNextPage) historyQuery.fetchNextPage();
+  }, [historyQuery.hasNextPage, historyQuery.fetchNextPage]);
+
+  // ── Loading state ────────────────────────────────────────────
+
   if (joinStatus === 'joining' || (joinStatus === 'pending' && historyQuery.isLoading)) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color={DefaultColor.base['primary-color-2']} />
-        <Text className="text-gray-500 mt-2">{t('chat.connecting')}</Text>
+        <Text className="mt-2 text-gray-500">{t('chat.connecting')}</Text>
       </View>
     );
   }
+
+  // ── Main render ──────────────────────────────────────────────
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <FocusAwareStatusBar hidden={true} />
-      {/* --- A. HEADER --- */}
-      <View className="flex-row items-center p-4 border-b border-gray-100 bg-white">
-        <TouchableOpacity onPress={() => goBack()} className="mr-3">
+      <FocusAwareStatusBar hidden />
+
+      {/* Header */}
+      <View className="flex-row items-center border-b border-gray-100 bg-white p-4">
+        <TouchableOpacity onPress={goBack} className="mr-3">
           <ChevronLeft size={24} color={DefaultColor.gray[800]} />
         </TouchableOpacity>
-
-        <View className="flex-1">
-          {/* Lấy tên đối phương từ store room (giả sử structure room có partner) */}
-          <Text className="font-inter-bold text-gray-800" numberOfLines={1}>
-            {room?.partner_name || "Chat Room"}
-          </Text>
-        </View>
+        <Text className="flex-1 font-inter-bold text-gray-800" numberOfLines={1}>
+          {room?.partner_name ?? 'Chat Room'}
+        </Text>
       </View>
 
-      {/* --- B. MESSAGE LIST --- */}
-      <KeyboardAvoidingView
-        behavior={'padding'}
-        className="flex-1"
-      >
+      {/* Messages */}
+      <KeyboardAvoidingView behavior="padding" className="flex-1">
         <FlatList
-          data={messages}
-          // Key extractor quan trọng: ưu tiên id thật, fallback id tạm
-          keyExtractor={(item) => item.temp_id || item.id || Math.random().toString()}
-
-          renderItem={({ item }) => (
-            <MessageItem item={item} currentUserId={user?.id || ''} key={item.temp_id || item.id || Math.random().toString()} />
-          )}
-
-          // QUAN TRỌNG: Đảo ngược danh sách (Tin mới nhất ở dưới cùng)
+          data={messagesWithTranslation}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           inverted
           contentContainerStyle={{ paddingVertical: 10 }}
-          // Infinite Scroll Logic
-          onEndReached={() => {
-            if (historyQuery.hasNextPage) {
-              historyQuery.fetchNextPage();
-            }
-          }}
+          onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
-
-          // Spinner khi load thêm lịch sử (sẽ hiện ở trên cùng do inverted)
-          ListFooterComponent={
-            historyQuery.isFetchingNextPage ? (
-              <View className="py-4">
-                <ActivityIndicator size="small" color={DefaultColor.base['primary-color-2']} />
-              </View>
-            ) : null
-          }
+          ListFooterComponent={listFooter}
+          // Tắt các tính năng không cần thiết để tối ưu FlatList
+          removeClippedSubviews
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          initialNumToRender={15}
         />
 
-        {/* --- C. INPUT BAR --- */}
-        <View className="p-3 bg-white border-t border-gray-100 flex-row items-center pb-6">
+        {/* Input */}
+        <View className="flex-row items-center border-t border-gray-100 bg-white p-3 pb-6">
           <TextInput
-            className="flex-1 bg-gray-100 rounded-full px-5 py-3 mr-3 text-base max-h-24"
+            className="mr-3 max-h-24 flex-1 rounded-full bg-gray-100 px-5 py-3 text-base"
             placeholder={t('chat.placeholder')}
             value={inputText}
             onChangeText={setInputText}
             multiline
             returnKeyType="default"
           />
-
-          <TouchableOpacity
-            onPress={handleSend}
-            disabled={!inputText.trim()}
-            className={`w-12 h-12 rounded-full items-center justify-center ${
-              inputText.trim() ? 'bg-blue-600' : 'bg-gray-300'
-            }`}
-          >
-            <Send size={20} color="white" />
-          </TouchableOpacity>
+          <SendButton disabled={!inputText.trim()} onPress={handleSend} />
         </View>
       </KeyboardAvoidingView>
+
+      {/* Bottom Sheet */}
+      <AppBottomSheet ref={sheetRef} onDismiss={handleSheetDismiss}>
+        {selectedItem && (
+          <MessageSheetContent
+            item={selectedItem}
+            onClose={handleCloseSheet}
+            onUpdateTranslation={handleUpdateTranslation}
+            t={t}
+            targetLang={targetLang}
+            setTargetLang={setTargetLang}
+            initialIsShowing={initialIsShowing}
+          />
+        )}
+      </AppBottomSheet>
     </SafeAreaView>
   );
 }

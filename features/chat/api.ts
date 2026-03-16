@@ -1,13 +1,16 @@
 import { client } from '@/lib/axios-client';
 import {
   JoinRoomRequest,
-  JoinRoomResponse, KTVConversationRequest, KTVConversationResponse,
+  JoinRoomResponse,
+  KTVConversationRequest,
+  KTVConversationResponse,
   ListMessageRequest,
   ListMessageResponse,
   SendMessageRequest,
+  TranslateMessageRequest,
+  TranslateMessageResponse,
 } from '@/features/chat/types';
 import { ResponseSuccessType } from '@/lib/types';
-
 
 const defaultUri = '/chat';
 
@@ -43,7 +46,11 @@ const chatApi = {
     const response = await client.get(`${defaultUri}/ktv-conversations`, { params });
     return response.data;
   },
-
+  // Dịch tin nhắn
+  translateMessage: async (data: TranslateMessageRequest): Promise<TranslateMessageResponse> => {
+    const response = await client.post(`${defaultUri}/translate`, data);
+    return response.data;
+  },
 };
 
 export default chatApi;

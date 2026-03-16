@@ -30,10 +30,7 @@ const AppBottomSheet = forwardRef<BottomSheetModal, AppBottomSheetProps>((props,
   } = props;
 
   // Nếu có snapPoints thì dùng, nếu không thì để undefined để kích hoạt dynamic sizing
-  const snapPoints = useMemo(
-    () => customSnapPoints || undefined,
-    [customSnapPoints]
-  );
+  const snapPoints = useMemo(() => customSnapPoints || undefined, [customSnapPoints]);
 
   const renderBackdrop = useCallback(
     (backdropProps: BottomSheetDefaultBackdropProps) => (
@@ -64,11 +61,8 @@ const AppBottomSheet = forwardRef<BottomSheetModal, AppBottomSheetProps>((props,
       backgroundStyle={styles.background}
       // Hỗ trợ bàn phím khi dùng Form
       android_keyboardInputMode="adjustResize"
-      keyboardBehavior="fillParent"
-    >
-      <ContentWrapper contentContainerStyle={styles.contentContainer}>
-        {children}
-      </ContentWrapper>
+      keyboardBehavior="fillParent">
+      <ContentWrapper contentContainerStyle={styles.contentContainer}>{children}</ContentWrapper>
     </BottomSheetModal>
   );
 });
