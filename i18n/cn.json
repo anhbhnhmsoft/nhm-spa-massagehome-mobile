@@ -701,7 +701,17 @@
       "comment": "评论",
       "submit": "提交评价",
       "hidden": "匿名评价",
-      "hidden_description": "不公开发布您的姓名"
+      "hidden_description": "不公开发布您的姓名",
+      "hold_to_translate": "长按翻译",
+      "translate": "翻译",
+      "translating": "正在翻译...",
+      "translate_to": "翻译为",
+
+      "view_original": "查看原文",
+      "view_translation": "查看翻译",
+
+      "translation": "— 翻译",
+      "original": "— 原文"
     },
     "error": {
       "rating_invalid": "评分必须在 1 到 5 之间",
@@ -951,10 +961,10 @@
           "active_ktv": "有订单的技师"
         },
         "items": {
-          "reviews": "{{count}} đánh giá",
-          "revenue": "Doanh thu",
-          "orders": "Đơn hàng",
-          "customers": "Khách hàng"
+          "reviews": "{{count}} 条评价",
+          "revenue": "收入",
+          "orders": "订单",
+          "customers": "客户"
         },
         "performance_title": "技师绩效"
       }

@@ -836,7 +836,17 @@
     "total_reviews": "Tổng cộng {{ count }} nhận xét",
     "no_reviews": "Chưa có đánh giá nào.",
     "hidden_user": "Người dùng ẩn danh",
-    "no_comment": "Không có bình luận."
+    "no_comment": "Không có bình luận.",
+    "hold_to_translate": "Nhấn giữ để dịch",
+    "translate": "Dịch",
+    "translating": "Đang dịch...",
+    "translate_to": "Dịch sang",
+
+    "view_original": "Xem bản gốc",
+    "view_translation": "Xem bản dịch",
+
+    "translation": "— Bản dịch",
+    "original": "— Bản gốc"
   },
   "ktv": {
     "index": {

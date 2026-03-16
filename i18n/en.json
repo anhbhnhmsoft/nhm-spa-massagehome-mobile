@@ -837,7 +837,17 @@
     "total_reviews": "Total {{ count }} comments",
     "no_reviews": "No reviews yet.",
     "hidden_user": "Anonymous User",
-    "no_comment": "No comment."
+    "no_comment": "No comment.",
+    "hold_to_translate": "Hold to translate",
+    "translate": "Translate",
+    "translating": "Translating...",
+    "translate_to": "Translate to",
+
+    "view_original": "View original",
+    "view_translation": "View translation",
+
+    "translation": "— Translation",
+    "original": "— Original"
   },
   "ktv": {
     "index": {

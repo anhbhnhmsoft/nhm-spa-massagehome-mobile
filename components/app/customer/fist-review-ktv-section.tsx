@@ -16,52 +16,51 @@ type Props = {
   review_count: number;
   first_review: KTVDetail['first_review'];
   ktv_id: string;
-}
+};
 
-export const FistReviewKtvSection:FC<Props> = ({t, review_count, first_review, ktv_id}) => {
+export const FistReviewKtvSection: FC<Props> = ({ t, review_count, first_review, ktv_id }) => {
   // Trạng thái hiển thị danh sách review
   const [showReviewList, setShowReviewList] = useState(false);
 
   return (
-   <>
-     <View className="mt-2 bg-white p-4">
-       {/* --- Header Review --- */}
-       <View className="mb-2 flex-row items-center justify-between">
-         <Text className="font-inter-bold text-base text-gray-800">
-           {t('masseurs_detail.review_by_customer')}
-         </Text>
-       </View>
+    <>
+      <View className="mt-2 bg-white p-4">
+        {/* --- Header Review --- */}
+        <View className="mb-2 flex-row items-center justify-between">
+          <Text className="font-inter-bold text-base text-gray-800">
+            {t('masseurs_detail.review_by_customer')}
+          </Text>
+        </View>
 
-       {/* --- Disclaimer (Dòng chữ cam) --- */}
-       <View className="mb-3 rounded bg-orange-50 px-2 py-1.5">
-         <Text className="text-[10px] leading-4 text-orange-500">
-           {t('masseurs_detail.review_disclaimer')}
-         </Text>
-       </View>
+        {/* --- Disclaimer (Dòng chữ cam) --- */}
+        <View className="mb-3 rounded bg-orange-50 px-2 py-1.5">
+          <Text className="text-[10px] leading-4 text-orange-500">
+            {t('masseurs_detail.review_disclaimer')}
+          </Text>
+        </View>
 
-       {/* --- Nội dung Review ( comment) --- */}
-       <ReviewFistItem item={first_review} />
+        {/* --- Nội dung Review ( comment) --- */}
+        <ReviewFistItem item={first_review} />
 
-       {/* --- Button Xem tất cả --- */}
-       {review_count > 1 && (
-         <TouchableOpacity
-           className="mt-4 flex-row items-center justify-center rounded-full bg-gray-50 py-2"
-           onPress={() => setShowReviewList(true)}>
-           <Text className="font-inter-medium text-xs text-gray-500">
-             {t('masseurs_detail.see_all_reviews', { count: review_count - 1 })}
-           </Text>
-           <Icon as={ChevronRight} size={12} className="ml-2 text-gray-500" />
-         </TouchableOpacity>
-       )}
-     </View>
-     <ReviewListModal
-       isVisible={showReviewList}
-       onClose={() => setShowReviewList(false)}
-       params={{ user_id: ktv_id }}
-     />
-   </>
-  )
-}
+        {/* --- Button Xem tất cả --- */}
+
+        <TouchableOpacity
+          className="mt-4 flex-row items-center justify-center rounded-full bg-gray-50 py-2"
+          onPress={() => setShowReviewList(true)}>
+          <Text className="font-inter-medium text-xs text-gray-500">
+            {t('masseurs_detail.see_all_reviews', { count: review_count })}
+          </Text>
+          <Icon as={ChevronRight} size={12} className="ml-2 text-gray-500" />
+        </TouchableOpacity>
+      </View>
+      <ReviewListModal
+        isVisible={showReviewList}
+        onClose={() => setShowReviewList(false)}
+        params={{ user_id: ktv_id }}
+      />
+    </>
+  );
+};
 
 // Hiển thị đánh giá đầu tiên của KTV
 const ReviewFistItem = ({ item }: { item: KTVDetail['first_review'] }) => {
@@ -104,7 +103,7 @@ const ReviewFistItem = ({ item }: { item: KTVDetail['first_review'] }) => {
             </View>
           </>
         ) : (
-          <Empty/>
+          <Empty />
         )}
       </View>
     </>
