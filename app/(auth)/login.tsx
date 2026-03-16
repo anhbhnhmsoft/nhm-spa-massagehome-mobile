@@ -78,7 +78,7 @@ export default function LoginScreen() {
                   !loading
                     ? 'text-primary-color-2'
                     : 'text-gray-400')}>
-                  {loading ? t('common.loading') : t('auth.forgot_password')}
+                  {loading ? t('common.loading') : t('common.forgot_password')}
                 </Text>
               </TouchableOpacity>
             </View>

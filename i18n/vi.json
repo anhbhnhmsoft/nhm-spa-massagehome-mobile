@@ -204,7 +204,7 @@
       "PAYMENT": "Thanh toán dịch vụ",
       "AFFILIATE": "Nhận hoa hồng Affiliate",
       "PAYMENT_FOR_KTV": "Thanh toán cho KTV",
-      "REFUND": "Hoàn tiền cho customer",
+      "REFUND": "Hoàn tiền dịch vụ",
       "RETRIEVE_PAYMENT_REFUND_KTV": "Thu hồi tiền thanh toán cho KTV khi hủy booking",
       "REFERRAL_KTV": "Hoa hồng từ kĩ thuật viên",
       "REFERRAL_INVITE_KTV_REWARD": "Hoa hồng từ kĩ thuật viên khi đăng ký",
@@ -322,7 +322,6 @@
     "terms_and_conditions_register_agency": "Điều khoản đăng ký đối tác",
     "privacy_policy": "Chính sách bảo mật",
     "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
-    "forgot_password": "Quên mật khẩu?",
     "error": {
       "phone_required": "Vui lòng nhập số điện thoại",
       "phone_invalid": "Số điện thoại không hợp lệ, vui lòng nhập lại",
