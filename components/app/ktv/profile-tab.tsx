@@ -1,13 +1,12 @@
-import React, { forwardRef, useCallback} from 'react';
+import React, { forwardRef } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useChangeImage, useEditImage } from '@/features/ktv/hooks';
 import { useProfileKtvQuery } from '@/features/ktv/hooks/use-query';
 import { Alert } from 'react-native';
 import AppBottomSheet from '@/components/ui/app-bottom-sheet';
-
 
 export const BottomEditImage = forwardRef<
   BottomSheetModal,
@@ -23,10 +22,7 @@ export const BottomEditImage = forwardRef<
   const MAX_IMAGE = 5;
 
   return (
-    <AppBottomSheet
-      ref={ref}
-      dynamicSizing={true}
-    >
+    <AppBottomSheet ref={ref} dynamicSizing={true}>
       <TouchableOpacity
         className={'flex-row items-center border-b border-gray-100 px-5 py-2 pb-4'}
         onPress={() => {
@@ -34,9 +30,7 @@ export const BottomEditImage = forwardRef<
             (ref as any)?.current?.dismiss();
           });
         }}>
-        <Text className="font-inter-medium text-lg text-slate-800">
-          {t('profile.take_photo')}
-        </Text>
+        <Text className="font-inter-medium text-lg text-slate-800">{t('profile.take_photo')}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         className={'flex-row items-center border-b border-gray-100 px-5 py-2 pb-4'}

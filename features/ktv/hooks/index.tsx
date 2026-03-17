@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import {
   DashboardQueryParams,
-  EditConfigScheduleRequest, EditProfileKtvRequest,
+  EditConfigScheduleRequest,
+  EditProfileKtvRequest,
   PercentChangeResult,
 } from '@/features/ktv/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +18,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 import {
   useDeleteImageMutation,
-  useLinkReferrerMutation, useSendDangerSupportMutation,
+  useLinkReferrerMutation,
+  useSendDangerSupportMutation,
   useUpdateConfigScheduleMutation,
   useUpdateProfileKtvMutation,
   useUploadImageMutation,
@@ -26,7 +28,7 @@ import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { router } from 'expo-router';
 import useToast from '@/features/app/hooks/use-toast';
 import { useApplicationStore } from '@/features/app/stores';
-import { _DefaultValueFormConfigSchedule,  _KTVConfigSchedules, } from '@/features/ktv/consts';
+import { _DefaultValueFormConfigSchedule, _KTVConfigSchedules } from '@/features/ktv/consts';
 import { queryClient } from '@/lib/provider/query-provider';
 import { DashboardTab } from '@/features/service/const';
 import { useGetTransactionList } from '@/features/payment/hooks';
@@ -36,10 +38,11 @@ import { useCameraPermissions } from 'expo-camera';
 import dayjs from 'dayjs';
 import { goBack } from '@/lib/utils';
 import { _Gender } from '@/features/auth/const';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
-export * from "./use-list-service"
-export * from "./use-schedule"
-export * from "./use-set-service"
+export * from './use-list-service';
+export * from './use-schedule';
+export * from './use-set-service';
 
 // Hook cho tổng doanh thu dashboard
 export const useDashboardTotalIncome = () => {
@@ -124,61 +127,66 @@ export const useDashboardTotalIncome = () => {
 export const editProfileKTV = () => {
   const { t } = useTranslation();
   const errorHandle = useErrorToast();
-  const {success: successToast} = useToast();
+  const { success: successToast } = useToast();
   const { data: profileData, refetch, isLoading } = useProfileKtvQuery();
   const { mutate: editProfile } = useUpdateProfileKtvMutation();
   const user = useAuthStore((state) => state.user);
   const setLoading = useApplicationStore((state) => state.setLoading);
 
   const form = useForm<EditProfileKtvRequest>({
-    resolver: zodResolver(z
-      .object({
-        // SỬA 1: Thêm .optional() cho experience
-        experience: z.number().optional(),
+    resolver: zodResolver(
+      z
+        .object({
+          // SỬA 1: Thêm .optional() cho experience
+          experience: z.number().optional(),
 
-        // SỬA 2: Thêm .optional() cho bio và các trường con nếu cần
-        bio: z.object({
-          vi: z.string().min(1, t('profile.error.bio_required')),
-          // Nếu interface IMultiLangField cho phép en, cn là optional thì ở đây cũng nên để optional
-          en: z.string().optional(),
-          cn: z.string().optional(),
-        }).optional(), // <--- Quan trọng: Để khớp với bio?: IMultiLangField
+          // SỬA 2: Thêm .optional() cho bio và các trường con nếu cần
+          bio: z
+            .object({
+              vi: z.string().min(1, t('profile.error.bio_required')),
+              // Nếu interface IMultiLangField cho phép en, cn là optional thì ở đây cũng nên để optional
+              en: z.string().optional(),
+              cn: z.string().optional(),
+            })
+            .optional(), // <--- Quan trọng: Để khớp với bio?: IMultiLangField
 
-        gender: z.enum(_Gender).optional(),
+          gender: z.enum(_Gender).optional(),
 
-        date_of_birth: z
-          .string()
-          .optional()
-          .refine((val) => !val || dayjs(val).isValid(), { // Thêm !val để tránh lỗi khi undefined
-            error: t('profile.error.invalid_date_of_birth'),
-          })
-          .refine(
-            (val) => {
-              if (!val) return true; // Bỏ qua nếu không nhập
-              const inputTime = dayjs(val);
-              return inputTime.isBefore(dayjs());
-            },
-            {
+          date_of_birth: z
+            .string()
+            .optional()
+            .refine((val) => !val || dayjs(val).isValid(), {
+              // Thêm !val để tránh lỗi khi undefined
               error: t('profile.error.invalid_date_of_birth'),
-            }
-          ),
+            })
+            .refine(
+              (val) => {
+                if (!val) return true; // Bỏ qua nếu không nhập
+                const inputTime = dayjs(val);
+                return inputTime.isBefore(dayjs());
+              },
+              {
+                error: t('profile.error.invalid_date_of_birth'),
+              }
+            ),
 
-        old_pass: z.string().optional(),
+          old_pass: z.string().optional(),
 
-        // Phần new_pass giữ nguyên logic của bạn
-        new_pass: z
-          .string()
-          .min(8, { message: t('auth.error.password_invalid') })
-          .regex(/[a-z]/)
-          .regex(/[A-Z]/)
-          .regex(/[0-9]/)
-          .optional()
-          .or(z.literal('')),
-      })
-      .refine((data) => !data.new_pass || !!data.old_pass, {
-        path: ['old_pass'],
-        message: t('profile.error.old_password_min'),
-      })),
+          // Phần new_pass giữ nguyên logic của bạn
+          new_pass: z
+            .string()
+            .min(8, { message: t('auth.error.password_invalid') })
+            .regex(/[a-z]/)
+            .regex(/[A-Z]/)
+            .regex(/[0-9]/)
+            .optional()
+            .or(z.literal('')),
+        })
+        .refine((data) => !data.new_pass || !!data.old_pass, {
+          path: ['old_pass'],
+          message: t('profile.error.old_password_min'),
+        })
+    ),
     mode: 'onSubmit',
     defaultValues: {
       experience: 0,
@@ -255,44 +263,52 @@ export const useChangeImage = () => {
    */
   const chooseImageFromLib = useCallback(
     async (imageLength: number = 0) => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
       if (imageLength >= MAX_IMAGE) {
         Alert.alert(t('common.error'), t('image.max_5'));
         return;
       }
+
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
         return;
       }
+
       const remain = MAX_IMAGE - imageLength;
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.5,
+        quality: 1, // Lấy full quality, để manipulator xử lý
         allowsMultipleSelection: true,
         selectionLimit: remain,
       });
 
       if (result.canceled) return;
 
-      if (result.assets.length > MAX_IMAGE) {
-        Alert.alert(t('common.error'), t('image.max_5'));
-        return;
-      }
+      // Convert tất cả ảnh sang JPEG song song
+      const convertedAssets = await Promise.all(
+        result.assets.map(async (asset) => {
+          const context = ImageManipulator.manipulate(asset.uri);
+          const image = await context.renderAsync();
+          const saved = await image.saveAsync({
+            compress: 0.8,
+            format: SaveFormat.JPEG,
+          });
+          return saved;
+        })
+      );
 
-      // 👉 build FormData nhiều ảnh
+      // Build FormData từ ảnh đã convert
       const form = new FormData();
-
-      result.assets.forEach((asset, index) => {
+      convertedAssets.forEach((saved, index) => {
         form.append('images[]', {
-          uri: asset.uri,
-          name: `image_${index}.jpg`,
+          uri: saved.uri,
+          name: `image_${Date.now()}_${index}.jpg`,
           type: 'image/jpeg',
         } as any);
       });
 
-      return form; // 👈 trả về cho hook upload
+      return form;
     },
     [t]
   );
@@ -516,21 +532,24 @@ export const useSendDangerSupport = () => {
   const { mutate } = useSendDangerSupportMutation();
 
   const sendDangerSupport = () => {
-    mutate({
-      message: '',
-      lat: userLocation?.location?.coords?.latitude?.toString(),
-      lng: userLocation?.location?.coords?.longitude?.toString(),
-    }, {
-      onSuccess: () => {
-        success({ message: t('danger_support.success') });
+    mutate(
+      {
+        message: '',
+        lat: userLocation?.location?.coords?.latitude?.toString(),
+        lng: userLocation?.location?.coords?.longitude?.toString(),
       },
-      onError: (err) => {
-        errorToast({ message: t('danger_support.error') });
-      },
-    });
+      {
+        onSuccess: () => {
+          success({ message: t('danger_support.success') });
+        },
+        onError: (err) => {
+          errorToast({ message: t('danger_support.error') });
+        },
+      }
+    );
   };
 
   return {
     sendDangerSupport,
-  }
-}
+  };
+};

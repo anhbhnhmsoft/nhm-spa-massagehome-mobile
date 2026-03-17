@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/features/auth/stores';
-import {  _Gender } from '@/features/auth/const';
+import { _Gender } from '@/features/auth/const';
 import useToast from '@/features/app/hooks/use-toast';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +11,7 @@ import {
   useMutationEditProfile,
   useProfileMutation,
 } from '@/features/auth/hooks/use-mutation';
-import {
-  EditProfileRequest,
-} from '@/features/auth/types';
+import { EditProfileRequest } from '@/features/auth/types';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,6 +21,7 @@ import { useCameraPermissions } from 'expo-camera';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
 export * from './use-handle-authenticate';
 export * from './use-handle-login';
@@ -33,7 +32,6 @@ export * from './use-logout';
 export * from './use-reset-password';
 export * from './use-set-language-user';
 export * from './use-get-profile';
-
 
 /**
  * Xử lý thay đổi avatar
@@ -67,20 +65,30 @@ export const useChangeAvatar = () => {
     if (status !== 'granted') {
       Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
       return false;
-    } else {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.5,
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Convert sang JPEG — xử lý Live Photo / HEIC
+      const context = ImageManipulator.manipulate(result.assets[0].uri);
+      const image = await context.renderAsync();
+      const saved = await image.saveAsync({
+        compress: 0.8,
+        format: SaveFormat.JPEG,
       });
-      if (!result.canceled) {
-        const form = new FormData();
-        form.append('file', {
-          uri: result.assets[0].uri,
-          name: 'avatar.jpg',
-          type: 'image/jpg',
-        } as any);
-        editAvatar(form, false);
-      }
+
+      const form = new FormData();
+      form.append('file', {
+        uri: saved.uri,
+        name: `avatar_${Date.now()}.jpg`,
+        type: 'image/jpeg',
+      } as any);
+
+      editAvatar(form, false);
     }
   }, [t]);
 
@@ -255,8 +263,6 @@ export const useEditProfile = () => {
     onSubmit,
   };
 };
-
-
 
 /**
  * Hook để xóa tài khoản
