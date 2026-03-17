@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native'
 import { HeaderAppAgency } from '@/components/app/agency/header-app';
 import { DashboardHeader, TechnicianItem } from '@/components/app/agency/doashboad-card';
 import { useDashboardAgency } from '@/features/agency/hook';
+import Empty from '@/components/empty';
 
 const DashboardScreen: React.FC = () => {
   const {
@@ -17,6 +18,7 @@ const DashboardScreen: React.FC = () => {
     isRefetching,
     onRefresh,
     handleLoadMore,
+    isPerformanceLoading,
   } = useDashboardAgency();
 
   // Render Footer để hiển thị loading khi tải thêm trang
@@ -30,7 +32,7 @@ const DashboardScreen: React.FC = () => {
   }, [isFetchingNextPage]);
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-slate-50">
       <HeaderAppAgency />
 
       <FlatList
@@ -55,6 +57,7 @@ const DashboardScreen: React.FC = () => {
             tintColor={'#044984'}
           />
         }
+        ListEmptyComponent={isPerformanceLoading ? null : <Empty />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}

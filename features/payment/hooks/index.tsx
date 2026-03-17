@@ -142,7 +142,7 @@ export const useWallet = (useFor: _UserRole) => {
             router.push('/(app)/(ktv)/(service)/deposit');
             break;
           case _UserRole.AGENCY:
-            router.push('/(app)/(service-agency)/deposit');
+            router.push('/(app)/(agency)/(service)/deposit');
             break;
         }
       },
@@ -181,7 +181,6 @@ export const useDeposit = () => {
   // State lưu trữ dữ liệu QRWechatData khi nạp tiền qua Wechat Pay
   const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
-
 
   // Mutate function dùng để gọi API nạp tiền
   const { mutate: mutateDeposit } = useDepositMutation();
@@ -320,7 +319,7 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
           resetNav('/(app)/(customer)/(profile)/wallet');
           break;
         case _UserRole.AGENCY:
-          resetNav('/(app)/(tab-agency)/wallet');
+          resetNav('/(app)/(agency)/(tab)/wallet');
           break;
         default:
           break;

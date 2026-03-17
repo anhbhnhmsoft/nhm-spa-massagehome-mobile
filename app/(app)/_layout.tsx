@@ -17,7 +17,10 @@ export default function AppLayout() {
   const user = useAuthStore((state) => state.user);
 
   // Lấy vị trí người dùng khi ứng dụng được mở
-  useLocation();
+
+  useLocation({
+    enabled: user?.role !== _UserRole.AGENCY,
+  });
 
   // kiểm tra affiliate link khi user login
   useCheckMatchAffiliate();
@@ -64,8 +67,7 @@ export default function AppLayout() {
 
           {/* --- TAB AGENCY SCREEN --- */}
           <Stack.Protected guard={guard.agency_screen}>
-            <Stack.Screen name="(tab-agency)" />
-            <Stack.Screen name="(service-agency)" />
+            <Stack.Screen name="(agency)" />
           </Stack.Protected>
 
           {/* --- TAB CUSTOMER SCREEN --- */}

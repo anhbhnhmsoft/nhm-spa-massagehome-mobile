@@ -74,7 +74,7 @@ export const formatLocation = async (
  * - Quản lý trạng thái permission (granted, denied, skipped)
  * - Chỉ dùng ở layout toàn cục
  */
-export const useLocation = () => {
+export const useLocation = ({ enabled = true }: { enabled?: boolean } = {}) => {
   // Lưu vị trí hiện tại vào store
   const setAppLocation = useApplicationStore((s) => s.setLocation);
   // Lưu subscription
@@ -178,6 +178,10 @@ export const useLocation = () => {
 
   // Lắng nghe sự kiện thay đổi trạng thái ứng dụng
   useEffect(() => {
+    if (!enabled) {
+      stopWatching();
+      return;
+    }
     // Bắt đầu theo dõi khi component mount
     startWatching();
 
@@ -201,6 +205,7 @@ export const useLocation = () => {
 
   // Effect: Gửi vị trí lên server khi có auth
   useEffect(() => {
+    if (!enabled) return;
     // Gửi vị trí ngay khi component mount
     const timeoutId = setTimeout(() => {
       sendLocation();

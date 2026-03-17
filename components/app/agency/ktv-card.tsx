@@ -1,7 +1,7 @@
-import { Image, Text,  View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import React from 'react';
 import { ListKTVItem } from '@/features/user/types';
-import {  Phone, User } from 'lucide-react-native';
+import { Phone, User } from 'lucide-react-native';
 import { _LanguagesMap } from '@/lib/const';
 
 export default function ItemKtv({ item }: { item: ListKTVItem }) {
@@ -9,9 +9,7 @@ export default function ItemKtv({ item }: { item: ListKTVItem }) {
   const langInfo = _LanguagesMap.find((l) => l.code === item.language);
 
   return (
-    <View
-      className="mx-4 mb-4 flex-row items-center rounded-3xl border-hairline border-primary-color-4/20 bg-base-color-2 p-4 shadow-sm"
-    >
+    <View className="mx-4 mb-2 flex-row items-center rounded-3xl border-hairline border-primary-color-4/20 bg-base-color-2 p-4 shadow-sm">
       {/* Avatar Section */}
       <View className="relative">
         {item.profile?.avatar_url ? (
@@ -46,7 +44,9 @@ export default function ItemKtv({ item }: { item: ListKTVItem }) {
           {langInfo && (
             <View className="flex-row items-center rounded-lg border-hairline border-primary-color-4/30 bg-base-color-3/50 px-2 py-0.5">
               <Image source={langInfo.icon} className="mr-1 h-3 w-4" resizeMode="contain" />
-              <Text className="font-inter-medium text-[11px] text-primary-color-1">{langInfo.label}</Text>
+              <Text className="font-inter-medium text-[11px] text-primary-color-1">
+                {langInfo.label}
+              </Text>
             </View>
           )}
         </View>

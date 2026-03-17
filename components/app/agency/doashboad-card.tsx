@@ -51,7 +51,7 @@ export const StatCard: React.FC<StatCardProps> = ({
     <View
       className={`mb-4 rounded-2xl p-4 ${
         fullWidth ? 'w-full flex-row items-center' : 'w-[48%]'
-      } ${isPrimary ? 'bg-primary-color-2' : 'border border-slate-100 bg-slate-50'}`}>
+      } ${isPrimary ? 'bg-primary-color-2' : 'border border-slate-100 bg-white'}`}>
       {Icon && (
         <View
           className={`mb-3 h-10 w-10 items-center justify-center rounded-lg ${
@@ -224,7 +224,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   return (
     <View>
       {/* Tab Filter */}
-      <View className="mb-6 border-b border-slate-100 pt-4">
+      <View className="mb-6 border-b border-slate-100 bg-white pt-4">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -254,7 +254,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       ) : (
         <View className="px-4">
           {/* Top Highlight Cards */}
-          <View className="mb-4 flex-row gap-4">
+          <View className="flex-row gap-4">
             <StatCard
               variant="primary"
               title={t('agency.page.dashboard.stats.total_discount')}
@@ -290,7 +290,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </View>
 
           {/* Title cho List */}
-          <Text className="mb-4 mt-4 font-inter-bold text-base text-base-color-1">
+          <Text className="mb-4 font-inter-bold text-base text-base-color-1">
             {t('agency.page.dashboard.performance_title')}
           </Text>
         </View>

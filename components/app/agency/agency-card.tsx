@@ -7,7 +7,6 @@ import QRCode from 'react-native-qrcode-svg';
 import * as Linking from 'expo-linking';
 import { _LinkingTask } from '@/features/app/hooks/use-handle-linking';
 
-
 interface InviteKTVModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -98,13 +97,13 @@ export const InviteKTVModal = ({ isVisible, onClose, userId }: InviteKTVModalPro
       </Pressable>
     </Modal>
   );
-};;
+};
 
 export const AgencyListHeader = ({ onInvitePress, totalKtv }: AgencyListHeaderProps) => {
   const { t } = useTranslation();
 
   return (
-    <View className="px-4 py-4">
+    <View className="px-4 pt-4">
       {/* Hàng 1: Tiêu đề và Nút mời */}
       <View className="flex-row items-center justify-between pb-5">
         <Text className="font-inter-bold text-base text-primary-color-1">
