@@ -201,7 +201,7 @@ export const useLocation = ({ enabled = true }: { enabled?: boolean } = {}) => {
       stopWatching();
       subscription.remove();
     };
-  }, []);
+  }, [enabled]);
 
   // Effect: Gửi vị trí lên server khi có auth
   useEffect(() => {
@@ -223,7 +223,7 @@ export const useLocation = ({ enabled = true }: { enabled?: boolean } = {}) => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
-  }, [statusAuth]);
+  }, [statusAuth, enabled]);
 };
 
 /**
