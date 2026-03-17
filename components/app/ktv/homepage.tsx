@@ -25,6 +25,7 @@ import { router } from 'expo-router';
 import { useSetBookingStart } from '@/features/ktv/hooks/use-booking';
 import { _BookingStatus } from '@/features/service/const';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
+import Avatar from '@/components/ui/avatar';
 
 // Component: Thẻ lịch hẹn
 interface AppointmentCardProps {
@@ -167,33 +168,18 @@ export const TodayEarnings = ({ data }: { data: DashboardKtvResponse['data'] | u
 
 // Component: Đánh giá mới hôm nay
 const ReviewItemCard = ({ item, t }: { item: ReviewItem; t: TFunction }) => {
-  const [imageError, setImageError] = React.useState(false);
   return (
     <View className="mb-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
       {/* Header đánh giá */}
       <View className="mb-4 flex-row items-start justify-between">
         <View className="flex-row items-center gap-x-3">
-          {item.reviewer?.avatar && !item.hidden && !imageError ? (
-            <Image
-              source={{ uri: item.reviewer.avatar }}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 40,
-                backgroundColor: DefaultColor.slate[200],
-              }}
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-              <Text className="font-inter-bold text-slate-500">
-                {item.hidden ? '?' : item.reviewer?.name?.charAt(0)}
-              </Text>
-            </View>
-          )}
+          <Avatar
+            source={item.reviewer?.avatar}
+            size={40}
+          />
           <View>
             <Text className="font-inter-bold text-slate-900">
-              {item.hidden ? t('review.hidden_user') : item.reviewer?.name}
+              {item.reviewer?.name ? item.reviewer.name : t('review.hidden_user')}
             </Text>
             <Text className="text-[10px] text-slate-400">
               {dayjs(item.review_at).format('DD/MM/YYYY')}

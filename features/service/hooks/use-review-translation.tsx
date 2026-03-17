@@ -1,100 +1,114 @@
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { _LanguageCode } from '@/lib/const';
 import { useMutationTranslateReview } from './use-mutation';
+import { ReviewTranslations } from '@/lib/types';
+import { ListReviewRequest, ListReviewResponse, ReviewItem } from '@/features/service/types';
+import { useImmer } from 'use-immer';
+import { queryClient } from '@/lib/provider/query-provider';
+import { InfiniteData } from '@tanstack/query-core';
+import { produce } from 'immer';
 
-const cache: Record<string, string> = {};
+
+const defaultStateComment: ReviewTranslations = {
+  [_LanguageCode.EN]: '',
+  [_LanguageCode.VI]: '',
+  [_LanguageCode.CN]: '',
+};
 
 export function useReviewTranslation(
-  reviewId: string,
-  originalComment: string,
-  onUpdateTranslation?: (reviewId: string, translated: string | null) => void
+  reviewItem: ReviewItem | null,
+  params: ListReviewRequest
 ) {
-  const { mutate: translateMutate } = useMutationTranslateReview();
-
-  const [translations, setTranslations] = useState<Partial<Record<_LanguageCode, string>>>(() => {
-    const entries: Partial<Record<_LanguageCode, string>> = {};
-    Object.keys(cache).forEach((key) => {
-      if (key.startsWith(`review__${reviewId}__`)) {
-        const lang = key.split('__')[2] as _LanguageCode;
-        entries[lang] = cache[key];
-      }
-    });
-    return entries;
-  });
-
+  const { mutate: translateMutate, isPending } = useMutationTranslateReview();
   const [targetLang, setTargetLang] = useState<_LanguageCode | null>(null);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [isShowingTranslated, setIsShowingTranslated] = useState(false);
 
-  const translationsRef = useRef(translations);
-  translationsRef.current = translations;
+  const [translatedComment, setTranslatedComment] = useImmer<ReviewTranslations>(defaultStateComment);
 
-  const currentTranslation = targetLang ? translations[targetLang] : undefined;
-  const hasTranslation = !!currentTranslation;
-  const displayComment =
-    isShowingTranslated && hasTranslation ? currentTranslation : originalComment;
+  // Update translated comment when review item changes
+  useEffect(() => {
+    if (reviewItem ) {
+      if (reviewItem.comment_translated){
+        setTranslatedComment(reviewItem.comment_translated);
+      }
+      if (!!(reviewItem.target_lang_translated && reviewItem.translated_comment)){
+        const targetLang = reviewItem.target_lang_translated;
+        const translate = reviewItem.translated_comment;
+        setTargetLang(targetLang);
+        setTranslatedComment((draft) => {
+          draft[targetLang] = translate;
+        });
+      }
+    }
+  }, [reviewItem]);
 
-  const translate = useCallback(
-    (lang: _LanguageCode) => {
-      const key = `review__${reviewId}__${lang}`;
-      const cached = translationsRef.current[lang] ?? cache[key];
+  const handleUpdateTranslation = (reviewId: string, translated: string, lang: _LanguageCode) => {
+    queryClient.setQueryData<InfiniteData<ListReviewResponse>>(
+      ['serviceApi-listReview', params],
+      (oldData) => { // TS tự hiểu oldData là InfiniteData<ListReviewResponse> | undefined
+        if (!oldData) return oldData;
+        return produce(oldData, (draft) => {
+          for (const page of draft.pages) {
+            const review = page.data.data.find((item: ReviewItem) => item.id === reviewId);
 
-      if (cached) {
-        setTranslations((p) => (p[lang] === cached ? p : { ...p, [lang]: cached }));
-        setIsShowingTranslated(true);
-        // Update parent with cached translation
-        onUpdateTranslation?.(reviewId, cached);
-        return;
+            if (review) {
+              review.translated_comment = translated;
+              review.target_lang_translated = lang;
+              break;
+            }
+          }
+        });
+      }
+    );
+  };
+
+  const translate = useCallback((lang: _LanguageCode) => {
+      if (reviewItem && reviewItem.comment && reviewItem.comment.trim().length > 0) {
+        if (translatedComment[lang] && translatedComment[lang].length > 0) {
+          handleUpdateTranslation(reviewItem.id, translatedComment[lang], lang);
+          return;
+        }
+
+        translateMutate(
+          { review_id: reviewItem.id, lang },
+          {
+            onSuccess: ({ data }) => {
+              const text = data.translate;
+              setTranslatedComment((draft) => {
+                draft[lang] = text;
+              });
+              // Update parent with new translation
+              handleUpdateTranslation(reviewItem.id, text, lang);
+            },
+          },
+        );
       }
 
-      setIsTranslating(true);
-      translateMutate(
-        { review_id: reviewId, lang },
-        {
-          onSuccess: ({ data }) => {
-            const text = data.translate;
-            cache[key] = text;
-            setTranslations((p) => ({ ...p, [lang]: text }));
-            setIsShowingTranslated(true);
-            setIsTranslating(false);
-            // Update parent with new translation
-            onUpdateTranslation?.(reviewId, text);
-          },
-          onError: () => setIsTranslating(false),
-        }
-      );
     },
-    [reviewId, translateMutate]
+    [translatedComment, reviewItem],
   );
 
-  const handleChangeLang = useCallback(
-    (lang: _LanguageCode) => {
-      setTargetLang(lang);
-      translate(lang);
-    },
-    [translate]
-  );
+  const handleChangeLang = useCallback((lang: _LanguageCode) => {
+    setTargetLang(lang);
+    translate(lang);
+  }, [translate]);
 
-  const handleToggleTranslation = useCallback(() => {
-    if (hasTranslation) {
-      setIsShowingTranslated((p) => {
-        const newValue = !p;
-        // Update parent when toggling
-        onUpdateTranslation?.(reviewId, newValue && hasTranslation ? currentTranslation : null);
-        return newValue;
-      });
-    } else if (targetLang) {
-      translate(targetLang);
-    }
-  }, [hasTranslation, targetLang, translate, onUpdateTranslation, reviewId, currentTranslation]);
+  /**
+   * Xóa ngôn ngữ đang chọn
+   */
+  const handleResetTargetLang = useCallback(() => {
+    setTargetLang(null);
+  }, []);
+
+  const handleResetTranslateComment = useCallback(() => {
+    setTranslatedComment(defaultStateComment);
+  }, []);
 
   return {
     targetLang,
-    isTranslating,
-    isShowingTranslated,
-    hasTranslation,
-    displayComment,
+    translatedComment,
     handleChangeLang,
-    handleToggleTranslation,
+    handleResetTargetLang,
+    handleResetTranslateComment,
+    loading: isPending
   };
 }

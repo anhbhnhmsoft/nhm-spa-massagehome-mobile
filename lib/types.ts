@@ -89,3 +89,5 @@ export interface IFileUpload {
   type: string; // vd: 'image/jpeg'
   name: string; // vd: 'photo.jpg'
 }
+
+export type ReviewTranslations = Record<_LanguageCode, string>;
