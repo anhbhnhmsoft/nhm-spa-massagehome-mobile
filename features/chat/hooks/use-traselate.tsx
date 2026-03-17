@@ -1,9 +1,8 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { Clipboard } from 'react-native';
 import { _LanguageCode } from '@/lib/const';
 import { useMutationTranslateMessage } from './use-mutation';
 
-// Global cache – tồn tại suốt vòng đời app, không reset khi unmount
 const globalCache: Record<string, string> = {};
 
 export function useTranslateMessage(
@@ -13,84 +12,67 @@ export function useTranslateMessage(
   setTargetLang: (lang: _LanguageCode) => void,
   initialIsShowing = false
 ) {
-  const { mutate: translateMutate } = useMutationTranslateMessage();
+  const { mutate: translateMutate, isPending } = useMutationTranslateMessage();
 
-  // Seed translations từ globalCache ngay lúc init → tránh re-render thêm
-  const [translations, setTranslations] = useState<Partial<Record<_LanguageCode, string>>>(() => {
-    const key = `${messageId}__${targetLang}`;
-    return globalCache[key] ? { [targetLang]: globalCache[key] } : {};
-  });
+  const [isShowingTranslated, setIsShowingTranslated] = useState(initialIsShowing);
 
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [isShowingTranslated, setIsShowingTranslated] = useState(
-    () => initialIsShowing && !!globalCache[`${messageId}__${targetLang}`]
-  );
+  const getCacheKey = (lang: _LanguageCode) => `${messageId}__${lang}`;
 
-  // Stable ref để translate callback không cần re-create khi translations thay đổi
-  const translationsRef = useRef(translations);
-  translationsRef.current = translations;
-
-  const currentTranslation = translations[targetLang];
-  const hasTranslation = !!currentTranslation;
-  const displayContent =
-    isShowingTranslated && hasTranslation ? currentTranslation : originalContent;
+  const getTranslation = (lang: _LanguageCode) => {
+    return globalCache[getCacheKey(lang)];
+  };
 
   const translate = useCallback(
     (lang: _LanguageCode) => {
-      const key = `${messageId}__${lang}`;
-      const cached = translationsRef.current[lang] ?? globalCache[key];
+      const cached = getTranslation(lang);
 
       if (cached) {
-        // Batch update để tránh 2 lần render
-        setTranslations((p) => (p[lang] === cached ? p : { ...p, [lang]: cached }));
         setIsShowingTranslated(true);
         return;
       }
 
-      setIsTranslating(true);
       translateMutate(
         { message_id: messageId, lang },
         {
           onSuccess: ({ data }) => {
-            const text = data.translate;
-            globalCache[key] = text;
-            setTranslations((p) => ({ ...p, [lang]: text }));
+            globalCache[getCacheKey(lang)] = data.translate;
             setIsShowingTranslated(true);
-            setIsTranslating(false);
           },
-          onError: () => setIsTranslating(false),
         }
       );
     },
-    // Chỉ phụ thuộc messageId + mutate (stable), không phụ thuộc translations
     [messageId, translateMutate]
   );
+
+  const currentTranslation = getTranslation(targetLang);
+
+  const displayContent =
+    isShowingTranslated && currentTranslation ? currentTranslation : originalContent;
 
   const handleChangeTargetLang = useCallback(
     (lang: _LanguageCode) => {
       setTargetLang(lang);
       translate(lang);
     },
-    [translate, setTargetLang]
+    [setTargetLang, translate]
   );
 
   const handleTranslateMessage = useCallback(() => {
-    if (hasTranslation) {
+    if (currentTranslation) {
       setIsShowingTranslated((p) => !p);
     } else {
       translate(targetLang);
     }
-  }, [hasTranslation, translate, targetLang]);
+  }, [currentTranslation, translate, targetLang]);
 
-  const handleCopyToClipboard = useCallback(
-    () => Clipboard.setString(displayContent),
-    [displayContent]
-  );
+  const handleCopyToClipboard = useCallback(() => {
+    Clipboard.setString(displayContent);
+  }, [displayContent]);
 
   return {
-    isTranslating,
+    isTranslating: isPending,
     isShowingTranslated,
-    hasTranslation,
+    hasTranslation: !!currentTranslation,
     displayContent,
     handleChangeTargetLang,
     handleTranslateMessage,

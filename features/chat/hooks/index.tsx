@@ -2,6 +2,7 @@ import {
   useMutationGetRoomId,
   useMutationSeenMessages,
   useMutationSendMessage,
+  useMutationTranslateMessage,
 } from '@/features/chat/hooks/use-mutation';
 import useChatStore from '@/features/chat/stores';
 import { useApplicationStore } from '@/features/app/stores';
@@ -19,7 +20,7 @@ import {
   useInfiniteQueryKTVConversations,
   useInfiniteQueryListMessage,
 } from '@/features/chat/hooks/use-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthStore } from '@/features/auth/stores';
 import SocketService from '@/features/chat/socket-service';
 import { queryClient } from '@/lib/provider/query-provider';
@@ -31,6 +32,8 @@ import useToast from '@/features/app/hooks/use-toast';
 import { _ChatConstant } from '@/features/chat/consts';
 import { goBack } from '@/lib/utils';
 import { AppState, AppStateStatus } from 'react-native';
+import { _LanguageCode } from '@/lib/const';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 // Hook để lấy thông tin phòng chat
 export const useGetRoomChat = () => {
@@ -85,6 +88,12 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
 
+  // state dịch
+  const [selectedItem, setSelectedItem] = useState<PayloadNewMessage | null>(null);
+  const defaultLang = useApplicationStore((s) => s.language);
+  const [targetLang, setTargetLang] = useState<_LanguageCode>(defaultLang);
+  const sheetRef = useRef<BottomSheetModal>(null);
+
   const { mutate: sendMessage } = useMutationSendMessage();
   const [joinStatus, setJoinStatus] = useState<'pending' | 'joining' | 'joined' | 'error'>(
     'pending'
@@ -96,15 +105,13 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     room?.id,
     joinStatus === 'joined'
   );
-
   const messages = useMemo(
     () => historyQuery.data?.pages.flatMap((p) => p.data.data) ?? [],
     [historyQuery.data]
   );
 
-  // Stable callback – không phụ thuộc object room, chỉ lấy room.id
   const updateCache = useCallback(
-    (msg: PayloadNewMessage) => {
+    (msg: Partial<PayloadNewMessage> & { id: string; temp_id?: string }) => {
       if (!room?.id) return;
       queryClient.setQueriesData<InfiniteData<ListMessageResponse>>(
         { queryKey: ['chatApi-listMessages', room.id] },
@@ -117,8 +124,15 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
               (m) => (msg.temp_id && m.temp_id === msg.temp_id) || (msg.id && m.id === msg.id)
             );
 
-            const merged = { ...msgs[idx], ...msg, status_sent: msg.status_sent ?? 'sent' };
-            idx !== -1 ? (msgs[idx] = merged) : msgs.unshift(merged);
+            if (idx === -1) {
+              msgs.unshift({ ...msg, status_sent: msg.status_sent ?? 'sent' } as PayloadNewMessage);
+            } else {
+              msgs[idx] = {
+                ...msgs[idx],
+                ...msg,
+                status_sent: msg.status_sent ?? msgs[idx].status_sent,
+              };
+            }
           })
       );
     },
@@ -152,6 +166,40 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     },
     [room, user, updateCache, sendMessage]
   );
+
+  const { mutate: translateMutate, isPending } = useMutationTranslateMessage();
+
+  // Handler dịch thuật
+  const handleTranslateMessage = useCallback(() => {
+    if (!selectedItem) return;
+
+    translateMutate(
+      { message_id: selectedItem?.id ?? selectedItem?.temp_id, lang: targetLang },
+      {
+        onSuccess: ({ data }) => {
+          updateCache({
+            id: selectedItem?.id,
+            translated_content: data.translate,
+          });
+        },
+        onError: (error) => {
+          errorToast({ message: t('chat.error_translate') });
+        },
+        onSettled: () => {
+          sheetRef.current?.dismiss();
+        },
+      }
+    );
+  }, [translateMutate, updateCache, selectedItem, targetLang]);
+  //
+  const handleLongPress = useCallback((item: PayloadNewMessage) => {
+    setSelectedItem(item);
+    sheetRef.current?.present();
+  }, []);
+
+  const handleSheetDismiss = useCallback(() => setSelectedItem(null), []);
+
+  const handleCloseSheet = useCallback(() => sheetRef.current?.dismiss(), []);
 
   // Socket lifecycle
   useEffect(() => {
@@ -222,7 +270,25 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     };
   }, [room?.partner_id]);
 
-  return { historyQuery, joinStatus, messages, submitMessage, user, room, isPartnerOnline };
+  return {
+    historyQuery,
+    joinStatus,
+    messages,
+    submitMessage,
+    user,
+    room,
+    isPartnerOnline,
+    handleLongPress,
+    selectedItem,
+    setSelectedItem,
+    targetLang,
+    setTargetLang,
+    handleTranslateMessage,
+    isTranslating: isPending,
+    sheetRef,
+    handleSheetDismiss,
+    handleCloseSheet,
+  };
 };
 
 // Lấy danh sách cuộc trò chuyện KTV

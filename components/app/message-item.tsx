@@ -1,7 +1,7 @@
 import { PayloadNewMessage } from '@/features/chat/types';
 import { cn } from '@/lib/utils';
 import { TFunction } from 'i18next';
-import React, { useCallback } from 'react';
+import React, { useCallback, memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Text } from '../ui/text';
 import { AlertCircle, Check, Clock } from 'lucide-react-native';
@@ -19,7 +19,7 @@ type MessageItemProps = {
   t: TFunction;
 };
 
-export const MessageItem = ({ item, currentUserId, onLongPress, t }: MessageItemProps) => {
+export const MessageItem = memo(({ item, currentUserId, onLongPress, t }: MessageItemProps) => {
   const isMe = item.sender_id === currentUserId;
 
   // Stable callback – tránh tạo anonymous function mới mỗi render
@@ -59,4 +59,4 @@ export const MessageItem = ({ item, currentUserId, onLongPress, t }: MessageItem
       </View>
     </TouchableOpacity>
   );
-};
+});

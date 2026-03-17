@@ -1,13 +1,14 @@
-import { useTranslateMessage } from '@/features/chat/hooks/use-traselate';
 import { PayloadNewMessage } from '@/features/chat/types';
 import { _LanguageCode, _LanguagesMap } from '@/lib/const';
 import { TFunction } from 'i18next';
 import { Copy, Languages } from 'lucide-react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '../ui/text';
 import { ActivityIndicator, Image, TouchableOpacity, View } from 'react-native';
 import { cn } from '@/lib/utils';
+
+// ─── LangChip ────────────────────────────────────────────────
 
 type LangChipProps = {
   code: _LanguageCode;
@@ -38,55 +39,82 @@ const LangChip = ({ code, label, icon, isSelected, isDisabled, onPress }: LangCh
   );
 };
 
+// ─── MessageSheetContent ─────────────────────────────────────
+
 type SheetContentProps = {
   item: PayloadNewMessage;
   onClose: () => void;
   t: TFunction;
+  handleTranslateMessage: () => void;
+  handleCopy: () => void;
   targetLang: _LanguageCode;
   setTargetLang: (lang: _LanguageCode) => void;
-  initialIsShowing: boolean;
-  onUpdateTranslation: (messageId: string, translated: string | null) => void;
+  isTranslating: boolean;
 };
 
 export const MessageSheetContent = ({
   item,
   onClose,
   t,
+  handleTranslateMessage,
+  handleCopy,
   targetLang,
   setTargetLang,
-  initialIsShowing,
-  onUpdateTranslation,
+  isTranslating,
 }: SheetContentProps) => {
   const insets = useSafeAreaInsets();
 
-  const {
-    isTranslating,
-    isShowingTranslated,
-    hasTranslation,
-    displayContent,
-    handleChangeTargetLang,
-    handleTranslateMessage,
-    handleCopyToClipboard,
-  } = useTranslateMessage(item.id, item.content, targetLang, setTargetLang, initialIsShowing);
+  // Lang đã được dịch thành công — chỉ update khi API trả về
+  const [translatedLang, setTranslatedLang] = useState<_LanguageCode | null>(null);
 
-  // Sync bản dịch lên parent – chỉ chạy khi trạng thái thực sự thay đổi
+  // Đang xem bản dịch hay bản gốc
+  const [isShowingTranslated, setIsShowingTranslated] = useState(false);
+
+  // Ref để detect translated_content thay đổi (API vừa trả về bản dịch mới)
+  const prevTranslatedContent = useRef(item.translated_content);
+
+  // ✅ Bản dịch hiện tại có khớp với lang đang chọn không
+  const isTranslatedForCurrentLang = !!item.translated_content && translatedLang === targetLang;
+
+  // ✅ Nội dung hiển thị
+  const displayContent =
+    isShowingTranslated && isTranslatedForCurrentLang ? item.translated_content! : item.content;
+
+  // ✅ Khi API trả về bản dịch mới (translated_content thay đổi)
+  // → lưu lang vừa dịch + tự show bản dịch
   useEffect(() => {
-    const translated = isShowingTranslated && hasTranslation ? displayContent : null;
-    onUpdateTranslation(item.id, translated);
-  }, [isShowingTranslated, hasTranslation, displayContent, item.id, onUpdateTranslation]);
+    if (item.translated_content && item.translated_content !== prevTranslatedContent.current) {
+      prevTranslatedContent.current = item.translated_content;
+      setTranslatedLang(targetLang);
+      setIsShowingTranslated(true);
+    }
+  }, [item.translated_content, targetLang]);
 
-  const handleCopy = useCallback(() => {
-    handleCopyToClipboard();
-    onClose();
-  }, [handleCopyToClipboard, onClose]);
+  // ✅ Khi đổi targetLang sang lang chưa dịch → ẩn bản dịch cũ
+  useEffect(() => {
+    if (translatedLang !== targetLang) {
+      setIsShowingTranslated(false);
+    }
+  }, [targetLang]);
 
+  const handleTranslate = useCallback(() => {
+    if (isTranslatedForCurrentLang) {
+      // Đã có bản dịch đúng lang → toggle gốc/dịch
+      setIsShowingTranslated((prev) => !prev);
+    } else {
+      // Chưa dịch hoặc đổi lang mới → gọi API
+      handleTranslateMessage();
+    }
+  }, [isTranslatedForCurrentLang, handleTranslateMessage]);
+
+  // ✅ Label button rõ ràng theo từng trạng thái
   const translateLabel = isTranslating
     ? t('chat.translating')
-    : hasTranslation
+    : isTranslatedForCurrentLang
       ? isShowingTranslated
-        ? t('chat.view_original')
-        : t('chat.view_translation')
-      : t('chat.translate_message');
+        ? t('chat.view_original') // đang xem dịch → cho xem gốc
+        : t('chat.view_translation') // đang xem gốc → cho xem dịch
+      : t('chat.translate_message'); // chưa dịch / đổi lang mới
 
   return (
     <View style={{ paddingBottom: insets.bottom + 8 }}>
@@ -95,7 +123,7 @@ export const MessageSheetContent = ({
         <Text className="text-[13px] text-gray-500" numberOfLines={3}>
           {displayContent}
         </Text>
-        {hasTranslation && (
+        {isTranslatedForCurrentLang && (
           <Text className="mt-1 text-[11px] text-gray-400">
             {isShowingTranslated ? t('chat.translation') : t('chat.original')}
           </Text>
@@ -118,10 +146,10 @@ export const MessageSheetContent = ({
 
       <View className="mx-2 h-px bg-gray-100" />
 
-      {/* Translate toggle */}
+      {/* Translate button */}
       <TouchableOpacity
         disabled={isTranslating}
-        onPress={handleTranslateMessage}
+        onPress={handleTranslate}
         className="flex-row items-center gap-4 rounded-xl px-2 py-4 active:bg-gray-50">
         {isTranslating ? (
           <ActivityIndicator size={20} color="#3B82F6" />
@@ -149,7 +177,7 @@ export const MessageSheetContent = ({
             icon={lang.icon}
             isSelected={targetLang === lang.code}
             isDisabled={isTranslating}
-            onPress={handleChangeTargetLang}
+            onPress={setTargetLang}
           />
         ))}
       </View>
