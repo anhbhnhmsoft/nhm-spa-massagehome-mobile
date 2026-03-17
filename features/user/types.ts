@@ -73,7 +73,7 @@ export type KTVDetail = ListKTVItem & {
       id: string;
       name: string;
       avatar_url: string | null;
-    };
+    } | null;
     comment: string | null;
     rating: number;
     created_at: string;

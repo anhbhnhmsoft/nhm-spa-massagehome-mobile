@@ -1,5 +1,5 @@
 import { _LanguageCode } from '@/lib/const';
-import { BaseSearchRequest, ResponseDataSuccessType, Paginator } from '@/lib/types';
+import { BaseSearchRequest, ResponseDataSuccessType, Paginator, ReviewTranslations } from '@/lib/types';
 
 export type CategoryItem = {
   id: string;
@@ -80,11 +80,15 @@ export type SendReviewRequest = {
 export type ReviewItem = {
   id: string; // ID đánh giá
   user_id: string; // ID user
-  review_by: string; // ID user đánh giá
-  service_booking_id: string; // ID dịch vụ
+  review_by: string | null; // ID user đánh giá
+  service_booking_id: string | null; // ID dịch vụ
   rating: number; // Đánh giá
   comment?: string; // Bình luận
-  hidden: boolean; // Có ẩn không
+  comment_translated: ReviewTranslations | undefined // Bình luận đã dịch
+
+  translated_comment?: string ; // Bình luận đã dịch (cái này là thêm vào để hiển thị trên app)
+  target_lang_translated?: _LanguageCode // Ngôn ngữ được dịch (cái này là thêm vào để hiển thị trên app)
+
   review_at: string; // Thời gian đánh giá
   reviewer: {
     id: string; // ID user đánh giá

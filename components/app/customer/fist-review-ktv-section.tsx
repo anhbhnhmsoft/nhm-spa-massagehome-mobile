@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import StarRating from '@/components/star-rating';
 import Empty from '@/components/empty';
 import ReviewListModal from '@/components/app/list-review';
+import Avatar from '@/components/ui/avatar';
 
 type Props = {
   t: TFunction;
@@ -40,7 +41,7 @@ export const FistReviewKtvSection: FC<Props> = ({ t, review_count, first_review,
         </View>
 
         {/* --- Nội dung Review ( comment) --- */}
-        <ReviewFistItem item={first_review} />
+        <ReviewFistItem item={first_review} t={t} />
 
         {/* --- Button Xem tất cả --- */}
 
@@ -63,43 +64,29 @@ export const FistReviewKtvSection: FC<Props> = ({ t, review_count, first_review,
 };
 
 // Hiển thị đánh giá đầu tiên của KTV
-const ReviewFistItem = ({ item }: { item: KTVDetail['first_review'] }) => {
-  const [imageError, setImageError] = useState(false);
+const ReviewFistItem = ({ item, t }: { item: KTVDetail['first_review']; t: TFunction }) => {
 
   return (
     <>
       <View className="mt-1 flex-row items-center justify-center">
         {item ? (
           <>
-            {/* Avatar người review (Giả định) */}
-            {item.review_by.avatar_url && !imageError ? (
-              <Image
-                source={{ uri: item.review_by.avatar_url }}
-                style={{ width: 32, height: 32, borderRadius: 9999 }}
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <View
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 9999,
-                  backgroundColor: DefaultColor.slate[200],
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Icon as={User} size={14} className="text-slate-400" />
-              </View>
-            )}
+            <Avatar
+              source={item.review_by?.avatar_url}
+              size={32}
+              borderWidth={0}
+            />
             <View className="ml-3 flex-1 gap-2">
               <View className="flex-row justify-between">
-                <Text className="font-inter-bold text-xs text-gray-700">{item.review_by.name}</Text>
+                <Text className="font-inter-bold text-xs text-gray-700">
+                  {item.review_by?.name ? item.review_by.name : t('review.hidden_user')}
+                </Text>
                 <Text className="text-[10px] text-gray-400">
                   {dayjs(item.created_at).format('DD/MM/YYYY')}
                 </Text>
               </View>
               <StarRating rating={item.rating} size={10} />
-              <Text className="mb-2 text-xs text-gray-600">{item.comment}</Text>
+              <Text className="mb-2 text-xs text-gray-600" numberOfLines={2}>{item.comment || t('review.no_comment')}</Text>
             </View>
           </>
         ) : (
