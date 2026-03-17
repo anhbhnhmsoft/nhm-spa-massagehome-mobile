@@ -54,6 +54,7 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
     handleTranslateMessage,
     selectedItem,
     isTranslating,
+    handleCopy,
   } = useChat(useFor);
 
   const handleSend = useCallback(() => {
@@ -144,7 +145,7 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
             t={t}
             targetLang={targetLang}
             setTargetLang={setTargetLang}
-            handleCopy={() => {}}
+            handleCopy={handleCopy}
             isTranslating={isTranslating}
           />
         )}

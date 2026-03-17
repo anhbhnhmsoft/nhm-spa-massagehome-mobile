@@ -823,6 +823,7 @@
     "placeholder": "Send a message...",
     "translated": "Translated",
     "copy": "Copy",
+    "copy_success": "Copied",
     "translate_message": "Translate message",
     "view_original": "View original",
     "view_translation": "View translation",

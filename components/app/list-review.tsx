@@ -89,7 +89,7 @@ const Review = React.memo(({ item, t, onLongPress, translatedComment }: ReviewPr
       {/* Hint */}
       {!isTranslated && (
         <Text className="mt-2 text-right text-[10px] text-gray-300">
-          {t('review.hold_to_translate', { defaultValue: 'Nhấn giữ để dịch' })}
+          {t('review.hold_to_translate')}
         </Text>
       )}
     </TouchableOpacity>
@@ -139,6 +139,18 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
     translateSheetRef.current?.dismiss();
   }, []);
 
+  const renderItem = useCallback(
+    ({ item }: { item: ReviewItem }) => (
+      <Review
+        item={item}
+        t={t}
+        onLongPress={handleLongPress}
+        translatedComment={translationMap[item.id] ?? null}
+      />
+    ),
+    [t, handleLongPress, translationMap]
+  );
+
   return (
     <Modal
       visible={isVisible}
@@ -173,14 +185,7 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
             <FlatList
               data={data}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <Review
-                  item={item}
-                  t={t}
-                  onLongPress={handleLongPress}
-                  translatedComment={translationMap[item.id] ?? null}
-                />
-              )}
+              renderItem={renderItem}
               contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
               onRefresh={refetch}
               refreshing={isLoading}

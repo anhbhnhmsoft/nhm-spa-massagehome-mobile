@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
 import { _ChatConstant } from '@/features/chat/consts';
 import { goBack } from '@/lib/utils';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, Clipboard } from 'react-native';
 import { _LanguageCode } from '@/lib/const';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
@@ -81,7 +81,7 @@ export const useGetRoomChat = () => {
 
 export const useChat = (useFor: 'ktv' | 'customer') => {
   const { t } = useTranslation();
-  const { error: errorToast } = useToast();
+  const { error: errorToast, success: successToast } = useToast();
 
   // Tách từng selector nhỏ → chỉ re-render khi đúng field thay đổi
   const room = useChatStore((s) => s.room);
@@ -191,11 +191,21 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
       }
     );
   }, [translateMutate, updateCache, selectedItem, targetLang]);
-  //
+
   const handleLongPress = useCallback((item: PayloadNewMessage) => {
     setSelectedItem(item);
     sheetRef.current?.present();
   }, []);
+
+  // handle copy
+  const handleCopy = useCallback(async () => {
+    if (!selectedItem?.content) return;
+
+    await Clipboard.setString(selectedItem.content);
+
+    sheetRef.current?.dismiss();
+    successToast({ message: t('chat.copied') });
+  }, [selectedItem, errorToast, t]);
 
   const handleSheetDismiss = useCallback(() => setSelectedItem(null), []);
 
@@ -288,6 +298,7 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     sheetRef,
     handleSheetDismiss,
     handleCloseSheet,
+    handleCopy,
   };
 };
 

@@ -829,6 +829,7 @@
     "placeholder": "发送消息...",
     "translated": "已翻译",
     "copy": "复制",
+    "copy_success": "消息已复制",
     "translate_message": "翻译消息",
     "view_original": "查看原文",
     "view_translation": "查看翻译",
@@ -838,12 +839,22 @@
     "original": "— 原文",
     "chat_room": "聊天室"
   },
-  "review": {
-    "all_reviews": "所有评价",
-    "total_reviews": "共 {{ count }} 条评论",
+ "review": {
+    "all_reviews": "全部评价",
+    "total_reviews": "共 {{count}} 条评价",
     "no_reviews": "暂无评价。",
     "hidden_user": "匿名用户",
-    "no_comment": "无评论。"
+    "no_comment": "暂无评论。",
+    "hold_to_translate": "长按翻译",
+    "translate": "翻译",
+    "translating": "正在翻译...",
+    "translate_to": "翻译为",
+
+    "view_original": "查看原文",
+    "view_translation": "查看翻译",
+
+    "translation": "— 翻译",
+    "original": "— 原文"
   },
   "ktv": {
     "index": {
