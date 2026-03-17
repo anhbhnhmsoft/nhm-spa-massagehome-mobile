@@ -9,6 +9,8 @@ import {
   SendReviewRequest,
   ListReviewRequest,
   ListReviewResponse,
+  TranslateReviewRequest,
+  TranslateReviewResponse,
 } from '@/features/service/types';
 import { ResponseSuccessType } from '@/lib/types';
 
@@ -43,6 +45,11 @@ const serviceApi = {
   // Lấy danh sách đánh giá dịch vụ
   listReview: async (params: ListReviewRequest): Promise<ListReviewResponse> => {
     const response = await client.get(`${defaultUri}/list-review`, { params });
+    return response.data;
+  },
+  // dich đánh giá
+  translateReview: async (data: TranslateReviewRequest): Promise<TranslateReviewResponse> => {
+    const response = await client.post(`${defaultUri}/translate-review`, data);
     return response.data;
   },
 };

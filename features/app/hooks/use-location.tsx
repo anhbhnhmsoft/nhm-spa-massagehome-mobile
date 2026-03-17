@@ -13,7 +13,10 @@ import { _AuthStatus } from '@/features/auth/const';
  * @param oldLoc
  * @param newLoc
  */
-const isSignificantChange = (oldLoc: Location.LocationObject | null, newLoc: Location.LocationObject) => {
+const isSignificantChange = (
+  oldLoc: Location.LocationObject | null,
+  newLoc: Location.LocationObject
+) => {
   if (!oldLoc) return true;
   // Chỉ update nếu lệch quá 0.001 độ (khoảng 100 mét)
   const threshold = 0.001;
@@ -27,7 +30,9 @@ const isSignificantChange = (oldLoc: Location.LocationObject | null, newLoc: Loc
  * format địa chỉ tọa độ
  * @param locationObject Vị trí người dùng
  */
-export const formatLocation = async (locationObject: Location.LocationObject): Promise<LocationApp | null> => {
+export const formatLocation = async (
+  locationObject: Location.LocationObject
+): Promise<LocationApp | null> => {
   try {
     const reversedGeoCodes = await Location.reverseGeocodeAsync({
       latitude: locationObject.coords.latitude,
@@ -43,9 +48,9 @@ export const formatLocation = async (locationObject: Location.LocationObject): P
       }
       // Tạo mảng các thành phần theo thứ tự hiển thị mong muốn
       const parts = [
-        streetInfo,                           // Số nhà + Đường (hoặc tên địa điểm)
-        place.district || place.subregion,    // Quận/Huyện (iOS hay trả về subregion thay vì district)
-        place.city || place.region,           // Tỉnh/Thành phố (Android hay trả về region)
+        streetInfo, // Số nhà + Đường (hoặc tên địa điểm)
+        place.district || place.subregion, // Quận/Huyện (iOS hay trả về subregion thay vì district)
+        place.city || place.region, // Tỉnh/Thành phố (Android hay trả về region)
       ];
       const addressString = parts
         .filter((part) => part && part.trim().length > 0) // Lọc null, undefined và chuỗi rỗng
@@ -120,9 +125,11 @@ export const useLocation = () => {
       // --- BƯỚC THÊM MỚI: LẤY VỊ TRÍ TỨC THỜI ---
       // Lấy nhanh vị trí cuối cùng được ghi nhận hoặc vị trí hiện tại
       const lastKnown = await Location.getLastKnownPositionAsync({});
-      const currentPos = lastKnown || await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
+      const currentPos =
+        lastKnown ||
+        (await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        }));
 
       if (currentPos) {
         const formatted = await formatLocation(currentPos);
@@ -130,7 +137,6 @@ export const useLocation = () => {
           setAppLocation(formatted);
           // Gửi lên server luôn nếu đã có Auth
           if (statusAuth === _AuthStatus.AUTHORIZED) {
-            console.log('gửi vị trí lên server')
             mutation.mutate({
               address: formatted.address,
               latitude: formatted.location.coords.latitude,
@@ -161,9 +167,8 @@ export const useLocation = () => {
               setAppLocation(newLocation);
             }
           }
-        },
+        }
       );
-
     } catch (error) {
       // Do nothing
     } finally {
@@ -176,19 +181,13 @@ export const useLocation = () => {
     // Bắt đầu theo dõi khi component mount
     startWatching();
 
-    const subscription = AppState.addEventListener('change', nextAppState => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
       // Logic: Chỉ start khi từ Background -> Active
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
         startWatching();
       }
       // Logic: Chỉ stop khi từ Active -> Background
-      else if (
-        appState.current === 'active' &&
-        nextAppState.match(/inactive|background/)
-      ) {
+      else if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
         stopWatching();
       }
       appState.current = nextAppState;
@@ -208,16 +207,18 @@ export const useLocation = () => {
     }, _TIME_OUT_LOADING_SCREEN_LAYOUT); // Gửi sau _TIME_OUT_LOADING_SCREEN_LAYOUT (để đảm bảo có vị trí)
 
     // Gửi vị trí mỗi 1 phút khi có auth
-    const intervalId = setInterval(() => {
-      sendLocation();
-    }, 1000 * 60 * 5); // Gửi mỗi 5 phút
+    const intervalId = setInterval(
+      () => {
+        sendLocation();
+      },
+      1000 * 60 * 5
+    ); // Gửi mỗi 5 phút
 
     return () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
     };
   }, [statusAuth]);
-
 };
 
 /**
@@ -232,10 +233,7 @@ export const useGetLocation = () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          t('permission.location.title'),
-          t('permission.location.message'),
-        );
+        Alert.alert(t('permission.location.title'), t('permission.location.message'));
       }
 
       // Có quyền -> Lấy vị trí
@@ -247,15 +245,11 @@ export const useGetLocation = () => {
 
       return location;
     } catch (error) {
-      Alert.alert(
-        t('permission.location.title'),
-        t('permission.location.error'),
-      );
+      Alert.alert(t('permission.location.title'), t('permission.location.error'));
       return null;
     }
   };
 };
-
 
 /**
  * Hook kiểm tra và yêu cầu quyền vị trí cho KTV

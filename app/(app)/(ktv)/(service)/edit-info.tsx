@@ -32,7 +32,7 @@ import dayjs from 'dayjs';
 import DateTimePickerInput from '@/components/app/ktv/date-time-input';
 import { BottomEditAvatar } from '@/components/app/profile-tab';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLockAccount } from '@/features/auth/hooks';
 
@@ -44,6 +44,8 @@ export default function EditInfoScreen() {
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
   const bottomShetImagePicker = useRef<BottomSheetModal>(null);
   const [imageError, setImageError] = useState(false);
+
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -296,17 +298,18 @@ export default function EditInfoScreen() {
             )}
           </KeyboardAwareScrollView>
         </TouchableWithoutFeedback>
-
-        {/* FOOTER BUTTON */}
-        <View className="border-t border-gray-100 bg-white p-4 shadow-lg">
-          <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
-            className="flex-row items-center justify-center rounded-xl bg-[#2B7BBE] py-4">
-            <Save size={20} color="white" />
-            <Text className="ml-4 text-lg font-bold text-white">{t('ktv.services.form.save')}</Text>
-          </TouchableOpacity>
-        </View>
       </SafeAreaView>
+      {/* FOOTER BUTTON */}
+      <View
+        className="border-t border-gray-100 bg-white p-4"
+        style={{ paddingBottom: insets.bottom + 10 }}>
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmit)}
+          className="flex-row items-center justify-center rounded-xl bg-[#2B7BBE] py-4">
+          <Save size={20} color="white" />
+          <Text className="ml-4 text-lg font-bold text-white">{t('ktv.services.form.save')}</Text>
+        </TouchableOpacity>
+      </View>
       <BottomEditAvatar ref={bottomEditAvatar} canDelete={profileData?.avatar_url !== null} />
       <BottomEditImage ref={bottomShetImagePicker} imageLength={profileData?.list_images?.length} />
     </>

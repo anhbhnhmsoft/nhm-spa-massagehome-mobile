@@ -2,6 +2,7 @@ import {
   useMutationGetRoomId,
   useMutationSeenMessages,
   useMutationSendMessage,
+  useMutationTranslateMessage,
 } from '@/features/chat/hooks/use-mutation';
 import useChatStore from '@/features/chat/stores';
 import { useApplicationStore } from '@/features/app/stores';
@@ -19,7 +20,7 @@ import {
   useInfiniteQueryKTVConversations,
   useInfiniteQueryListMessage,
 } from '@/features/chat/hooks/use-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthStore } from '@/features/auth/stores';
 import SocketService from '@/features/chat/socket-service';
 import { queryClient } from '@/lib/provider/query-provider';
@@ -30,7 +31,9 @@ import { useTranslation } from 'react-i18next';
 import useToast from '@/features/app/hooks/use-toast';
 import { _ChatConstant } from '@/features/chat/consts';
 import { goBack } from '@/lib/utils';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, Clipboard } from 'react-native';
+import { _LanguageCode } from '@/lib/const';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 // Hook để lấy thông tin phòng chat
 export const useGetRoomChat = () => {
@@ -75,204 +78,205 @@ export const useGetRoomChat = () => {
 };
 
 // Hook để quản lý chat
+
 export const useChat = (useFor: 'ktv' | 'customer') => {
   const { t } = useTranslation();
-  const { error: errorToast } = useToast();
+  const { error: errorToast, success: successToast } = useToast();
 
-  const room = useChatStore((state) => state.room);
-  const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
+  // Tách từng selector nhỏ → chỉ re-render khi đúng field thay đổi
+  const room = useChatStore((s) => s.room);
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+
+  // state dịch
+  const [selectedItem, setSelectedItem] = useState<PayloadNewMessage | null>(null);
+  const defaultLang = useApplicationStore((s) => s.language);
+  const [targetLang, setTargetLang] = useState<_LanguageCode>(defaultLang);
+  const sheetRef = useRef<BottomSheetModal>(null);
+
   const { mutate: sendMessage } = useMutationSendMessage();
   const [joinStatus, setJoinStatus] = useState<'pending' | 'joining' | 'joined' | 'error'>(
     'pending'
   );
-  // Trạng thái trực tuyến của đối phương
   const [isPartnerOnline, setIsPartnerOnline] = useState(false);
 
   const historyQuery = useInfiniteQueryListMessage(
-    {
-      filter: {},
-      page: 1,
-      per_page: 10,
-    },
+    { filter: {}, page: 1, per_page: 10 },
     room?.id,
     joinStatus === 'joined'
   );
+  const messages = useMemo(
+    () => historyQuery.data?.pages.flatMap((p) => p.data.data) ?? [],
+    [historyQuery.data]
+  );
 
-  const messages = useMemo(() => {
-    return historyQuery.data?.pages.flatMap((page) => page.data.data) || [];
-  }, [historyQuery.data]);
-
-  // Cập nhật cache tin nhắn khi nhận được tin nhắn mới
   const updateCache = useCallback(
-    (msg: PayloadNewMessage) => {
+    (msg: Partial<PayloadNewMessage> & { id: string; temp_id?: string }) => {
       if (!room?.id) return;
-
       queryClient.setQueriesData<InfiniteData<ListMessageResponse>>(
         { queryKey: ['chatApi-listMessages', room.id] },
-        (oldData) => {
-          return produce(oldData, (draft) => {
-            if (!draft?.pages?.length) return;
-            const firstPage = draft.pages[0];
-            const messages = firstPage.data?.data;
-            if (!messages) return;
-            // 1. Tìm tin nhắn: Ưu tiên tìm theo temp_id trước, sau đó mới tìm theo id thật
-            const index = messages.findIndex((m) => {
-              const matchTempId = !!(msg.temp_id && m.temp_id === msg.temp_id);
-              const matchRealId = !!(msg.id && m.id === msg.id);
-              return matchTempId || matchRealId;
-            });
+        (old) =>
+          produce(old, (draft) => {
+            const msgs = draft?.pages?.[0]?.data?.data;
+            if (!msgs) return;
 
-            // 2. Cập nhật tin nhắn nếu tìm thấy
-            if (index !== -1) {
-              messages[index] = {
-                ...messages[index],
-                ...msg,
-                id: msg.id || messages[index].id,
-                temp_id: msg.temp_id || messages[index].temp_id,
-                status_sent: msg.status_sent || 'sent',
-              };
+            const idx = msgs.findIndex(
+              (m) => (msg.temp_id && m.temp_id === msg.temp_id) || (msg.id && m.id === msg.id)
+            );
+
+            if (idx === -1) {
+              msgs.unshift({ ...msg, status_sent: msg.status_sent ?? 'sent' } as PayloadNewMessage);
             } else {
-              messages.unshift({
+              msgs[idx] = {
+                ...msgs[idx],
                 ...msg,
-                status_sent: msg.status_sent || 'sent',
-              });
+                status_sent: msg.status_sent ?? msgs[idx].status_sent,
+              };
             }
-          });
+          })
+      );
+    },
+    [room?.id]
+  );
+
+  const submitMessage = useCallback(
+    (content: string) => {
+      if (!room || !user) return;
+
+      const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      const tempMsg: PayloadNewMessage = {
+        id: tempId,
+        temp_id: tempId,
+        room_id: room.id,
+        content,
+        sender_id: user.id,
+        sender_name: user.name,
+        created_at: dayjs().toISOString(),
+        status_sent: 'pending',
+      };
+
+      updateCache(tempMsg);
+      sendMessage(
+        { content, room_id: room.id, temp_id: tempId },
+        {
+          onSuccess: () => updateCache({ ...tempMsg, status_sent: 'sent' }),
+          onError: () => updateCache({ ...tempMsg, status_sent: 'failed' }),
         }
       );
     },
-    [queryClient, room?.id]
+    [room, user, updateCache, sendMessage]
   );
 
-  // Gửi tin nhắn
-  const submitMessage = (msg: string) => {
-    if (!room || !user) return;
+  const { mutate: translateMutate, isPending } = useMutationTranslateMessage();
 
-    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  // Handler dịch thuật
+  const handleTranslateMessage = useCallback(() => {
+    if (!selectedItem) return;
 
-    const tempMsg: PayloadNewMessage = {
-      id: tempId,
-      room_id: room.id,
-      content: msg,
-      sender_id: user.id,
-      sender_name: user.name,
-      created_at: dayjs().toISOString(),
-      temp_id: tempId,
-      status_sent: 'pending', // Trạng thái gửi (nếu là tin tạm thời) (ko có trong response)
-    };
-    updateCache(tempMsg);
-    sendMessage(
+    translateMutate(
+      { message_id: selectedItem?.id ?? selectedItem?.temp_id, lang: targetLang },
       {
-        content: msg,
-        room_id: room.id,
-        temp_id: tempId,
-      },
-      {
-        onSuccess: () => {
-          // Cập nhật tin Optimistic thành tin thật khi nhận phản hồi thành công
-          updateCache({ ...tempMsg, status_sent: 'sent' });
+        onSuccess: ({ data }) => {
+          updateCache({
+            id: selectedItem?.id,
+            translated_content: data.translate,
+          });
         },
-        onError: (error: any) => {
-          // Cập nhật tin Optimistic thành tin thất bại khi nhận phản hồi thất bại
-          updateCache({ ...tempMsg, status_sent: 'failed' });
+        onError: (error) => {
+          errorToast({ message: t('chat.error_translate') });
+        },
+        onSettled: () => {
+          sheetRef.current?.dismiss();
         },
       }
     );
-  };
+  }, [translateMutate, updateCache, selectedItem, targetLang]);
 
-  // Lắng nghe sự kiện khi room hoặc token thay đổi
+  const handleLongPress = useCallback((item: PayloadNewMessage) => {
+    setSelectedItem(item);
+    sheetRef.current?.present();
+  }, []);
+
+  // handle copy
+  const handleCopy = useCallback(async () => {
+    if (!selectedItem?.content) return;
+
+    await Clipboard.setString(selectedItem.content);
+
+    sheetRef.current?.dismiss();
+    successToast({ message: t('chat.copied') });
+  }, [selectedItem, errorToast, t]);
+
+  const handleSheetDismiss = useCallback(() => setSelectedItem(null), []);
+
+  const handleCloseSheet = useCallback(() => sheetRef.current?.dismiss(), []);
+
+  // Socket lifecycle
   useEffect(() => {
     if (!room?.id || !token) {
       setJoinStatus('error');
       return;
     }
 
-    let isMounted = true; // Cờ để tránh set state khi unmount
+    let mounted = true;
 
-    // Hàm khởi tạo socket khi join room
-    const initSocket = async () => {
+    const connect = async () => {
       try {
-        if (isMounted) setJoinStatus('joining');
-        // Reset cache tin nhắn cũ khi join room mới
+        if (mounted) setJoinStatus('joining');
         await queryClient.resetQueries({ queryKey: ['chatApi-listMessages', room.id] });
-        // Bắt đầu kết nối
         SocketService.connect(token);
-        // QUAN TRỌNG: Đợi kết nối thành công (Handshake xong)
         await SocketService.waitForConnection();
-        // Sau khi đã có connection -> Mới Join Room
         await SocketService.joinRoom(room.id);
-
-        // Lắng nghe tin nhắn mới
-        SocketService.onMessageNew((newMsg: PayloadNewMessage) => {
-          updateCache(newMsg);
-        });
-
-        if (isMounted) setJoinStatus('joined');
-      } catch (error: any) {
-        if (isMounted) setJoinStatus('error');
+        SocketService.onMessageNew((msg: PayloadNewMessage) => updateCache(msg));
+        if (mounted) setJoinStatus('joined');
+      } catch {
+        if (mounted) setJoinStatus('error');
       }
     };
 
-    // Hàm ngắt kết nối socket
-    const handleDisconnect = () => {
-      SocketService.leaveRoom(room?.id); // Gửi tin hiệu leave
-      SocketService.disconnect();        // Ngắt kết nối socket ngay lập tức
+    const disconnect = () => {
+      SocketService.leaveRoom(room.id);
+      SocketService.disconnect();
     };
 
-    // Lắng nghe trạng thái App
-    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
-      // Nếu App chuyển sang background (ẩn) hoặc inactive (iOS swipe)
-      if (nextAppState.match(/inactive|background/)) {
-        handleDisconnect();
-      }
-      // Nếu App active trở lại (Foreground)
-      else if (nextAppState === 'active') {
-        initSocket();
-      }
+    const sub = AppState.addEventListener('change', (state: AppStateStatus) => {
+      if (state.match(/inactive|background/)) disconnect();
+      else if (state === 'active') connect();
     });
 
-    initSocket();
+    connect();
 
     return () => {
-      isMounted = false;
-      handleDisconnect();
-      subscription.remove();
+      mounted = false;
+      disconnect();
+      sub.remove();
       SocketService.offMessageNew();
-
       if (useFor === 'ktv') {
         queryClient.invalidateQueries({ queryKey: ['chatApi-listKTVConversations'] });
       }
     };
   }, [room?.id, token, useFor]);
 
-  // Cập nhật joinStatus khi historyQuery gặp lỗi
   useEffect(() => {
-    if (historyQuery.isError) {
-      setJoinStatus('error');
-    }
+    if (historyQuery.isError) setJoinStatus('error');
   }, [historyQuery.isError]);
 
-  // Hiển thị thông báo lỗi khi join room thất bại
   useEffect(() => {
-    if (joinStatus === 'error') {
-      errorToast({ message: t('chat.error_join_room') });
-      goBack();
-    }
+    if (joinStatus !== 'error') return;
+    errorToast({ message: t('chat.error_join_room') });
+    goBack();
   }, [joinStatus]);
 
-  // Lắng nghe thay đổi trạng thái online/offline của partner
+  // Partner online presence – dùng handler ref để off đúng function
   useEffect(() => {
-    // Lắng nghe thay đổi realtime từ Socket
-    SocketService.socket?.on('user_presence_change', (data: { userId: string; status: string }) => {
-      // Nếu ID người thay đổi trạng thái đúng là partner của mình
+    const handler = (data: { userId: string; status: string }) => {
       if (String(data.userId) === String(room?.partner_id)) {
         setIsPartnerOnline(data.status === 'online');
       }
-    });
-
+    };
+    SocketService.socket?.on('user_presence_change', handler);
     return () => {
-      SocketService.socket?.off('user_presence_change');
+      SocketService.socket?.off('user_presence_change', handler);
     };
   }, [room?.partner_id]);
 
@@ -284,6 +288,17 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     user,
     room,
     isPartnerOnline,
+    handleLongPress,
+    selectedItem,
+    setSelectedItem,
+    targetLang,
+    setTargetLang,
+    handleTranslateMessage,
+    isTranslating: isPending,
+    sheetRef,
+    handleSheetDismiss,
+    handleCloseSheet,
+    handleCopy,
   };
 };
 

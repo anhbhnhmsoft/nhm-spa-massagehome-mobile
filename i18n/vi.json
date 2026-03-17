@@ -819,14 +819,35 @@
     "error_join_room": "Lỗi khi tham gia phòng chat",
     "online": "Online",
     "offline": "Offline",
-    "placeholder": "Gửi tin nhắn..."
+    "placeholder": "Gửi tin nhắn...",
+    "translated": "Đã dịch",
+    "copy": "Sao chép",
+    "copy_success": "Đã sao chép vào clipboard",
+    "translate_message": "Dịch tin nhắn",
+    "view_original": "Xem bản gốc",
+    "view_translation": "Xem bản dịch",
+    "translating": "Đang dịch...",
+    "translate_to": "Dịch sang",
+    "translation": "— Bản dịch",
+    "original": "— Bản gốc",
+    "chat_room": "Chat Room"
   },
   "review": {
     "all_reviews": "Tất cả đánh giá",
     "total_reviews": "Tổng cộng {{ count }} nhận xét",
     "no_reviews": "Chưa có đánh giá nào.",
     "hidden_user": "Người dùng ẩn danh",
-    "no_comment": "Không có bình luận."
+    "no_comment": "Không có bình luận.",
+    "hold_to_translate": "Nhấn giữ để dịch",
+    "translate": "Dịch",
+    "translating": "Đang dịch...",
+    "translate_to": "Dịch sang",
+
+    "view_original": "Xem bản gốc",
+    "view_translation": "Xem bản dịch",
+
+    "translation": "— Bản dịch",
+    "original": "— Bản gốc"
   },
   "ktv": {
     "index": {

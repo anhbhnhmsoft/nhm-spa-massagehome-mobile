@@ -1,3 +1,4 @@
+import { _LanguageCode } from '@/lib/const';
 import { BaseSearchRequest, ResponseDataSuccessType, Paginator } from '@/lib/types';
 
 export type CategoryItem = {
@@ -32,16 +33,11 @@ export type ServiceItem = {
   }[];
 };
 
-
 // Pick only required fields for booking
 export type PickBookingItem = {
   service_id: string;
   option_id: string;
 };
-
-
-
-
 
 export type CouponItem = {
   id: string; // ID coupon
@@ -59,8 +55,7 @@ export type CouponItem = {
   display_ads: boolean; // Có hiển thị trong quảng cáo không
   banners: string | null; // Banner hiển thị khi áp dụng coupon (null nếu không có)
 };
-export type ListCouponRequest = BaseSearchRequest<{
-}>;
+export type ListCouponRequest = BaseSearchRequest<{}>;
 
 export type ListCouponResponse = ResponseDataSuccessType<CouponItem[]>;
 
@@ -105,3 +100,12 @@ export type ListReviewRequest = BaseSearchRequest<{
 
 export type ListReviewResponse = ResponseDataSuccessType<Paginator<ReviewItem>>;
 export type UpdateServiceResponse = ResponseDataSuccessType<ServiceItem>;
+
+export type TranslateReviewRequest = {
+  review_id: string;
+  lang: _LanguageCode;
+};
+
+export type TranslateReviewResponse = ResponseDataSuccessType<{
+  translate: string;
+}>;

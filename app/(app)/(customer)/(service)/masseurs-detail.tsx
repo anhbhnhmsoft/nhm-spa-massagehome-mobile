@@ -12,6 +12,8 @@ import {
   ServiceCardDetailKtv,
   ServicesBottomSheet,
 } from '@/components/app/customer';
+import { useAuthStore } from '@/features/auth/stores';
+import { ClockFading } from 'lucide-react-native';
 
 const MasseurDetailScreen = () => {
   const { t } = useTranslation();
@@ -56,18 +58,10 @@ const MasseurDetailScreen = () => {
               </View>
             </View>
           }
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={() => refreshPage()}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refreshPage()} />}
           renderItem={({ item }) => {
             return (
-              <View
-                key={item.id}
-                className="bg-white px-5 pb-4"
-              >
+              <View key={item.id} className="bg-white px-5 pb-4">
                 <ServiceCardDetailKtv item={item} t={t} setItem={handleOpenServiceSheet} />
               </View>
             );
@@ -76,9 +70,7 @@ const MasseurDetailScreen = () => {
           ListFooterComponent={
             <>
               {/* Lịch làm việc */}
-              {detail.schedule && (
-                <SchedulesKtvSection schedule={detail.schedule} t={t} />
-              )}
+              {detail.schedule && <SchedulesKtvSection schedule={detail.schedule} t={t} />}
 
               {/* --- Review Section --- */}
               <FistReviewKtvSection
@@ -107,6 +99,7 @@ const MasseurDetailScreen = () => {
         handlePrepareBooking={handlePrepareBooking}
         t={t}
       />
+      {/* <ReviewSheetContent /> */}
     </>
   );
 };
