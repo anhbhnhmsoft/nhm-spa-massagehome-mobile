@@ -3,7 +3,8 @@ import {
   DetailKTVResponse,
   ListKTVRequest,
   ListKTVResponse,
-  ApplyPartnerResponse, CheckApplyPartnerResponse,
+  ApplyPartnerResponse,
+  CheckApplyPartnerResponse,
 } from '@/features/user/types';
 import { ResponseSuccessType } from '@/lib/types';
 
