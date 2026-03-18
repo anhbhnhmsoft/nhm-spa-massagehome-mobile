@@ -235,7 +235,8 @@ export const editProfileKTV = () => {
 };
 
 const MAX_IMAGE = 5;
-
+const MAX_DIMENSION = 1280;
+const COMPRESS_QUALITY = 0.7;
 // Hook cho thay đổi ảnh đại diện KTV
 export const useChangeImage = () => {
   const { t } = useTranslation();
@@ -261,6 +262,7 @@ export const useChangeImage = () => {
   /**
    * Chọn ảnh từ thư viện (tối đa 5)
    */
+
   const chooseImageFromLib = useCallback(
     async (imageLength: number = 0) => {
       if (imageLength >= MAX_IMAGE) {
@@ -278,27 +280,44 @@ export const useChangeImage = () => {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1, // Lấy full quality, để manipulator xử lý
+        quality: 1,
         allowsMultipleSelection: true,
         selectionLimit: remain,
       });
 
       if (result.canceled) return;
 
-      // Convert tất cả ảnh sang JPEG song song
       const convertedAssets = await Promise.all(
         result.assets.map(async (asset) => {
+          const { width, height } = asset;
+          let resizeWidth = width;
+          let resizeHeight = height;
+
+          if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+            if (width >= height) {
+              resizeWidth = MAX_DIMENSION;
+              resizeHeight = Math.round((height / width) * MAX_DIMENSION);
+            } else {
+              resizeHeight = MAX_DIMENSION;
+              resizeWidth = Math.round((width / height) * MAX_DIMENSION);
+            }
+          }
+
           const context = ImageManipulator.manipulate(asset.uri);
+
+          if (resizeWidth !== width || resizeHeight !== height) {
+            context.resize({ width: resizeWidth, height: resizeHeight });
+          }
+
           const image = await context.renderAsync();
-          const saved = await image.saveAsync({
-            compress: 0.8,
+          return image.saveAsync({
+            compress: COMPRESS_QUALITY,
             format: SaveFormat.JPEG,
           });
-          return saved;
         })
       );
 
-      // Build FormData từ ảnh đã convert
+      // Build FormData từ ảnh đã nén
       const form = new FormData();
       convertedAssets.forEach((saved, index) => {
         form.append('images[]', {

@@ -22,6 +22,7 @@ import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import dayjs from 'dayjs';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { useImagePicker } from '@/features/app/hooks/use-image-picker';
 
 export * from './use-handle-authenticate';
 export * from './use-handle-login';
@@ -40,6 +41,7 @@ export const useChangeAvatar = () => {
   const { t } = useTranslation();
 
   const [permission, requestPermission] = useCameraPermissions();
+  const { pickImage } = useImagePicker();
 
   const editAvatar = useEditAvatar();
 
@@ -61,36 +63,17 @@ export const useChangeAvatar = () => {
 
   // Xử lý khi nhấn nút chọn ảnh từ thư viện
   const chooseImageFormLib = useCallback(async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
-      return false;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      // Convert sang JPEG — xử lý Live Photo / HEIC
-      const context = ImageManipulator.manipulate(result.assets[0].uri);
-      const image = await context.renderAsync();
-      const saved = await image.saveAsync({
-        compress: 0.8,
-        format: SaveFormat.JPEG,
-      });
-
+    pickImage('avatar', (fileInfo) => {
       const form = new FormData();
       form.append('file', {
-        uri: saved.uri,
-        name: `avatar_${Date.now()}.jpg`,
-        type: 'image/jpeg',
+        uri: fileInfo.uri,
+        name: fileInfo.name,
+        type: fileInfo.type,
       } as any);
 
       editAvatar(form, false);
-    }
-  }, [t]);
+    });
+  }, [pickImage, editAvatar]);
 
   // Trả về hàm xử lý xoóa avatar và thay đổi avatar
   const deleteAvatar = useCallback(() => {
