@@ -36,7 +36,7 @@ export default function EditInfoScreen() {
   const { handleLockAccount, isPending } = useLockAccount();
   // Sử dụng Hook đã viết từ trước
   const { form, onSubmit, errors, isSubmitting, isLoading } = useUpdateProfileAgency();
-  const { control, setValue } = form;
+  const { control } = form;
   if (isLoading) {
     return <ProfileSkeleton />;
   }

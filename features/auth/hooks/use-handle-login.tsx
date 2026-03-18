@@ -55,7 +55,7 @@ export const useHandleLogin = () => {
           .regex(/[a-z]/, { message: t('auth.error.password_invalid') })
           .regex(/[A-Z]/, { message: t('auth.error.password_invalid') })
           .regex(/[0-9]/, { message: t('auth.error.password_invalid') }),
-      }),
+      })
     ),
     defaultValues: {
       phone: phone || '',
@@ -72,7 +72,8 @@ export const useHandleLogin = () => {
   // mutate function để gọi API xác thực user
   const { mutate: mutateLogin, isPending: pendingLogin } = useLoginMutation();
 
-  const { mutate: mutateForgotPassword, isPending: pendingForgotPassword } = useForgotPasswordMutation();
+  const { mutate: mutateForgotPassword, isPending: pendingForgotPassword } =
+    useForgotPasswordMutation();
 
   // handle submit form
   const onSubmit = useCallback((data: LoginRequest) => {
@@ -91,7 +92,7 @@ export const useHandleLogin = () => {
           } else if (user.role === _UserRole.KTV) {
             return resetNav('/(app)/(ktv)/(tab)');
           } else if (user.role === _UserRole.AGENCY) {
-            return resetNav('/(app)/(tab-agency)');
+            return resetNav('/(app)/(agency)/(tab)');
           } else {
             errorToast({ message: t('common_error.unknown_error') });
           }
@@ -111,34 +112,37 @@ export const useHandleLogin = () => {
       errorToast({ message: t('auth.error.phone_required') });
       return;
     }
-    mutateForgotPassword({ phone }, {
-      onSuccess: (res) => {
-        const dataResponse = res.data;
-        const caseHandle = dataResponse.case;
-        // case nếu đã verify otp trước đó, chuyển hướng đến reset password
-        if (caseHandle === 'need_re_enter_reset_password') {
-          router.replace('/(auth)/reset-password');
-        }
-        // case nếu chưa verify otp, chuyển hướng đến verify otp
-        else if (caseHandle === "success" || caseHandle === "need_re_enter_otp"){
-          if (dataResponse.last_sent_at && dataResponse.retry_after_seconds) {
-            updateStateForm({
-              case_verify_otp: "forgot_password",
-              last_sent_at: dataResponse.last_sent_at,
-              retry_after_seconds: dataResponse.retry_after_seconds,
-            });
-            router.replace('/(auth)/verify-otp');
-          }else{
-            errorToast({
-              message: t('common_error.unknown_error'),
-            })
+    mutateForgotPassword(
+      { phone },
+      {
+        onSuccess: (res) => {
+          const dataResponse = res.data;
+          const caseHandle = dataResponse.case;
+          // case nếu đã verify otp trước đó, chuyển hướng đến reset password
+          if (caseHandle === 'need_re_enter_reset_password') {
+            router.replace('/(auth)/reset-password');
           }
-        }
-      },
-      onError: (err) => {
-        handleError(err);
-      },
-    });
+          // case nếu chưa verify otp, chuyển hướng đến verify otp
+          else if (caseHandle === 'success' || caseHandle === 'need_re_enter_otp') {
+            if (dataResponse.last_sent_at && dataResponse.retry_after_seconds) {
+              updateStateForm({
+                case_verify_otp: 'forgot_password',
+                last_sent_at: dataResponse.last_sent_at,
+                retry_after_seconds: dataResponse.retry_after_seconds,
+              });
+              router.replace('/(auth)/verify-otp');
+            } else {
+              errorToast({
+                message: t('common_error.unknown_error'),
+              });
+            }
+          }
+        },
+        onError: (err) => {
+          handleError(err);
+        },
+      }
+    );
   }, [phone]);
 
   return {

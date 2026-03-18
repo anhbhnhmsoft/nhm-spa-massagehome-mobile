@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
-import { getTabBarHeight } from '@/components/styles/style';
 import ItemKtv from '@/components/app/agency/ktv-card';
 import {
   AgencyEmptyState,
@@ -10,9 +9,11 @@ import {
 import { useAuthStore } from '@/features/auth/stores';
 import { HeaderAppAgency } from '@/components/app/agency/header-app';
 import { useGetListKTVManager } from '@/features/user/hooks';
+import { _Gender, _UserRole } from '@/features/auth/const';
+import { _LanguageCode } from '@/lib/const';
 
 export default function AgencyDashboard() {
-  const [modalVisible, setModalVisible] = useState(false); // Quản lý modal
+  const [modalVisible, setModalVisible] = useState(false);
   const user = useAuthStore((state) => state.user);
   const {
     data,
@@ -24,10 +25,8 @@ export default function AgencyDashboard() {
     pagination,
   } = useGetListKTVManager();
 
-  const bottomPadding = getTabBarHeight() + 20;
-
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-slate-50">
       <HeaderAppAgency />
 
       <FlatList
@@ -35,8 +34,7 @@ export default function AgencyDashboard() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ItemKtv item={item} />}
         contentContainerStyle={{
-          paddingTop: 16,
-          paddingBottom: bottomPadding,
+          paddingBottom: 100,
         }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (

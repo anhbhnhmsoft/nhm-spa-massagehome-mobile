@@ -1,4 +1,4 @@
-import { View,  FlatList, RefreshControl } from 'react-native';
+import { View, FlatList, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Empty from '@/components/empty';
 import { useState } from 'react';
@@ -7,15 +7,16 @@ import { HeaderAppAgency } from '@/components/app/agency/header-app';
 import { useWallet } from '@/features/payment/hooks';
 import { _UserRole } from '@/features/auth/const';
 
-
 export default function WalletScreen() {
   const { t } = useTranslation();
   const [visibleWithdraw, setVisibleWithdraw] = useState(false);
 
-  const { queryWallet, queryTransactionList, goToDepositScreen, refresh } = useWallet(_UserRole.AGENCY);
+  const { queryWallet, queryTransactionList, goToDepositScreen, refresh } = useWallet(
+    _UserRole.AGENCY
+  );
   return (
     <>
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-slate-50">
         <HeaderAppAgency />
 
         <FlatList
