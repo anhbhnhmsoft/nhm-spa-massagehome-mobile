@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Controller, FieldErrors } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { ContractFileType } from '@/features/file/const';
 import { CheckSquare, Square } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
-import { _UserRole } from '@/features/auth/const';
 import {
   CardPendingApplication,
   CardReasonRejectApplication,
@@ -24,7 +23,8 @@ import {
 import { useCheckPartnerRegister, useRegisterTechnical } from '@/features/user/hooks';
 import { FormError, FormInput, FormLabel } from '@/components/ui/form-input';
 import {
-  addOrUpdateFile, appendFile,
+  addOrUpdateFile,
+  appendFile,
   getFilesByType,
   removeFileByType,
   removeSpecificFile,
@@ -33,9 +33,8 @@ import {
 import { ApplyTechnicalRequest } from '@/features/user/types';
 import { FormDatePicker } from '@/components/ui/form-date-picker';
 
-// Lấy message lỗi File cho từng type cụ thể
 const getErrorsFileType = (errors: FieldErrors<ApplyTechnicalRequest>, type: _PartnerFileType) => {
-  const fileUploadErrors = (errors.file_uploads);
+  const fileUploadErrors = errors.file_uploads;
   if (fileUploadErrors) {
     return fileUploadErrors[type]?.message;
   }
@@ -45,27 +44,20 @@ export default function PartnerRegisterIndividualScreen() {
   const { t } = useTranslation();
 
   const { referrer_id, isLeader } = useLocalSearchParams<{
-    referrer_id?: string,
-    isLeader?: '1' | '0'
+    referrer_id?: string;
+    isLeader?: '1' | '0';
   }>();
 
-  const { pickImage } = useImagePicker();
+  const { pickImage, loadingKey, isAnyLoading } = useImagePicker();
 
-  const {
-    showForm,
-    reviewApplication,
-  } = useCheckPartnerRegister();
+  const { showForm, reviewApplication } = useCheckPartnerRegister();
 
-  const {
-    form,
-    onSubmit,
-    loading,
-  } = useRegisterTechnical({
+  const { form, onSubmit, loading } = useRegisterTechnical({
     isLeader: isLeader === '1',
     referrer_id: referrer_id || '',
   });
-  const [isAgreed, setIsAgreed] = useState<boolean>(false);
 
+  const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const [showModalApplication, setShowModalApplication] = useState(false);
 
   const {
@@ -74,22 +66,16 @@ export default function PartnerRegisterIndividualScreen() {
     handleSubmit,
   } = form;
 
-  // Tên tiêu đề header
   const title = useMemo(() => {
-    if (isLeader === '1') {
-      return 'profile.partner_form.title_technician_leader';
-    }
+    if (isLeader === '1') return 'profile.partner_form.title_technician_leader';
     return 'profile.partner_form.title';
   }, [isLeader]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white relative">
+    <SafeAreaView className="relative flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
-
-      {/*Header*/}
       <HeaderBack title={title} />
 
-      {/* Status Pending */}
       {!showForm && (
         <CardPendingApplication
           t={t}
@@ -98,7 +84,6 @@ export default function PartnerRegisterIndividualScreen() {
         />
       )}
 
-      {/*Form */}
       {showForm && (
         <View className="flex-1">
           <KeyboardAwareScrollView
@@ -108,102 +93,104 @@ export default function PartnerRegisterIndividualScreen() {
             scrollEnabled={true}
             bounces={false}
             overScrollMode="never"
-            showsVerticalScrollIndicator={false}
-          >
+            showsVerticalScrollIndicator={false}>
             <View className="flex-1 px-4 pt-4">
-              {/* Hiển thị lý do từ chối */}
               <CardReasonRejectApplication
                 t={t}
                 data={reviewApplication}
                 setShowModalApplication={setShowModalApplication}
               />
 
-              {/* Ảnh CCCD (trước và sau và ảnh chụp cùng cccd) */}
+              {/* Ảnh CCCD */}
               <Controller
                 control={control}
                 name="file_uploads"
                 render={({ field: { value = [], onChange } }) => {
-                  const idFrontFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_FRONT)[0];
+                  const idFrontFile = getFilesByType(
+                    value,
+                    _PartnerFileType.IDENTITY_CARD_FRONT
+                  )[0];
                   const idBackFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_BACK)[0];
-                  const faceIdFile = getFilesByType(value, _PartnerFileType.FACE_WITH_IDENTITY_CARD)[0];
-                  const errorIdFront = getErrorsFileType(errors, _PartnerFileType.IDENTITY_CARD_FRONT);
-                  const errorIdBack = getErrorsFileType(errors, _PartnerFileType.IDENTITY_CARD_BACK);
-                  const errorFaceId = getErrorsFileType(errors, _PartnerFileType.FACE_WITH_IDENTITY_CARD);
+                  const faceIdFile = getFilesByType(
+                    value,
+                    _PartnerFileType.FACE_WITH_IDENTITY_CARD
+                  )[0];
+                  const errorIdFront = getErrorsFileType(
+                    errors,
+                    _PartnerFileType.IDENTITY_CARD_FRONT
+                  );
+                  const errorIdBack = getErrorsFileType(
+                    errors,
+                    _PartnerFileType.IDENTITY_CARD_BACK
+                  );
+                  const errorFaceId = getErrorsFileType(
+                    errors,
+                    _PartnerFileType.FACE_WITH_IDENTITY_CARD
+                  );
+
                   return (
                     <View className="mb-2">
-                      <FormLabel
-                        label={t('profile.partner_form.id_cccd_title')}
-                        required={true}
-                      />
+                      <FormLabel label={t('profile.partner_form.id_cccd_title')} required={true} />
                       <View className="my-2 flex-row flex-wrap gap-3">
                         {/* CCCD FRONT */}
                         <ImageRegisterPartnerSlot
                           uri={idFrontFile?.file.uri || null}
                           label={t('profile.partner_form.id_cccd_front')}
+                          isLoading={loadingKey === 'cccd_front'} // ✅
+                          disabled={isAnyLoading} // ✅
                           onAdd={() =>
-                            pickImage((file) => {
-                              const newFilesArray = addOrUpdateFile(
-                                value,
-                                _PartnerFileType.IDENTITY_CARD_FRONT,
-                                file,
+                            pickImage('cccd_front', (file) => {
+                              onChange(
+                                addOrUpdateFile(value, _PartnerFileType.IDENTITY_CARD_FRONT, file)
                               );
-                              onChange(newFilesArray);
                             })
                           }
-                          onRemove={() => {
-                            const newFilesArray = removeFileByType(
-                              value,
-                              _PartnerFileType.IDENTITY_CARD_FRONT,
-                            );
-                            onChange(newFilesArray);
-                          }}
+                          onRemove={() =>
+                            onChange(removeFileByType(value, _PartnerFileType.IDENTITY_CARD_FRONT))
+                          }
                         />
                         {/* CCCD BACK */}
                         <ImageRegisterPartnerSlot
                           uri={idBackFile?.file.uri || null}
                           label={t('profile.partner_form.id_cccd_back')}
+                          isLoading={loadingKey === 'cccd_back'} // ✅
+                          disabled={isAnyLoading} // ✅
                           onAdd={() =>
-                            pickImage((file) => {
-                              const newFilesArray = addOrUpdateFile(
-                                value,
-                                _PartnerFileType.IDENTITY_CARD_BACK,
-                                file,
+                            pickImage('cccd_back', (file) => {
+                              onChange(
+                                addOrUpdateFile(value, _PartnerFileType.IDENTITY_CARD_BACK, file)
                               );
-                              onChange(newFilesArray);
                             })
                           }
-                          onRemove={() => {
-                            const newFilesArray = removeFileByType(
-                              value,
-                              _PartnerFileType.IDENTITY_CARD_BACK,
-                            );
-                            onChange(newFilesArray);
-                          }}
+                          onRemove={() =>
+                            onChange(removeFileByType(value, _PartnerFileType.IDENTITY_CARD_BACK))
+                          }
                         />
-                        {/* Ảnh chụp cùng cccd */}
+                        {/* Ảnh chụp cùng CCCD */}
                         <ImageRegisterPartnerSlot
                           uri={faceIdFile?.file.uri || null}
                           label={t('profile.partner_form.face_with_id')}
+                          isLoading={loadingKey === 'face_id'} // ✅
+                          disabled={isAnyLoading} // ✅
                           onAdd={() =>
-                            pickImage((file) => {
-                              const newFilesArray = addOrUpdateFile(
-                                value,
-                                _PartnerFileType.FACE_WITH_IDENTITY_CARD,
-                                file,
+                            pickImage('face_id', (file) => {
+                              onChange(
+                                addOrUpdateFile(
+                                  value,
+                                  _PartnerFileType.FACE_WITH_IDENTITY_CARD,
+                                  file
+                                )
                               );
-                              onChange(newFilesArray);
                             })
                           }
-                          onRemove={() => {
-                            const newFilesArray = removeFileByType(
-                              value,
-                              _PartnerFileType.FACE_WITH_IDENTITY_CARD,
-                            );
-                            onChange(newFilesArray);
-                          }}
+                          onRemove={() =>
+                            onChange(
+                              removeFileByType(value, _PartnerFileType.FACE_WITH_IDENTITY_CARD)
+                            )
+                          }
                         />
                       </View>
-                      <View className="gap-2 flex-col">
+                      <View className="flex-col gap-2">
                         <FormError error={errorIdFront} />
                         <FormError error={errorIdBack} />
                         <FormError error={errorFaceId} />
@@ -218,8 +205,12 @@ export default function PartnerRegisterIndividualScreen() {
                 control={control}
                 name="file_uploads"
                 render={({ field: { value = [], onChange } }) => {
-                  const imageDisplayFiles = getFilesByType(value, _PartnerFileType.KTV_IMAGE_DISPLAY);
+                  const imageDisplayFiles = getFilesByType(
+                    value,
+                    _PartnerFileType.KTV_IMAGE_DISPLAY
+                  );
                   const errorsFile = getErrorsFileType(errors, _PartnerFileType.KTV_IMAGE_DISPLAY);
+
                   return (
                     <View className="mb-2">
                       <FormLabel
@@ -233,32 +224,34 @@ export default function PartnerRegisterIndividualScreen() {
                       <View className="my-2 flex-row flex-wrap gap-3">
                         {imageDisplayFiles.map((item, index) => (
                           <ImageRegisterPartnerSlot
-                            key={item.file.uri + index}
+                            key={item.file.uri + item.type_upload}
                             uri={item.file.uri}
                             label={t('profile.partner_form.add_photo')}
+                            isLoading={loadingKey === `ktv_${item.type_upload}`} // ✅
+                            disabled={isAnyLoading} // ✅
                             onAdd={() =>
-                              pickImage((fileInfo) => {
-                                const updatedArray = updateSpecificFile(value, item, fileInfo);
-                                onChange(updatedArray);
+                              pickImage(`ktv_${item.type_upload}`, (fileInfo) => {
+                                onChange(updateSpecificFile(value, item, fileInfo));
                               })
                             }
-                            onRemove={() => {
-                              const updatedArray = removeSpecificFile(value, item);
-                              onChange(updatedArray);
-                            }}
+                            onRemove={() => onChange(removeSpecificFile(value, item))}
                           />
                         ))}
-                        {imageDisplayFiles.length < 5 &&
+                        {imageDisplayFiles.length < 5 && (
                           <ImageRegisterPartnerSlot
                             uri={null}
                             label={t('profile.partner_form.add_photo')}
+                            isLoading={loadingKey === 'ktv_new'} // ✅
+                            disabled={isAnyLoading} // ✅
                             onAdd={() =>
-                              pickImage((newFileInfo) => {
-                                const updatedArray = appendFile(value, _PartnerFileType.KTV_IMAGE_DISPLAY, newFileInfo);
-                                onChange(updatedArray);
+                              pickImage('ktv_new', (newFileInfo) => {
+                                onChange(
+                                  appendFile(value, _PartnerFileType.KTV_IMAGE_DISPLAY, newFileInfo)
+                                );
                               })
                             }
-                          />}
+                          />
+                        )}
                         <FormError error={errorsFile} />
                       </View>
                     </View>
@@ -270,28 +263,21 @@ export default function PartnerRegisterIndividualScreen() {
               <Controller
                 control={control}
                 name="avatar"
-                render={({ field: { value, onChange } }) => {
-                  return (
-                    <View className="mb-2">
-                      <FormLabel
+                render={({ field: { value, onChange } }) => (
+                  <View className="mb-2">
+                    <FormLabel label={t('profile.partner_form.avatar')} required />
+                    <View className="my-2">
+                      <ImageRegisterPartnerSlot
+                        uri={value?.uri || null}
                         label={t('profile.partner_form.avatar')}
-                        required
+                        isLoading={loadingKey === 'avatar'} // ✅
+                        disabled={isAnyLoading} // ✅
+                        onAdd={() => pickImage('avatar', (newFileInfo) => onChange(newFileInfo))}
                       />
-                      <View className="my-2">
-                        <ImageRegisterPartnerSlot
-                          uri={value?.uri || null}
-                          label={t('profile.partner_form.avatar')}
-                          onAdd={() =>
-                            pickImage((newFileInfo) => {
-                              onChange(newFileInfo);
-                            })
-                          }
-                        />
-                        <FormError error={errors.avatar?.message} />
-                      </View>
+                      <FormError error={errors.avatar?.message} />
                     </View>
-                  );
-                }}
+                  </View>
+                )}
               />
 
               {/* Tên hiển thị */}
@@ -327,8 +313,7 @@ export default function PartnerRegisterIndividualScreen() {
                         value={dateValue}
                         error={error?.message}
                         onChange={(selectedDate) => {
-                          const formattedForApi = selectedDate.toISOString().split('T')[0];
-                          onChange(formattedForApi);
+                          onChange(selectedDate.toISOString().split('T')[0]);
                         }}
                       />
                     </View>
@@ -367,13 +352,8 @@ export default function PartnerRegisterIndividualScreen() {
                       placeholder={t('common.years_of_experience')}
                       value={value !== undefined && value !== null ? String(value) : ''}
                       onChangeText={(text) => {
-                        // Chỉ gửi số nếu chuỗi không rỗng, tránh gửi NaN khi xóa hết
                         const val = Number(text);
-                        if (Number.isNaN(val)) {
-                          onChange(0);
-                        } else {
-                          onChange(val);
-                        }
+                        onChange(Number.isNaN(val) ? 0 : val);
                       }}
                       keyboardType="numeric"
                       error={errors.experience?.message}
@@ -406,9 +386,7 @@ export default function PartnerRegisterIndividualScreen() {
 
           {/* Footer */}
           <View className="border-t border-gray-100 bg-white p-4">
-            {/* Đồng ý với Điều khoản và Chính sách */}
             <View className="mb-2 flex-row items-start gap-3">
-              {/* Ô Checkbox */}
               <TouchableOpacity
                 onPress={() => setIsAgreed(!isAgreed)}
                 activeOpacity={0.7}
@@ -419,8 +397,6 @@ export default function PartnerRegisterIndividualScreen() {
                   className={isAgreed ? 'text-primary-color-2' : 'text-gray-400'}
                 />
               </TouchableOpacity>
-
-              {/* Nội dung văn bản có chứa link */}
               <View className="flex-1">
                 <Text className="font-inter-regular leading-5 text-gray-600">
                   {t('auth.i_agree_to')}{' '}
@@ -429,9 +405,7 @@ export default function PartnerRegisterIndividualScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/(app)/term-or-use-pdf',
-                        params: {
-                          type: ContractFileType.POLICY_FOR_KTV.toString(),
-                        },
+                        params: { type: ContractFileType.POLICY_FOR_KTV.toString() },
                       })
                     }>
                     {t('auth.terms_and_conditions_register_technical')}
@@ -442,9 +416,7 @@ export default function PartnerRegisterIndividualScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/(app)/term-or-use-pdf',
-                        params: {
-                          type: ContractFileType.POLICY_PRIVACY.toString(),
-                        },
+                        params: { type: ContractFileType.POLICY_PRIVACY.toString() },
                       })
                     }>
                     {t('auth.privacy_policy')}
@@ -452,24 +424,23 @@ export default function PartnerRegisterIndividualScreen() {
                 </Text>
               </View>
             </View>
-            {/* Nút Đăng ký */}
+
+            {/* ✅ Nút submit cũng disable khi đang xử lý ảnh */}
             <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
-              disabled={!isAgreed || loading}
+              disabled={!isAgreed || loading || isAnyLoading}
               className={cn(
-                'items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200',
-                !(!isAgreed || loading) ? 'bg-primary-color-2' : 'bg-slate-500',
+                'items-center justify-center rounded-xl py-3.5 shadow-lg shadow-blue-200',
+                !isAgreed || loading || isAnyLoading ? 'bg-slate-500' : 'bg-primary-color-2'
               )}>
               <Text className="font-inter-bold text-base text-white">
                 {loading ? t('common.loading') : t('profile.partner_form.button_submit')}
               </Text>
             </TouchableOpacity>
-
           </View>
         </View>
       )}
 
-      {/* Modal Đơn Đăng ký */}
       <ModalApplication
         t={t}
         isVisible={showModalApplication}
@@ -480,7 +451,12 @@ export default function PartnerRegisterIndividualScreen() {
   );
 }
 
-
-
-
-
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 100,
+  },
+});

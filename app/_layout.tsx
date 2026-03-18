@@ -1,6 +1,6 @@
 import '@/global.css';
 import { PortalHost } from '@rn-primitives/portal';
-import {  Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import QueryProvider from '@/lib/provider/query-provider';
 import ThemeProvider from '@/lib/provider/theme-provider';
 import useFontInter from '@/lib/provider/font-inter';
@@ -59,11 +59,9 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [ready, loaded, error]);
-
   if (!ready) {
     return null;
   }
-
   return (
     <SafeAreaProvider>
       <QueryProvider>
@@ -87,29 +85,31 @@ export default function RootLayout() {
 const AppContainer = () => {
   const status = useAuthStore((state) => state.status);
   const lang = useApplicationStore((state) => state.language);
-  const complete = useMemo(() => ![_AuthStatus.HYDRATE, _AuthStatus.INITIAL].includes(status), [status]);
+  const complete = useMemo(
+    () => ![_AuthStatus.HYDRATE, _AuthStatus.INITIAL].includes(status),
+    [status]
+  );
   // Xử lý linking
   useHandleLinking(complete);
 
   return (
     <HydrateAuthProvider>
-     <View style={{ flex: 1 }} key={lang}>
-       <Stack
-         screenOptions={{
-           headerShown: false,
-         }}
-       >
-         <Stack.Protected guard={!complete}>
-           <Stack.Screen name="index" />
-         </Stack.Protected>
-         <Stack.Protected guard={complete}>
-           <Stack.Screen name="(app)" />
-           <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
-             <Stack.Screen name="(auth)" />
-           </Stack.Protected>
-         </Stack.Protected>
-       </Stack>
-     </View>
+      <View style={{ flex: 1 }} key={lang}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Protected guard={!complete}>
+            <Stack.Screen name="index" />
+          </Stack.Protected>
+          <Stack.Protected guard={complete}>
+            <Stack.Screen name="(app)" />
+            <Stack.Protected guard={status === _AuthStatus.UNAUTHORIZED}>
+              <Stack.Screen name="(auth)" />
+            </Stack.Protected>
+          </Stack.Protected>
+        </Stack>
+      </View>
     </HydrateAuthProvider>
   );
 };

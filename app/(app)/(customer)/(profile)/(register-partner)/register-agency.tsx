@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { ContractFileType } from '@/features/file/const';
 import { CheckSquare, MapPin, Square } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
-import { _UserRole } from '@/features/auth/const';
 import {
   CardPendingApplication,
   CardReasonRejectApplication,
@@ -23,18 +22,13 @@ import {
 } from '@/components/app/customer';
 import { useCheckPartnerRegister, useRegisterAgency } from '@/features/user/hooks';
 import { FormError, FormInput, FormLabel } from '@/components/ui/form-input';
-import {
-  addOrUpdateFile,
-  getFilesByType,
-  removeFileByType,
-} from '@/features/user/utils';
+import { addOrUpdateFile, getFilesByType, removeFileByType } from '@/features/user/utils';
 import { ApplyTechnicalRequest } from '@/features/user/types';
 import { Card } from '@/components/ui/card';
 import { ListLocationModal } from '@/components/app/location';
 
-// Lấy message lỗi File cho từng type cụ thể
 const getErrorsFileType = (errors: FieldErrors<ApplyTechnicalRequest>, type: _PartnerFileType) => {
-  const fileUploadErrors = (errors.file_uploads);
+  const fileUploadErrors = errors.file_uploads;
   if (fileUploadErrors) {
     return fileUploadErrors[type]?.message;
   }
@@ -43,23 +37,15 @@ const getErrorsFileType = (errors: FieldErrors<ApplyTechnicalRequest>, type: _Pa
 export default function PartnerRegisterAgencyScreen() {
   const { t } = useTranslation();
 
-  const { pickImage } = useImagePicker();
+  // ✅ Lấy thêm loadingKey và isAnyLoading
+  const { pickImage, loadingKey, isAnyLoading } = useImagePicker();
 
-  const {
-    showForm,
-    reviewApplication,
-  } = useCheckPartnerRegister();
+  const { showForm, reviewApplication } = useCheckPartnerRegister();
 
-  const {
-    form,
-    onSubmit,
-    loading,
-  } = useRegisterAgency();
+  const { form, onSubmit, loading } = useRegisterAgency();
 
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
-
   const [showModalApplication, setShowModalApplication] = useState(false);
-
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
 
   const {
@@ -69,15 +55,11 @@ export default function PartnerRegisterAgencyScreen() {
     handleSubmit,
   } = form;
 
-
   return (
-    <SafeAreaView className="flex-1 bg-white relative">
+    <SafeAreaView className="relative flex-1 bg-white">
       <FocusAwareStatusBar hidden={true} />
-
-      {/*Header*/}
       <HeaderBack title={'profile.partner_register.agency_title'} />
 
-      {/* Status Pending */}
       {!showForm && (
         <CardPendingApplication
           t={t}
@@ -86,7 +68,6 @@ export default function PartnerRegisterAgencyScreen() {
         />
       )}
 
-      {/*Form */}
       {showForm && (
         <View className="flex-1">
           <KeyboardAwareScrollView
@@ -96,25 +77,33 @@ export default function PartnerRegisterAgencyScreen() {
             scrollEnabled={true}
             bounces={false}
             overScrollMode="never"
-            showsVerticalScrollIndicator={false}
-          >
+            showsVerticalScrollIndicator={false}>
             <View className="flex-1 px-4 pt-4">
-              {/* Hiển thị lý do từ chối */}
               <CardReasonRejectApplication
                 t={t}
                 data={reviewApplication}
                 setShowModalApplication={setShowModalApplication}
               />
 
-              {/* Ảnh CCCD (trước và sau ) */}
+              {/* Ảnh CCCD (trước và sau) */}
               <Controller
                 control={control}
                 name="file_uploads"
                 render={({ field: { value = [], onChange } }) => {
-                  const idFrontFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_FRONT)[0];
+                  const idFrontFile = getFilesByType(
+                    value,
+                    _PartnerFileType.IDENTITY_CARD_FRONT
+                  )[0];
                   const idBackFile = getFilesByType(value, _PartnerFileType.IDENTITY_CARD_BACK)[0];
-                  const errorIdFront = getErrorsFileType(errors, _PartnerFileType.IDENTITY_CARD_FRONT);
-                  const errorIdBack = getErrorsFileType(errors, _PartnerFileType.IDENTITY_CARD_BACK);
+                  const errorIdFront = getErrorsFileType(
+                    errors,
+                    _PartnerFileType.IDENTITY_CARD_FRONT
+                  );
+                  const errorIdBack = getErrorsFileType(
+                    errors,
+                    _PartnerFileType.IDENTITY_CARD_BACK
+                  );
+
                   return (
                     <View className="mb-2">
                       <FormLabel
@@ -126,48 +115,38 @@ export default function PartnerRegisterAgencyScreen() {
                         <ImageRegisterPartnerSlot
                           uri={idFrontFile?.file.uri || null}
                           label={t('profile.partner_form.id_cccd_front')}
+                          isLoading={loadingKey === 'cccd_front'} // ✅
+                          disabled={isAnyLoading} // ✅
                           onAdd={() =>
-                            pickImage((file) => {
-                              const newFilesArray = addOrUpdateFile(
-                                value,
-                                _PartnerFileType.IDENTITY_CARD_FRONT,
-                                file,
+                            pickImage('cccd_front', (file) => {
+                              onChange(
+                                addOrUpdateFile(value, _PartnerFileType.IDENTITY_CARD_FRONT, file)
                               );
-                              onChange(newFilesArray);
                             })
                           }
-                          onRemove={() => {
-                            const newFilesArray = removeFileByType(
-                              value,
-                              _PartnerFileType.IDENTITY_CARD_FRONT,
-                            );
-                            onChange(newFilesArray);
-                          }}
+                          onRemove={() =>
+                            onChange(removeFileByType(value, _PartnerFileType.IDENTITY_CARD_FRONT))
+                          }
                         />
                         {/* CCCD BACK */}
                         <ImageRegisterPartnerSlot
                           uri={idBackFile?.file.uri || null}
                           label={t('profile.partner_form.id_cccd_back')}
+                          isLoading={loadingKey === 'cccd_back'} // ✅
+                          disabled={isAnyLoading} // ✅
                           onAdd={() =>
-                            pickImage((file) => {
-                              const newFilesArray = addOrUpdateFile(
-                                value,
-                                _PartnerFileType.IDENTITY_CARD_BACK,
-                                file,
+                            pickImage('cccd_back', (file) => {
+                              onChange(
+                                addOrUpdateFile(value, _PartnerFileType.IDENTITY_CARD_BACK, file)
                               );
-                              onChange(newFilesArray);
                             })
                           }
-                          onRemove={() => {
-                            const newFilesArray = removeFileByType(
-                              value,
-                              _PartnerFileType.IDENTITY_CARD_BACK,
-                            );
-                            onChange(newFilesArray);
-                          }}
+                          onRemove={() =>
+                            onChange(removeFileByType(value, _PartnerFileType.IDENTITY_CARD_BACK))
+                          }
                         />
                       </View>
-                      <View className="gap-2 flex-col">
+                      <View className="flex-col gap-2">
                         <FormError error={errorIdFront} />
                         <FormError error={errorIdBack} />
                       </View>
@@ -176,8 +155,7 @@ export default function PartnerRegisterAgencyScreen() {
                 }}
               />
 
-
-              {/* Tên hiển thị (tên thật của người dùng) */}
+              {/* Tên hiển thị */}
               <Controller
                 control={control}
                 name="nickname"
@@ -196,56 +174,52 @@ export default function PartnerRegisterAgencyScreen() {
                 )}
               />
 
+              {/* Địa chỉ */}
               <View className="mt-4">
                 <Controller
                   control={control}
-                  name={'address'}
-                  render={({ field: { value } }) => {
-                    return (
-                      <View className="mb-2">
-                        <FormLabel
-                          label={t('profile.partner_form.address')}
-                          required
+                  name="address"
+                  render={({ field: { value } }) => (
+                    <View className="mb-2">
+                      <FormLabel label={t('profile.partner_form.address')} required />
+                      <View className="my-2">
+                        <TouchableOpacity onPress={() => setShowLocationModal(true)}>
+                          <Card className="flex-row items-center">
+                            <View className="mr-3 rounded-full bg-blue-100 p-2">
+                              <Icon as={MapPin} size={20} className="text-blue-600" />
+                            </View>
+                            <View className="flex-1">
+                              {value ? (
+                                <Text className="font-inter-medium text-sm leading-6 text-slate-800">
+                                  {value}
+                                </Text>
+                              ) : (
+                                <Text className="text-sm text-gray-400">
+                                  {t('location.placeholder_address')}
+                                </Text>
+                              )}
+                            </View>
+                          </Card>
+                        </TouchableOpacity>
+                        <ListLocationModal
+                          visible={showLocationModal}
+                          onClose={() => setShowLocationModal(false)}
+                          onSelect={(location) => {
+                            setValue('address', location.address);
+                            setValue('latitude', Number(location.latitude));
+                            setValue('longitude', Number(location.longitude));
+                            setShowLocationModal(false);
+                          }}
                         />
-                        <View className="my-2">
-                          <TouchableOpacity onPress={() => setShowLocationModal(true)}>
-                            <Card className={'flex-row items-center'}>
-                              <View className="mr-3 rounded-full bg-blue-100 p-2">
-                                <Icon as={MapPin} size={20} className="text-blue-600" />
-                              </View>
-                              <View className="flex-1">
-                                {value ? (
-                                  <Text className="font-inter-medium text-sm leading-6 text-slate-800">
-                                    {value}
-                                  </Text>
-                                ) : (
-                                  <Text className="text-sm text-gray-400">
-                                    {t('location.placeholder_address')}
-                                  </Text>
-                                )}
-                              </View>
-                            </Card>
-                          </TouchableOpacity>
-                          <ListLocationModal
-                            visible={showLocationModal}
-                            onClose={() => setShowLocationModal(false)}
-                            onSelect={(location) => {
-                              setValue('address', location.address);
-                              setValue('latitude', Number(location.latitude));
-                              setValue('longitude', Number(location.longitude));
-                              setShowLocationModal(false);
-                            }}
-                          />
-                        </View>
-                        <View className="gap-2 flex-col">
-                          <FormError error={errors?.address?.message} />
-                          {(errors.latitude || errors.longitude) && (
-                            <FormError error={t('profile.partner_form.error.invalid_address')} />
-                          )}
-                        </View>
                       </View>
-                    );
-                  }}
+                      <View className="flex-col gap-2">
+                        <FormError error={errors?.address?.message} />
+                        {(errors.latitude || errors.longitude) && (
+                          <FormError error={t('profile.partner_form.error.invalid_address')} />
+                        )}
+                      </View>
+                    </View>
+                  )}
                 />
               </View>
             </View>
@@ -253,9 +227,7 @@ export default function PartnerRegisterAgencyScreen() {
 
           {/* Footer */}
           <View className="border-t border-gray-100 bg-white p-4">
-            {/* Đồng ý với Điều khoản và Chính sách */}
             <View className="mb-2 flex-row items-start gap-3">
-              {/* Ô Checkbox */}
               <TouchableOpacity
                 onPress={() => setIsAgreed(!isAgreed)}
                 activeOpacity={0.7}
@@ -266,8 +238,6 @@ export default function PartnerRegisterAgencyScreen() {
                   className={isAgreed ? 'text-primary-color-2' : 'text-gray-400'}
                 />
               </TouchableOpacity>
-
-              {/* Nội dung văn bản có chứa link */}
               <View className="flex-1">
                 <Text className="font-inter-regular leading-5 text-gray-600">
                   {t('auth.i_agree_to')}{' '}
@@ -276,9 +246,7 @@ export default function PartnerRegisterAgencyScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/(app)/term-or-use-pdf',
-                        params: {
-                          type: ContractFileType.POLICY_FOR_AGENCY.toString(),
-                        },
+                        params: { type: ContractFileType.POLICY_FOR_AGENCY.toString() },
                       })
                     }>
                     {t('auth.terms_and_conditions_register_agency')}
@@ -289,9 +257,7 @@ export default function PartnerRegisterAgencyScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/(app)/term-or-use-pdf',
-                        params: {
-                          type: ContractFileType.POLICY_PRIVACY.toString(),
-                        },
+                        params: { type: ContractFileType.POLICY_PRIVACY.toString() },
                       })
                     }>
                     {t('auth.privacy_policy')}
@@ -299,13 +265,14 @@ export default function PartnerRegisterAgencyScreen() {
                 </Text>
               </View>
             </View>
-            {/* Nút Đăng ký */}
+
+            {/* ✅ Disable nút submit khi đang xử lý ảnh */}
             <TouchableOpacity
               onPress={handleSubmit(onSubmit)}
-              disabled={!isAgreed || loading}
+              disabled={!isAgreed || loading || isAnyLoading}
               className={cn(
-                'items-center justify-center rounded-xl bg-primary-color-2 py-3.5 shadow-lg shadow-blue-200',
-                !(!isAgreed || loading) ? 'bg-primary-color-2' : 'bg-slate-500',
+                'items-center justify-center rounded-xl py-3.5 shadow-lg shadow-blue-200',
+                !isAgreed || loading || isAnyLoading ? 'bg-slate-500' : 'bg-primary-color-2'
               )}>
               <Text className="font-inter-bold text-base text-white">
                 {loading ? t('common.loading') : t('profile.partner_form.button_submit')}
@@ -315,7 +282,6 @@ export default function PartnerRegisterAgencyScreen() {
         </View>
       )}
 
-      {/* Modal Đơn Đăng ký */}
       <ModalApplication
         t={t}
         isVisible={showModalApplication}
