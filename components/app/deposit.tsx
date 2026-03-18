@@ -43,7 +43,6 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
 
   const { configPayment, form, submitDeposit, handleCloseWechat } = useDeposit();
 
-
   const {
     control,
     handleSubmit,
@@ -57,14 +56,16 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
   const watchedPayment = watch('payment_type');
 
   useEffect(() => {
-    if (configPayment?.exchange_rate_vnd_cny && watchedPayment === _PaymentType.WECHAT_PAY) {
+    if (
+      configPayment?.exchange_rate_vnd_cny &&
+      (watchedPayment === _PaymentType.WECHAT_PAY || watchedPayment === _PaymentType.ALI_PAY)
+    ) {
       const priceCny = Number(watchedAmount) / Number(configPayment?.exchange_rate_vnd_cny);
       setExchangePriceCny(priceCny);
     } else {
       setExchangePriceCny(0);
     }
   }, [watchedAmount, watchedPayment]);
-
 
   return (
     <>
@@ -97,7 +98,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                       <View
                         className={cn(
                           'flex-row items-center border-b pb-2',
-                          errors.amount ? 'border-red-500' : 'border-gray-200',
+                          errors.amount ? 'border-red-500' : 'border-gray-200'
                         )}>
                         <TextInput
                           className="flex-1 font-inter-bold text-3xl text-gray-900"
@@ -132,7 +133,8 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
               </View>
 
               {/* Hiển thị giá đổi tiền CNY */}
-              {watchedPayment === _PaymentType.WECHAT_PAY && (
+              {(watchedPayment === _PaymentType.WECHAT_PAY ||
+                watchedPayment === _PaymentType.ALI_PAY) && (
                 <Text className="mt-2 text-xs text-gray-500">
                   {t('payment.exchange_rate_wechat_pay', {
                     priceCny: formatBalance(exchangePriceCny),
@@ -171,8 +173,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                           disabled ? styles.methodDisabled : {},
                         ]}>
                         {disabled && (
-                          <View
-                            className="absolute bottom-0 left-0 right-0 top-0 z-10 flex-1 items-center justify-center rounded-xl bg-black/40">
+                          <View className="absolute bottom-0 left-0 right-0 top-0 z-10 flex-1 items-center justify-center rounded-xl bg-black/40">
                             <View className="rounded-2xl bg-white px-2 py-1">
                               <Text className="font-inter-bold text-xs text-red-500">
                                 {t('payment.method_disabled')}
@@ -201,6 +202,12 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                           {method.id === _PaymentType.WECHAT_PAY && (
                             <Image
                               source={require('@/assets/icon/wechat.png')}
+                              style={{ width: 24, height: 24, borderRadius: 12 }}
+                            />
+                          )}
+                          {method.id === _PaymentType.ALI_PAY && (
+                            <Image
+                              source={require('@/assets/icon/alipay.png')}
                               style={{ width: 24, height: 24, borderRadius: 12 }}
                             />
                           )}
@@ -248,10 +255,11 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
 
         {/* --- BOTTOM BUTTON --- */}
         <View className="absolute bottom-0 w-full border-t border-gray-100 bg-white p-5 shadow-lg">
-          <View className="mb-2 flex-row justify-between items-center">
+          <View className="mb-2 flex-row items-center justify-between">
             <Text className="text-sm text-gray-500">{t('payment.total_payment')}:</Text>
             <View className="flex-row items-center justify-center gap-2">
-              {watchedPayment === _PaymentType.WECHAT_PAY && (
+              {(watchedPayment === _PaymentType.WECHAT_PAY ||
+                watchedPayment === _PaymentType.ALI_PAY) && (
                 <Text className="mt-2 text-xs text-gray-500">
                   ({formatBalance(exchangePriceCny)} CNY)
                 </Text>
@@ -260,7 +268,6 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                 {watchedAmount ? formatBalance(watchedAmount) : '0'} {t('common.currency')}
               </Text>
             </View>
-
           </View>
           <TouchableOpacity
             className={`items-center justify-center rounded-full py-4 ${
@@ -386,12 +393,10 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
       ref={bottomSheetRef}
       isScrollable={true}
       snapPoints={['95%']}
-      onDismiss={() => closeModal()}
-    >
+      onDismiss={() => closeModal()}>
       {/* QR CODE IMAGE SECTION */}
       <View className="mb-6 items-center">
-        <View
-          className="relative items-center justify-center rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <View className="relative items-center justify-center rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
           <Image
             source={{ uri: QRCodeImageUrl }}
             style={{ width: 180, height: 180 }}
@@ -422,9 +427,7 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
         <View className="flex-row items-center justify-between border-b border-gray-200 pb-3">
           <View>
             <Text className="mb-1 text-xs text-gray-500">{t('payment.bank_name')}</Text>
-            <Text className="font-inter-bold text-base text-gray-900">
-              {qrBankData?.bank_name}
-            </Text>
+            <Text className="font-inter-bold text-base text-gray-900">{qrBankData?.bank_name}</Text>
           </View>
         </View>
 
@@ -441,9 +444,7 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
         {/* Số tài khoản */}
         <View className="mt-3 flex-row items-center justify-between border-b border-gray-200 pb-3">
           <View>
-            <Text className="mb-1 text-xs text-gray-500">
-              {t('payment.account_number')}
-            </Text>
+            <Text className="mb-1 text-xs text-gray-500">{t('payment.account_number')}</Text>
             <Text className="font-inter-bold text-base text-gray-900">
               {qrBankData?.account_number}
             </Text>
@@ -469,9 +470,7 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
         {/* Nội dung */}
         <View className="mt-3 flex-row items-center justify-between">
           <View className="flex-1 pr-4">
-            <Text className="mb-1 text-xs text-gray-500">
-              {t('payment.description_qr_bank')}
-            </Text>
+            <Text className="mb-1 text-xs text-gray-500">{t('payment.description_qr_bank')}</Text>
             <Text className="mb-1 font-inter-bold text-base text-red-600">
               {qrBankData?.description || ''}
             </Text>
@@ -488,9 +487,7 @@ const CheckQRPaymentModal = ({ useFor }: { useFor: _UserRole }) => {
       {/* STATUS LOADING */}
       <View className="mb-6 flex-row items-center justify-center gap-2">
         <ActivityIndicator size="small" color="#2B7BBE" />
-        <Text className="font-inter-medium text-[#2B7BBE]">
-          {t('payment.waiting_payment')}
-        </Text>
+        <Text className="font-inter-medium text-[#2B7BBE]">{t('payment.waiting_payment')}</Text>
       </View>
     </AppBottomSheet>
   );
@@ -511,21 +508,19 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
   const bottomSheetRefWechat = React.useRef<BottomSheetModal>(null);
 
   useEffect(() => {
-    if (qrWechatData){
+    if (qrWechatData) {
       bottomSheetRefWechat.current?.present();
-    }else{
+    } else {
       bottomSheetRefWechat.current?.dismiss();
     }
   }, [qrWechatData]);
-
 
   return (
     <AppBottomSheet
       ref={bottomSheetRefWechat}
       isScrollable={true}
       snapPoints={['95%']}
-      onDismiss={() => onClose()}
-    >
+      onDismiss={() => onClose()}>
       {/* --- QR CODE SECTION --- */}
       <View className="items-center">
         <View className="mb-4 rounded-3xl border-4 border-[#07C160]/10 bg-white p-4">
@@ -542,9 +537,7 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
           onPress={() => saveURLImage(qrWechatData?.qr_image || '')}
           className="flex-row items-center gap-2 rounded-full bg-[#07C160]/10 px-6 py-2.5">
           <Download size={18} color="#07C160" />
-          <Text className="font-inter-bold text-sm text-[#07C160]">
-            {t('common.save_qr_code')}
-          </Text>
+          <Text className="font-inter-bold text-sm text-[#07C160]">{t('common.save_qr_code')}</Text>
         </TouchableOpacity>
 
         <Text className="mt-4 px-10 text-center text-sm text-gray-500">
@@ -560,8 +553,9 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
             <Text className="mb-1 text-xs uppercase tracking-wider text-gray-500">
               {t('payment.amount')}
             </Text>
-            <Text className="font-inter-bold text-2xl mb-2 text-gray-900">
-              {formatBalance(qrWechatData?.amount_cny || 0)} <Text className="font-inter-medium text-sm"> CNY</Text>
+            <Text className="mb-2 font-inter-bold text-2xl text-gray-900">
+              {formatBalance(qrWechatData?.amount_cny || 0)}{' '}
+              <Text className="font-inter-medium text-sm"> CNY</Text>
             </Text>
             <Text className="font-inter-bold text-sm text-slate-500">
               {formatBalance(qrWechatData?.amount || 0)} {t('common.currency')}
@@ -575,8 +569,7 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
           <Text className="mb-2 text-xs uppercase tracking-wider text-gray-500">
             {t('payment.transfer_note')}
           </Text>
-          <View
-            className="flex-row items-center justify-between rounded-xl border border-dashed border-gray-300 bg-white p-3">
+          <View className="flex-row items-center justify-between rounded-xl border border-dashed border-gray-300 bg-white p-3">
             <Text className="mr-2 flex-1 font-inter-bold text-sm text-red-600">
               {qrWechatData?.description || ''}
             </Text>
@@ -598,7 +591,6 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
           {t('payment.processing_transaction')}
         </Text>
       </View>
-
     </AppBottomSheet>
   );
 };

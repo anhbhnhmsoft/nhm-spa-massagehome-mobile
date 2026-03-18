@@ -196,7 +196,8 @@
       "QR_BANKING": "Chuyển khoản QR Banking",
       "ZALO_PAY": "Thanh toán Zalo Pay",
       "MOMO_PAY": "Thanh toán Momo Pay",
-      "WECHAT_PAY": "Thanh toán Wechat Pay"
+      "WECHAT_PAY": "Thanh toán Wechat Pay",
+      "ALI_PAY": "Thanh toán Alipay"
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Nạp tiền qua QR Banking",
