@@ -1,5 +1,10 @@
 import { _LanguageCode } from '@/lib/const';
-import { BaseSearchRequest, Paginator, ResponseDataSuccessType } from '@/lib/types';
+import {
+  BaseSearchRequest,
+  Paginator,
+  ResponseDataSuccessType,
+  ReviewTranslations,
+} from '@/lib/types';
 
 export type JoinRoomRequest = {
   user_id: string; // ID của người dùng định chat
@@ -30,7 +35,10 @@ export type PayloadNewMessage = {
   created_at: string; // Thời gian tạo tin nhắn (ISO string)
   temp_id?: string; // ID tạm thời (nếu có)
   status_sent?: 'pending' | 'sent' | 'failed'; // Trạng thái gửi (nếu là tin tạm thời) (ko có trong response)
-  translated_content?: string | null; // Nội dung dịch (chỉ dùng frontend)
+
+  content_translated?: ReviewTranslations | undefined; // Bình luận đã dịch
+  translated_content?: string; // Bình luận đã dịch (cái này là thêm vào để hiển thị trên app)
+  target_lang_translated?: _LanguageCode; // Ngôn ngữ được dịch (cái này là thêm vào để hiển thị trên app)
 };
 
 export type ListMessageRequest = BaseSearchRequest<object>;

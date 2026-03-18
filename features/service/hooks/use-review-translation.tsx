@@ -8,29 +8,26 @@ import { queryClient } from '@/lib/provider/query-provider';
 import { InfiniteData } from '@tanstack/query-core';
 import { produce } from 'immer';
 
-
 const defaultStateComment: ReviewTranslations = {
   [_LanguageCode.EN]: '',
   [_LanguageCode.VI]: '',
   [_LanguageCode.CN]: '',
 };
-
-export function useReviewTranslation(
-  reviewItem: ReviewItem | null,
-  params: ListReviewRequest
-) {
+// bọc callback giúp anh Huy
+export function useReviewTranslation(reviewItem: ReviewItem | null, params: ListReviewRequest) {
   const { mutate: translateMutate, isPending } = useMutationTranslateReview();
   const [targetLang, setTargetLang] = useState<_LanguageCode | null>(null);
 
-  const [translatedComment, setTranslatedComment] = useImmer<ReviewTranslations>(defaultStateComment);
+  const [translatedComment, setTranslatedComment] =
+    useImmer<ReviewTranslations>(defaultStateComment);
 
   // Update translated comment when review item changes
   useEffect(() => {
-    if (reviewItem ) {
-      if (reviewItem.comment_translated){
+    if (reviewItem) {
+      if (reviewItem.comment_translated) {
         setTranslatedComment(reviewItem.comment_translated);
       }
-      if (!!(reviewItem.target_lang_translated && reviewItem.translated_comment)){
+      if (!!(reviewItem.target_lang_translated && reviewItem.translated_comment)) {
         const targetLang = reviewItem.target_lang_translated;
         const translate = reviewItem.translated_comment;
         setTargetLang(targetLang);
@@ -41,27 +38,32 @@ export function useReviewTranslation(
     }
   }, [reviewItem]);
 
-  const handleUpdateTranslation = (reviewId: string, translated: string, lang: _LanguageCode) => {
-    queryClient.setQueryData<InfiniteData<ListReviewResponse>>(
-      ['serviceApi-listReview', params],
-      (oldData) => { // TS tự hiểu oldData là InfiniteData<ListReviewResponse> | undefined
-        if (!oldData) return oldData;
-        return produce(oldData, (draft) => {
-          for (const page of draft.pages) {
-            const review = page.data.data.find((item: ReviewItem) => item.id === reviewId);
+  const handleUpdateTranslation = useCallback(
+    (reviewId: string, translated: string, lang: _LanguageCode) => {
+      queryClient.setQueryData<InfiniteData<ListReviewResponse>>(
+        ['serviceApi-listReview', params],
+        (oldData) => {
+          // TS tự hiểu oldData là InfiniteData<ListReviewResponse> | undefined
+          if (!oldData) return oldData;
+          return produce(oldData, (draft) => {
+            for (const page of draft.pages) {
+              const review = page.data.data.find((item: ReviewItem) => item.id === reviewId);
 
-            if (review) {
-              review.translated_comment = translated;
-              review.target_lang_translated = lang;
-              break;
+              if (review) {
+                review.translated_comment = translated;
+                review.target_lang_translated = lang;
+                break;
+              }
             }
-          }
-        });
-      }
-    );
-  };
+          });
+        }
+      );
+    },
+    [params]
+  );
 
-  const translate = useCallback((lang: _LanguageCode) => {
+  const translate = useCallback(
+    (lang: _LanguageCode) => {
       if (reviewItem && reviewItem.comment && reviewItem.comment.trim().length > 0) {
         if (translatedComment[lang] && translatedComment[lang].length > 0) {
           handleUpdateTranslation(reviewItem.id, translatedComment[lang], lang);
@@ -79,18 +81,20 @@ export function useReviewTranslation(
               // Update parent with new translation
               handleUpdateTranslation(reviewItem.id, text, lang);
             },
-          },
+          }
         );
       }
-
     },
-    [translatedComment, reviewItem],
+    [translatedComment, reviewItem]
   );
 
-  const handleChangeLang = useCallback((lang: _LanguageCode) => {
-    setTargetLang(lang);
-    translate(lang);
-  }, [translate]);
+  const handleChangeLang = useCallback(
+    (lang: _LanguageCode) => {
+      setTargetLang(lang);
+      translate(lang);
+    },
+    [translate]
+  );
 
   /**
    * Xóa ngôn ngữ đang chọn
@@ -109,6 +113,6 @@ export function useReviewTranslation(
     handleChangeLang,
     handleResetTargetLang,
     handleResetTranslateComment,
-    loading: isPending
+    loading: isPending,
   };
 }

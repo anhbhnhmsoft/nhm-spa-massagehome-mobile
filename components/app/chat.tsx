@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -19,6 +19,8 @@ import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import DefaultColor from '@/components/styles/color';
 import { MessageItem } from './message-item';
 import { MessageSheetContent } from './message-sheet-content';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { PayloadNewMessage } from '@/features/chat/types';
 
 type SendButtonProps = { disabled: boolean; onPress: () => void };
 
@@ -36,26 +38,11 @@ const SendButton = ({ disabled, onPress }: SendButtonProps) => (
 
 export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' }) {
   const { t } = useTranslation();
+  const translateSheetRef = useRef<BottomSheetModal>(null);
+  const [selectedMessage, setSelectedMessage] = useState<PayloadNewMessage | null>(null);
   const [inputText, setInputText] = useState('');
 
-  const {
-    messages,
-    submitMessage,
-    joinStatus,
-    historyQuery,
-    user,
-    room,
-    handleLongPress,
-    targetLang,
-    setTargetLang,
-    sheetRef,
-    handleSheetDismiss,
-    handleCloseSheet,
-    handleTranslateMessage,
-    selectedItem,
-    isTranslating,
-    handleCopy,
-  } = useChat(useFor);
+  const { messages, submitMessage, joinStatus, historyQuery, user, room, params } = useChat(useFor);
 
   const handleSend = useCallback(() => {
     const text = inputText.trim();
@@ -63,6 +50,18 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
     submitMessage(text);
     setInputText('');
   }, [inputText, submitMessage]);
+
+  // Handle long press to show translate sheet
+  const handleLongPress = useCallback((item: PayloadNewMessage) => {
+    setSelectedMessage(item);
+    requestAnimationFrame(() => translateSheetRef.current?.present());
+  }, []);
+
+  // Handle dismiss sheet
+  const handleDismissSheet = useCallback(() => {
+    setSelectedMessage(null);
+    translateSheetRef.current?.dismiss();
+  }, []);
 
   const handleEndReached = useCallback(() => {
     if (historyQuery.hasNextPage) historyQuery.fetchNextPage();
@@ -136,20 +135,13 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
       </KeyboardAvoidingView>
 
       {/* Bottom Sheet */}
-      <AppBottomSheet ref={sheetRef} onDismiss={handleSheetDismiss}>
-        {selectedItem && (
-          <MessageSheetContent
-            item={selectedItem}
-            onClose={handleCloseSheet}
-            handleTranslateMessage={handleTranslateMessage}
-            t={t}
-            targetLang={targetLang}
-            setTargetLang={setTargetLang}
-            handleCopy={handleCopy}
-            isTranslating={isTranslating}
-          />
-        )}
-      </AppBottomSheet>
+      <MessageSheetContent
+        item={selectedMessage}
+        ref={translateSheetRef}
+        onClose={handleDismissSheet}
+        t={t}
+        params={params}
+      />
     </SafeAreaView>
   );
 }
