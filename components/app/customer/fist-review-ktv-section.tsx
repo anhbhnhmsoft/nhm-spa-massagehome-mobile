@@ -1,11 +1,9 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from '@/components/ui/icon';
-import { ChevronRight, User } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
 import React, { FC, useState } from 'react';
 import { TFunction } from 'i18next';
 import { KTVDetail } from '@/features/user/types';
-import { Image } from 'expo-image';
-import DefaultColor from '@/components/styles/color';
 import dayjs from 'dayjs';
 import StarRating from '@/components/star-rating';
 import Empty from '@/components/empty';
@@ -65,17 +63,12 @@ export const FistReviewKtvSection: FC<Props> = ({ t, review_count, first_review,
 
 // Hiển thị đánh giá đầu tiên của KTV
 const ReviewFistItem = ({ item, t }: { item: KTVDetail['first_review']; t: TFunction }) => {
-
   return (
     <>
       <View className="mt-1 flex-row items-center justify-center">
         {item ? (
           <>
-            <Avatar
-              source={item.review_by?.avatar_url}
-              size={32}
-              borderWidth={0}
-            />
+            <Avatar source={item.review_by?.avatar_url} size={32} borderWidth={0} />
             <View className="ml-3 flex-1 gap-2">
               <View className="flex-row justify-between">
                 <Text className="font-inter-bold text-xs text-gray-700">
@@ -86,7 +79,9 @@ const ReviewFistItem = ({ item, t }: { item: KTVDetail['first_review']; t: TFunc
                 </Text>
               </View>
               <StarRating rating={item.rating} size={10} />
-              <Text className="mb-2 text-xs text-gray-600" numberOfLines={2}>{item.comment || t('review.no_comment')}</Text>
+              <Text className="mb-2 text-xs text-gray-600" numberOfLines={2}>
+                {item.comment || t('review.no_comment')}
+              </Text>
             </View>
           </>
         ) : (

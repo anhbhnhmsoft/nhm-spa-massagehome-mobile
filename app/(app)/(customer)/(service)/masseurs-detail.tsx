@@ -12,8 +12,6 @@ import {
   ServiceCardDetailKtv,
   ServicesBottomSheet,
 } from '@/components/app/customer';
-import { useAuthStore } from '@/features/auth/stores';
-import { ClockFading } from 'lucide-react-native';
 
 const MasseurDetailScreen = () => {
   const { t } = useTranslation();
@@ -99,7 +97,6 @@ const MasseurDetailScreen = () => {
         handlePrepareBooking={handlePrepareBooking}
         t={t}
       />
-      {/* <ReviewSheetContent /> */}
     </>
   );
 };

@@ -1,9 +1,9 @@
 import { _LanguageCode } from '@/lib/const';
 import {
   BaseSearchRequest,
+  LanguageTranslations,
   Paginator,
   ResponseDataSuccessType,
-  ReviewTranslations,
 } from '@/lib/types';
 
 export type JoinRoomRequest = {
@@ -36,7 +36,7 @@ export type PayloadNewMessage = {
   temp_id?: string; // ID tạm thời (nếu có)
   status_sent?: 'pending' | 'sent' | 'failed'; // Trạng thái gửi (nếu là tin tạm thời) (ko có trong response)
 
-  content_translated?: ReviewTranslations | undefined; // Bình luận đã dịch
+  content_translated?: LanguageTranslations | undefined; // Bình luận đã dịch
   translated_content?: string; // Bình luận đã dịch (cái này là thêm vào để hiển thị trên app)
   target_lang_translated?: _LanguageCode; // Ngôn ngữ được dịch (cái này là thêm vào để hiển thị trên app)
 };

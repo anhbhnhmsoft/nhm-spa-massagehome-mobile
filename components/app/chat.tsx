@@ -14,7 +14,6 @@ import { useChat } from '@/features/chat/hooks';
 import { cn, goBack } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { _LanguageCode, _LanguagesMap } from '@/lib/const';
-import AppBottomSheet from '@/components/ui/app-bottom-sheet';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import DefaultColor from '@/components/styles/color';
 import { MessageItem } from './message-item';
@@ -140,7 +139,6 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
         ref={translateSheetRef}
         onClose={handleDismissSheet}
         t={t}
-        params={params}
       />
     </SafeAreaView>
   );

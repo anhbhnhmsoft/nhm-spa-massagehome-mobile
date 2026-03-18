@@ -21,7 +21,6 @@ type MessageItemProps = {
 
 export const MessageItem = memo(({ item, currentUserId, onLongPress, t }: MessageItemProps) => {
   const isMe = item.sender_id === currentUserId;
-  console.log('render message item', item);
 
   return (
     <TouchableOpacity

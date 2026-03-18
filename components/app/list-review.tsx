@@ -5,18 +5,14 @@ import { useGetReviewList } from '@/features/service/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import dayjs from 'dayjs';
 import StarRating from '@/components/star-rating';
-import { ListReviewRequest, ListReviewResponse, ReviewItem } from '@/features/service/types';
+import { ListReviewRequest, ReviewItem } from '@/features/service/types';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 import { TFunction } from 'i18next';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet'; // 👈 thêm
 import ReviewTranslateSheet from './review-item-translate';
 import Avatar from '@/components/ui/avatar';
-import { produce } from 'immer';
-import { queryClient } from '@/lib/provider/query-provider';
-import { InfiniteData } from '@tanstack/query-core';
 import { Divider } from '@/components/ui/divider';
-
 
 interface ReviewProps {
   item: ReviewItem;
@@ -31,17 +27,13 @@ const Review = React.memo(({ item, t, onLongPress }: ReviewProps) => {
       delayLongPress={100}
       onLongPress={() => {
         if (item.comment && item.comment.trim().length > 0) {
-          onLongPress(item)
+          onLongPress(item);
         }
       }}
       className="mb-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
       {/* Avatar + Info */}
       <View className="mb-3 flex-row items-center">
-        <Avatar
-          source={item.reviewer?.avatar}
-          size={40}
-          borderWidth={0}
-        />
+        <Avatar source={item.reviewer?.avatar} size={40} borderWidth={0} />
         <View className="ml-3 flex-1">
           <Text className="font-inter-bold text-gray-800">
             {item.reviewer?.name ? item.reviewer.name : t('review.hidden_user')}
@@ -78,12 +70,9 @@ const Review = React.memo(({ item, t, onLongPress }: ReviewProps) => {
       ) : (
         <Text className="font-inter-italic text-sm text-gray-400">{t('review.no_comment')}</Text>
       )}
-
-
     </TouchableOpacity>
   );
 });
-
 
 interface ReviewListModalProps {
   isVisible: boolean;
@@ -96,7 +85,6 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
   const translateSheetRef = useRef<BottomSheetModal>(null);
   const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
 
-
   const {
     data,
     fetchNextPage,
@@ -107,7 +95,7 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
     isRefetching,
     pagination,
     setFilter,
-    params: paramReviewList
+    params: paramReviewList,
   } = useGetReviewList(isVisible);
 
   useEffect(() => {
@@ -116,7 +104,6 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
       refetch();
     }
   }, [isVisible, params]);
-
 
   // Handle long press to show translate sheet
   const handleLongPress = useCallback((item: ReviewItem) => {
@@ -131,13 +118,7 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
   }, []);
 
   const renderItem = useCallback(
-    ({ item }: { item: ReviewItem }) => (
-      <Review
-        item={item}
-        t={t}
-        onLongPress={handleLongPress}
-      />
-    ),
+    ({ item }: { item: ReviewItem }) => <Review item={item} t={t} onLongPress={handleLongPress} />,
     [t, handleLongPress]
   );
 
@@ -146,8 +127,7 @@ const ReviewListModal = ({ isVisible, onClose, params }: ReviewListModalProps) =
       visible={isVisible}
       animationType="slide"
       presentationStyle="pageSheet"
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <BottomSheetModalProvider>
         <SafeAreaView className="flex-1 bg-gray-50">
           {/* Header */}
