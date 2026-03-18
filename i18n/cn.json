@@ -118,7 +118,9 @@
     "total": "总计",
     "nickname": "昵称",
     "password_description": "密码必须至少包含8个字符，包括至少1个大写字母、1个小写字母、1个数字。",
-    "status": "状态"
+    "status": "状态",
+    "choose_method": "请选择登录方式或创建新账户",
+    "login_phone": "手机号"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
