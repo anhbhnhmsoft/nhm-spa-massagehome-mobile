@@ -3,7 +3,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -16,24 +15,33 @@ import { useHandleAuthenticate } from '@/features/auth/hooks';
 import { FormInput } from '@/components/ui/form-input';
 import { AtSign, ChevronRightIcon, PhoneIcon } from 'lucide-react-native';
 import { useState } from 'react';
+import { _TypeAuthenticate } from '@/features/auth/const';
 
 export default function AuthScreen() {
   const { t } = useTranslation();
 
   const { form, onSubmit, loading } = useHandleAuthenticate();
 
-  const [show, setShow] = useState(true);
+  const [showSelection, setShowSelection] = useState(true);
 
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = form;
+
+  const typeAuthenticate = watch('type_authenticate');
+  const isPhone = typeAuthenticate === _TypeAuthenticate.PHONE;
+  const inputLabel = isPhone ? t('common.phone') : t('common.email');
+  const inputPlaceholder = isPhone ? t('auth.placeholder_phone') : t('common.email');
+  const inputKeyboardType = isPhone ? 'number-pad' : 'email-address';
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className="flex-1 bg-white">
-        {show ? (
+        {showSelection ? (
           <View className="flex-1 bg-white px-4 pt-12">
             {/* Header */}
             <Text className="mb-2 font-inter-bold text-2xl tracking-tight text-gray-900">
@@ -46,7 +54,11 @@ export default function AuthScreen() {
             <TouchableOpacity
               activeOpacity={0.7}
               className="mb-4 flex-row items-center rounded-[24px] border border-gray-100 bg-white p-4"
-              onPress={() => setShow(false)}>
+              onPress={() => {
+                setValue('type_authenticate', _TypeAuthenticate.PHONE);
+                setValue('username', '');
+                setShowSelection(false);
+              }}>
               <View className="mr-4 h-14 w-14 items-center justify-center rounded-2xl bg-base-color-3">
                 <PhoneIcon size={24} color="#044984" />
               </View>
@@ -61,7 +73,12 @@ export default function AuthScreen() {
             {/* Email Option */}
             <TouchableOpacity
               activeOpacity={0.7}
-              className="mb-10 flex-row items-center rounded-[24px] border border-gray-100 bg-white p-4">
+              className="mb-10 flex-row items-center rounded-[24px] border border-gray-100 bg-white p-4"
+              onPress={() => {
+                setValue('type_authenticate', _TypeAuthenticate.EMAIL);
+                setValue('username', '');
+                setShowSelection(false);
+              }}>
               <View className="mr-4 h-14 w-14 items-center justify-center rounded-2xl bg-base-color-3">
                 <AtSign size={24} color="#044984" />
               </View>
@@ -80,27 +97,28 @@ export default function AuthScreen() {
             <View>
               {/* Title */}
               <Text className="mb-2 font-inter-bold text-2xl text-gray-900">
-                {t('auth.auth_title')}
+                {t(isPhone ? 'auth.auth_title_phone' : 'auth.auth_title_email')}
               </Text>
               <Text className="mb-8 text-base leading-6 text-gray-500">
-                {t('auth.auth_description')}
+                {t(isPhone ? 'auth.auth_description_phone' : 'auth.auth_description_email')}
               </Text>
 
               {/* Input Container */}
               <Controller
                 control={control}
-                name="phone"
+                name="username"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <FormInput
                     required
-                    label={t('common.phone')}
-                    placeholder={t('auth.placeholder_phone')}
-                    keyboardType="number-pad"
+                    label={inputLabel}
+                    placeholder={inputPlaceholder}
+                    keyboardType={inputKeyboardType}
                     autoFocus={true}
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    error={errors?.phone?.message}
+                    error={errors?.username?.message}
+                    autoCapitalize={isPhone ? 'none' : 'none'}
                   />
                 )}
               />

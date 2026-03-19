@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { RegisterRequest } from '@/features/auth/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
-import { _Gender } from '@/features/auth/const';
+import { _Gender, _TypeAuthenticate } from '@/features/auth/const';
 import { _LanguageCode } from '@/lib/const';
 import { useCallback } from 'react';
 import { router } from 'expo-router';
@@ -27,8 +27,9 @@ export const useHandleRegister = () => {
   // handle success toast khi gọi API thành công
   const { success } = useToast();
 
-  // Lấy phone_authenticate từ auth store khi submit form verify OTP
-  const phone = useFormAuthStore((state) => state.phone_authenticate);
+  // Lấy username/type_authenticate từ auth store khi submit form verify OTP
+  const username = useFormAuthStore((state) => state.username_authenticate);
+  const typeAuthenticate = useFormAuthStore((state) => state.type_authenticate);
 
   const resetState = useFormAuthStore((state) => state.resetState);
 
@@ -43,7 +44,8 @@ export const useHandleRegister = () => {
   const form = useForm<RegisterRequest>({
     resolver: zodResolver(
       z.object({
-        phone: z.string().min(1),
+        username: z.string().min(1),
+        type_authenticate: z.enum(_TypeAuthenticate),
         name: z.string().min(1, { error: t('auth.error.name_required') }),
         password: z
           .string()
@@ -62,7 +64,8 @@ export const useHandleRegister = () => {
       })
     ),
     defaultValues: {
-      phone: phone || '',
+      username: username || '',
+      type_authenticate: typeAuthenticate || _TypeAuthenticate.PHONE,
       name: '',
       password: '',
       gender: _Gender.MALE,

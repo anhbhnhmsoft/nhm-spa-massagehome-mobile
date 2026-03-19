@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
-import {Text} from '@/components/ui/text';
+import { _TypeAuthenticate } from '@/features/auth/const';
+import { Text } from '@/components/ui/text';
 import { useHandleResendOtp, useHandleVerifyOtp } from '@/features/auth/hooks';
 import {
   Keyboard,
@@ -13,28 +13,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Controller } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import OtpCodeField from '@/components/ui/otp-code-field';
+import { useTranslation } from 'react-i18next';
 
 export default function VerifyOtpScreen() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const {
-    phone,
+    username,
+    typeAuthenticate,
     form,
     onSubmit,
     loading: loadingVerifyOTP,
   } = useHandleVerifyOtp();
-
-  const {
-    resendOTP,
-    secondsLeft,
-    loading: loadingResendOTP,
-  } = useHandleResendOtp()
+  const { resendOTP, secondsLeft, loading: loadingResendOTP } = useHandleResendOtp();
+  const isPhone = typeAuthenticate === _TypeAuthenticate.PHONE;
 
   const {
     control,
     handleSubmit,
     formState: { isValid },
-    setValue
+    setValue,
   } = form;
 
   return (
@@ -43,25 +41,25 @@ export default function VerifyOtpScreen() {
         <SafeAreaView className="flex-1 bg-white">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            className="flex-1 px-5 pt-4 justify-between"
-          >
-
+            className="flex-1 justify-between px-5 pt-4">
             {/* --- CONTENT --- */}
-            <View className="flex-1 px-6 items-center mt-6">
-
+            <View className="mt-6 flex-1 items-center px-6">
               {/* Title */}
-              <Text className="text-2xl font-inter-bold text-gray-900 text-center mb-3">
-                {t('auth.auth_verify_title')}
+              <Text className="mb-3 text-center font-inter-bold text-2xl text-gray-900">
+                {t(isPhone ? 'auth.auth_verify_title_phone' : 'auth.auth_verify_title_email')}
               </Text>
 
               {/* Subtitle */}
-              <View className={"gap-2 justify-center items-center mb-4"}>
-                <Text className="text-gray-500 text-center text-base px-4 leading-6">
-                  {t('auth.auth_verify_description')}
+              <View className={'mb-4 items-center justify-center gap-2'}>
+                <Text className="px-4 text-center text-base leading-6 text-gray-500">
+                  {t(
+                    isPhone
+                      ? 'auth.auth_verify_description_phone'
+                      : 'auth.auth_verify_description_email'
+                  )}
                 </Text>
-                <Text className="font-inter-bold text-primary-color-1">{phone}</Text>
+                <Text className="font-inter-bold text-primary-color-1">{username}</Text>
               </View>
-
 
               {/* --- OTP INPUT --- */}
               <View className="w-full">
@@ -69,25 +67,30 @@ export default function VerifyOtpScreen() {
                   control={control}
                   name="otp"
                   render={({ field: { value } }) => (
-                     <OtpCodeField value={value} setValue={(text) => setValue('otp', text, { shouldValidate: true })} />
+                    <OtpCodeField
+                      value={value}
+                      setValue={(text) => setValue('otp', text, { shouldValidate: true })}
+                    />
                   )}
                 />
               </View>
             </View>
 
             {/* --- FOOTER (Gửi lại & Nút Tiếp tục) --- */}
-            <View className="px-6 mb-8 w-full">
+            <View className="mb-8 w-full px-6">
               {/* Text Gửi lại SMS */}
               <TouchableOpacity
                 onPress={resendOTP}
                 disabled={secondsLeft > 0 || loadingVerifyOTP || loadingResendOTP}
-                className="items-center mb-6"
-              >
-                <Text className={cn(
-                  "text-base font-inter-medium",
-                  secondsLeft > 0 ? "text-primary-color-2" : "text-gray-500"
-                )}>
-                  {secondsLeft > 0 ? `${t('auth.resend_otp')} (${secondsLeft})` : t('auth.resend_otp')}
+                className="mb-6 items-center">
+                <Text
+                  className={cn(
+                    'font-inter-medium text-base',
+                    secondsLeft > 0 ? 'text-primary-color-2' : 'text-gray-500'
+                  )}>
+                  {secondsLeft > 0
+                    ? `${t(isPhone ? 'auth.resend_otp_phone' : 'auth.resend_otp_email')} (${secondsLeft})`
+                    : t(isPhone ? 'auth.resend_otp_phone' : 'auth.resend_otp_email')}
                 </Text>
               </TouchableOpacity>
 
@@ -96,20 +99,15 @@ export default function VerifyOtpScreen() {
                 onPress={handleSubmit(onSubmit)}
                 disabled={!isValid || loadingVerifyOTP || loadingResendOTP}
                 className={cn(
-                  "w-full py-4 rounded-full items-center justify-center",
-                  isValid
-                    ? "bg-primary-color-2"
-                    : "bg-slate-100"
-                )}
-              >
-                <Text className="text-white text-lg font-inter-bold">
-                  {t('common.continue')}
-                </Text>
+                  'w-full items-center justify-center rounded-full py-4',
+                  isValid ? 'bg-primary-color-2' : 'bg-slate-100'
+                )}>
+                <Text className="font-inter-bold text-lg text-white">{t('common.continue')}</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </>
-  )
+  );
 }
