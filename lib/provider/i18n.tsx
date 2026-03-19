@@ -1,22 +1,25 @@
 import vi from '@/i18n/vi.json';
 import en from '@/i18n/en.json';
 import cn from '@/i18n/cn.json';
+import jp from '@/i18n/jp.json';
+import kr from '@/i18n/kr.json';
+
 import { getLocales } from 'expo-localization';
 import { useApplicationStore } from '@/features/app/stores';
 import { _LanguageCode } from '@/lib/const';
 import { _StorageKey } from '@/lib/storages/key';
 import { Storage } from '@/lib/storages';
 import { initReactI18next } from 'react-i18next';
-import i18n from 'i18next'
+import i18n from 'i18next';
 import { checkLanguage } from '@/lib/utils';
 
-
 const resources = {
-  "vi": { translation: vi },
-  "en": { translation: en },
-  "cn": { translation: cn },
+  vi: { translation: vi },
+  en: { translation: en },
+  cn: { translation: cn },
+  jp: { translation: jp },
+  kr: { translation: kr },
 };
-
 
 const initI18n = async () => {
   const setLanguage = useApplicationStore.getState().setLanguage;
@@ -27,10 +30,12 @@ const initI18n = async () => {
 
   // Nếu language chưa lưu hoặc không hợp lệ -> set mặc định
   if (!savedLanguage || !checkLanguage(savedLanguage)) {
-    switch (deviceLang){
+    switch (deviceLang) {
       case _LanguageCode.EN:
       case _LanguageCode.VI:
       case _LanguageCode.CN:
+      case _LanguageCode.JP:
+      case _LanguageCode.KR:
         savedLanguage = deviceLang;
         break;
       default:
@@ -40,7 +45,7 @@ const initI18n = async () => {
   }
 
   await i18n.use(initReactI18next).init({
-    compatibilityJSON: "v4",
+    compatibilityJSON: 'v4',
     resources,
     lng: savedLanguage,
     fallbackLng: _LanguageCode.VI,

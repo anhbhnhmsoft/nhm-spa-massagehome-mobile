@@ -81,6 +81,8 @@ export interface IMultiLangField {
   [_LanguageCode.VI]: string;
   [_LanguageCode.EN]?: string;
   [_LanguageCode.CN]?: string;
+  [_LanguageCode.JP]?: string;
+  [_LanguageCode.KR]?: string;
 }
 
 export interface IFileUpload {
@@ -95,4 +97,6 @@ export const _DEFAULT_TRANSLATIONS: LanguageTranslations = {
   [_LanguageCode.EN]: '',
   [_LanguageCode.VI]: '',
   [_LanguageCode.CN]: '',
+  [_LanguageCode.JP]: '',
+  [_LanguageCode.KR]: '',
 };
