@@ -1,5 +1,6 @@
 import {
-  BaseSearchRequest, IFileUpload,
+  BaseSearchRequest,
+  IFileUpload,
   IMultiLangField,
   Paginator,
   ResponseDataSuccessType,
@@ -49,7 +50,6 @@ export type ListKTVItem = {
   schedule: KTVWorkSchedule;
 };
 
-
 export type ServiceCategoryItem = {
   id: string;
   name: string;
@@ -61,13 +61,13 @@ export type ServiceCategoryItem = {
     price: string;
     duration: number;
   }[];
-}
+};
 export type KTVDetail = ListKTVItem & {
   display_image: {
     id: string;
     url: string;
   }[];
-  first_review: {
+  recent_reviews: {
     id: string;
     review_by: {
       id: string;
@@ -77,10 +77,11 @@ export type KTVDetail = ListKTVItem & {
     comment: string | null;
     rating: number;
     created_at: string;
-  } | null;
-  price_transportation: number ; // Giá vận chuyển
+  }[];
+  price_transportation: number; // Giá vận chuyển
   service_categories: ServiceCategoryItem[];
-  on_going_booking: { // Dịch vụ đang diễn ra (nếu có)
+  on_going_booking: {
+    // Dịch vụ đang diễn ra (nếu có)
     id: string;
     start_time: string; // ISO Date String
     duration: number;
@@ -99,7 +100,6 @@ export type ListKTVRequest = BaseSearchRequest<{
 export type ListKTVResponse = ResponseDataSuccessType<Paginator<ListKTVItem>>;
 
 export type DetailKTVResponse = ResponseDataSuccessType<KTVDetail>;
-
 
 export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
   can_apply: boolean;
@@ -129,7 +129,7 @@ export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
 export type FileUploadItem = {
   type_upload: _PartnerFileType;
   file: IFileUpload;
-}
+};
 
 export type ApplyPartnerRequest = {
   role: _UserRole.KTV | _UserRole.AGENCY;
@@ -148,7 +148,6 @@ export type ApplyPartnerRequest = {
     };
   }[];
 };
-
 
 export type ApplyTechnicalRequest = {
   nickname: string;

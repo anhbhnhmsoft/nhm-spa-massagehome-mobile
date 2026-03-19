@@ -196,7 +196,8 @@
       "QR_BANKING": "银行扫码转账",
       "ZALO_PAY": "Zalo Pay",
       "MOMO_PAY": "Momo Pay",
-      "WECHAT_PAY": "Wechat Pay"
+      "WECHAT_PAY": "Wechat Pay",
+      "ALI_PAY": "使用支付宝支付"
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "二维码银行充值",

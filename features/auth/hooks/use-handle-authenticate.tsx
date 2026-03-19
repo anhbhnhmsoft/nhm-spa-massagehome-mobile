@@ -16,7 +16,7 @@ import useToast from '@/features/app/hooks/use-toast';
 export const useHandleAuthenticate = () => {
   const { t } = useTranslation();
   // handle error toast khi gọi API thất bại
-  const {error: errorToast} = useToast();
+  const { error: errorToast } = useToast();
   const handleError = useErrorToast();
   // set state vào auth store khi submit form
   const updateStateForm = useFormAuthStore((state) => state.updateState);
@@ -49,26 +49,26 @@ export const useHandleAuthenticate = () => {
           phone_authenticate: data.phone,
         });
         // case need_login: redirect về màn hình login
-        if (caseHandle === "need_login"){
+        if (caseHandle === 'need_login') {
           router.push('/(auth)/login');
         }
         // case need_re_enter_register: redirect về màn hình register
-        else if (caseHandle === "need_re_enter_register"){
+        else if (caseHandle === 'need_re_enter_register') {
           router.replace('/(auth)/register');
         }
         // case need_register hoặc need_re_enter_otp: redirect về màn hình verify OTP
-        else if (caseHandle === "need_register" || caseHandle === "need_re_enter_otp"){
+        else if (caseHandle === 'need_register' || caseHandle === 'need_re_enter_otp') {
           if (dataResponse.last_sent_at && dataResponse.retry_after_seconds) {
             updateStateForm({
-              case_verify_otp: "register",
+              case_verify_otp: 'register',
               last_sent_at: dataResponse.last_sent_at,
               retry_after_seconds: dataResponse.retry_after_seconds,
             });
             router.replace('/(auth)/verify-otp');
-          }else{
+          } else {
             errorToast({
               message: t('common_error.unknown_error'),
-            })
+            });
           }
         }
       },

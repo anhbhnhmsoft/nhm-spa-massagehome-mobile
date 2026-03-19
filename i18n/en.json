@@ -196,7 +196,9 @@
       "QR_BANKING": "QR Banking Transfer",
       "ZALO_PAY": "Zalo Pay",
       "MOMO_PAY": "Momo Pay",
-      "WECHAT_PAY": "WeChat Pay"
+      "WECHAT_PAY": "WeChat Pay",
+      "ALI_PAY": "Alipay"
+
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Deposit via QR Banking",

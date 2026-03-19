@@ -66,7 +66,7 @@ export default function AuthScreen() {
                 <AtSign size={24} color="#044984" />
               </View>
               <View className="flex-1">
-                <Text className="text-[17px] font-semibold text-gray-900">Email</Text>
+                <Text className="text-[17px] font-semibold text-gray-900">{t('common.email')}</Text>
               </View>
               <ChevronRightIcon />
             </TouchableOpacity>

@@ -1,14 +1,15 @@
 import React, { forwardRef } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTranslation } from 'react-i18next';
+import { X } from 'lucide-react-native';
 import { _LanguagesMap } from '@/lib/const';
 import { Text } from '@/components/ui/text';
 import AppBottomSheet from '@/components/ui/app-bottom-sheet';
 import { ListReviewRequest, ReviewItem } from '@/features/service/types';
 import { useReviewTranslation } from '@/features/service/hooks';
-import {  LangPicker } from '@/components/ui/lang-chip';
+import { LangPicker } from '@/components/ui/lang-chip';
 import { Divider } from '@/components/ui/divider';
 
 type Props = {
@@ -39,6 +40,18 @@ export const ReviewTranslateSheet = forwardRef<BottomSheetModal, Props>(
           onDismiss();
         }}>
         <View style={{ paddingBottom: insets.bottom + 8 }} className="px-3">
+          <View className="flex-row items-center justify-end">
+            <TouchableOpacity
+              onPress={() => {
+                handleResetTranslateComment();
+                handleResetTargetLang();
+                onDismiss();
+              }}
+              className="rounded-full bg-gray-200 p-2">
+              <X size={20} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
           {/* Preview nội dung */}
           <View className="mb-3 py-3">
             <Text className="text-[13px] text-gray-500" numberOfLines={4}>

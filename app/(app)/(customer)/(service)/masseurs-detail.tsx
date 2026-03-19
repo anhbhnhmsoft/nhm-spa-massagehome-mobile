@@ -6,8 +6,8 @@ import Empty from '@/components/empty';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   CarouselImageKtvSection,
-  FistReviewKtvSection,
   InfoKtvSection,
+  RecentReviewKtvSection,
   SchedulesKtvSection,
   ServiceCardDetailKtv,
   ServicesBottomSheet,
@@ -71,10 +71,10 @@ const MasseurDetailScreen = () => {
               {detail.schedule && <SchedulesKtvSection schedule={detail.schedule} t={t} />}
 
               {/* --- Review Section --- */}
-              <FistReviewKtvSection
+              <RecentReviewKtvSection
                 t={t}
                 review_count={detail.review_count}
-                first_review={detail.first_review}
+                recent_reviews={detail.recent_reviews}
                 ktv_id={detail.id}
               />
 
