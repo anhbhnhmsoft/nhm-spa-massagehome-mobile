@@ -1,4 +1,4 @@
-import { ConfigPaymentItem, QRBankData, QRWechatData } from '@/features/payment/types';
+import { AlipayData, ConfigPaymentItem, QRBankData, QRWechatData } from '@/features/payment/types';
 import { create } from 'zustand';
 
 interface IWalletStore {
@@ -10,12 +10,14 @@ interface IWalletStore {
   transactionId: string | null;
   qrBankData: QRBankData | null;
   qrWechatData: QRWechatData | null;
+  alipayData: AlipayData | null;
 
   setConfigPayment: (configPayment: ConfigPaymentItem | null) => void;
   // Cập nhật thông tin giao dịch hiện tại
   setTransactionId: (transactionId: string | null) => void;
   setQrBankData: (qrBankData: QRBankData | null) => void;
   setQrWechatData: (qrWechatData: QRWechatData | null) => void;
+  setAlipayData: (alipayData: AlipayData | null) => void;
   refreshWallet: (need_refresh: boolean) => void;
 }
 
@@ -27,6 +29,7 @@ export const useWalletStore = create<IWalletStore>((set) => ({
   transactionId: null,
   qrBankData: null,
   qrWechatData: null,
+  alipayData: null,
 
   setConfigPayment: (configPayment) => set({ configPayment }),
   // Cập nhật thông tin giao dịch hiện tại
@@ -34,4 +37,5 @@ export const useWalletStore = create<IWalletStore>((set) => ({
   setQrBankData: (qrBankData) => set({ qrBankData }),
   refreshWallet: (need_refresh) => set({ need_refresh }),
   setQrWechatData: (qrWechatData) => set({ qrWechatData }),
+  setAlipayData: (alipayData) => set({ alipayData }),
 }));

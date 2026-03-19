@@ -54,7 +54,6 @@ export const useHandleAuthenticate = () => {
   const onSubmit = useCallback((data: AuthenticateRequest) => {
     mutate(data, {
       onSuccess: (res) => {
-        console.log('res auth', res);
         const dataResponse = res.data;
         const caseHandle = dataResponse.case;
         // Lưu username/type_authenticate vào auth store khi submit form
@@ -87,7 +86,6 @@ export const useHandleAuthenticate = () => {
         }
       },
       onError: (err) => {
-        console.log('err', err);
         handleError(err);
       },
     });

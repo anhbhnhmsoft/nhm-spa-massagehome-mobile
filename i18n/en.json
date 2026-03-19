@@ -217,7 +217,8 @@
       "PAYMENT_FEE_TRANSPORT": "Payment Fee Transport",
       "PAYMENT_KTV_EARN_TRANSPORT": "Earn Transport Fee",
       "REFUND_CUSTOMER_TRANSPORT": "Refund Customer Transport",
-      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport"
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport",
+      "DEPOSIT_WECHAT_ALIPAY": "Deposit via Alipay"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -604,6 +605,8 @@
     "request_withdraw": "Request Withdrawal",
     "method_disabled": "Maintenance",
     "wechat_scan_instruction": "Please use WeChat to scan the QR code to complete the payment",
+    "alipay_scan_instruction": "Open the Alipay app and scan the QR code to make the payment",
+    "processing_transaction_alipay": "The system is processing the Alipay payment. This process may take 15–30 minutes",
     "amount": "Amount",
     "transfer_note": "Transfer note",
     "note_important": "Please enter this note exactly as shown",

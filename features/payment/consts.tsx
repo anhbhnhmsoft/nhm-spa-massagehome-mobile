@@ -53,6 +53,7 @@ export enum _TransactionType {
   PAYMENT_KTV_EARN_TRANSPORT = 15, // Nhận tiền từ di chuyển ( Cộng tiền KTV)
   REFUND_CUSTOMER_TRANSPORT = 16, // Hoàn tiền cho customer khi hủy booking
   PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL = 17, // thu hồi tiền thanh toán cho KTV khi hủy booking
+  DEPOSIT_WECHAT_ALIPAY = 20, // Nạp tiền qua Wechat Pay
 }
 
 export const _TransactionTypeMap = {
@@ -75,6 +76,7 @@ export const _TransactionTypeMap = {
   [_TransactionType.REFUND_CUSTOMER_TRANSPORT]: 'enum.transaction_type.REFUND_CUSTOMER_TRANSPORT',
   [_TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL]:
     'enum.transaction_type.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL',
+  [_TransactionType.DEPOSIT_WECHAT_ALIPAY]: 'enum.transaction_type.DEPOSIT_WECHAT_ALIPAY',
 };
 
 export enum _TransactionStatus {
@@ -109,6 +111,8 @@ export const _TransactionInType = [
   _TransactionType.REFUND_CUSTOMER_TRANSPORT,
   _TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL,
   _TransactionType.PAYMENT_KTV_EARN_TRANSPORT,
+  _TransactionType.DEPOSIT_WECHAT_ALIPAY,
+  _TransactionType.PAYMENT,
 ] as readonly _TransactionType[];
 
 export const _TransactionOutType = [

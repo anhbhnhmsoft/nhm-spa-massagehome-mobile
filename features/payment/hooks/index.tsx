@@ -18,6 +18,7 @@ import { useWalletStore } from '@/features/payment/stores';
 import { useApplicationStore } from '@/features/app/stores';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import {
+  AlipayData,
   ConfigPaymentItem,
   CreateWithdrawInfoRequest,
   DepositRequest,
@@ -180,6 +181,8 @@ export const useDeposit = () => {
   const setQrBankData = useWalletStore((state) => state.setQrBankData);
   // State lưu trữ dữ liệu QRWechatData khi nạp tiền qua Wechat Pay
   const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
+  // State lưu trữ dữ liệu AlipayData khi nạp tiền qua Alipay
+  const setAlipayData = useWalletStore((state) => state.setAlipayData);
   const refreshWallet = useWalletStore((state) => state.refreshWallet);
 
   // Mutate function dùng để gọi API nạp tiền
@@ -241,6 +244,10 @@ export const useDeposit = () => {
             const qrWechatData = resData.data_payment as QRWechatData;
             setQrWechatData(qrWechatData);
             break;
+          case _PaymentType.ALI_PAY:
+            const alipayData = resData.data_payment as AlipayData;
+            setAlipayData(alipayData);
+            break;
           default:
             break;
         }
@@ -265,11 +272,18 @@ export const useDeposit = () => {
     setQrWechatData(null);
     refreshWallet(true);
   }, []);
+
+  const hadnleCloseAlipay = useCallback(() => {
+    setAlipayData(null);
+    refreshWallet(true);
+  }, []);
+
   return {
     configPayment: configPayment as ConfigPaymentItem,
     form,
     submitDeposit,
     handleCloseWechat,
+    hadnleCloseAlipay,
   };
 };
 

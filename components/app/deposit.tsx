@@ -41,7 +41,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
   // giá đổi tiền giữa VND và CNY (nếu chọn nạp qua Wechat)
   const [exchangePriceCny, setExchangePriceCny] = useState<number>(0);
 
-  const { configPayment, form, submitDeposit, handleCloseWechat } = useDeposit();
+  const { configPayment, form, submitDeposit, handleCloseWechat, hadnleCloseAlipay } = useDeposit();
 
   const {
     control,
@@ -288,6 +288,7 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
       <CheckQRPaymentModal useFor={useFor} />
 
       <WeChatPaymentModal onClose={handleCloseWechat} />
+      <AliPaymentModal onClose={hadnleCloseAlipay} />
     </>
   );
 }
@@ -589,6 +590,106 @@ export const WeChatPaymentModal = ({ onClose }: WeChatPaymentModalProps) => {
       <View className="mt-8 flex-row items-center justify-center gap-3 py-4">
         <Text className="font-inter-medium text-gray-600">
           {t('payment.processing_transaction')}
+        </Text>
+      </View>
+    </AppBottomSheet>
+  );
+};
+
+interface AliPaymentModalProps {
+  onClose: () => void;
+}
+
+export const AliPaymentModal = ({ onClose }: AliPaymentModalProps) => {
+  const { t } = useTranslation();
+  const alipayData = useWalletStore((state) => state.alipayData);
+  const copyToClipboard = useCopyClipboard();
+  const { saveURLImage } = useSaveFileImage();
+
+  const bottomSheetRefWechat = React.useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    if (alipayData) {
+      bottomSheetRefWechat.current?.present();
+    } else {
+      bottomSheetRefWechat.current?.dismiss();
+    }
+  }, [alipayData]);
+
+  return (
+    <AppBottomSheet
+      ref={bottomSheetRefWechat}
+      isScrollable={true}
+      snapPoints={['95%']}
+      onDismiss={() => onClose()}>
+      {/* --- QR CODE SECTION --- */}
+      <View className="items-center">
+        <View className="mb-4 rounded-3xl border-4 border-[#1677FF]/10 bg-white p-4">
+          <View className="rounded-2xl border border-gray-100 bg-white p-2">
+            <Image
+              source={{ uri: alipayData?.qr_image || '' }}
+              style={{ width: 220, height: 220 }}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => saveURLImage(alipayData?.qr_image || '')}
+          className="flex-row items-center gap-2 rounded-full bg-[#1677FF]/10 px-6 py-2.5">
+          <Download size={18} color="#1677FF" />
+          <Text className="font-inter-bold text-sm text-[#1677FF]">{t('common.save_qr_code')}</Text>
+        </TouchableOpacity>
+
+        <Text className="mt-4 px-10 text-center text-sm text-gray-500">
+          {t('payment.alipay_scan_instruction')}
+        </Text>
+      </View>
+
+      {/* --- DETAILS SECTION --- */}
+      <View className="mt-8 space-y-4 rounded-2xl bg-gray-50 p-5">
+        {/* Số tiền */}
+        <View className="flex-row items-center justify-between border-b border-gray-200 pb-4">
+          <View>
+            <Text className="mb-1 text-xs uppercase tracking-wider text-gray-500">
+              {t('payment.amount')}
+            </Text>
+            <Text className="mb-2 font-inter-bold text-2xl text-gray-900">
+              {formatBalance(alipayData?.amount_cny || 0)}{' '}
+              <Text className="font-inter-medium text-sm"> CNY</Text>
+            </Text>
+            <Text className="font-inter-bold text-sm text-slate-500">
+              {formatBalance(alipayData?.amount || 0)} {t('common.currency')}
+            </Text>
+          </View>
+          <CircleDollarSign size={28} color="#1677FF" />
+        </View>
+
+        {/* Nội dung chuyển khoản */}
+        <View className="pt-2">
+          <Text className="mb-2 text-xs uppercase tracking-wider text-gray-500">
+            {t('payment.transfer_note')}
+          </Text>
+          <View className="flex-row items-center justify-between rounded-xl border border-dashed border-gray-300 bg-white p-3">
+            <Text className="mr-2 flex-1 font-inter-bold text-sm text-red-600">
+              {alipayData?.description || ''}
+            </Text>
+            <TouchableOpacity
+              onPress={() => copyToClipboard(alipayData?.description || '')}
+              className="rounded-lg bg-gray-100 p-2">
+              <Copy size={18} color="#374151" />
+            </TouchableOpacity>
+          </View>
+          <Text className="mt-2 text-[11px] italic text-red-400">
+            * {t('payment.note_important')}
+          </Text>
+        </View>
+      </View>
+
+      {/* --- WAITING STATUS --- */}
+      <View className="mt-8 flex-row items-center justify-center gap-3 py-4">
+        <Text className="font-inter-medium text-gray-600">
+          {t('payment.processing_transaction_alipay')}
         </Text>
       </View>
     </AppBottomSheet>

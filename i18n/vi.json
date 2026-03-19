@@ -216,7 +216,8 @@
       "PAYMENT_FEE_TRANSPORT": "Chi phí di chuyển",
       "PAYMENT_KTV_EARN_TRANSPORT": "Nhận tiền từ di chuyển",
       "REFUND_CUSTOMER_TRANSPORT": "Hoàn tiền khi hủy booking",
-      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Hoàn tiền di chuyển"
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Hoàn tiền di chuyển",
+      "DEPOSIT_WECHAT_ALIPAY": "Nạp tiền qua Alipay"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
@@ -602,10 +603,12 @@
     "request_withdraw": "Yêu cầu rút tiền",
     "method_disabled": "Đang bảo trì",
     "wechat_scan_instruction": "Vui lòng sử dụng WeChat để quét mã QR thực hiện thanh toán",
+    "alipay_scan_instruction": "Mở ứng dụng Alipay và quét mã QR để thanh toán",
     "amount": "Số tiền",
     "transfer_note": "Nội dung chuyển khoản",
     "note_important": "Vui lòng nhập chính xác nội dung này",
     "processing_transaction": "Hệ thống đang xử lý thanh toán WeChat. Quá trình này có thể mất từ 15–30 phút",
+    "processing_transaction_alipay": "Hệ thống đang xử lý thanh toán Alipay. Quá trình này có thể mất từ 15–30 phút",
     "exchange_rate_wechat_pay": "Quy đổi thành {{priceCny}} CNY",
     "withdraw": {
       "title_modal": "Chọn tài khoản rút tiền",
