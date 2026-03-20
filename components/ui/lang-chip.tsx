@@ -1,8 +1,10 @@
-import { _LanguageCode } from '@/lib/const';
+import { _LanguageCode, _LanguagesMap } from '@/lib/const';
 import React, { useCallback } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
+import { View } from 'moti';
+import { TFunction } from 'i18next';
 
 type LangChipProps = {
   code: _LanguageCode;
@@ -31,5 +33,39 @@ export const LangChip = ({ code, label, icon, isSelected, isDisabled, onPress }:
         {label}
       </Text>
     </TouchableOpacity>
+  );
+};
+
+export const LangPicker = ({
+  targetLang,
+  loading,
+  handleChangeLang,
+  t,
+}: {
+  targetLang: _LanguageCode | null;
+  loading: boolean;
+  handleChangeLang: (code: _LanguageCode) => void;
+  t: TFunction;
+}) => {
+  return (
+    <View>
+      <View className="mx-2 h-px bg-gray-100" />
+
+      <Text className="px-2 pb-2 pt-3 text-[12px] text-gray-400">{t('review.translate_to')}</Text>
+
+      <View className="flex-row flex-wrap gap-2 px-2 pb-2">
+        {_LanguagesMap.map((lang) => (
+          <LangChip
+            key={lang.code}
+            code={lang.code}
+            label={lang.label}
+            icon={lang.icon}
+            isSelected={targetLang === lang.code}
+            isDisabled={loading}
+            onPress={handleChangeLang}
+          />
+        ))}
+      </View>
+    </View>
   );
 };

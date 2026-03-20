@@ -1,25 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { _LanguageCode } from '@/lib/const';
 import { useMutationTranslateReview } from './use-mutation';
-import { ReviewTranslations } from '@/lib/types';
 import { ListReviewRequest, ListReviewResponse, ReviewItem } from '@/features/service/types';
 import { useImmer } from 'use-immer';
 import { queryClient } from '@/lib/provider/query-provider';
 import { InfiniteData } from '@tanstack/query-core';
 import { produce } from 'immer';
+import _ from 'lodash';
+import { _DEFAULT_TRANSLATIONS, LanguageTranslations } from '@/lib/types';
 
-const defaultStateComment: ReviewTranslations = {
-  [_LanguageCode.EN]: '',
-  [_LanguageCode.VI]: '',
-  [_LanguageCode.CN]: '',
-};
 // bọc callback giúp anh Huy
 export function useReviewTranslation(reviewItem: ReviewItem | null, params: ListReviewRequest) {
   const { mutate: translateMutate, isPending } = useMutationTranslateReview();
   const [targetLang, setTargetLang] = useState<_LanguageCode | null>(null);
 
   const [translatedComment, setTranslatedComment] =
-    useImmer<ReviewTranslations>(defaultStateComment);
+    useImmer<LanguageTranslations>(_DEFAULT_TRANSLATIONS);
 
   // Update translated comment when review item changes
   useEffect(() => {
@@ -104,7 +100,7 @@ export function useReviewTranslation(reviewItem: ReviewItem | null, params: List
   }, []);
 
   const handleResetTranslateComment = useCallback(() => {
-    setTranslatedComment(defaultStateComment);
+    setTranslatedComment(_DEFAULT_TRANSLATIONS);
   }, []);
 
   return {

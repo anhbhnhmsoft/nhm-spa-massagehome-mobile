@@ -1,39 +1,12 @@
-import { FC, forwardRef, useCallback, useMemo, useState, ReactNode } from 'react';
-import { Dimensions, ScrollView, TouchableOpacity, View } from 'react-native';
-import {
-  Bell,
-  Building2,
-  ChevronRight,
-  ClipboardList,
-  HandCoins,
-  Headphones,
-  Heart,
-  Info,
-  LogOut,
-  MapPin,
-  RefreshCcw,
-  Settings,
-  Ticket,
-  User as UserIcon,
-  Wallet,
-} from 'lucide-react-native';
+import { forwardRef, useCallback } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
-import { cn, formatBalance, openAboutPage } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useChangeAvatar, useLogout } from '@/features/auth/hooks';
-import { Icon } from '@/components/ui/icon';
-import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { useChangeAvatar } from '@/features/auth/hooks';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
-import { ListLocationModal } from '@/components/app/location';
-import { useApplicationStore } from '@/features/app/stores';
 import { _LanguagesMap } from '@/lib/const';
-import SelectLanguage from '@/components/app/select-language';
-import Dialog from '@/components/ui/dialog';
-import SupportModal from '@/components/app/support-modal';
-import { useGetSupport } from '@/features/config/hooks';
-import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 
 // Bottom Edit image
 export const BottomEditAvatar = forwardRef<

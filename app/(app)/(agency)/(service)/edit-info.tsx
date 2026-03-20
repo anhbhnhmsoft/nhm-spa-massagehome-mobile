@@ -93,8 +93,8 @@ export default function EditInfoScreen() {
                 />
 
                 <FormInput
-                  label={t('common.phone')}
-                  value={user?.phone}
+                  label={user?.phone ? t('common.phone') : t('common.email')}
+                  value={user?.phone || user?.email}
                   editable={false}
                   icon={<Lock size={16} color="#9CA3AF" />}
                 />

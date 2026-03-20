@@ -1,4 +1,4 @@
-import { ListMessageRequest, PayloadNewMessage } from '@/features/chat/types';
+import { PayloadNewMessage } from '@/features/chat/types';
 import { _LanguagesMap } from '@/lib/const';
 import { TFunction } from 'i18next';
 import { Copy } from 'lucide-react-native';
@@ -10,17 +10,16 @@ import { useChatTranslation } from '@/features/chat/hooks';
 import AppBottomSheet from '../ui/app-bottom-sheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import useCopyClipboard from '@/features/app/hooks/use-copy-clipboard';
-import { LangChip } from '../ui/lang-chip';
+import { LangPicker } from '../ui/lang-chip';
 
 type SheetContentProps = {
   item: PayloadNewMessage | null;
   onClose: () => void;
   t: TFunction;
-  params: ListMessageRequest;
 };
 
 export const MessageSheetContent = forwardRef<BottomSheetModal, SheetContentProps>(
-  ({ item, onClose, t, params }, ref) => {
+  ({ item, onClose, t }, ref) => {
     const insets = useSafeAreaInsets();
 
     const {
@@ -30,12 +29,11 @@ export const MessageSheetContent = forwardRef<BottomSheetModal, SheetContentProp
       handleResetTargetLang,
       handleResetTranslateChat,
       isTranslating,
-    } = useChatTranslation(item, params);
+    } = useChatTranslation(item);
 
     const handleCopyToClipboard = useCopyClipboard();
 
     const translatedText = targetLang ? translatedChat?.[targetLang] : null;
-
     const displayContent = translatedText || item?.content;
 
     return (
@@ -79,21 +77,12 @@ export const MessageSheetContent = forwardRef<BottomSheetModal, SheetContentProp
           <View className="mx-2 h-px bg-gray-100" />
 
           {/* Lang picker */}
-          <Text className="px-2 pb-2 pt-3 text-[12px] text-gray-400">{t('chat.translate_to')}</Text>
-
-          <View className="flex-row flex-wrap gap-2 px-2 pb-2">
-            {_LanguagesMap.map((lang) => (
-              <LangChip
-                key={lang.code}
-                code={lang.code}
-                label={lang.label}
-                icon={lang.icon}
-                isSelected={targetLang === lang.code}
-                isDisabled={isTranslating}
-                onPress={handleChangeTargetLang}
-              />
-            ))}
-          </View>
+          <LangPicker
+            targetLang={targetLang}
+            loading={isTranslating}
+            handleChangeLang={handleChangeTargetLang}
+            t={t}
+          />
         </View>
       </AppBottomSheet>
     );

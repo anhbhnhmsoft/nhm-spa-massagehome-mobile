@@ -80,7 +80,7 @@ export default function AppLayout() {
           </Stack.Protected>
 
           {/* --- PDF SCREEN --- */}
-          <Stack.Screen name="term-or-use-pdf" />
+          {/* <Stack.Screen name="term-or-use-pdf" /> */}
         </Stack.Protected>
       </Stack>
     </>

@@ -1,11 +1,12 @@
-import { _Gender, _UserRole } from '@/features/auth/const';
+import { _Gender, _TypeAuthenticate, _UserRole } from '@/features/auth/const';
 import { _LanguageCode } from '@/lib/const';
 import { ResponseDataSuccessType } from '@/lib/types';
 
 export type User = {
   id: string;
   name: string;
-  phone: string;
+  phone?: string;
+  email?: string;
   disabled: boolean;
   role: _UserRole;
   referral_code: string;
@@ -40,21 +41,23 @@ export type AuthData = {
 };
 
 export type AuthenticateRequest = {
-  phone: string;
+  username: string;
+  type_authenticate: _TypeAuthenticate;
 };
 
 export type AuthenticateResponse = ResponseDataSuccessType<{
-  case: "need_login" | "need_re_enter_otp" | "need_register" | "need_re_enter_register";
+  case: 'need_login' | 'need_re_enter_otp' | 'need_register' | 'need_re_enter_register';
   last_sent_at?: string; // Thời gian cuối cùng OTP được gửi
   retry_after_seconds?: number; // Thời gian chờ trước khi có thể gửi lại OTP
 }>;
 
 export type ForgotPasswordRequest = {
-  phone: string;
-}
+  username: string;
+  type_authenticate: _TypeAuthenticate;
+};
 
 export type ForgotPasswordResponse = ResponseDataSuccessType<{
-  case:"need_re_enter_otp" | "need_re_enter_reset_password" | "success";
+  case: 'need_re_enter_otp' | 'need_re_enter_reset_password' | 'success';
   last_sent_at?: string; // Thời gian cuối cùng OTP được gửi
   retry_after_seconds?: number; // Thời gian chờ trước khi có thể gửi lại OTP
 }>;
@@ -65,13 +68,14 @@ export type ResendOTPResponse = ResponseDataSuccessType<{
 }>;
 
 export type VerifyOTPRequest = {
-  phone: string;
+  username: string;
+  type_authenticate: _TypeAuthenticate;
   otp: string;
 };
 
-
 export type RegisterRequest = {
-  phone: string;
+  username: string;
+  type_authenticate: _TypeAuthenticate;
   name: string;
   password: string;
   referral_code?: string | null;
@@ -82,17 +86,18 @@ export type RegisterRequest = {
 export type RegisterResponse = ResponseDataSuccessType<AuthData>;
 
 export type LoginRequest = {
-  phone: string;
+  username: string;
+  type_authenticate: _TypeAuthenticate;
   password: string;
 };
 
 export type LoginResponse = ResponseDataSuccessType<AuthData>;
 
 export type ResetPasswordRequest = {
-  phone: string;
+  username: string;
+  type_authenticate: _TypeAuthenticate;
   password: string;
-}
-
+};
 
 export type ProfileResponse = ResponseDataSuccessType<{
   user: User;
@@ -117,4 +122,3 @@ export type EditProfileRequest = {
   old_password?: string;
   new_password?: string;
 };
-

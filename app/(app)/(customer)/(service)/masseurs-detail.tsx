@@ -6,14 +6,12 @@ import Empty from '@/components/empty';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   CarouselImageKtvSection,
-  FistReviewKtvSection,
   InfoKtvSection,
+  RecentReviewKtvSection,
   SchedulesKtvSection,
   ServiceCardDetailKtv,
   ServicesBottomSheet,
 } from '@/components/app/customer';
-import { useAuthStore } from '@/features/auth/stores';
-import { ClockFading } from 'lucide-react-native';
 
 const MasseurDetailScreen = () => {
   const { t } = useTranslation();
@@ -73,10 +71,10 @@ const MasseurDetailScreen = () => {
               {detail.schedule && <SchedulesKtvSection schedule={detail.schedule} t={t} />}
 
               {/* --- Review Section --- */}
-              <FistReviewKtvSection
+              <RecentReviewKtvSection
                 t={t}
                 review_count={detail.review_count}
-                first_review={detail.first_review}
+                recent_reviews={detail.recent_reviews}
                 ktv_id={detail.id}
               />
 
@@ -99,7 +97,6 @@ const MasseurDetailScreen = () => {
         handlePrepareBooking={handlePrepareBooking}
         t={t}
       />
-      {/* <ReviewSheetContent /> */}
     </>
   );
 };

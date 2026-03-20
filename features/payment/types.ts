@@ -54,7 +54,7 @@ export type DepositRequest = {
 export type DepositItem = {
   transaction_id: string;
   payment_type: _PaymentType;
-  data_payment: QRBankData | QRWechatData; // Tùy vào payment_type, có thể là QRBankData hoặc ZaloPayData hoặc MomoPayData
+  data_payment: QRBankData | QRWechatData | AlipayData; // Tùy vào payment_type, có thể là QRBankData hoặc ZaloPayData hoặc MomoPayData hoặc AlipayData
 };
 
 export type QRBankData = {
@@ -72,6 +72,14 @@ export interface QRWechatData {
   amount: string;
   description: string;
   amount_cny: string;
+  exchange_rate: string;
+}
+
+export interface AlipayData {
+  qr_image: string;
+  amount: string;
+  description: string;
+  amount_cny: number;
   exchange_rate: string;
 }
 

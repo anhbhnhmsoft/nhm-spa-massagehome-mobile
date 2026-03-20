@@ -118,7 +118,9 @@
     "total": "Total",
     "nickname": "Nickname",
     "password_description": "Password must be at least 8 characters long, include at least 1 uppercase, 1 lowercase, 1 number.",
-    "status": "Status"
+    "status": "Status",
+    "choose_method": "Choose how you want to log in or create a new account",
+    "login_phone": "Phone number"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -194,7 +196,9 @@
       "QR_BANKING": "QR Banking Transfer",
       "ZALO_PAY": "Zalo Pay",
       "MOMO_PAY": "Momo Pay",
-      "WECHAT_PAY": "WeChat Pay"
+      "WECHAT_PAY": "WeChat Pay",
+      "ALI_PAY": "Alipay"
+
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Deposit via QR Banking",
@@ -213,7 +217,8 @@
       "PAYMENT_FEE_TRANSPORT": "Payment Fee Transport",
       "PAYMENT_KTV_EARN_TRANSPORT": "Earn Transport Fee",
       "REFUND_CUSTOMER_TRANSPORT": "Refund Customer Transport",
-      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport"
+      "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport",
+      "DEPOSIT_WECHAT_ALIPAY": "Deposit via Alipay"
     },
     "transaction_status": {
       "PENDING": "Pending",
@@ -302,13 +307,23 @@
     "index_label": "Exercise, massage, spa your way",
     "btn_login_register": "Log in / Register",
     "index_label_2": "By logging into the app, you agree to our Rules, Terms, and Policies.",
+    "auth_title_phone": "What's your phone number?",
+    "auth_description_phone": "The phone number is used to log in or register for the first time.",
+    "auth_title_email": "What's your email?",
+    "auth_description_email": "The email is used to log in or register for the first time.",
     "auth_title": "What's your phone number?",
     "auth_description": "The phone number is used to log in or register for the first time.",
     "placeholder_phone": "Enter phone number",
     "auth_verify_title": "Verify Phone Number",
     "auth_verify_description": "An OTP code has been sent to your phone number",
+    "auth_verify_title_phone": "Verify Phone Number",
+    "auth_verify_description_phone": "An OTP code has been sent to your phone number",
+    "auth_verify_title_email": "Verify Email",
+    "auth_verify_description_email": "An OTP code has been sent to your email",
     "placeholder_otp": "Enter OTP",
     "resend_otp": "Resend OTP",
+    "resend_otp_phone": "Resend SMS",
+    "resend_otp_email": "Resend Email",
     "register_title": "Register",
     "register_description": "Please enter your information to help us verify your account.",
     "login_title": "Log in",
@@ -328,6 +343,8 @@
       "phone_invalid": "Invalid phone number, please re-enter",
       "phone_min": "Phone number must be at least 9 digits",
       "phone_max": "Phone number max 12 digits",
+      "email_required": "Please enter email",
+      "email_invalid": "Invalid email, please re-enter",
       "otp_required": "Please enter OTP code",
       "otp_invalid": "Invalid OTP code, please re-enter",
       "otp_min": "OTP code must be at least 6 digits",
@@ -588,6 +605,8 @@
     "request_withdraw": "Request Withdrawal",
     "method_disabled": "Maintenance",
     "wechat_scan_instruction": "Please use WeChat to scan the QR code to complete the payment",
+    "alipay_scan_instruction": "Open the Alipay app and scan the QR code to make the payment",
+    "processing_transaction_alipay": "The system is processing the Alipay payment. This process may take 15–30 minutes",
     "amount": "Amount",
     "transfer_note": "Transfer note",
     "note_important": "Please enter this note exactly as shown",

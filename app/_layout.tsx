@@ -62,6 +62,7 @@ export default function RootLayout() {
   if (!ready) {
     return null;
   }
+
   return (
     <SafeAreaProvider>
       <QueryProvider>

@@ -9,6 +9,7 @@ export enum _PaymentType {
   ZALO_PAY = 2,
   MOMO_PAY = 3,
   WECHAT_PAY = 7,
+  ALI_PAY = 8,
 }
 
 export const _PAYMENT_METHODS = [
@@ -25,6 +26,11 @@ export const _PAYMENT_METHODS = [
   {
     id: _PaymentType.WECHAT_PAY,
     name: 'enum.payment_type.WECHAT_PAY',
+    desc: 'common.hold_payment',
+  },
+  {
+    id: _PaymentType.ALI_PAY,
+    name: 'enum.payment_type.ALI_PAY',
     desc: 'common.hold_payment',
   },
 ] as const;
@@ -47,6 +53,7 @@ export enum _TransactionType {
   PAYMENT_KTV_EARN_TRANSPORT = 15, // Nhận tiền từ di chuyển ( Cộng tiền KTV)
   REFUND_CUSTOMER_TRANSPORT = 16, // Hoàn tiền cho customer khi hủy booking
   PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL = 17, // thu hồi tiền thanh toán cho KTV khi hủy booking
+  DEPOSIT_WECHAT_ALIPAY = 20, // Nạp tiền qua Wechat Pay
 }
 
 export const _TransactionTypeMap = {
@@ -58,7 +65,8 @@ export const _TransactionTypeMap = {
   [_TransactionType.AFFILIATE]: 'enum.transaction_type.AFFILIATE',
   [_TransactionType.PAYMENT_FOR_KTV]: 'enum.transaction_type.PAYMENT_FOR_KTV',
   [_TransactionType.REFUND]: 'enum.transaction_type.REFUND',
-  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]: 'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
+  [_TransactionType.RETRIEVE_PAYMENT_REFUND_KTV]:
+    'enum.transaction_type.RETRIEVE_PAYMENT_REFUND_KTV',
   [_TransactionType.REFERRAL_KTV]: 'enum.transaction_type.REFERRAL_KTV',
   [_TransactionType.REFERRAL_INVITE_KTV_REWARD]: 'enum.transaction_type.REFERRAL_INVITE_KTV_REWARD',
   [_TransactionType.DEPOSIT_WECHAT_PAY]: 'enum.transaction_type.DEPOSIT_WECHAT_PAY',
@@ -66,7 +74,9 @@ export const _TransactionTypeMap = {
   [_TransactionType.PAYMENT_FEE_TRANSPORT]: 'enum.transaction_type.PAYMENT_FEE_TRANSPORT',
   [_TransactionType.PAYMENT_KTV_EARN_TRANSPORT]: 'enum.transaction_type.PAYMENT_KTV_EARN_TRANSPORT',
   [_TransactionType.REFUND_CUSTOMER_TRANSPORT]: 'enum.transaction_type.REFUND_CUSTOMER_TRANSPORT',
-  [_TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL]: 'enum.transaction_type.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL',
+  [_TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL]:
+    'enum.transaction_type.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL',
+  [_TransactionType.DEPOSIT_WECHAT_ALIPAY]: 'enum.transaction_type.DEPOSIT_WECHAT_ALIPAY',
 };
 
 export enum _TransactionStatus {
@@ -101,6 +111,8 @@ export const _TransactionInType = [
   _TransactionType.REFUND_CUSTOMER_TRANSPORT,
   _TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL,
   _TransactionType.PAYMENT_KTV_EARN_TRANSPORT,
+  _TransactionType.DEPOSIT_WECHAT_ALIPAY,
+  _TransactionType.PAYMENT,
 ] as readonly _TransactionType[];
 
 export const _TransactionOutType = [

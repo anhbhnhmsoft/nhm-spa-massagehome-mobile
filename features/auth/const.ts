@@ -1,5 +1,3 @@
-
-
 export enum _AuthStatus {
   INITIAL = 'INITIAL',
   HYDRATE = 'HYDRATE',
@@ -22,3 +20,7 @@ export const _GenderMap = {
   [_Gender.FEMALE]: 'enum.gender.FEMALE',
 } as const;
 
+export enum _TypeAuthenticate {
+  PHONE = 'phone',
+  EMAIL = 'email',
+}

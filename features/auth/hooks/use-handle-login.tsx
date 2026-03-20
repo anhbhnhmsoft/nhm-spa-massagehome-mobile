@@ -8,7 +8,7 @@ import { useCallback, useEffect } from 'react';
 import { LoginRequest } from '@/features/auth/types';
 import z from 'zod';
 import { useForgotPasswordMutation, useLoginMutation } from '@/features/auth/hooks/use-mutation';
-import { _UserRole } from '@/features/auth/const';
+import { _TypeAuthenticate, _UserRole } from '@/features/auth/const';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
 import { router } from 'expo-router';
 
@@ -20,8 +20,9 @@ export const useHandleLogin = () => {
   const { t } = useTranslation();
   // handle error toast khi gọi API thất bại
   const handleError = useErrorToast();
-  // set phone_authen vào auth store khi submit form
-  const phone = useFormAuthStore((state) => state.phone_authenticate);
+  // set username/type_authenticate vào auth store khi submit form
+  const username = useFormAuthStore((state) => state.username_authenticate);
+  const typeAuthenticate = useFormAuthStore((state) => state.type_authenticate);
 
   // update state form auth store khi gọi API thành công
   const updateStateForm = useFormAuthStore((state) => state.updateState);
@@ -42,12 +43,8 @@ export const useHandleLogin = () => {
   const form = useForm<LoginRequest>({
     resolver: zodResolver(
       z.object({
-        phone: z
-          .string()
-          .min(1, { error: t('auth.error.phone_required') })
-          .regex(/^[0-9]+$/, { error: t('auth.error.phone_invalid') })
-          .min(9, { error: t('auth.error.phone_min') })
-          .max(12, { error: t('auth.error.phone_max') }),
+        username: z.string().min(1, { error: t('auth.error.phone_required') }),
+        type_authenticate: z.nativeEnum(_TypeAuthenticate),
         password: z
           .string()
           .min(1, { message: t('auth.error.password_invalid') })
@@ -58,16 +55,21 @@ export const useHandleLogin = () => {
       })
     ),
     defaultValues: {
-      phone: phone || '',
+      username: username || '',
+      type_authenticate: typeAuthenticate || _TypeAuthenticate.PHONE,
       password: '',
     },
   });
 
-  // set phone_authen vào form khi phone_authen thay đổi
+  // set username/type_authenticate vào form khi auth store thay đổi
   useEffect(() => {
-    if (!phone) return;
-    form.setValue('phone', phone);
-  }, [phone]);
+    if (username) {
+      form.setValue('username', username);
+    }
+    if (typeAuthenticate) {
+      form.setValue('type_authenticate', typeAuthenticate);
+    }
+  }, [username, typeAuthenticate]);
 
   // mutate function để gọi API xác thực user
   const { mutate: mutateLogin, isPending: pendingLogin } = useLoginMutation();
@@ -108,12 +110,17 @@ export const useHandleLogin = () => {
 
   // handle submit forgot password
   const onForgotPassword = useCallback(() => {
-    if (!phone) {
-      errorToast({ message: t('auth.error.phone_required') });
+    if (!username || !typeAuthenticate) {
+      errorToast({
+        message:
+          typeAuthenticate === _TypeAuthenticate.PHONE
+            ? t('auth.error.phone_required')
+            : t('auth.error.email_required'),
+      });
       return;
     }
     mutateForgotPassword(
-      { phone },
+      { username, type_authenticate: typeAuthenticate },
       {
         onSuccess: (res) => {
           const dataResponse = res.data;
@@ -143,7 +150,7 @@ export const useHandleLogin = () => {
         },
       }
     );
-  }, [phone]);
+  }, [username, typeAuthenticate]);
 
   return {
     form,

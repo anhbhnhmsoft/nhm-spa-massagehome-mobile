@@ -36,7 +36,13 @@ export const formatBalance = (balance: string | number) => {
 
 // Kiểm tra ngôn ngữ có hợp lệ hay không
 export const checkLanguage = (lang: string) => {
-  return [_LanguageCode.EN, _LanguageCode.VI, _LanguageCode.CN].includes(lang as _LanguageCode);
+  return [
+    _LanguageCode.EN,
+    _LanguageCode.VI,
+    _LanguageCode.CN,
+    _LanguageCode.JP,
+    _LanguageCode.KR,
+  ].includes(lang as _LanguageCode);
 };
 
 // Hàm chuyển đổi độ sang radian
@@ -236,7 +242,7 @@ export const goBack = () => {
   if (router.canGoBack()) {
     router.back();
   }
-}
+};
 
 /**
  * So sánh hai phiên bản ứng dụng
@@ -259,4 +265,3 @@ export const calculatePriceDistance = (priceDistance: number, distance: number) 
   const rawPrice = priceDistance * distance;
   return Math.ceil(rawPrice / 500) * 500;
 };
-

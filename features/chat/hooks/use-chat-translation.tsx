@@ -1,30 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useMutationTranslateMessage } from './use-mutation';
 import { _LanguageCode } from '@/lib/const';
-import { ReviewTranslations } from '@/lib/types';
-import { ListMessageRequest, ListMessageResponse, PayloadNewMessage } from '../types';
+import { _DEFAULT_TRANSLATIONS, LanguageTranslations } from '@/lib/types';
+import { ListMessageResponse, PayloadNewMessage } from '../types';
 import { useImmer } from 'use-immer';
 import { queryClient } from '@/lib/provider/query-provider';
 import { InfiniteData } from '@tanstack/react-query';
 import useChatStore from '../stores';
 import { produce } from 'immer';
 
-const defaultStateChat: ReviewTranslations = {
-  [_LanguageCode.EN]: '',
-  [_LanguageCode.VI]: '',
-  [_LanguageCode.CN]: '',
-};
-
-export const useChatTranslation = (
-  chatItem: PayloadNewMessage | null,
-  params: ListMessageRequest
-) => {
+export const useChatTranslation = (chatItem: PayloadNewMessage | null) => {
   const { mutate: translateMutate, isPending } = useMutationTranslateMessage();
   const [targetLang, setTargetLang] = useState<_LanguageCode | null>(null);
 
-  console.log(params);
-
-  const [translatedChat, setTranslatedChat] = useImmer<ReviewTranslations>(defaultStateChat);
+  const [translatedChat, setTranslatedChat] = useImmer<LanguageTranslations>(_DEFAULT_TRANSLATIONS);
   const room = useChatStore((s) => s.room);
 
   useEffect(() => {
@@ -53,7 +42,6 @@ export const useChatTranslation = (
           if (!oldData) return oldData;
 
           return produce(oldData, (draft) => {
-            console.log('oo', oldData);
             if (!draft.pages) return;
 
             for (const page of draft.pages) {
@@ -72,7 +60,7 @@ export const useChatTranslation = (
         }
       );
     },
-    [room?.id, params]
+    [room?.id, queryClient]
   );
 
   const translate = useCallback(
@@ -82,7 +70,6 @@ export const useChatTranslation = (
           handleUpdateTranslation(chatItem.id, translatedChat[lang], lang);
           return;
         }
-
         translateMutate(
           { message_id: chatItem.id, lang },
           {
@@ -91,26 +78,28 @@ export const useChatTranslation = (
               setTranslatedChat((draft) => {
                 draft[lang] = text;
               });
-              // Update parent with new translation
               handleUpdateTranslation(chatItem.id, text, lang);
             },
           }
         );
       }
     },
-    [chatItem, translatedChat]
+    [chatItem, translatedChat, handleUpdateTranslation]
   );
-  const handleChangeTargetLang = useCallback((lang: _LanguageCode) => {
-    setTargetLang(lang);
-    translate(lang);
-  }, []);
+  const handleChangeTargetLang = useCallback(
+    (lang: _LanguageCode) => {
+      setTargetLang(lang);
+      translate(lang);
+    },
+    [translate]
+  );
 
   const handleResetTargetLang = useCallback(() => {
     setTargetLang(null);
   }, []);
 
   const handleResetTranslateChat = useCallback(() => {
-    setTranslatedChat(defaultStateChat);
+    setTranslatedChat(_DEFAULT_TRANSLATIONS);
   }, []);
   return {
     targetLang,

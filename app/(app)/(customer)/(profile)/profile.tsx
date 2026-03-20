@@ -1,7 +1,4 @@
-import {
-  Camera,
-  User as UserIcon,
-} from 'lucide-react-native';
+import { Camera, User as UserIcon } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +26,6 @@ export default function UserProfile() {
         {/* Header */}
         <HeaderBack title={t('profile.user_info_title')} />
 
-
         {/* Scrollable Content */}
         {user && (
           <ScrollView
@@ -49,7 +45,7 @@ export default function UserProfile() {
                   />
                 ) : (
                   // Fallback UI khi không có ảnh hoặc ảnh lỗi
-                  <View className="h-28 w-28 rounded-full border-4 border-white bg-slate-200 items-center justify-center">
+                  <View className="h-28 w-28 items-center justify-center rounded-full border-4 border-white bg-slate-200">
                     <Icon as={UserIcon} size={32} className={'text-slate-400'} />
                   </View>
                 )}
@@ -64,7 +60,10 @@ export default function UserProfile() {
             {/* Form List */}
             <View className="px-4">
               <InfoItem label={t('common.full_name')} value={user.name || t('common.unknown')} />
-              <InfoItem label={t('common.phone')} value={user.phone || t('common.unknown')} />
+              <InfoItem
+                label={user.phone ? t('common.phone') : t('common.email')}
+                value={user.phone || user.email || t('common.unknown')}
+              />
               <InfoItem
                 label={t('common.gender')}
                 value={t(_GenderMap[user.profile.gender || _Gender.MALE]) || t('common.unknown')}
@@ -87,9 +86,10 @@ export default function UserProfile() {
             <View className="mt-6 items-center gap-4 space-y-4 px-4">
               <TouchableOpacity
                 className="w-full items-center rounded-lg bg-primary-color-2/20 py-3"
-                onPress={() => router.push('/(app)/(customer)/(profile)/edit-profile')}
-              >
-                <Text className="font-inter-bold text-primary-color-2">{t('profile.edit_info')}</Text>
+                onPress={() => router.push('/(app)/(customer)/(profile)/edit-profile')}>
+                <Text className="font-inter-bold text-primary-color-2">
+                  {t('profile.edit_info')}
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

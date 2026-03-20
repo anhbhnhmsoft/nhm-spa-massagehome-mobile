@@ -35,7 +35,6 @@ export type ResponseDataSuccessType<T> = {
   data: T;
 };
 
-
 export type ResponseSuccessType = {
   message: string;
 };
@@ -69,8 +68,8 @@ export type Paginator<T> = {
     per_page: number;
     to: number;
     total: number;
-  }
-}
+  };
+};
 
 export interface IDeviceInfo {
   platform: 'ios' | 'android';
@@ -82,6 +81,8 @@ export interface IMultiLangField {
   [_LanguageCode.VI]: string;
   [_LanguageCode.EN]?: string;
   [_LanguageCode.CN]?: string;
+  [_LanguageCode.JP]?: string;
+  [_LanguageCode.KR]?: string;
 }
 
 export interface IFileUpload {
@@ -90,4 +91,12 @@ export interface IFileUpload {
   name: string; // vd: 'photo.jpg'
 }
 
-export type ReviewTranslations = Record<_LanguageCode, string>;
+export type LanguageTranslations = Record<_LanguageCode, string>;
+
+export const _DEFAULT_TRANSLATIONS: LanguageTranslations = {
+  [_LanguageCode.EN]: '',
+  [_LanguageCode.VI]: '',
+  [_LanguageCode.CN]: '',
+  [_LanguageCode.JP]: '',
+  [_LanguageCode.KR]: '',
+};
