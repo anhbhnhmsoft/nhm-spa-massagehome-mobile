@@ -17,12 +17,11 @@ type Props = {
 
 export const ServiceCardDetailKtv: FC<Props> = ({ t, item, setItem }: Props) => {
   const [imageError, setImageError] = useState(false);
-
   // Tính giá thấp nhất trong danh sách giá
   const minPrice = useMemo(() => {
     const min = item.prices.reduce(
       (acc, option) => Math.min(acc, Number(option.price)),
-      Number(item.prices[0].price)
+      Number(item.prices[0]?.price ?? 0)
     );
     return min.toFixed(2);
   }, [item.prices]);

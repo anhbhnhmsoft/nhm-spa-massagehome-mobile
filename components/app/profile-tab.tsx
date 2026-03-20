@@ -7,6 +7,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/
 import { useChangeAvatar } from '@/features/auth/hooks';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { _LanguagesMap } from '@/lib/const';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Bottom Edit image
 export const BottomEditAvatar = forwardRef<
@@ -16,7 +17,7 @@ export const BottomEditAvatar = forwardRef<
   }
 >(({ canDelete }, ref) => {
   const { t } = useTranslation();
-
+  const inset = useSafeAreaInsets();
   const { takePictureCamera, chooseImageFormLib, deleteAvatar } = useChangeAvatar();
 
   // Cấu hình Backdrop (Lớp nền mờ đen phía sau)
@@ -36,7 +37,10 @@ export const BottomEditAvatar = forwardRef<
       backgroundStyle={{ backgroundColor: '#f5f5f5' }}
       handleIndicatorStyle={{ backgroundColor: 'white' }} // Màu cái thanh ngang nhỏ ở trên
     >
-      <BottomSheetView className="flex-1 pb-5">
+      <BottomSheetView
+        style={{ paddingBottom: inset.bottom + 20 }}
+        className="flex-1"
+      >
         <TouchableOpacity
           className={'flex-row items-center border-b border-gray-100 px-5 py-2 pb-4'}
           onPress={() => {

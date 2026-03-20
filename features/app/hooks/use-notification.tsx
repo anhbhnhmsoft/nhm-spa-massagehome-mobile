@@ -86,14 +86,11 @@ export const useNotification = () => {
     syncTokenToServer();
 
     // 2. Setup Listeners
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log("Nhận thông báo khi mở app:", notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log("User bấm vào thông báo:", response);
-      // Điều hướng (router.push) tại đây
-    });
+    // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    // });
+    //
+    // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+    // });
 
     return () => {
       if (notificationListener.current) {

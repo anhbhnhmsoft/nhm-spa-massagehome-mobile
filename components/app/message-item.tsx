@@ -24,7 +24,11 @@ export const MessageItem = memo(({ item, currentUserId, onLongPress, t }: Messag
 
   return (
     <TouchableOpacity
-      onLongPress={() => onLongPress(item)}
+      onLongPress={() => {
+        if (!isMe) {
+          onLongPress(item);
+        }
+      }}
       delayLongPress={350}
       activeOpacity={0.85}
       className={cn('my-1 w-full flex-row px-4', isMe ? 'justify-end' : 'justify-start')}>

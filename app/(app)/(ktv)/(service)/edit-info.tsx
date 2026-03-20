@@ -16,7 +16,6 @@ import {
   Plus,
   Save,
   Trash2,
-  User as UserIcon,
   X,
 } from 'lucide-react-native';
 import { cn } from '@/lib/utils';
@@ -24,7 +23,6 @@ import { Text } from '@/components/ui/text';
 import HeaderBack from '@/components/header-back';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTranslation } from 'react-i18next';
-import { Icon } from '@/components/ui/icon';
 import { editProfileKTV, useEditImage } from '@/features/ktv/hooks';
 import { Controller } from 'react-hook-form';
 import { BottomEditImage } from '@/components/app/ktv/profile-tab';
@@ -35,6 +33,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLockAccount } from '@/features/auth/hooks';
+import Avatar from '@/components/ui/avatar';
+import { FormInput } from '@/components/ui/form-input';
 
 export default function EditInfoScreen() {
   const { form, profileData, onSubmit, user, isLoading } = editProfileKTV();
@@ -42,8 +42,7 @@ export default function EditInfoScreen() {
   const { control, handleSubmit } = form;
   const { handleLockAccount, isPending } = useLockAccount();
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
-  const bottomShetImagePicker = useRef<BottomSheetModal>(null);
-  const [imageError, setImageError] = useState(false);
+  const bottomSheetImagePicker = useRef<BottomSheetModal>(null);
 
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
@@ -73,19 +72,10 @@ export default function EditInfoScreen() {
 
                 <View className="mb-6 mt-6 items-center">
                   <View className="relative">
-                    {user?.profile.avatar_url !== null && !imageError ? (
-                      <Image
-                        source={{ uri: user?.profile.avatar_url }}
-                        className="h-28 w-28 rounded-full border-4 border-white"
-                        resizeMode="cover"
-                        onError={() => setImageError(true)}
-                      />
-                    ) : (
-                      // Fallback UI khi không có ảnh hoặc ảnh lỗi
-                      <View className="h-28 w-28 items-center justify-center rounded-full border-4 border-white bg-slate-200">
-                        <Icon as={UserIcon} size={32} className={'text-slate-400'} />
-                      </View>
-                    )}
+                    <Avatar
+                      source={user?.profile.avatar_url}
+                      size={112}
+                    />
                     <TouchableOpacity
                       className="absolute bottom-0 right-0 rounded-full border-2 border-white bg-[#2B7BBE] p-1.5"
                       onPress={() => bottomEditAvatar.current?.present()}>
@@ -109,7 +99,7 @@ export default function EditInfoScreen() {
                     {(profileData?.list_images?.length ?? 0) < 5 && (
                       <TouchableOpacity
                         className="h-20 w-20 items-center justify-center rounded-xl border border-dashed border-[#2B7BBE] bg-blue-50"
-                        onPress={() => bottomShetImagePicker.current?.present()}>
+                        onPress={() => bottomSheetImagePicker.current?.present()}>
                         <View className="mb-1 rounded-full bg-[#2B7BBE] p-1">
                           <Plus size={16} color="white" />
                         </View>
@@ -146,17 +136,18 @@ export default function EditInfoScreen() {
 
                 {/* 3. FORM FIELDS */}
                 <View className="space-y-4 px-4">
+
                   <FormInput
                     label={t('common.full_name')}
                     value={profileData?.name}
                     editable={false}
-                    icon={<Lock size={16} color="#9CA3AF" />}
+                    rightIcon={<Lock size={16} color="#9CA3AF" />}
                   />
                   <FormInput
                     label={t('common.phone')}
                     value={profileData?.phone}
                     editable={false}
-                    icon={<Lock size={16} color="#9CA3AF" />}
+                    rightIcon={<Lock size={16} color="#9CA3AF" />}
                   />
 
                   <Controller
@@ -193,12 +184,12 @@ export default function EditInfoScreen() {
                           const value = text === '' ? undefined : Number(text);
                           field.onChange(value);
                         }}
-                        icon={<Briefcase size={16} color="#9CA3AF" />}
+                        rightIcon={<Briefcase size={16} color="#9CA3AF" />}
                       />
                     )}
                   />
 
-                  <Text className="my-4 mt-2 text-base font-bold text-gray-800">
+                  <Text className="my-4 mt-2 text-base font-inter-bold text-gray-800">
                     {t('common.bio')}
                   </Text>
 
@@ -249,7 +240,7 @@ export default function EditInfoScreen() {
 
                 {/* 4. SECURITY SECTION */}
                 <View className="mb-8 mt-6 px-4">
-                  <Text className="mb-3 text-base font-bold text-gray-800">
+                  <Text className="mb-3 text-base font-inter-bold text-gray-800">
                     {t('common.security')}
                   </Text>
 
@@ -263,7 +254,7 @@ export default function EditInfoScreen() {
                         onChangeText={field.onChange}
                         secureTextEntry
                         error={fieldState.error?.message}
-                        icon={<Key size={16} color="#6B7280" />}
+                        rightIcon={<Key size={16} color="#6B7280" />}
                       />
                     )}
                   />
@@ -277,7 +268,7 @@ export default function EditInfoScreen() {
                         onChangeText={field.onChange}
                         secureTextEntry
                         error={fieldState.error?.message}
-                        icon={<Key size={16} color="#6B7280" />}
+                        rightIcon={<Key size={16} color="#6B7280" />}
                       />
                     )}
                   />
@@ -307,55 +298,15 @@ export default function EditInfoScreen() {
           onPress={handleSubmit(onSubmit)}
           className="flex-row items-center justify-center rounded-xl bg-[#2B7BBE] py-4">
           <Save size={20} color="white" />
-          <Text className="ml-4 text-lg font-bold text-white">{t('ktv.services.form.save')}</Text>
+          <Text className="ml-4 text-lg font-inter-bold text-white">{t('ktv.services.form.save')}</Text>
         </TouchableOpacity>
       </View>
       <BottomEditAvatar ref={bottomEditAvatar} canDelete={profileData?.avatar_url !== null} />
-      <BottomEditImage ref={bottomShetImagePicker} imageLength={profileData?.list_images?.length} />
+      <BottomEditImage ref={bottomSheetImagePicker} imageLength={profileData?.list_images?.length} />
     </>
   );
 }
 
-// --- COMPONENTS CON CHO GỌN CODE ---
-
-// 1. Input thường (Có hỗ trợ icon và trạng thái disable)
-const FormInput = ({
-  label,
-  value,
-  editable = true,
-  icon,
-  onChangeText,
-  keyboardType = 'default',
-  error,
-  secureTextEntry,
-}: any) => (
-  <View className="mb-3">
-    <Text className="mb-1.5 ml-1 text-sm font-medium text-gray-500">{label}</Text>
-
-    <View
-      className={cn(
-        'h-14 flex-row items-center rounded-xl border px-4',
-        error
-          ? 'border-red-500'
-          : editable
-            ? 'border-gray-200 bg-white'
-            : 'border-gray-100 bg-gray-50'
-      )}>
-      <TextInput
-        value={value}
-        editable={editable}
-        onChangeText={onChangeText}
-        keyboardType={keyboardType}
-        secureTextEntry={secureTextEntry}
-        className={cn('flex-1 text-base', editable ? 'text-gray-900' : 'text-gray-500')}
-      />
-      {icon && <View className="ml-2">{icon}</View>}
-    </View>
-
-    {/* ERROR TEXT */}
-    {error && <Text className="ml-1 mt-1 text-xs text-red-500">{error}</Text>}
-  </View>
-);
 
 // 2. Text Area đa ngôn ngữ (Có Badge góc phải)
 const LanguageTextArea = ({ lang, placeholder, value, onChangeText, error }: any) => (

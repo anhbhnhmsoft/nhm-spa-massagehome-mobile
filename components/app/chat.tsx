@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { useChat } from '@/features/chat/hooks';
 import { cn, goBack } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
-import { _LanguageCode, _LanguagesMap } from '@/lib/const';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import DefaultColor from '@/components/styles/color';
 import { MessageItem } from './message-item';
