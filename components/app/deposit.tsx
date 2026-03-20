@@ -160,6 +160,8 @@ export default function Deposit({ useFor }: { useFor: _UserRole }) {
                       disabled = !configPayment?.allow_payment?.zalopay;
                     } else if (method.id === _PaymentType.WECHAT_PAY) {
                       disabled = !configPayment?.allow_payment?.wechatpay;
+                    } else if (method.id === _PaymentType.ALI_PAY) {
+                      disabled = !configPayment?.allow_payment?.alipay;
                     }
                     return (
                       <TouchableOpacity

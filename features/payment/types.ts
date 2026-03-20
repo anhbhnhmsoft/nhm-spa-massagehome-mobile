@@ -41,6 +41,7 @@ export type ConfigPaymentItem = {
     zalopay: boolean; // Cho phép nạp qua ZaloPay
     momo: boolean; // Cho phép nạp qua Momo
     wechatpay: boolean; // Cho phép nạp qua WechatPay
+    alipay: boolean; // Cho phép nạp qua Alipay
   };
 };
 
