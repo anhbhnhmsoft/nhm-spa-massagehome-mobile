@@ -12,7 +12,7 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "env": {
         "EXPO_PUBLIC_BACKEND_URL": "https://massagehome.com.vn",
