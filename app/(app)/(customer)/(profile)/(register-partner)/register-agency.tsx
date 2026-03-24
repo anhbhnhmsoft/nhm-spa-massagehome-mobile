@@ -57,7 +57,7 @@ export default function PartnerRegisterAgencyScreen() {
 
   return (
     <SafeAreaView className="relative flex-1 bg-white">
-      <FocusAwareStatusBar hidden={false} style={'dark'} />
+      <FocusAwareStatusBar hidden={true} />
       <HeaderBack title={'profile.partner_register.agency_title'} />
 
       {!showForm && (
