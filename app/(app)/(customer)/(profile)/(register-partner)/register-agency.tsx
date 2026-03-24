@@ -57,7 +57,7 @@ export default function PartnerRegisterAgencyScreen() {
 
   return (
     <SafeAreaView className="relative flex-1 bg-white">
-      <FocusAwareStatusBar hidden={true} />
+      <FocusAwareStatusBar hidden={false} style={'dark'} />
       <HeaderBack title={'profile.partner_register.agency_title'} />
 
       {!showForm && (
@@ -201,16 +201,6 @@ export default function PartnerRegisterAgencyScreen() {
                             </View>
                           </Card>
                         </TouchableOpacity>
-                        <ListLocationModal
-                          visible={showLocationModal}
-                          onClose={() => setShowLocationModal(false)}
-                          onSelect={(location) => {
-                            setValue('address', location.address);
-                            setValue('latitude', Number(location.latitude));
-                            setValue('longitude', Number(location.longitude));
-                            setShowLocationModal(false);
-                          }}
-                        />
                       </View>
                       <View className="flex-col gap-2">
                         <FormError error={errors?.address?.message} />
@@ -287,6 +277,16 @@ export default function PartnerRegisterAgencyScreen() {
         isVisible={showModalApplication}
         onClose={() => setShowModalApplication(false)}
         data={reviewApplication}
+      />
+      <ListLocationModal
+        visible={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onSelect={(location) => {
+          setValue('address', location.address);
+          setValue('latitude', Number(location.latitude));
+          setValue('longitude', Number(location.longitude));
+          setShowLocationModal(false);
+        }}
       />
     </SafeAreaView>
   );
