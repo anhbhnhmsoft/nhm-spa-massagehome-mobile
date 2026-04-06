@@ -82,6 +82,7 @@ export type RegisterRequest = {
   referral_code?: string | null;
   gender: _Gender;
   language: _LanguageCode;
+  address?: string;
 };
 
 export type RegisterResponse = ResponseDataSuccessType<AuthData>;

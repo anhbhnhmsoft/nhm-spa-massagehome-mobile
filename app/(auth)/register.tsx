@@ -152,6 +152,23 @@ export default function RegisterScreen() {
                   )}
                 />
 
+                {/* Address Input */}
+                <Controller
+                  control={control}
+                  name="address"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <FormInput
+                      id="address"
+                      placeholder={t('common.address')}
+                      label={t('common.address')}
+                      error={errors.address?.message}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value || ''}
+                    />
+                  )}
+                />
+
                 {/* Gender Input */}
                 <Controller
                   control={control}

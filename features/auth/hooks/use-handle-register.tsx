@@ -62,6 +62,7 @@ export const useHandleRegister = () => {
         language: z.enum(_LanguageCode, {
           error: t('auth.error.language_invalid'),
         }),
+        address: z.string().optional(),
       })
         .superRefine((data, ctx) => {
           // Nếu chọn loại xác thực là EMAIL
