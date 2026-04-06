@@ -1,5 +1,5 @@
 import AppBottomSheet from '@/components/ui/app-bottom-sheet';
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC,  useCallback, useMemo, useState } from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import { View, TouchableOpacity } from 'react-native';
@@ -11,18 +11,51 @@ import { ImageOff } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import { cn, formatBalance } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
+import { useImmer } from 'use-immer';
+import { useDetailKtv } from '@/features/user/hooks';
 
 type Props = {
   ref: React.Ref<BottomSheetModal>,
   serviceData: ServiceCategoryItem | null,
   onDismiss: () => void,
   t: TFunction,
-  handlePrepareBooking: (option: { id: string, price: string, duration: number }) => void,
+  handlePrepareBooking: ReturnType<typeof useDetailKtv>['handlePrepareBooking'],
 }
 
 export const ServicesBottomSheet: FC<Props> = ({ ref, serviceData, onDismiss, t, handlePrepareBooking }) => {
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const [selectedIds, setSelectedIds] = useImmer<string[]>([]);
+
+  const handleToggle = useCallback((id: string) => {
+    setSelectedIds((draft) => {
+      // Tìm vị trí của id trong mảng draft
+      const index = draft.indexOf(id);
+      if (index !== -1) {
+        // Bỏ chọn: Nếu id đã tồn tại, dùng splice để xóa nó khỏi mảng
+        draft.splice(index, 1);
+      } else {
+        // Chọn thêm: Nếu id chưa có, dùng push để thêm thẳng vào mảng
+        draft.push(id);
+      }
+    });
+  },[]);
+
+  // 1. Lấy ra danh sách toàn bộ các option đang được chọn
+  const selectedOptions = useMemo(() => {
+    if (serviceData){
+      return serviceData.prices.filter(opt => selectedIds.includes(opt.id));
+    }else{
+      return [];
+    }
+  },[serviceData, selectedIds]);
+
+// 2. Tính tổng tiền của các option đã chọn
+  const totalPrice = selectedOptions.reduce((sum, opt) => sum + Number(opt.price), 0);
+
+// 3. Biến kiểm tra xem người dùng đã chọn ít nhất 1 mục chưa
+  const hasSelection = selectedIds.length > 0;
 
   const [imageError, setImageError] = useState(false);
 
@@ -88,12 +121,12 @@ export const ServicesBottomSheet: FC<Props> = ({ ref, serviceData, onDismiss, t,
 
           {/* Danh sách các option */}
           {serviceData.prices.map((option) => {
-            const isSelected = selectedId === option.id;
+            const isSelected = selectedIds.includes(option.id);
             return (
               <TouchableOpacity
                 key={option.id}
                 activeOpacity={0.7}
-                onPress={() => setSelectedId(option.id)}
+                onPress={() => handleToggle(option.id)}
                 className={cn(`flex-row items-center p-4 mb-3 rounded-2xl border-2`,
                   isSelected ? 'border-primary-color-2 bg-blue-50/30' : 'border-slate-100 bg-white',
                 )}
@@ -132,30 +165,31 @@ export const ServicesBottomSheet: FC<Props> = ({ ref, serviceData, onDismiss, t,
           <View className="mt-8">
             <View
               className="w-full bg-slate-100 rounded-2xl py-4 px-6 flex-row justify-between items-center shadow-lg shadow-slate-300">
-              {/* Hiển thị giá tiền của gói đang chọn */}
+
+              {/* Hiển thị TỔNG giá tiền của CÁC gói đang chọn */}
               <View className="flex-col">
-                <Text className="text-slate-700 text-sm font-inter-bold">{t('common.price')}</Text>
+                <Text className="text-slate-700 text-sm font-inter-bold">{t('common.temp_price')}</Text>
                 <Text className="text-primary-color-2 text-xl font-inter-bold">
-                  {formatBalance(serviceData.prices.find(opt => opt.id === selectedId)?.price ?? 0)} {t('common.currency')}
+                  {formatBalance(totalPrice)}
                 </Text>
               </View>
 
               {/* Book Now */}
               <TouchableOpacity
-                disabled={!selectedId}
+                disabled={!hasSelection}
                 onPress={() => {
-                  const option = serviceData.prices.find(opt => opt.id === selectedId);
-                  if (option) {
-                    handlePrepareBooking({
-                      id: option.id,
-                      price: option.price,
-                      duration: option.duration,
-                    });
-                  }
+                  // Tạo một mảng chứa thông tin các gói đã chọn để gửi đi
+                  const payload = selectedOptions.map(option => ({
+                    id: option.id,
+                    price: option.price,
+                    duration: option.duration,
+                  }));
+                  // Gọi hàm chuẩn bị booking với mảng dữ liệu mới
+                  handlePrepareBooking(payload);
                 }}
                 activeOpacity={0.7}
-                className={cn('flex-row items-center bg-primary-color-2 px-4 py-2 rounded-xl',
-                  selectedId ? 'bg-primary-color-2' : 'bg-slate-300',
+                className={cn('flex-row items-center px-4 py-2 rounded-xl',
+                  hasSelection ? 'bg-primary-color-2' : 'bg-slate-300' // Cập nhật logic màu sắc
                 )}>
                 <Text className="text-white text-base font-inter-bold mr-2">{t('common.book_now')}</Text>
                 <Ionicons name="arrow-forward" size={20} color="white" />

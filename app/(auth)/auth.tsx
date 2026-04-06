@@ -118,7 +118,7 @@ export default function AuthScreen() {
                     onChangeText={onChange}
                     onBlur={onBlur}
                     error={errors?.username?.message}
-                    autoCapitalize={isPhone ? 'none' : 'none'}
+                    autoCapitalize={'none'}
                   />
                 )}
               />

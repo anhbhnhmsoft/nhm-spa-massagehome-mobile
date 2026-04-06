@@ -80,7 +80,7 @@ export default function MasseursScreen() {
         ) : (
           <FlatList
             keyExtractor={(item, index) => `masseur-${item.id}-${index}`}
-            data={data}
+            data={data ?? []}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             style={{

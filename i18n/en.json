@@ -34,6 +34,7 @@
     "to": "to",
     "or": "Or",
     "price": "Price",
+    "temp_price": "Temporary Price",
     "remember_me": "Remember me",
     "forgot_password": "Forgot password?",
     "loading": "Processing...",
@@ -1012,8 +1013,10 @@
     "start_time": "Start Time",
     "end_time": "End Time",
     "save_changes": "Save Changes",
+    "is_cross_day": "Cross Day",
+    "off_day": "Off Day",
     "error": {
-      "invalid_time_end": "End time must be after start time",
+      "invalid_time_end": "The starting time cannot overlap with the ending time",
       "invalid_day": "Please select a valid day",
       "something_went_wrong": "Something went wrong, please try again"
     }

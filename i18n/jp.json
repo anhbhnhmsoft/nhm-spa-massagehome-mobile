@@ -34,6 +34,7 @@
     "to": "まで",
     "or": "または",
     "price": "料金",
+    "temp_price": "一時料金",
     "remember_me": "ログイン情報を保存",
     "forgot_password": "パスワードをお忘れですか？",
     "loading": "処理中...",
@@ -1007,8 +1008,10 @@
     "start_time": "開始時間",
     "end_time": "終了時間",
     "save_changes": "変更を保存",
+    "is_cross_day": "跨日",
+    "off_day": "休息日",
     "error": {
-      "invalid_time_end": "終了時間は開始時間より後である必要があります",
+      "invalid_time_end": "開始日時は終了日時より前である必要があります",
       "invalid_day": "有効な日を選択してください",
       "something_went_wrong": "エラーが発生しました。もう一度お試しください"
     }

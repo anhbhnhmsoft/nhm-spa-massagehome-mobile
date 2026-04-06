@@ -67,18 +67,16 @@ export const useDetailKtv = () => {
   }, []);
 
   // Xử lý chọn dịch vụ
-  const handlePrepareBooking = useCallback((option: {id: string, price:string, duration: number}) => {
+  const handlePrepareBooking = useCallback((option: {id: string, price:string, duration: number}[]) => {
     bottomServiceRef.current?.dismiss();
     handleDismissServiceSheet();
     if (serviceData && ktv) {
       setItem({
         service: {
           category_id: serviceData.id,
-          price_id: option.id,
           name: serviceData.name,
           image_url: serviceData.image_url,
-          temp_price: option.price,
-          duration: option.duration,
+          options: option,
         },
         ktv: {
           id: ktv.id,

@@ -34,6 +34,7 @@
     "to": "까지",
     "or": "또는",
     "price": "가격",
+    "temp_price": "임시 가격",
     "remember_me": "로그인 정보 저장",
     "forgot_password": "비밀번호를 잊으셨나요?",
     "loading": "처리 중...",
@@ -1007,8 +1008,10 @@
     "start_time": "시작 시간",
     "end_time": "종료 시간",
     "save_changes": "변경 사항 저장",
+    "is_cross_day": "일정 교차",
+    "off_day": "휴무일",
     "error": {
-      "invalid_time_end": "종료 시간은 시작 시간 이후여야 합니다",
+      "invalid_time_end": "시작 시간은 종료 시간 이후여야 합니다",
       "invalid_day": "유효한 날짜를 선택해 주세요",
       "something_went_wrong": "오류가 발생했습니다. 다시 시도해 주세요"
     }

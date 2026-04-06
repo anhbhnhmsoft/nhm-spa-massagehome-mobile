@@ -17,10 +17,10 @@ import dayjs from 'dayjs';
 import { useEditProfile, useLockAccount } from '@/features/auth/hooks';
 import React, { ReactNode } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import DateTimePickerInput from '@/components/date-time-input';
 import { cn, goBack } from '@/lib/utils';
 import HeaderBack from '@/components/header-back';
 import { Trash2 } from 'lucide-react-native';
+import { FormDatePicker } from '@/components/ui/form-date-picker';
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
@@ -110,8 +110,7 @@ export default function EditProfileScreen() {
               control={control}
               name="date_of_birth"
               render={({ field: { value, onChange } }) => (
-                <DateTimePickerInput
-                  mode="date"
+                <FormDatePicker
                   value={value ? dayjs(value).toDate() : new Date()}
                   onChange={(newDate) => {
                     // 1. Clone lại date hiện tại để không sửa trực tiếp biến state cũ (tránh side-effect)

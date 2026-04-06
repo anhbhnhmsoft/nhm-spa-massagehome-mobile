@@ -13,13 +13,14 @@ import 'react-native-get-random-values';
 import { TFunction } from 'i18next';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
-
-import { _KTVConfigSchedules } from '@/features/ktv/consts'; // Cần cho uuid
+import { _KTVConfigSchedules } from '@/features/ktv/consts';
 import * as WebBrowser from 'expo-web-browser';
 import { router } from 'expo-router';
-import { CouponItem } from '@/features/service/types';
-import { _PartnerFileType } from '@/features/user/const';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+// --- Config Dayjs ---
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -264,4 +265,17 @@ export const calculatePriceDistance = (priceDistance: number, distance: number) 
   if (!priceDistance || isNaN(priceDistance)) return 0;
   const rawPrice = priceDistance * distance;
   return Math.ceil(rawPrice / 500) * 500;
+};
+
+// Date Object để truyền vào DateTimePicker
+export const parseTime = (timeStr: string): Date => {
+  // Nếu string rỗng hoặc null, trả về giờ hiện tại
+  if (!timeStr) return new Date();
+  // Parse theo định dạng HH:mm, dayjs tự lấy ngày hiện tại
+  return dayjs(timeStr, 'HH:mm').toDate();
+};
+
+// Chuyển Date Object -> để lưu vào State
+export const formatTime = (date: Date): string => {
+  return dayjs(date).format('HH:mm');
 };

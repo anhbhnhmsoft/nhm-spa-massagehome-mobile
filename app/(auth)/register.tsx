@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { useHandleRegister } from '@/features/auth/hooks';
 import { Controller } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/components/ui/icon';
 import {
@@ -14,7 +14,7 @@ import {
   ChevronDown,
   Square,
 } from 'lucide-react-native';
-import { _Gender } from '@/features/auth/const';
+import { _Gender, _TypeAuthenticate } from '@/features/auth/const';
 import { _LanguagesMap } from '@/lib/const';
 import { SelectLanguageModal } from '@/components/app/select-language';
 import { router } from 'expo-router';
@@ -35,8 +35,11 @@ export default function RegisterScreen() {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
     setValue,
   } = form;
+
+  const typeAuthenticate = watch('type_authenticate');
 
   useEffect(() => {
     if (user_referral) {
@@ -82,6 +85,31 @@ export default function RegisterScreen() {
                       onChangeText={onChange}
                       value={value}
                     />
+                  )}
+                />
+
+                {/* Phone Input */}
+                <Controller
+                  control={control}
+                  name="phone"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      {
+                        typeAuthenticate === _TypeAuthenticate.EMAIL ? (
+                          <FormInput
+                            id="phone"
+                            required
+                            placeholder={t('common.phone')}
+                            label={t('common.phone')}
+                            error={errors.phone?.message}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )
+                        : <Fragment />
+                      }
+                    </>
                   )}
                 />
 
@@ -247,7 +275,7 @@ export default function RegisterScreen() {
           disabled={loading || !isAgreed}
           className={cn(
             'w-full items-center justify-center rounded-full py-4',
-            !loading && isAgreed ? 'bg-primary-color-2' : "bg-gray-300",
+            !loading && isAgreed ? 'bg-primary-color-2' : 'bg-gray-300',
           )}>
           <Text className="font-inter-bold text-lg text-white">{t('common.continue')}</Text>
         </TouchableOpacity>

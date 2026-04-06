@@ -15,7 +15,7 @@ export const useGetListKTVHomepage = () => {
     per_page: 6,
   });
   const data = useMemo(() => {
-    return query.data?.pages.flatMap((page) => page.data.data) || [];
+    return query.data?.pages?.flatMap((page) => page?.data?.data || []) || [];
   }, [query.data]);
 
   const pagination = useMemo(() => {

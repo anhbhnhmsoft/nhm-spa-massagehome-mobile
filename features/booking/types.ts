@@ -67,7 +67,7 @@ export type ListBookingResponse = ResponseDataSuccessType<Paginator<BookingItem>
 // Lấy thông tin trước khi đặt lịch dịch vụ
 export type PrepareBookingRequest = {
   category_id: string;
-  option_id: string;
+  option_ids: string[];
   ktv_id: string;
   latitude: number;
   longitude: number;

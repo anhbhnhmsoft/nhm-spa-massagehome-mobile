@@ -4,11 +4,9 @@ import { create } from 'zustand';
 export type PrepareBookingItem = {
   service: {
     category_id: string;
-    price_id: string;
     name: string;
-    duration: number;
     image_url: string | null;
-    temp_price: string;
+    options: { id: string, price: string, duration: number }[];
   },
   ktv: {
     id: string;

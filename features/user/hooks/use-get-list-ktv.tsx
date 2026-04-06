@@ -12,7 +12,7 @@ export const useGetListKTV = () => {
   const query = useInfiniteListKTV(params);
 
   const data = useMemo(() => {
-    return query.data?.pages.flatMap((page) => page.data.data) || [];
+    return query.data?.pages?.flatMap((page) => page?.data?.data || []) || [];
   }, [query.data]);
 
   const pagination = useMemo(() => {

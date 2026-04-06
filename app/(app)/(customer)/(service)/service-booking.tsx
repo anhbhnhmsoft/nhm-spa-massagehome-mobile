@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -41,7 +41,11 @@ export default function BookingConfirmationScreen() {
 
   const { control, formState: { errors }, setValue, handleSubmit } = form;
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
-  if (!item) return null;
+  if (!item) return <Fragment/>;
+
+  const tempDuration = useMemo(() => item.service.options.reduce((acc, cur) => acc + cur.duration, 0), [item.service.options]);
+  const tempPrice = useMemo(() => item.service.options.reduce((acc, cur) => acc + Number(cur.price), 0), [item.service.options]);
+
 
   return (
     <SafeAreaView className="flex-1 relative bg-slate-50" edges={['top', 'bottom']}>
@@ -112,13 +116,13 @@ export default function BookingConfirmationScreen() {
             {/* Duration */}
             <View className="flex-row items-center justify-between gap-2 mb-3">
               <Text className="text-slate-500 text-sm">{t('services.duration')}</Text>
-              <Text className="font-inter-semibold text-sm" numberOfLines={1}>{item.service.duration} {t("common.minute")}</Text>
+              <Text className="font-inter-semibold text-sm" numberOfLines={1}>{tempDuration} {t("common.minute")}</Text>
             </View>
 
             {/* Tiền dịch vụ */}
             <View className="flex-row items-center justify-between gap-2 mb-3">
               <Text className="text-slate-500 text-sm">{t('services.price_service')}</Text>
-              <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing?.price || item.service.temp_price)} {t('common.currency')}</Text>
+              <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing?.price || tempPrice)} {t('common.currency')}</Text>
             </View>
 
             {/* Tiền khoảng cách */}
@@ -144,7 +148,7 @@ export default function BookingConfirmationScreen() {
             <View className="flex-row justify-between items-center">
               <Text className="text-base font-inter-bold">{t('common.total')}</Text>
               <Text className="text-lg font-inter-bold text-primary-color-2">
-                {formatBalance(dataPricing?.final_price || item.service.temp_price)} {t('common.currency')}
+                {formatBalance(dataPricing?.final_price || tempPrice)} {t('common.currency')}
               </Text>
             </View>
           </Card>
@@ -341,7 +345,7 @@ export default function BookingConfirmationScreen() {
         <View>
           <Text className="text-[10px] text-slate-400 font-inter-bold uppercase mb-0.5">{t('services.subtotal')}</Text>
           <Text className="text-xl font-extrabold text-primary-color-2">
-            {formatBalance(dataPricing?.final_price || item.service.temp_price)} {t('common.currency')}
+            {formatBalance(dataPricing?.final_price || tempPrice)} {t('common.currency')}
           </Text>
         </View>
 

@@ -6,47 +6,65 @@ import { Clock } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { _KTVConfigSchedulesLabel } from '@/features/ktv/consts';
 import dayjs from 'dayjs';
-import { KTVDetail, KTVWorkSchedule } from '@/features/user/types';
+import { KTVWorkSchedule } from '@/features/user/types';
 import { TFunction } from 'i18next';
-import isBetween from 'dayjs/plugin/isBetween';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-
-dayjs.extend(isBetween);
-dayjs.extend(customParseFormat);
-
 
 type Props = {
   t: TFunction;
   schedule?: KTVWorkSchedule;
 }
 
-export const SchedulesKtvSection:FC<Props> = ({ t, schedule }) => {
-
+export const SchedulesKtvSection: FC<Props> = ({ t, schedule }) => {
   const currentDayKey = getCurrentDayKey();
-  // Sắp xếp lịch để hiển thị từ Thứ 2 -> CN (nếu data trả về lộn xộn)
+
+  // Sắp xếp lịch để hiển thị từ Thứ 2 -> CN
   const sortedSchedule = useMemo(() => {
     return [...(schedule?.schedule_time || [])].sort((a, b) => a.day_key - b.day_key);
   }, [schedule]);
 
+  // Logic kiểm tra Online Realtime (Hỗ trợ ca xuyên đêm)
   const isOnlineRealtime = useMemo(() => {
     // Check 1: Nút tổng (Manual Switch)
-    if (!schedule?.is_working) return false;
+    if (!schedule?.is_working || !schedule?.schedule_time) return false;
 
-    // Tìm cấu hình của ngày hôm nay
-    const todayConfig = schedule?.schedule_time?.find(
-      (item: any) => item.day_key === currentDayKey
-    );
-    // Check 2: Hôm nay có lịch không?
-    if (!todayConfig || !todayConfig.active) return false;
+    // Lấy giờ hiện tại dưới dạng chuỗi HH:mm (VD: "02:30", "15:00")
+    const nowTimeStr = dayjs().format('HH:mm');
 
-    // Check 3: So sánh giờ hiện tại
-    const now = dayjs();
-    const start = dayjs(todayConfig.start_time, 'HH:mm'); // Tạo object giờ hôm nay
-    const end = dayjs(todayConfig.end_time, 'HH:mm');
+    // Xác định day_key của ngày hôm qua
+    const yesterdayKey = currentDayKey === 2 ? 8 : currentDayKey - 1;
 
-    // Nếu giờ hiện tại nằm giữa Start và End
-    // Lưu ý: '[]' nghĩa là bao gồm cả phút bắt đầu và kết thúc
-    return now.isBetween(start, end, null, '[]');
+    // Lấy config của hôm nay và hôm qua
+    const todayConfig = schedule.schedule_time.find(item => item.day_key === currentDayKey);
+    const yesterdayConfig = schedule.schedule_time.find(item => item.day_key === yesterdayKey);
+
+    // --- 1. KIỂM TRA CA CỦA NGÀY HÔM NAY ---
+    if (todayConfig && todayConfig.active) {
+      const start = todayConfig.start_time;
+      const end = todayConfig.end_time;
+
+      if (start <= end) {
+        // Ca bình thường (VD: 08:00 - 22:00)
+        if (nowTimeStr >= start && nowTimeStr <= end) return true;
+      } else {
+        // Ca xuyên đêm của hôm nay (VD: 16:00 - 08:00 sáng mai)
+        // Nếu hiện tại là buổi tối -> chỉ cần nowTimeStr >= start
+        if (nowTimeStr >= start) return true;
+      }
+    }
+
+    // --- 2. KIỂM TRA CA ĐÊM CỦA HÔM QUA (Vắt sang sáng nay) ---
+    if (yesterdayConfig && yesterdayConfig.active) {
+      const start = yesterdayConfig.start_time;
+      const end = yesterdayConfig.end_time;
+
+      // Nếu hôm qua là ca xuyên đêm (start > end)
+      // Và bây giờ đang là buổi sáng sớm (nowTimeStr <= end)
+      if (start > end && nowTimeStr <= end) {
+        return true;
+      }
+    }
+
+    return false;
   }, [schedule, currentDayKey]);
 
   if (!schedule) return null;
@@ -83,13 +101,15 @@ export const SchedulesKtvSection:FC<Props> = ({ t, schedule }) => {
       <View className="rounded-xl bg-gray-50 p-3">
         {sortedSchedule.map((item, index) => {
           const isToday = item.day_key === currentDayKey;
+          // Xác định xem ca này có phải là ca xuyên đêm không
+          const isCrossDay = item.start_time > item.end_time;
 
           return (
             <View
               key={item.day_key}
-              className={`flex-row items-center justify-between py-2 ${
+              className={cn(`flex-row items-center justify-between py-2`,
                 index !== sortedSchedule.length - 1 ? 'border-b border-dashed border-gray-200' : ''
-              }`}>
+              )}>
               {/* Cột Thứ */}
               <View className="flex-row items-center gap-2">
                 {isToday && <View className="h-1.5 w-1.5 rounded-full bg-primary-color-2" />}
@@ -103,15 +123,23 @@ export const SchedulesKtvSection:FC<Props> = ({ t, schedule }) => {
               </View>
 
               {/* Cột Giờ */}
-              <View>
+              <View className="items-end">
                 {item.active ? (
-                  <Text
-                    className={cn(
-                      'text-sm',
-                      isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700',
-                    )}>
-                    {item.start_time} - {item.end_time}
-                  </Text>
+                  <>
+                    <Text
+                      className={cn(
+                        'text-sm',
+                        isToday ? 'font-inter-bold text-primary-color-2' : 'text-gray-700',
+                      )}>
+                      {item.start_time} - {item.end_time}
+                    </Text>
+                    {/* Thêm text chú thích nếu là ca xuyên đêm */}
+                    {isCrossDay && (
+                      <Text className="text-[10px] text-orange-500 mt-0.5 font-inter-medium">
+                        ({t('config_schedule.is_cross_day')})
+                      </Text>
+                    )}
+                  </>
                 ) : (
                   <Text className="font-inter-italic text-sm text-gray-400">
                     {t('common.day_off')}

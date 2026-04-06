@@ -34,6 +34,7 @@
     "to": "至",
     "or": "或",
     "price": "价格",
+    "temp_price": "临时价格",
     "remember_me": "记住我",
     "forgot_password": "忘记密码？",
     "loading": "处理中...",
@@ -1017,8 +1018,10 @@
     "start_time": "开始时间",
     "end_time": "结束时间",
     "save_changes": "保存更改",
+    "is_cross_day": "跨天",
+    "off_day": "休息日",
     "error": {
-      "invalid_time_end": "结束时间必须在开始时间之后",
+      "invalid_time_end": "开始时间不能与结束时间重叠",
       "invalid_day": "请选择有效的日期",
       "something_went_wrong": "发生错误，请重试"
     }

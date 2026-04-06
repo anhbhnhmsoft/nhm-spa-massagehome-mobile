@@ -34,11 +34,11 @@ export const useBooking = () => {
       z.object({
         ktv_id: z.string(),
         category_id: z.string(),
-        option_id: z.string(),
-        note: z.string().optional(),
-        address: z.string().min(1, {
-          error: t('services.error.invalid_address'),
+        option_ids: z.array(z.string()).min(1, {
+          error: t('services.error.require_option'),
         }),
+        note: z.string().optional(),
+        address: z.string().min(1),
         latitude: z.number(),
         longitude: z.number(),
         coupon_id: z.string().nullable().optional(),
@@ -46,7 +46,7 @@ export const useBooking = () => {
     ),
     defaultValues: {
       category_id: '',
-      option_id: '',
+      option_ids: [],
       note: '',
       address: '',
       latitude: 0,
@@ -63,7 +63,7 @@ export const useBooking = () => {
 
     form.reset({
       category_id: item.service.category_id,
-      option_id: item.service.price_id,
+      option_ids: item.service.options.map((option) => option.id),
       ktv_id: item.ktv.id,
       note: '',
       address: '',
@@ -103,7 +103,7 @@ export const useBooking = () => {
       mutatePrepareBooking(
         {
           category_id: item!.service.category_id,
-          option_id: item!.service.price_id,
+          option_ids: item!.service.options.map((option) => option.id),
           ktv_id: item!.ktv.id,
           latitude,
           longitude,

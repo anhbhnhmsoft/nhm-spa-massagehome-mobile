@@ -76,6 +76,7 @@ export type VerifyOTPRequest = {
 export type RegisterRequest = {
   username: string;
   type_authenticate: _TypeAuthenticate;
+  phone?: string;
   name: string;
   password: string;
   referral_code?: string | null;

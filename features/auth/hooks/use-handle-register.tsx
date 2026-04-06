@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { _Gender, _TypeAuthenticate } from '@/features/auth/const';
 import { _LanguageCode } from '@/lib/const';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { router } from 'expo-router';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
 
@@ -47,6 +47,7 @@ export const useHandleRegister = () => {
         username: z.string().min(1),
         type_authenticate: z.enum(_TypeAuthenticate),
         name: z.string().min(1, { error: t('auth.error.name_required') }),
+        phone: z.string().optional(),
         password: z
           .string()
           .min(1, { message: t('auth.error.password_invalid') })
@@ -62,16 +63,39 @@ export const useHandleRegister = () => {
           error: t('auth.error.language_invalid'),
         }),
       })
+        .superRefine((data, ctx) => {
+          // Nếu chọn loại xác thực là EMAIL
+          if (data.type_authenticate === _TypeAuthenticate.EMAIL) {
+            // Kiểm tra xem phone có bị rỗng không
+            if (!data.phone || data.phone.trim() === '') {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: t('auth.error.phone_required', ''),
+                path: ['phone'],
+              });
+            }
+          }
+        })
     ),
     defaultValues: {
-      username: username || '',
-      type_authenticate: typeAuthenticate || _TypeAuthenticate.PHONE,
+      username:  '',
+      type_authenticate: _TypeAuthenticate.PHONE,
       name: '',
+      phone: '',
       password: '',
       gender: _Gender.MALE,
       language: _LanguageCode.VI,
     },
   });
+
+  useEffect(() => {
+    if (username && typeAuthenticate) {
+      form.setValue('username', username);
+      form.setValue('type_authenticate', typeAuthenticate);
+    }
+  }, [username, typeAuthenticate]);
+
+
 
   // handle submit form
   const onSubmit = useCallback((data: RegisterRequest) => {

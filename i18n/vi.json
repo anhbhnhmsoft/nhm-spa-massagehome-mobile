@@ -34,6 +34,7 @@
     "to": "đến",
     "or": "Hoặc",
     "price": "Giá",
+    "temp_price": "Giá tạm tính",
     "remember_me": "Ghi nhớ đăng nhập",
     "forgot_password": "Quên mật khẩu?",
     "loading": "Đang xử lý...",
@@ -1010,8 +1011,10 @@
     "start_time": "Giờ bắt đầu",
     "end_time": "Giờ kết thúc",
     "save_changes": "Lưu thay đổi",
+    "is_cross_day": "Ca xuyên đêm",
+    "off_day": "Nghỉ làm",
     "error": {
-      "invalid_time_end": "Giờ kết thúc phải sau giờ bắt đầu",
+      "invalid_time_end": "Giờ bắt đầu không được trùng giờ kết thúc",
       "invalid_day": "Vui lòng chọn ngày hợp lệ",
       "something_went_wrong": "Đã xảy ra lỗi, vui lòng thử lại"
     }
