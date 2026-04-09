@@ -13,7 +13,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import {
   useDeleteImageMutation,
   useLinkReferrerMutation,
@@ -268,10 +268,13 @@ export const useChangeImage = () => {
         return;
       }
 
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
-        return;
+      if (Platform.OS === 'ios') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+          Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
+          return;
+        }
       }
 
       const remain = MAX_IMAGE - imageLength;

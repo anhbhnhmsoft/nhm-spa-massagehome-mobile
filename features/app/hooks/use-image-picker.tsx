@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { IFileUpload } from '@/lib/types';
 import { useCallback, useRef, useState } from 'react';
@@ -20,14 +20,13 @@ export const useImagePicker = () => {
     isProcessingRef.current = true;
 
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (Platform.OS === 'ios') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (status !== 'granted') {
-        Alert.alert(
-          t('profile.partner_form.alert_photo_permission_title'),
-          t('profile.partner_form.alert_photo_permission_message')
-        );
-        return;
+        if (status !== 'granted') {
+          Alert.alert(t('permission.picture_lib.title'), t('permission.picture_lib.message'));
+          return;
+        }
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
