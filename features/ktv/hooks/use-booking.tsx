@@ -8,10 +8,17 @@ import { queryClient } from '@/lib/provider/query-provider';
 import useToast from '@/features/app/hooks/use-toast';
 import { _BookingStatus } from '@/features/service/const';
 import { Alert } from 'react-native';
-import { calculateEndTime, getMessageError, getRemainingTime } from '@/lib/utils';
+import {
+  calculateEndTime,
+  formatDistance,
+  getDistanceFromLatLonInKm,
+  getMessageError,
+  getRemainingTime,
+} from '@/lib/utils';
 import {  StartBookingResponse } from '@/features/ktv/types';
 import { useAuthStore } from '@/features/auth/stores';
 import { _UserRole } from '@/features/auth/const';
+import { useApplicationStore } from '@/features/app/stores';
 
 /**
  * Hook dùng để đếm bộ bắt đầu (dùng ở layout toàn cục)
@@ -140,6 +147,8 @@ export const useBooking = (id: string) => {
 
   const setBookingStart = useSetBookingStart();
 
+  const address = useApplicationStore((s) => s.location);
+
   // hydrate store when component mounted
   useEffect(() => {
     if (!_hydrated) {
@@ -149,30 +158,53 @@ export const useBooking = (id: string) => {
 
   useEffect(() => {
     if (!data || !bookingStart) return;
-    if (bookingStart?.booking_id === data.id && data.status === _BookingStatus.COMPLETED) {
+    if (bookingStart?.booking_id === data.id && [_BookingStatus.COMPLETED, _BookingStatus.CONFIRMED].includes(data.status)) {
       clearBookingStart();
     }
   }, [data, bookingStart]);
 
   // bắt đầu dịch vụ
   const handleStartBooking = async () => {
-    if (!data || !_hydrated) return;
+    if (!data || !_hydrated || !address) return;
 
-    // bắt đầu dịch vụ
-    startBookingMutate(data.id, {
-      onSuccess: async (res) => {
-        const dataRes = res.data;
-        // reset lại query để refetch
-        // Bọc try catch
-        await refetch();
-        await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
-        await setBookingStart(dataRes);
-      },
+    const distanceInKm = getDistanceFromLatLonInKm(
+      address.location.coords.latitude,
+      address.location.coords.longitude,
+      data.lat,
+      data.lng
+    );
+    const distanceInMeters = distanceInKm * 1000;
 
-      onError: (err: any) => {
-        error({ message: err.message });
-      },
-    });
+    // nếu cách xa hơn 100 mét thì không thể bắt đầu dịch vụ
+    if (distanceInMeters > 100) {
+      const formattedDistance = formatDistance(distanceInKm);
+      Alert.alert(
+        t('booking.error.start_booking_nearby_title'),
+        t('booking.error.start_booking_nearby_message', { distance: formattedDistance }),
+        [
+          {
+            text: t('common.cancel'),
+            style: 'cancel',
+          },
+        ]
+      );
+    }else{
+      // bắt đầu dịch vụ
+      startBookingMutate(data.id, {
+        onSuccess: async (res) => {
+          const dataRes = res.data;
+          // reset lại query để refetch
+          // Bọc try catch
+          await refetch();
+          await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+          await setBookingStart(dataRes);
+        },
+
+        onError: (err: any) => {
+          error({ message: err.message });
+        },
+      });
+    }
   };
 
 

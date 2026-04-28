@@ -121,7 +121,10 @@
     "password_description": "Password must be at least 8 characters long, include at least 1 uppercase, 1 lowercase, 1 number.",
     "status": "Status",
     "choose_method": "Choose how you want to log in or create a new account",
-    "login_phone": "Phone number"
+    "login_phone": "Phone number",
+    "no_phone": "No phone number",
+    "no_phone_message": "This user has no phone number.",
+    "call": "Call"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -821,7 +824,9 @@
     },
     "error": {
       "only_confirmed_booking": "Only confirmed bookings can start the service.",
-      "another_booking_already_started": "Only one service can be started at a time."
+      "another_booking_already_started": "Only one service can be started at a time.",
+      "start_booking_nearby_title": "Cannot start service",
+      "start_booking_nearby_message": "You are more than {{distance}} away from the appointment location. Please get closer to start the service."
     }
   },
   "affiliate": {

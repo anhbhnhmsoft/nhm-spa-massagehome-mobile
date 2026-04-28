@@ -1,5 +1,8 @@
 {
   "common": {
+    "no_phone": "Không có số điện thoại",
+    "no_phone_message": "Ngươi dùng này không có số điện thoại.",
+    "call": "Gọi điện thoại",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "register": "Đăng ký",
@@ -819,7 +822,9 @@
     },
     "error": {
       "only_confirmed_booking": "Chỉ có thể bắt đầu dịch vụ khi lịch hẹn đã được xác nhận.",
-      "another_booking_already_started": "Chỉ có thể có một dịch vụ đang diễn ra tại một thời điểm."
+      "another_booking_already_started": "Chỉ có thể có một dịch vụ đang diễn ra tại một thời điểm.",
+      "start_booking_nearby_title": "Không thể bắt đầu dịch vụ",
+      "start_booking_nearby_message": "Bạn đang ở cách địa điểm hẹn hơn {{distance}}, vui lòng đến gần hơn để bắt đầu dịch vụ."
     }
   },
   "affiliate": {

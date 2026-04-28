@@ -121,7 +121,10 @@
     "password_description": "密码必须至少包含8个字符，包括至少1个大写字母、1个小写字母、1个数字。",
     "status": "状态",
     "choose_method": "请选择登录方式或创建新账户",
-    "login_phone": "手机号"
+    "login_phone": "手机号",
+    "no_phone": "没有电话号码",
+    "no_phone_message": "此用户没有电话号码。",
+    "call": "呼叫"
   },
   "common_success": {
     "save_image_success": "图片保存成功",
@@ -825,8 +828,10 @@
       "booking_end_body": "服务已结束"
     },
     "error": {
-      "only_confirmed_booking": "只有已确认的预约才能开始服务。",
-      "another_booking_already_started": "只有一个服务可以在同一时间进行。"
+      "only_confirmed_booking": "只有已确认的预订才能开始服务。",
+      "another_booking_already_started": "只有一个服务可以在同一时间进行。",
+      "start_booking_nearby_title": "无法开始服务",
+      "start_booking_nearby_message": "您距离预约地点超过{{distance}}，请靠近后再开始服务。"
     }
   },
   "affiliate": {

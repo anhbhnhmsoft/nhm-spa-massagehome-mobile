@@ -1,7 +1,15 @@
 import React, { useMemo } from 'react';
-import { View,  Pressable } from 'react-native';
+import { View,  Pressable, Linking, Alert } from 'react-native';
 import { Icon } from '@/components/ui/icon';
-import { MapPin, Navigation2, Timer, User, MessageCircle, Map } from 'lucide-react-native';
+import {
+  MapPin,
+  Navigation2,
+  Timer,
+  User,
+  MessageCircle,
+  Map,
+  Phone,
+} from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { BookingItem } from '@/features/booking/types';
 import {  getBookingStatusStyle } from '@/features/service/const';
@@ -42,15 +50,16 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
       onPress={useSingleTouch(() => onPress?.(item))}
       className="overflow-hidden rounded-xl border border-blue-100 bg-white p-3">
       {/* Badge status */}
-      <View className={`absolute right-0 top-0 rounded-bl-lg px-3 py-1`} style={{
+      <View
+        className={`absolute right-0 top-0 rounded-bl-lg px-3 py-1`}
+        style={{
           backgroundColor: styles.background,
         }}>
         <Text
           className={`font-inter-semibold text-sm`}
           style={{
             color: styles.text_color,
-          }}
-        >
+          }}>
           {t(styles.label)}
         </Text>
       </View>
@@ -78,7 +87,9 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
 
         <View className="mt-2 flex-row items-start">
           <Icon as={MapPin} size={16} className="mr-2 mt-0.5 text-primary-color-2" />
-          <Text className="flex-1 text-sm text-primary-color-3">{distance ? formatDistance(distance) : '-'}</Text>
+          <Text className="flex-1 text-sm text-primary-color-3">
+            {distance ? formatDistance(distance) : '-'}
+          </Text>
         </View>
 
         <View className="mt-2 flex-row items-center gap-2">
@@ -99,18 +110,36 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
             className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
             onPress={() => {
               if (item?.user?.id) {
-                joinRoomChat({
-                  user_id: item?.user?.id,
-                },'ktv')
+                joinRoomChat(
+                  {
+                    user_id: item?.user?.id,
+                  },
+                  'ktv'
+                );
               }
             }}>
             <Icon as={MessageCircle} size={14} className="mr-2 text-white" />
-            <Text className="font-inter-medium text-sm text-white">
-              {t('booking.inbox')}
-            </Text>
+            <Text className="font-inter-medium text-sm text-white">{t('booking.inbox')}</Text>
+          </Pressable>
+          <Pressable
+            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
+            onPress={async () => {
+              const phoneNumber = item?.user?.phone;
+              if (phoneNumber) {
+                await Linking.openURL(`tel:${phoneNumber}`);
+              } else {
+                // Hiển thị thông báo nếu không có số điện thoại
+                Alert.alert(
+                  t('common.no_phone'),
+                  t('common.no_phone_message'),
+                  [{ text: t('common.ok') }]
+                );
+              }
+            }}>
+            <Icon as={Phone} size={14} className="mr-2 text-white" />
+            <Text className="font-inter-medium text-sm text-white">{t('common.call')}</Text>
           </Pressable>
         </View>
-
       </View>
     </Pressable>
   );

@@ -1,12 +1,12 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import React, { useMemo } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
+import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
 import { Ionicons } from '@expo/vector-icons';
-import { _BookingStatus, _BookingStatusMap, getStatusColor } from '@/features/service/const';
+import {  _BookingStatusMap } from '@/features/service/const';
 import { useTranslation } from 'react-i18next';
 import DefaultColor from '@/components/styles/color';
-import { AlignLeft, Home, User } from 'lucide-react-native';
+import { AlignLeft, Phone } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import { useBooking } from '@/features/ktv/hooks/use-booking';
 import { cn, formatBalance, openMap } from '@/lib/utils';
@@ -45,7 +45,7 @@ export default function BookingDetails() {
 
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={['bottom','top']}>
+    <SafeAreaView className="flex-1 bg-white" edges={['bottom', 'top']}>
       <HeaderBack title="booking.detail_title" />
 
       <ScrollView
@@ -60,7 +60,6 @@ export default function BookingDetails() {
             tintColor={DefaultColor.base['primary-color-2']}
           />
         }>
-
         {/* Detail */}
         <View className="mb-4 overflow-hidden rounded-3xl border border-slate-100 bg-base-color-3">
           {/* Image Header */}
@@ -106,7 +105,6 @@ export default function BookingDetails() {
                     {t('booking.see_directions')}
                   </Text>
                 </TouchableOpacity>
-
               </View>
             </View>
           </View>
@@ -117,22 +115,48 @@ export default function BookingDetails() {
               <View className="flex-row items-center">
                 <Avatar source={booking?.user?.avatar_url} />
                 <View className="ml-4">
-                  <Text className="text-lg font-inter-bold text-slate-800">{booking?.user?.name}</Text>
+                  <Text className="font-inter-bold text-lg text-slate-800">
+                    {booking?.user?.name}
+                  </Text>
                 </View>
               </View>
-              <TouchableOpacity
-                className="mt-4 flex-row items-center justify-center rounded-sm bg-primary-color-2 px-6 py-2"
-                onPress={() => {
-                  if (booking?.user?.id) {
-                    joinRoomChat({
-                      user_id: booking?.user?.id,
-                    },'ktv')
-                  }
-                }}
-              >
-                <Ionicons name="chatbubble-ellipses-outline" size={18} color="white" />
-                <Text className="ml-2 font-inter-bold text-white">{t('booking.inbox')}</Text>
-              </TouchableOpacity>
+              {/* Container cho 2 nút */}
+              <View className="mt-4 flex-row gap-2">
+                {/* Nút Nhắn tin */}
+                <TouchableOpacity
+                  className="flex-1 flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3"
+                  onPress={() => {
+                    if (booking?.user?.id) {
+                      joinRoomChat(
+                        {
+                          user_id: booking?.user?.id,
+                        },
+                        'ktv'
+                      );
+                    }
+                  }}>
+                  <Ionicons name="chatbubble-ellipses-outline" size={18} color="white" />
+                  <Text className="ml-2 font-inter-bold text-white">{t('booking.inbox')}</Text>
+                </TouchableOpacity>
+
+                {/* Nút Gọi điện */}
+                <TouchableOpacity
+                  className="flex-1 flex-row items-center justify-center rounded-xl bg-green-500 py-3"
+                  onPress={async () => {
+                    const phoneNumber = booking?.user?.phone;
+                    if (phoneNumber) {
+                      await Linking.openURL(`tel:${phoneNumber}`);
+                    } else {
+                      // Hiển thị thông báo nếu không có số điện thoại
+                      Alert.alert(t('common.no_phone'), t('common.no_phone_message'), [
+                        { text: t('common.ok') },
+                      ]);
+                    }
+                  }}>
+                  <Ionicons name="call-outline" size={18} color="white" />
+                  <Text className="ml-2 font-inter-bold text-white">{t('common.call')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -142,15 +166,11 @@ export default function BookingDetails() {
             <View className="w-1/2 p-2">
               <View className="rounded-2xl bg-slate-50 p-3">
                 <View className="mb-1 flex-row items-center">
-                  <Ionicons
-                    name="ticket"
-                    size={16}
-                    color={DefaultColor.base['primary-color-2']}
-                  />
+                  <Ionicons name="ticket" size={16} color={DefaultColor.base['primary-color-2']} />
                   <Text className="ml-2 text-xs text-slate-400">{t('booking.status')}</Text>
                 </View>
                 <Text className="font-inter-bold text-slate-800">
-                  {booking?.status ? t(_BookingStatusMap[booking.status]) : ""}
+                  {booking?.status ? t(_BookingStatusMap[booking.status]) : ''}
                 </Text>
               </View>
             </View>
@@ -194,10 +214,13 @@ export default function BookingDetails() {
               <View className="rounded-2xl bg-slate-50 p-3">
                 <View className="mb-1 flex-row items-center">
                   <Ionicons name="time" size={16} color={DefaultColor.base['primary-color-2']} />
-                  <Text className="ml-2 text-xs text-slate-400">{t('booking.start')} - {t('booking.end')}</Text>
+                  <Text className="ml-2 text-xs text-slate-400">
+                    {t('booking.start')} - {t('booking.end')}
+                  </Text>
                 </View>
-                <Text className="font-inter-bold text-center text-slate-800">
-                  {booking?.start_time ? dayjs(booking?.start_time).format('HH:mm') : '-- : --'} {booking?.end_time ? dayjs(booking?.end_time).format('HH:mm') : '  -- : --'}
+                <Text className="text-center font-inter-bold text-slate-800">
+                  {booking?.start_time ? dayjs(booking?.start_time).format('HH:mm') : '-- : --'}{' '}
+                  {booking?.end_time ? dayjs(booking?.end_time).format('HH:mm') : '  -- : --'}
                 </Text>
               </View>
             </View>
@@ -205,7 +228,7 @@ export default function BookingDetails() {
 
           {/* Notes */}
           <View className="px-4">
-            <View className="mb-4 rounded-2xl bg-slate-50 p-3 gap-2">
+            <View className="mb-4 gap-2 rounded-2xl bg-slate-50 p-3">
               <View>
                 {/* Header Ghi chú */}
                 <View className="mb-3 flex-row items-center">
@@ -251,8 +274,7 @@ export default function BookingDetails() {
                 <Text className="font-inter-medium text-[14px] text-slate-500">
                   {t('booking.original_price')}
                 </Text>
-                <Text
-                  className={'font-inter-medium text-[14px] text-slate-700'}>
+                <Text className={'font-inter-medium text-[14px] text-slate-700'}>
                   {formatBalance(booking?.price || 0)} {t('common.currency')}
                 </Text>
               </View>
@@ -298,7 +320,9 @@ export default function BookingDetails() {
 
       {/* Action Buttons */}
       {(canStartBooking || canCancelBooking || timeLeft !== null) && (
-        <View className="border-t border-slate-100 bg-white p-4" style={{ paddingBottom: inset.bottom }}>
+        <View
+          className="border-t border-slate-100 bg-white p-4"
+          style={{ paddingBottom: inset.bottom }}>
           {/* Remaining time - chỉ hiển thị khi đang chạy */}
           {timeLeft != null && (
             <View className="mb-4 items-center">
@@ -334,7 +358,7 @@ export default function BookingDetails() {
           {canCancelBooking && (
             <TouchableOpacity
               onPress={() => {
-                if (booking?.id){
+                if (booking?.id) {
                   handleOpenCancel(booking.id);
                 }
               }}

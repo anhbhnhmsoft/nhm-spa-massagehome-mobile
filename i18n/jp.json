@@ -121,7 +121,10 @@
     "password_description": "パスワードは8文字以上で、大文字・小文字・数字をそれぞれ1文字以上含む必要があります。",
     "status": "ステータス",
     "choose_method": "ログイン方法または新規アカウント作成方法を選択してください",
-    "login_phone": "電話番号"
+    "login_phone": "電話番号",
+    "no_phone": "電話番号なし",
+    "no_phone_message": "このユーザーは電話番号を持っていません。",
+    "call": "電話"
   },
   "common_success": {
     "save_image_success": "画像を正常に保存しました",
@@ -818,7 +821,9 @@
     },
     "error": {
       "only_confirmed_booking": "予約が確認された後にのみサービスを開始できます。",
-      "another_booking_already_started": "同時に1つのサービスのみ進行できます。"
+      "another_booking_already_started": "同時に1つのサービスのみ進行できます。",
+      "start_booking_nearby_title": "サービスを開始できません",
+      "start_booking_nearby_message": "予約場所から{{distance}}以上離れています。近づいてからサービスを開始してください。"
     }
   },
   "affiliate": {

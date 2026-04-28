@@ -39,6 +39,7 @@ export type BookingItem = {
     id: string;
     name: string;
     avatar_url: string | null;
+    phone: string | null;
   };
   address: string;
   booking_time: string;
