@@ -12,6 +12,7 @@ export default function ServiceLayout() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
+        <Stack.Screen name="support-chat" options={{ headerShown: false }} />
         <Stack.Screen
           name="service-booking-result"
           options={{

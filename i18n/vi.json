@@ -1,6 +1,10 @@
 {
   "common": {
+    "note":"Ghi chú",
     "no_phone": "Không có số điện thoại",
+    "create":"Tạo",
+    "pending":"Đang chờ",
+    "assigned_user":"Nhân viên phụ trách",
     "no_phone_message": "Ngươi dùng này không có số điện thoại.",
     "call": "Gọi điện thoại",
     "login": "Đăng nhập",
@@ -22,6 +26,7 @@
     "placeholder_search": "Tìm kiếm...",
     "empty": "Ups! Không có dữ liệu để hiển thị...",
     "select": "Chọn",
+    "selected": "Đã chọn",
     "search": "Tìm kiếm",
     "account": "Tài khoản",
     "cancel": "Hủy",
@@ -836,7 +841,15 @@
   },
   "support": {
     "title": "Hỗ trợ khách hàng",
-    "description": "Chúng tôi luôn sẵn sàng giúp đỡ bạn"
+    "description": "Chúng tôi luôn sẵn sàng giúp đỡ bạn",
+    "contact": "Liên hệ",
+    "continue_chat": "Tiếp tục trò chuyện",
+    "cannot_create_new": "Bạn có {{tickets}} yêu cầu hỗ trợ đang chờ xử lý. Vui lòng giải quyết xong trước khi tạo yêu cầu mới.",
+    "status_assigned": "Đã bàn giao",
+    "status_in_progress": "Đang xử lý",
+    "status_closed": "Đã đóng",
+    "status_pending": "Đang chờ",
+    "open_tickets": "Các yêu cầu đang chờ xử lý"
   },
   "chat": {
     "connecting": "Kết nối...",

@@ -1,5 +1,10 @@
 {
   "common": {
+    "note": "メモ",
+    "no_phone": "電話番号なし",
+    "create": "作成",
+    "pending": "保留中",
+    "assigned_user": "担当スタッフ",
     "login": "ログイン",
     "logout": "ログアウト",
     "register": "新規登録",
@@ -19,6 +24,7 @@
     "placeholder_search": "検索...",
     "empty": "表示するデータがありません...",
     "select": "選択",
+    "selected": "選択済み",
     "search": "検索",
     "account": "アカウント",
     "cancel": "キャンセル",
@@ -122,7 +128,6 @@
     "status": "ステータス",
     "choose_method": "ログイン方法または新規アカウント作成方法を選択してください",
     "login_phone": "電話番号",
-    "no_phone": "電話番号なし",
     "no_phone_message": "このユーザーは電話番号を持っていません。",
     "call": "電話"
   },
@@ -835,7 +840,15 @@
   },
   "support": {
     "title": "カスタマーサポート",
-    "description": "いつでもお手伝いします"
+    "description": "いつでもお手伝いします",
+    "contact": "連絡",
+    "continue_chat": "チャットを続ける",
+    "cannot_create_new": "保留中のサポートリクエストが{{tickets}}件あります。新しいリクエストを作成する前に解決してください。",
+    "status_assigned": "担当者割り当て済み",
+    "status_in_progress": "対応中",
+    "status_closed": "完了",
+    "status_pending": "保留中",
+    "open_tickets": "保留中のリクエスト"
   },
   "chat": {
     "connecting": "接続中...",

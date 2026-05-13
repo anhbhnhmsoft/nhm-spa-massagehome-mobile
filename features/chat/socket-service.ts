@@ -101,12 +101,46 @@ class SocketService {
     }
   }
 
+  onSupportMessageNew(callback: (message: any) => void) {
+    if (this.socket) {
+      this.socket.off('support:message:new');
+      this.socket.on('support:message:new', (data) => {
+        callback(data);
+      });
+    }
+  }
+
+  onSupportTicketEvent(callback: (payload: any) => void) {
+    if (this.socket) {
+      this.socket.off('support:ticket:created');
+      this.socket.off('support:ticket:claimed');
+      this.socket.off('support:ticket:closed');
+      this.socket.on('support:ticket:created', callback);
+      this.socket.on('support:ticket:claimed', callback);
+      this.socket.on('support:ticket:closed', callback);
+    }
+  }
+
   /**
    * Hủy lắng nghe sự kiện message mới
    */
   offMessageNew() {
     if (this.socket) {
       this.socket.off('message:new');
+    }
+  }
+
+  offSupportMessageNew() {
+    if (this.socket) {
+      this.socket.off('support:message:new');
+    }
+  }
+
+  offSupportTicketEvent() {
+    if (this.socket) {
+      this.socket.off('support:ticket:created');
+      this.socket.off('support:ticket:claimed');
+      this.socket.off('support:ticket:closed');
     }
   }
 

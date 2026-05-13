@@ -1,5 +1,10 @@
 {
   "common": {
+    "note": "备注",
+    "no_phone": "没有电话号码",
+    "create": "创建",
+    "pending": "待处理",
+    "assigned_user": "分配员工",
     "login": "登录",
     "logout": "退出登录",
     "register": "注册",
@@ -19,6 +24,7 @@
     "placeholder_search": "搜索...",
     "empty": "哎呀！没有可显示的数据...",
     "select": "选择",
+    "selected": "已选择",
     "search": "搜索",
     "account": "账户",
     "cancel": "取消",
@@ -122,7 +128,6 @@
     "status": "状态",
     "choose_method": "请选择登录方式或创建新账户",
     "login_phone": "手机号",
-    "no_phone": "没有电话号码",
     "no_phone_message": "此用户没有电话号码。",
     "call": "呼叫"
   },
@@ -728,10 +733,8 @@
       "translate": "翻译",
       "translating": "正在翻译...",
       "translate_to": "翻译为",
-
       "view_original": "查看原文",
       "view_translation": "查看翻译",
-
       "translation": "— 翻译",
       "original": "— 原文"
     },
@@ -843,7 +846,15 @@
   },
   "support": {
     "title": "客户支持",
-    "description": "我们随时为您提供帮助"
+    "description": "我们随时为您提供帮助",
+    "contact": "联系",
+    "continue_chat": "继续聊天",
+    "cannot_create_new": "您有 {{tickets}} 个待处理的支持请求。请在创建新请求之前先解决它们。",
+    "status_assigned": "已分配",
+    "status_in_progress": "处理中",
+    "status_closed": "已关闭",
+    "status_pending": "待处理",
+    "open_tickets": "待处理的请求"
   },
   "chat": {
     "connecting": "正在连接...",
@@ -863,7 +874,7 @@
     "original": "— 原文",
     "chat_room": "聊天室"
   },
- "review": {
+  "review": {
     "all_reviews": "全部评价",
     "total_reviews": "共 {{count}} 条评价",
     "no_reviews": "暂无评价。",
@@ -873,10 +884,8 @@
     "translate": "翻译",
     "translating": "正在翻译...",
     "translate_to": "翻译为",
-
     "view_original": "查看原文",
     "view_translation": "查看翻译",
-
     "translation": "— 翻译",
     "original": "— 原文"
   },

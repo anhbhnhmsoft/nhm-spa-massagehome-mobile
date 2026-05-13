@@ -1,5 +1,10 @@
 {
   "common": {
+    "note": "Note",
+    "no_phone": "No phone number",
+    "create": "Create",
+    "pending": "Pending",
+    "assigned_user": "Assigned Staff",
     "login": "Log in",
     "logout": "Log out",
     "register": "Register",
@@ -19,6 +24,7 @@
     "placeholder_search": "Search...",
     "empty": "Oops! No data to display...",
     "select": "Select",
+    "selected": "Selected",
     "search": "Search",
     "account": "Account",
     "cancel": "Cancel",
@@ -122,7 +128,6 @@
     "status": "Status",
     "choose_method": "Choose how you want to log in or create a new account",
     "login_phone": "Phone number",
-    "no_phone": "No phone number",
     "no_phone_message": "This user has no phone number.",
     "call": "Call"
   },
@@ -202,7 +207,6 @@
       "MOMO_PAY": "Momo Pay",
       "WECHAT_PAY": "WeChat Pay",
       "ALI_PAY": "Alipay"
-
     },
     "transaction_type": {
       "DEPOSIT_QR_CODE": "Deposit via QR Banking",
@@ -335,7 +339,6 @@
     "reset_password_title": "Reset Password",
     "reset_password_description": "Please enter your new password.",
     "btn_reset_password": "Reset Password",
-
     "i_agree_to": "I agree to",
     "terms_and_conditions": "Terms of Service",
     "terms_and_conditions_register_technical": "Terms of Service for Technical",
@@ -721,7 +724,6 @@
     "distance_price": "Distance Price",
     "service_price": "Service Price",
     "discount": "Discount",
-
     "review": {
       "title": "Review Service",
       "rating": "Satisfaction Level",
@@ -838,7 +840,15 @@
   },
   "support": {
     "title": "Customer Support",
-    "description": "We are always ready to help you"
+    "description": "We are always ready to help you",
+    "contact": "Contact",
+    "continue_chat": "Continue Chat",
+    "cannot_create_new": "You have {{tickets}} pending support requests. Please resolve them before creating a new one.",
+    "status_assigned": "Assigned",
+    "status_in_progress": "In Progress",
+    "status_closed": "Closed",
+    "status_pending": "Pending",
+    "open_tickets": "Pending Requests"
   },
   "chat": {
     "connecting": "Connecting...",
@@ -868,10 +878,8 @@
     "translate": "Translate",
     "translating": "Translating...",
     "translate_to": "Translate to",
-
     "view_original": "View original",
     "view_translation": "View translation",
-
     "translation": "— Translation",
     "original": "— Original"
   },
