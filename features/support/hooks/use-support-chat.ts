@@ -20,14 +20,17 @@ import {
   useMutationSendSupportMessage,
   useMutationSeenSupportMessages,
 } from '@/features/support/hooks/use-mutation';
+import {
+  SupportCategory,
+  SupportTicket,
+  SupportMessage,
+  SupportMessageListResponse,
+} from '@/features/support/types';
 
-type SupportChatMessage = PayloadNewMessage & {
+type SupportChatMessage = SupportMessage & {
+  room_id?: string;
+  status_sent?: 'pending' | 'sent' | 'failed';
   sender_id?: string | null;
-  sender_user_id?: string | null;
-  sender_admin_id?: string | null;
-  sender_type?: 'customer' | 'staff' | 'system';
-  sender_name?: string | null;
-  sender_avatar?: string | null;
 };
 
 export const useSupportChat = (ticketId?: string | number) => {
@@ -57,9 +60,9 @@ export const useSupportChat = (ticketId?: string | number) => {
   const ticket = ticketQuery.data ?? null;
 
   const updateCache = useCallback(
-    (msg: Partial<SupportChatMessage> & { id: string; temp_id?: string }) => {
+    (msg: Partial<SupportChatMessage> & { id: string; temp_id?: string | null }) => {
       if (!ticket?.room_id) return;
-      queryClient.setQueriesData<InfiniteData<ListMessageResponse>>(
+      queryClient.setQueriesData<InfiniteData<SupportMessageListResponse>>(
         { queryKey: ['supportApi-messages', ticketId] },
         (old) =>
           produce(old, (draft) => {
@@ -76,7 +79,7 @@ export const useSupportChat = (ticketId?: string | number) => {
                 ...msg,
                 sender_id: senderId,
                 status_sent: msg.status_sent ?? 'sent',
-              } as PayloadNewMessage);
+              } as SupportMessage);
             } else {
               const senderId = msg.sender_id ?? msg.sender_user_id ?? msg.sender_admin_id ?? msgs[idx].id;
               msgs[idx] = {
@@ -100,6 +103,7 @@ export const useSupportChat = (ticketId?: string | number) => {
       const tempMsg: SupportChatMessage = {
         id: tempId,
         temp_id: tempId,
+        support_ticket_id: ticket.id,
         room_id: ticket.room_id,
         content,
         sender_id: user.id,
