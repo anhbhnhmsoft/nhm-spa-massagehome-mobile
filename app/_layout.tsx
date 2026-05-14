@@ -54,11 +54,15 @@ export default function RootLayout() {
     initial();
   }, []);
 
+  const [isSplashHidden, setIsSplashHidden] = useState(false);
+
   useEffect(() => {
-    if (ready && loaded && !error) {
-      SplashScreen.hideAsync();
+    if (ready && loaded && !error && !isSplashHidden) {
+      SplashScreen.hideAsync()
+        .then(() => setIsSplashHidden(true))
+        .catch(console.warn);
     }
-  }, [ready, loaded, error]);
+  }, [ready, loaded, error, isSplashHidden]);
   if (!ready) {
     return null;
   }

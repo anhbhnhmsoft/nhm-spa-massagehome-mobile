@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
@@ -34,6 +35,7 @@ const BaseBottomModal = ({
                            showBackdrop = true,
                          }: BaseBottomModalProps) => {
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
 
   return (
     <Modal
@@ -53,10 +55,13 @@ const BaseBottomModal = ({
                 type: 'timing', // Dùng timing để không bị nảy
                 duration: 100,  // Thời gian trượt (ms)
               }}
-              className={cn("bg-white rounded-t-[24px] p-3", containerClassName)}
+              className={cn("bg-white rounded-t-[24px] px-4 pt-6", containerClassName)}
               style={[
                 styles.shadow,
-                { paddingBottom: insets.bottom + 20 },
+                {
+                  paddingBottom: insets.bottom + 20,
+                  maxHeight: height - insets.top - 20,
+                },
               ]}
             >
               {/* --- HEADER --- */}
@@ -79,7 +84,7 @@ const BaseBottomModal = ({
               </View>
 
               {/* --- BODY --- */}
-              <View>
+              <View style={{ flexShrink: 1 }}>
                 {children}
               </View>
             </MotiView>
