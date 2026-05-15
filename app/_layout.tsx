@@ -30,10 +30,11 @@ export {
   ErrorBoundary,
 } from 'expo-router';
 
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
+  const [preventFinished, setPreventFinished] = useState(false);
+  const [splashPrevented, setSplashPrevented] = useState(false);
+  const [isSplashHidden, setIsSplashHidden] = useState(false);
   // Khởi tạo font Inter
   const [loaded, error] = useFontInter();
   // Set màu scheme
@@ -41,6 +42,15 @@ export default function RootLayout() {
 
   useEffect(() => {
     async function initial() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        setSplashPrevented(true);
+      } catch (preventError) {
+        console.warn('SplashScreen.preventAutoHideAsync failed', preventError);
+      } finally {
+        setPreventFinished(true);
+      }
+
       try {
         // Mặc định là light theme
         setColorScheme('light');
@@ -54,16 +64,15 @@ export default function RootLayout() {
     initial();
   }, []);
 
-  const [isSplashHidden, setIsSplashHidden] = useState(false);
-
   useEffect(() => {
-    if (ready && loaded && !error && !isSplashHidden) {
+    if (ready && loaded && !error && !isSplashHidden && splashPrevented) {
       SplashScreen.hideAsync()
         .then(() => setIsSplashHidden(true))
         .catch(console.warn);
     }
-  }, [ready, loaded, error, isSplashHidden]);
-  if (!ready) {
+  }, [ready, loaded, error, isSplashHidden, splashPrevented]);
+
+  if (!ready || !preventFinished) {
     return null;
   }
 
@@ -87,7 +96,7 @@ export default function RootLayout() {
   );
 }
 
-const AppContainer = () => {
+function AppContainer() {
   const status = useAuthStore((state) => state.status);
   const lang = useApplicationStore((state) => state.language);
   const complete = useMemo(
@@ -117,4 +126,5 @@ const AppContainer = () => {
       </View>
     </HydrateAuthProvider>
   );
-};
+}
+

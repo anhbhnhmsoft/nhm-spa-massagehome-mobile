@@ -5,7 +5,7 @@ import DefaultColor from '@/components/styles/color';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 
-const FullScreenLoading = ({ loading }: { loading: boolean }) => {
+export default function FullScreenLoading({ loading }: { loading: boolean }) {
   if (!loading) return null;
 
   const { t } = useTranslation();
@@ -49,9 +49,8 @@ const FullScreenLoading = ({ loading }: { loading: boolean }) => {
       </View>
     </Modal>
   );
-};
+}
 
-export default FullScreenLoading;
 
 const styles = StyleSheet.create({
   fixedOverlay: {

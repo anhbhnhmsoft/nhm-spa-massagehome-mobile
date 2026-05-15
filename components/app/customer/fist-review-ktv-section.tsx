@@ -43,7 +43,7 @@ export const RecentReviewKtvSection: FC<Props> = ({ t, review_count, recent_revi
         {!recent_reviews || recent_reviews.length === 0 ? (
           <Empty />
         ) : (
-          recent_reviews.map((item) => <ReviewRecentItem key={item.id} item={item} t={t} />)
+          recent_reviews.map((item, index) => <ReviewRecentItem key={index} item={item} t={t} />)
         )}
 
         {/* --- Button Xem tất cả --- */}

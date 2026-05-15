@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useCallback, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -86,19 +87,27 @@ export const useNotification = () => {
     syncTokenToServer();
 
     // 2. Setup Listeners
-    // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-    // });
-    //
-    // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-    // });
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+       // Xử lý khi nhận thông báo trong lúc app đang mở (Foreground)
+       // console.log('Notification Received:', notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+       // Xử lý khi người dùng nhấn vào thông báo
+       const data = response.notification.request.content.data;
+       
+       if (data?.support_ticket_id) {
+         // Nếu có support_ticket_id, điều hướng thẳng vào phòng chat
+         router.push({
+           pathname: '/(app)/(customer)/(service)/support-chat',
+           params: { ticketId: data.support_ticket_id }
+         });
+       }
+    });
 
     return () => {
-      if (notificationListener.current) {
-        notificationListener.current.remove();
-      }
-      if (responseListener.current) {
-        responseListener.current.remove();
-      }
+      notificationListener.current?.remove();
+      responseListener.current?.remove();
     };
   }, [statusAuth]); // Chạy lại khi user thay đổi (login/logout)
 };

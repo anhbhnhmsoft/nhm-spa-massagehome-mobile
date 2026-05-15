@@ -58,10 +58,11 @@ export const useSupportChat = (ticketId?: string | number) => {
   );
 
   const ticket = ticketQuery.data ?? null;
+  const roomId = ticket?.room_id ?? (ticket?.id ? `support-ticket:${ticket.id}` : undefined);
 
   const updateCache = useCallback(
     (msg: Partial<SupportChatMessage> & { id: string; temp_id?: string | null }) => {
-      if (!ticket?.room_id) return;
+      if (!roomId) return;
       queryClient.setQueriesData<InfiniteData<SupportMessageListResponse>>(
         { queryKey: ['supportApi-messages', ticketId] },
         (old) =>
@@ -92,19 +93,19 @@ export const useSupportChat = (ticketId?: string | number) => {
           })
       );
     },
-    [ticket?.room_id, ticketId]
+    [roomId, ticketId]
   );
 
   const submitMessage = useCallback(
     (content: string) => {
-      if (!ticket || !user) return;
+      if (!ticket || !user || !roomId) return;
 
       const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       const tempMsg: SupportChatMessage = {
         id: tempId,
         temp_id: tempId,
         support_ticket_id: ticket.id,
-        room_id: ticket.room_id,
+        room_id: roomId,
         content,
         sender_id: user.id,
         sender_user_id: user.id,
@@ -123,7 +124,7 @@ export const useSupportChat = (ticketId?: string | number) => {
         }
       );
     },
-    [ticket, user, updateCache, sendMessage]
+    [ticket, user, roomId, updateCache, sendMessage]
   );
 
   useEffect(() => {
@@ -141,7 +142,7 @@ export const useSupportChat = (ticketId?: string | number) => {
       return;
     }
 
-    if (!ticket?.room_id) {
+    if (!roomId) {
       setJoinStatus('error');
       return;
     }
@@ -153,21 +154,23 @@ export const useSupportChat = (ticketId?: string | number) => {
         await queryClient.resetQueries({ queryKey: ['supportApi-messages', ticketId] });
         SocketService.connect(token);
         await SocketService.waitForConnection();
-        await SocketService.joinRoom(ticket.room_id);
+        await SocketService.joinRoom(roomId);
         SocketService.onSupportMessageNew((payload: any) => {
           const msg = payload?.message ?? payload;
           if (!msg?.id || !msg?.content) return;
           updateCache(msg);
         });
         if (mounted) setJoinStatus('joined');
-        seenMessages({ support_ticket_id: ticket.id });
+        if (ticket?.id) seenMessages({ support_ticket_id: ticket.id });
       } catch {
         if (mounted) setJoinStatus('error');
       }
     };
 
     const disconnect = () => {
-      SocketService.leaveRoom(ticket.room_id);
+      if (roomId) {
+        SocketService.leaveRoom(roomId);
+      }
       SocketService.disconnect();
     };
 
@@ -184,7 +187,7 @@ export const useSupportChat = (ticketId?: string | number) => {
       sub.remove();
       SocketService.offSupportMessageNew();
     };
-  }, [ticketId, ticket?.room_id, ticket?.id, token, ticketQuery.isLoading, ticketQuery.isFetching, ticketQuery.isError]);
+  }, [ticketId, roomId, ticket?.id, token, ticketQuery.isLoading, ticketQuery.isFetching, ticketQuery.isError]);
 
   useEffect(() => {
     if (historyQuery.isError || ticketQuery.isError) setJoinStatus('error');

@@ -43,34 +43,25 @@ export default function AppLayout() {
 
   return (
     <>
-      {/* --- LOADING SCREEN --- */}
       <FullScreenLoading loading={loading} />
-
-      {/* --- NOTIFICATION PERMISSION MODAL --- */}
       <NotificationPermissionModal />
-
-      {/* --- STACK SCREEN --- */}
       <Stack
         screenOptions={{
           headerShown: false,
         }}>
-        {/* --- MAINTAINED SCREEN --- */}
         <Stack.Protected guard={guard.maintained}>
           <Stack.Screen name="maintaince" />
         </Stack.Protected>
 
         <Stack.Protected guard={!guard.maintained}>
-          {/* --- TAB KTV SCREEN --- */}
           <Stack.Protected guard={guard.ktv_screen}>
             <Stack.Screen name="(ktv)" />
           </Stack.Protected>
 
-          {/* --- TAB AGENCY SCREEN --- */}
           <Stack.Protected guard={guard.agency_screen}>
             <Stack.Screen name="(agency)" />
           </Stack.Protected>
 
-          {/* --- TAB CUSTOMER SCREEN --- */}
           <Stack.Protected guard={guard.customer_screen}>
             <Stack.Screen name="(customer)" />
           </Stack.Protected>
@@ -79,7 +70,6 @@ export default function AppLayout() {
             <Stack.Screen name="take-picture-avatar" />
           </Stack.Protected>
 
-          {/* --- PDF SCREEN --- */}
           <Stack.Screen name="term-or-use-pdf" />
         </Stack.Protected>
       </Stack>
