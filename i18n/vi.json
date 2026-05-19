@@ -588,7 +588,7 @@
     "deposit": "Nạp tiền",
     "withdraw": "Rút tiền",
     "no_transactions": "Chưa có giao dịch nào",
-    "frozen_balance": "Số dư tạm dữ"
+    "frozen_balance": "Số dư tạm giữ"
   },
   "payment": {
     "deposit_title": "Nạp tiền vào ví",

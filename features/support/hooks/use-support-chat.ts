@@ -10,9 +10,7 @@ import { goBack } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores';
 import SocketService from '@/features/chat/socket-service';
 import {
-  PayloadNewMessage,
   ListMessageRequest,
-  ListMessageResponse,
 } from '@/features/chat/types';
 import useToast from '@/features/app/hooks/use-toast';
 import { useSupportMessagesQuery, useSupportTicketQuery } from '@/features/support/hooks/use-query';
@@ -21,11 +19,11 @@ import {
   useMutationSeenSupportMessages,
 } from '@/features/support/hooks/use-mutation';
 import {
-  SupportCategory,
-  SupportTicket,
   SupportMessage,
   SupportMessageListResponse,
+  SupportSocketMessagePayload,
 } from '@/features/support/types';
+import useConfigStore from '@/features/config/stores';
 
 type SupportChatMessage = SupportMessage & {
   room_id?: string;
@@ -38,6 +36,8 @@ export const useSupportChat = (ticketId?: string | number) => {
   const { error: errorToast } = useToast();
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
+  const setActiveSupportRoomId = useConfigStore((s) => s.setActiveSupportRoomId);
+  const resetSupportUnreadCount = useConfigStore((s) => s.resetSupportUnreadCount);
 
   const { mutate: sendMessage } = useMutationSendSupportMessage();
   const { mutate: seenMessages } = useMutationSeenSupportMessages();
@@ -148,6 +148,15 @@ export const useSupportChat = (ticketId?: string | number) => {
     }
 
     let mounted = true;
+    const handleSupportMessage = (payload: SupportSocketMessagePayload) => {
+      const msg = payload?.message;
+      if (!msg?.id || !msg?.content) return;
+      updateCache({
+        ...msg,
+        sender_id: msg.sender_user_id ?? msg.sender_admin_id ?? msg.id,
+      });
+    };
+
     const connect = async () => {
       try {
         if (mounted) setJoinStatus('joining');
@@ -155,27 +164,34 @@ export const useSupportChat = (ticketId?: string | number) => {
         SocketService.connect(token);
         await SocketService.waitForConnection();
         await SocketService.joinRoom(roomId);
-        SocketService.onSupportMessageNew((payload: any) => {
-          const msg = payload?.message ?? payload;
-          if (!msg?.id || !msg?.content) return;
-          updateCache(msg);
-        });
+        setActiveSupportRoomId(roomId);
+        SocketService.onSupportMessageNew(handleSupportMessage);
         if (mounted) setJoinStatus('joined');
-        if (ticket?.id) seenMessages({ support_ticket_id: ticket.id });
+        if (ticket?.id) {
+          seenMessages(
+            { support_ticket_id: ticket.id },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['supportApi-tickets'] });
+              },
+            }
+          );
+        }
+        resetSupportUnreadCount();
       } catch {
         if (mounted) setJoinStatus('error');
       }
     };
 
-    const disconnect = () => {
+    const leaveSupportRoom = () => {
       if (roomId) {
         SocketService.leaveRoom(roomId);
       }
-      SocketService.disconnect();
+      setActiveSupportRoomId(null);
     };
 
     const sub = AppState.addEventListener('change', (state: AppStateStatus) => {
-      if (state.match(/inactive|background/)) disconnect();
+      if (state.match(/inactive|background/)) leaveSupportRoom();
       else if (state === 'active') connect();
     });
 
@@ -183,11 +199,23 @@ export const useSupportChat = (ticketId?: string | number) => {
 
     return () => {
       mounted = false;
-      disconnect();
+      leaveSupportRoom();
       sub.remove();
-      SocketService.offSupportMessageNew();
+      SocketService.offSupportMessageNew(handleSupportMessage);
     };
-  }, [ticketId, roomId, ticket?.id, token, ticketQuery.isLoading, ticketQuery.isFetching, ticketQuery.isError]);
+  }, [
+    ticketId,
+    roomId,
+    ticket?.id,
+    token,
+    ticketQuery.isLoading,
+    ticketQuery.isFetching,
+    ticketQuery.isError,
+    seenMessages,
+    updateCache,
+    resetSupportUnreadCount,
+    setActiveSupportRoomId,
+  ]);
 
   useEffect(() => {
     if (historyQuery.isError || ticketQuery.isError) setJoinStatus('error');

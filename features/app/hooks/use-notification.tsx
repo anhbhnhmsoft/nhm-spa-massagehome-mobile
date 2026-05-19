@@ -6,8 +6,10 @@ import * as Notifications from 'expo-notifications';
 import authApi from '@/features/auth/api';
 import { getInfoDevice } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores';
-import { User } from '@/features/auth/types';
 import { _AuthStatus } from '@/features/auth/const';
+import { NotificationType } from '@/features/notification/const';
+import useConfigStore from '@/features/config/stores';
+import { queryClient } from '@/lib/provider/query-provider';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -80,7 +82,27 @@ export const useNotification = () => {
   const statusAuth = useAuthStore((state) => state.status);
   const notificationListener = useRef<Notifications.EventSubscription>(null);
   const responseListener = useRef<Notifications.EventSubscription>(null);
+  const handledSupportNotificationIdsRef = useRef<Set<string>>(new Set());
   const syncTokenToServer = useSyncTokenToServer();
+
+  const updateSupportBadgeFromNotification = useCallback((data: Record<string, any> | null | undefined) => {
+    const type = Number(data?.type);
+    const ticketId = data?.support_ticket_id;
+    if (type !== NotificationType.SUPPORT_CHAT_MESSAGE || !ticketId) return;
+
+    const notificationId = data?.notification_id ? String(data.notification_id) : null;
+    if (notificationId) {
+      if (handledSupportNotificationIdsRef.current.has(notificationId)) return;
+      handledSupportNotificationIdsRef.current.add(notificationId);
+    }
+
+    const roomId = `support-ticket:${ticketId}`;
+    const store = useConfigStore.getState();
+    if (store.active_support_room_id === roomId) return;
+
+    store.incrementSupportUnreadCount(1);
+    queryClient.invalidateQueries({ queryKey: ['supportApi-tickets'] });
+  }, []);
 
   useEffect(() => {
     // 1. Tự động chạy khi User Login hoặc App mở
@@ -90,11 +112,13 @@ export const useNotification = () => {
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
        // Xử lý khi nhận thông báo trong lúc app đang mở (Foreground)
        // console.log('Notification Received:', notification);
+       updateSupportBadgeFromNotification(notification.request.content.data);
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
        // Xử lý khi người dùng nhấn vào thông báo
        const data = response.notification.request.content.data;
+       updateSupportBadgeFromNotification(data);
        
        if (data?.support_ticket_id) {
          // Nếu có support_ticket_id, điều hướng thẳng vào phòng chat
@@ -109,7 +133,7 @@ export const useNotification = () => {
       notificationListener.current?.remove();
       responseListener.current?.remove();
     };
-  }, [statusAuth]); // Chạy lại khi user thay đổi (login/logout)
+  }, [statusAuth, syncTokenToServer, updateSupportBadgeFromNotification]); // Chạy lại khi user thay đổi (login/logout)
 };
 
 // Kiểm tra quyền thông báo

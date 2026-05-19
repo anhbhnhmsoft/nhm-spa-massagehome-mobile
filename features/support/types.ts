@@ -29,6 +29,11 @@ export type SupportMessage = {
   sender_avatar?: string | null;
 };
 
+export type SupportSocketMessagePayload = {
+  ticket: SupportTicket;
+  message: SupportMessage | null;
+};
+
 export type SupportTicket = {
   id: string;
   room_id: string;
@@ -50,6 +55,7 @@ export type SupportTicket = {
     service_name: string | null;
   } | null;
   last_message_at: string | null;
+  unread_count?: number;
   latest_message: SupportMessage | null;
   created_at: string;
   updated_at: string;
@@ -73,4 +79,3 @@ export type SendSupportMessageRequest = {
 export type SupportSeenRequest = {
   support_ticket_id: string | number;
 };
-

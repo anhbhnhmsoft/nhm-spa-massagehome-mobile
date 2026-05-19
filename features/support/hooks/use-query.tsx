@@ -33,6 +33,7 @@ export const useSupportTicketsQuery = (params: Record<string, any>, enabled: boo
       return currentPage < lastPageNum ? currentPage + 1 : undefined;
     },
     gcTime: 0,
+    refetchInterval: enabled ? 30 * 1000 : false,
     retry: 0,
     meta: { persist: false },
   });

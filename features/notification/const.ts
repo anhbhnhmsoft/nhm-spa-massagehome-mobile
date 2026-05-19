@@ -17,6 +17,7 @@ export enum NotificationType {
   BOOKING_OVERTIME_WARNING = 16,
   BOOKING_START = 17,
   WALLET_TRANSACTION_CANCELLED = 18,
+  SUPPORT_CHAT_MESSAGE = 24,
 }
 
 export enum NotificationStatus {

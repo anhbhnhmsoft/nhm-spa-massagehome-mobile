@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { TabIcon } from '@/components/app/tab-icon';
 import PromoModal from '@/components/app/promo-modal';
+import SupportFab from '@/components/app/support-fab';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTabBarHeight, tabBarStyle } from '@/components/styles/style';
 import { useAuthStore } from '@/features/auth/stores';
@@ -22,6 +23,8 @@ export default function TabsLayout() {
       <FocusAwareStatusBar />
       {/*Modal promo */}
       <PromoModal />
+      {/* FAB hỗ trợ khách hàng — hiển thị trên tất cả các tab */}
+      <SupportFab />
       {/* Tabs */}
       <Tabs
         screenOptions={{

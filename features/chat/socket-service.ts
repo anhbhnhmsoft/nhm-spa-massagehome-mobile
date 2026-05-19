@@ -4,6 +4,14 @@ import { _SocketURL } from '@/lib/const';
 
 class SocketService {
   public socket: Socket | null = null;
+  private supportMessageCallbacks = new Set<(message: any) => void>();
+  private supportTicketCallbacks = new Set<(payload: any) => void>();
+  private readonly supportMessageEmitter = (data: any) => {
+    this.supportMessageCallbacks.forEach((callback) => callback(data));
+  };
+  private readonly supportTicketEmitter = (payload: any) => {
+    this.supportTicketCallbacks.forEach((callback) => callback(payload));
+  };
 
   /**
    * Connect to Socket Server
@@ -20,6 +28,17 @@ class SocketService {
         token: token,
       },
     });
+
+    if (this.supportMessageCallbacks.size > 0) {
+      this.socket.on('support:message:new', this.supportMessageEmitter);
+    }
+
+    if (this.supportTicketCallbacks.size > 0) {
+      this.socket.on('support:ticket:created', this.supportTicketEmitter);
+      this.socket.on('support:ticket:claimed', this.supportTicketEmitter);
+      this.socket.on('support:ticket:closed', this.supportTicketEmitter);
+    }
+
     return this.socket;
   }
 
@@ -103,21 +122,21 @@ class SocketService {
 
   onSupportMessageNew(callback: (message: any) => void) {
     if (this.socket) {
-      this.socket.off('support:message:new');
-      this.socket.on('support:message:new', (data) => {
-        callback(data);
-      });
+      if (this.supportMessageCallbacks.size === 0) {
+        this.socket.on('support:message:new', this.supportMessageEmitter);
+      }
+      this.supportMessageCallbacks.add(callback);
     }
   }
 
   onSupportTicketEvent(callback: (payload: any) => void) {
     if (this.socket) {
-      this.socket.off('support:ticket:created');
-      this.socket.off('support:ticket:claimed');
-      this.socket.off('support:ticket:closed');
-      this.socket.on('support:ticket:created', callback);
-      this.socket.on('support:ticket:claimed', callback);
-      this.socket.on('support:ticket:closed', callback);
+      if (this.supportTicketCallbacks.size === 0) {
+        this.socket.on('support:ticket:created', this.supportTicketEmitter);
+        this.socket.on('support:ticket:claimed', this.supportTicketEmitter);
+        this.socket.on('support:ticket:closed', this.supportTicketEmitter);
+      }
+      this.supportTicketCallbacks.add(callback);
     }
   }
 
@@ -130,17 +149,37 @@ class SocketService {
     }
   }
 
-  offSupportMessageNew() {
+  offSupportMessageNew(callback?: (message: any) => void) {
+    if (callback) {
+      this.supportMessageCallbacks.delete(callback);
+    } else {
+      this.supportMessageCallbacks.clear();
+    }
+
     if (this.socket) {
-      this.socket.off('support:message:new');
+      this.socket.off('support:message:new', this.supportMessageEmitter);
+      if (this.supportMessageCallbacks.size > 0) {
+        this.socket.on('support:message:new', this.supportMessageEmitter);
+      }
     }
   }
 
-  offSupportTicketEvent() {
+  offSupportTicketEvent(callback?: (payload: any) => void) {
+    if (callback) {
+      this.supportTicketCallbacks.delete(callback);
+    } else {
+      this.supportTicketCallbacks.clear();
+    }
+
     if (this.socket) {
-      this.socket.off('support:ticket:created');
-      this.socket.off('support:ticket:claimed');
-      this.socket.off('support:ticket:closed');
+      this.socket.off('support:ticket:created', this.supportTicketEmitter);
+      this.socket.off('support:ticket:claimed', this.supportTicketEmitter);
+      this.socket.off('support:ticket:closed', this.supportTicketEmitter);
+      if (this.supportTicketCallbacks.size > 0) {
+        this.socket.on('support:ticket:created', this.supportTicketEmitter);
+        this.socket.on('support:ticket:claimed', this.supportTicketEmitter);
+        this.socket.on('support:ticket:closed', this.supportTicketEmitter);
+      }
     }
   }
 
@@ -149,6 +188,8 @@ class SocketService {
    */
   disconnect() {
     if (this.socket) {
+      this.offSupportMessageNew();
+      this.offSupportTicketEvent();
       this.socket.disconnect();
       this.socket = null;
     }

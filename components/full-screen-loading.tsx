@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui/text';
 
 export default function FullScreenLoading({ loading }: { loading: boolean }) {
-  if (!loading) return null;
-
   const { t } = useTranslation();
+
+  if (!loading) return null;
 
   return (
     // Dùng Modal để đảm bảo nó luôn nằm trên cùng của mọi lớp UI
