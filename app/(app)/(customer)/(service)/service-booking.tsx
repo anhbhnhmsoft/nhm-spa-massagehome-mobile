@@ -36,6 +36,9 @@ export default function BookingConfirmationScreen() {
     form,
     dataPricing,
     error,
+    loadingPrepareBooking,
+    canSubmitBooking,
+    handleSelectCoupon,
     handleBookingService,
   } = useBooking();
 
@@ -122,14 +125,14 @@ export default function BookingConfirmationScreen() {
             {/* Tiền dịch vụ */}
             <View className="flex-row items-center justify-between gap-2 mb-3">
               <Text className="text-slate-500 text-sm">{t('services.price_service')}</Text>
-              <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing?.price || tempPrice)} {t('common.currency')}</Text>
+              <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing?.price ?? tempPrice)} {t('common.currency')}</Text>
             </View>
 
             {/* Tiền khoảng cách */}
             {!!dataPricing?.price_distance && (
               <View className="flex-row items-center justify-between gap-2 mb-3">
                 <Text className="text-slate-500 text-sm">{t('services.distance_price')}</Text>
-                <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing.price_distance || 0)} {t('common.currency')}</Text>
+                <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing.price_distance ?? 0)} {t('common.currency')}</Text>
               </View>
             )}
             {/* Tiền giảm giá */}
@@ -137,7 +140,7 @@ export default function BookingConfirmationScreen() {
               <View className="flex-row items-center justify-between gap-2 mb-3">
                 <Text className="text-slate-500 text-sm">{t('services.discount')}</Text>
                 <Text
-                  className="font-inter-semibold text-sm">{formatBalance(dataPricing.discount_coupon || 0)} {t('common.currency')}</Text>
+                  className="font-inter-semibold text-sm">{formatBalance(dataPricing.discount_coupon ?? 0)} {t('common.currency')}</Text>
               </View>
             )}
 
@@ -148,7 +151,7 @@ export default function BookingConfirmationScreen() {
             <View className="flex-row justify-between items-center">
               <Text className="text-base font-inter-bold">{t('common.total')}</Text>
               <Text className="text-lg font-inter-bold text-primary-color-2">
-                {formatBalance(dataPricing?.final_price || tempPrice)} {t('common.currency')}
+                {formatBalance(dataPricing?.final_price ?? tempPrice)} {t('common.currency')}
               </Text>
             </View>
           </Card>
@@ -241,6 +244,14 @@ export default function BookingConfirmationScreen() {
                         {t('services.error.invalid_address')}
                       </Text>
                     )}
+                    {loadingPrepareBooking && (
+                      <View className="flex-row items-center gap-2">
+                        <ActivityIndicator size="small" color={DefaultColor.base['primary-color-2']} />
+                        <Text className="text-sm text-slate-500">
+                          {t('common.loading')}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 );
               }}
@@ -314,9 +325,9 @@ export default function BookingConfirmationScreen() {
                           isSelected={value === item.id}
                           onPress={() => {
                             if (value === item.id) {
-                              onChange(null);
+                              handleSelectCoupon(null);
                             }else{
-                              onChange(item.id)
+                              handleSelectCoupon(item.id);
                             }
                           }}
                         />
@@ -345,16 +356,16 @@ export default function BookingConfirmationScreen() {
         <View>
           <Text className="text-[10px] text-slate-400 font-inter-bold uppercase mb-0.5">{t('services.subtotal')}</Text>
           <Text className="text-xl font-extrabold text-primary-color-2">
-            {formatBalance(dataPricing?.final_price || tempPrice)} {t('common.currency')}
+            {formatBalance(dataPricing?.final_price ?? tempPrice)} {t('common.currency')}
           </Text>
         </View>
 
         <TouchableOpacity
-          disabled={!!error}
+          disabled={!canSubmitBooking}
           onPress={handleSubmit(handleBookingService)}
           className={cn('rounded-2xl px-6 py-3.5 flex-row items-center shadow-md shadow-blue-200', {
-            'bg-slate-400': !!error,
-            'bg-primary-color-2': !error,
+            'bg-slate-400': !canSubmitBooking,
+            'bg-primary-color-2': canSubmitBooking,
           })}>
           <Text className="text-white font-inter-bold text-base mr-2">{t('services.btn_booking')}</Text>
           <Ionicons name="chevron-forward" size={18} color="white" />

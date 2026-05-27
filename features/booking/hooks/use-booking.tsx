@@ -1,5 +1,5 @@
 import { usePrepareBookingStore } from '@/features/profile/stores';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getMessageError, goBack } from '@/lib/utils';
 import { useApplicationStore } from '@/features/app/stores';
 import { useForm, useWatch } from 'react-hook-form';
@@ -30,6 +30,7 @@ export const useBooking = () => {
   const setLoading = useApplicationStore((s) => s.setLoading);
 
   const form = useForm<BookingServiceRequest>({
+    mode: 'onChange',
     resolver: zodResolver(
       z.object({
         ktv_id: z.string(),
@@ -38,9 +39,15 @@ export const useBooking = () => {
           error: t('services.error.require_option'),
         }),
         note: z.string().optional(),
-        address: z.string().min(1),
-        latitude: z.number(),
-        longitude: z.number(),
+        address: z.string().trim().min(1, {
+          error: t('location.error.invalid_address'),
+        }),
+        latitude: z.number({
+          error: t('services.error.invalid_address'),
+        }),
+        longitude: z.number({
+          error: t('services.error.invalid_address'),
+        }),
         coupon_id: z.string().nullable().optional(),
       })
     ),
@@ -51,6 +58,7 @@ export const useBooking = () => {
       address: '',
       latitude: 0,
       longitude: 0,
+      coupon_id: null,
     },
   });
 
@@ -69,6 +77,7 @@ export const useBooking = () => {
       address: '',
       latitude: 0,
       longitude: 0,
+      coupon_id: null,
     });
   }, [item]);
 
@@ -93,13 +102,37 @@ export const useBooking = () => {
   const { mutate: mutatePrepareBooking, isPending: loadingPrepareBooking } =
     useMutationPrepareBooking();
 
+  const latestPrepareRequestRef = useRef(0);
+
   const latitude = useWatch({ control: form.control, name: 'latitude' });
   const longitude = useWatch({ control: form.control, name: 'longitude' });
+  const address = useWatch({ control: form.control, name: 'address' });
 
   const coupon_id = useWatch({ control: form.control, name: 'coupon_id' });
 
+  const handleSelectCoupon = useCallback((couponId: string | null) => {
+    setError(null);
+    form.setValue('coupon_id', couponId, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  }, [form]);
+
   useEffect(() => {
-    if (item && latitude && longitude) {
+    const hasValidAddress = !!address?.trim();
+    const hasValidCoordinates = !!latitude && !!longitude;
+
+    if (!item || !hasValidAddress || !hasValidCoordinates) {
+      setDataPricing(null);
+      setError(null);
+      return;
+    }
+
+    if (item && hasValidAddress && hasValidCoordinates) {
+      const requestId = latestPrepareRequestRef.current + 1;
+      latestPrepareRequestRef.current = requestId;
+
       mutatePrepareBooking(
         {
           category_id: item!.service.category_id,
@@ -111,10 +144,12 @@ export const useBooking = () => {
         },
         {
           onSuccess: (res) => {
+            if (latestPrepareRequestRef.current !== requestId) return;
             setDataPricing(res.data);
             setError(null);
           },
           onError: (err) => {
+            if (latestPrepareRequestRef.current !== requestId) return;
             const message = getMessageError(err, t);
             setError(message || t('common_error.unknown_error'));
             setDataPricing(null);
@@ -122,7 +157,7 @@ export const useBooking = () => {
         }
       );
     }
-  }, [latitude, longitude, item, t]);
+  }, [address, latitude, longitude, coupon_id, item, t]);
 
   const handleBookingService = useCallback(
     (data: BookingServiceRequest) => {
@@ -145,8 +180,8 @@ export const useBooking = () => {
   );
 
   useEffect(() => {
-    setLoading(loadingBookingService || loadingPrepareBooking);
-  }, [loadingBookingService, loadingPrepareBooking]);
+    setLoading(loadingBookingService);
+  }, [loadingBookingService, setLoading]);
 
   return {
     item,
@@ -155,6 +190,9 @@ export const useBooking = () => {
     form,
     dataPricing,
     error,
+    loadingPrepareBooking,
+    canSubmitBooking: !!address?.trim() && !!latitude && !!longitude && !loadingPrepareBooking,
+    handleSelectCoupon,
     handleBookingService,
   };
 };
