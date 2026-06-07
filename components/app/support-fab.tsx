@@ -3,15 +3,21 @@ import { TouchableOpacity, StyleSheet, Platform, View } from 'react-native';
 import { Headphones } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { InfiniteData } from '@tanstack/query-core';
 import { Text } from '@/components/ui/text';
 import SupportModal from '@/components/app/support-modal';
 import { useGetSupport } from '@/features/config/hooks';
 import { useAuthStore } from '@/features/auth/stores';
 import SocketService from '@/features/chat/socket-service';
 import useConfigStore from '@/features/config/stores';
-import { SupportSocketMessagePayload } from '@/features/support/types';
+import {
+  SupportSocketMessagePayload,
+  SupportTicket,
+  SupportTicketListResponse,
+} from '@/features/support/types';
 import { useSupportTicketsQuery } from '@/features/support/hooks/use-query';
 import { queryClient } from '@/lib/provider/query-provider';
+import { produce } from 'immer';
 
 /**
  * Floating Action Button hiển thị nút hỗ trợ cố định ở góc phải dưới màn hình.
@@ -24,6 +30,7 @@ const SupportFab = () => {
   const userId = useAuthStore((s) => s.user?.id);
   const supportUnreadCount = useConfigStore((s) => s.support_unread_count);
   const activeSupportRoomId = useConfigStore((s) => s.active_support_room_id);
+  const resetSupportUnreadCount = useConfigStore((s) => s.resetSupportUnreadCount);
   const { visible, openSupportModal, closeSupportModal, supportChanel } = useGetSupport();
   const supportTicketParams = useMemo(
     () => ({
@@ -38,6 +45,10 @@ const SupportFab = () => {
       supportTicketsQuery.data?.pages
         .flatMap((page) => page.data.data)
         .reduce((total, ticket) => {
+          if (ticket.status === 'closed') {
+            return total;
+          }
+
           if (typeof ticket.unread_count === 'number') {
             return total + ticket.unread_count;
           }
@@ -73,13 +84,52 @@ const SupportFab = () => {
       queryClient.invalidateQueries({ queryKey: ['supportApi-tickets'] });
     };
 
+    const updateSupportTicketsCache = (ticket: SupportTicket) => {
+      queryClient.setQueriesData<InfiniteData<SupportTicketListResponse>>(
+        { queryKey: ['supportApi-tickets'] },
+        (old) =>
+          produce(old, (draft) => {
+            if (!draft?.pages) return;
+
+            draft.pages.forEach((page) => {
+              const tickets = page.data?.data;
+              if (!tickets) return;
+
+              const index = tickets.findIndex((item) => String(item.id) === String(ticket.id));
+              if (index === -1) return;
+
+              tickets[index] = {
+                ...tickets[index],
+                ...ticket,
+              };
+            });
+          })
+      );
+    };
+
+    const handleSupportTicketEvent = (payload: { ticket?: SupportTicket | null }) => {
+      const ticket = payload?.ticket;
+      if (!ticket) return;
+      if (String(ticket.customer?.id ?? '') !== String(userId)) return;
+
+      updateSupportTicketsCache(ticket);
+
+      if (ticket.status === 'closed') {
+        resetSupportUnreadCount();
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['supportApi-tickets'] });
+    };
+
     SocketService.connect(token);
     SocketService.onSupportMessageNew(handleSupportMessage);
+    SocketService.onSupportTicketEvent(handleSupportTicketEvent);
 
     return () => {
       SocketService.offSupportMessageNew(handleSupportMessage);
+      SocketService.offSupportTicketEvent(handleSupportTicketEvent);
     };
-  }, [token, userId, activeSupportRoomId]);
+  }, [token, userId, activeSupportRoomId, resetSupportUnreadCount]);
 
   return (
     <>
@@ -103,7 +153,7 @@ const SupportFab = () => {
       <SupportModal
         isVisible={visible}
         onClose={closeSupportModal}
-        supportChanel={supportChanel}
+        supportChanel={supportChanel ?? undefined}
       />
     </>
   );

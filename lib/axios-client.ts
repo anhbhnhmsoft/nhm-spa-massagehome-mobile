@@ -22,10 +22,11 @@ client.interceptors.request.use(
     // Add an authorization token if available
     const token = await SecureStorage.getItem<string>(_StorageKey.SECURE_AUTH_TOKEN);
     const lang = await Storage.getItem<_LanguageCode>(_StorageKey.LANGUAGE);
+    const legacyManifest = Constants.manifest as { version?: string } | null;
     const appVersion =
       Constants.expoConfig?.version ||
       Constants.manifest2?.extra?.expoClient?.version ||
-      Constants.manifest?.version ||
+      legacyManifest?.version ||
       '1.0.0';
     const appPlatform = Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : null;
 
