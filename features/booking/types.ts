@@ -6,18 +6,48 @@ export type BookingCheckItem = {
   service_name: string;
   date: string;
   location: string;
-  technician: string;
+  technician: string | null;
+  is_ktv_selected?: boolean;
   price: string;
   price_discount: string;
   price_transportation: string;
   total_price: string;
   reason_cancel: string | null;
+  ktv_confirm_deadline_at?: string | null;
+  application_opened_at?: string | null;
+  application_open_reason?: string | null;
 };
 
 export type BookingCheckResponse = ResponseDataSuccessType<{
-  status: 'waiting' | 'confirmed' | 'failed';
+  status: 'waiting' | 'waiting_ktv_confirm' | 'open_for_application' | 'confirmed' | 'failed';
   data?: BookingCheckItem;
 }>;
+
+export type BookingApplicationTechnician = {
+  id: string | null;
+  name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  experience?: number | null;
+  bio?: Record<string, string> | null;
+  location?: {
+    address: string | null;
+    latitude: string | number | null;
+    longitude: string | number | null;
+  };
+};
+
+export type BookingApplicationItem = {
+  id: string;
+  booking_id: string;
+  ktv_id: string;
+  status: number;
+  status_label: string | null;
+  applied_at: string | null;
+  selected_at: string | null;
+  removed_reason: string | null;
+  ktv: BookingApplicationTechnician;
+};
 
 export type ListBookingRequest = BaseSearchRequest<{
   status?: _BookingStatus;
@@ -31,10 +61,15 @@ export type BookingItem = {
     image: string;
   };
   ktv_user: {
-    id: string;
+    id: string | null;
     name: string;
     avatar_url: string | null;
   };
+  selected_ktv_user?: {
+    id: string | null;
+    name: string;
+    avatar_url: string | null;
+  } | null;
   user: {
     id: string;
     name: string;
@@ -45,6 +80,14 @@ export type BookingItem = {
   booking_time: string;
   start_time: string | null;
   end_time: string | null;
+  booking_phase?: string;
+  is_ktv_selected?: boolean;
+  ktv_confirm_deadline_at?: string | null;
+  application_opened_at?: string | null;
+  application_open_reason?: string | null;
+  has_applied?: boolean;
+  application_status?: number | null;
+  distance?: number | null;
   note: string | null;
   duration: number;
   status: _BookingStatus;
@@ -63,6 +106,18 @@ export type BookingItem = {
 };
 
 export type ListBookingResponse = ResponseDataSuccessType<Paginator<BookingItem>>;
+export type BookingApplicationListResponse = ResponseDataSuccessType<Paginator<BookingApplicationItem>>;
+export type BookingApplicationSelectResponse = ResponseDataSuccessType<BookingItem>;
+export type BookingApplicationPreviewResponse = ResponseDataSuccessType<{
+  booking_id: string;
+  ktv_id: string;
+  technician_name: string | null;
+  price: number;
+  price_discount: number;
+  price_transportation: number;
+  total_price: number;
+  distance: number | null;
+}>;
 
 
 // Lấy thông tin trước khi đặt lịch dịch vụ

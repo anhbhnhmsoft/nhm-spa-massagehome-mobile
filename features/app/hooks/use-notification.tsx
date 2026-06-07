@@ -10,6 +10,7 @@ import { _AuthStatus } from '@/features/auth/const';
 import { NotificationType } from '@/features/notification/const';
 import useConfigStore from '@/features/config/stores';
 import { queryClient } from '@/lib/provider/query-provider';
+import { _UserRole } from '@/features/auth/const';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -119,6 +120,25 @@ export const useNotification = () => {
        // Xử lý khi người dùng nhấn vào thông báo
        const data = response.notification.request.content.data;
        updateSupportBadgeFromNotification(data);
+
+       const type = Number(data?.type);
+       const bookingId = data?.booking_id ? String(data.booking_id) : null;
+       const user = useAuthStore.getState().user;
+
+       if (
+         user?.role === _UserRole.KTV &&
+         bookingId &&
+         [NotificationType.APPLICATION_BOOKING_AVAILABLE, NotificationType.BOOKING_KTV_RELEASED, NotificationType.BOOKING_KTV_CONFIRM_TIMEOUT].includes(type)
+       ) {
+         router.push({
+           pathname: '/(app)/(ktv)/(tab)/schedule',
+           params: {
+             mode: 'applications',
+             bookingId,
+           },
+         });
+         return;
+       }
        
        if (data?.support_ticket_id) {
          // Nếu có support_ticket_id, điều hướng thẳng vào phòng chat

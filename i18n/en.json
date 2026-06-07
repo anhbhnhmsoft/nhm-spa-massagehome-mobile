@@ -199,7 +199,9 @@
       "COMPLETED": "Completed",
       "CANCELED": "Cancelled",
       "PAYMENT_FAILED": "Payment Failed",
-      "WAITING_CANCEL": "Waiting Cancel"
+      "WAITING_CANCEL": "Waiting Cancel",
+      "WAITING_KTV_CONFIRM": "Waiting KTV Confirm",
+      "OPEN_FOR_APPLICATION": "Open For Application"
     },
     "payment_type": {
       "QR_BANKING": "QR Banking Transfer",
@@ -816,7 +818,23 @@
     "price_transportation": "Transportation Price",
     "no_customer_notes": "No notes from the customer",
     "no_cancel_reason": "No cancellation reason",
-    "cancel_pending_note": "The cancellation request will be sent to the administrator for review.",
+    "apply_now": "Apply now",
+    "applied_label": "Applied",
+    "application_detail_title": "Application Booking Details",
+    "confirm_booking_action": "Confirm Booking",
+    "confirm_booking_action_desc": "Do you confirm taking this booking?",
+    "application_success_mobile": "Application submitted successfully",
+    "confirmed_successfully_mobile": "Booking confirmed successfully",
+    "waiting_ktv_confirm_title": "Waiting for technician confirmation",
+    "waiting_ktv_confirm_desc": "The selected technician has 3 minutes to confirm this booking.",
+    "open_for_application_title": "Booking is open for applications",
+    "open_for_application_desc": "You can review technicians who applied and choose the one you want.",
+    "select_technician_title": "Select Technician",
+    "select_technician_action": "View applicants",
+    "application_candidate": "Applicant",
+    "unassigned_technician": "Technician not selected",
+    "confirm_deadline_label": "Confirmation deadline: {{time}}",
+    "cancel_pending_note": "The booking will be cancelled automatically and the refund will be processed by the system.",
     "start_error_booking": "An error occurred while starting the service. Please try again.",
     "warning_alert_service_booking_confirm": "You have 1 service confirmed at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",
     "warning_alert_service_booking_ongoing": "You have 1 service ongoing at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",
@@ -894,6 +912,7 @@
       "new_reviews": "New Reviews Today",
       "no_review_new_today": "No new reviews today",
       "order_in_progress": "Order in progress",
+      "application_bookings": "New application bookings",
       "ktv_had_order_in_progress": "Technician had order in progress at {{time}}"
     },
     "services": {

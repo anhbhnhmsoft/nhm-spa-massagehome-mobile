@@ -5,6 +5,8 @@ import { _StorageKey } from '@/lib/storages/key';
 import ErrorAPIServer, { IValidationErrors } from '@/lib/types';
 import i18next from 'i18next';
 import { useAuthStore } from '@/features/auth/stores';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 export const client = axios.create({
   baseURL: `${_BackendURL}/api`,
@@ -20,8 +22,21 @@ client.interceptors.request.use(
     // Add an authorization token if available
     const token = await SecureStorage.getItem<string>(_StorageKey.SECURE_AUTH_TOKEN);
     const lang = await Storage.getItem<_LanguageCode>(_StorageKey.LANGUAGE);
+    const appVersion =
+      Constants.expoConfig?.version ||
+      Constants.manifest2?.extra?.expoClient?.version ||
+      Constants.manifest?.version ||
+      '1.0.0';
+    const appPlatform = Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : null;
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (appPlatform) {
+      config.headers['X-App-Platform'] = appPlatform;
+    }
+    if (appVersion) {
+      config.headers['X-App-Version'] = appVersion;
     }
     // Thêm tham số ngôn ngữ vào mỗi request nếu có
     if (lang) {

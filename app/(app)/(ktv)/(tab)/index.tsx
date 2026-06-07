@@ -15,6 +15,10 @@ export default function KTVDashboard() {
 
   const bottomPadding = getTabBarHeight() + 20;
 
+  const goSchedule = useSingleTouch(() => {
+    router.push('/(app)/(ktv)/(tab)/schedule');
+  });
+
   return (
     <View className="flex-1 bg-slate-50">
       {/* Header */}
@@ -43,13 +47,10 @@ export default function KTVDashboard() {
         {/* Section: Đơn sắp tới */}
         <View className="mb-8">
           <View className="mb-4 flex-row items-end justify-between">
-            <Text className="font-inter-bold text-lg text-slate-900">
-              {t('ktv.index.upcoming')}
-            </Text>
-            <TouchableOpacity
-              onPress={useSingleTouch(() => {
-                router.push('/(app)/(ktv)/(tab)/schedule');
-              })}>
+              <Text className="font-inter-bold text-lg text-slate-900">
+                {t('ktv.index.upcoming')}
+              </Text>
+            <TouchableOpacity onPress={goSchedule}>
               <Text className="text-sm text-primary-color-2">{t('common.see_all')}</Text>
             </TouchableOpacity>
           </View>

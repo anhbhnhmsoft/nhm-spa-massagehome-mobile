@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   CheckCircle,
@@ -16,25 +16,46 @@ import { TFunction } from 'i18next';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
+import { router } from 'expo-router';
 import { useCheckBooking } from '@/features/booking/hooks';
-import { BookingCheckItem } from '@/features/booking/types';
-import { formatBalance } from '@/lib/utils';
+import { BookingApplicationItem, BookingApplicationPreviewResponse, BookingCheckItem } from '@/features/booking/types';
+import { formatBalance, getMessageError } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import { ApplicationTechnicianModal } from '@/components/app/customer/application-technician-modal';
+import { queryClient } from '@/lib/provider/query-provider';
+import bookingApi from '@/features/booking/api';
+import useToast from '@/features/app/hooks/use-toast';
+import { useBookingStore } from '@/features/booking/stores';
+import { useUserServiceStore } from '@/features/user/stores';
 
 const ServiceBookingResultScreen = () => {
 
   const { t } = useTranslation();
+  const { error } = useToast();
+  const setApplicationSelection = useBookingStore((state) => state.setApplicationSelection);
+  const setApplicationSelectionSource = useBookingStore((state) => state.setApplicationSelectionSource);
+  const setKtv = useUserServiceStore((state) => state.setKtv);
 
   const resetNav = useResetNav();
 
-  const { status, data } = useCheckBooking();
+  const { status, data, bookingId, applications, selectMutation, refetch } = useCheckBooking();
+  const [showApplications, setShowApplications] = useState(false);
+  const [applicationPreview, setApplicationPreview] = useState<BookingApplicationPreviewResponse['data'] | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const closeModal = useCallback(() => {
     resetNav('/(app)/(customer)/(tab)');
   },[resetNav]);
 
+  const closeApplications = useCallback(() => {
+    setShowApplications(false);
+    setApplicationPreview(null);
+    setPreviewLoading(false);
+  }, []);
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <>
+      <SafeAreaView className="flex-1 bg-white">
         {/* Header: Chỉ hiện nút Đóng (X) khi KHÔNG PHẢI đang xử lý */}
         {status !== 'waiting' && (
           <View className="flex-row justify-end px-4 pt-2">
@@ -49,10 +70,52 @@ const ServiceBookingResultScreen = () => {
         {/* Nội dung chính thay đổi theo Status */}
         <View className="flex-1">
           {status === 'waiting' && <Processing t={t}  />}
+          {status === 'waiting_ktv_confirm' && <WaitingKtvConfirm t={t} bookingData={data?.data} />}
+          {status === 'open_for_application' && (
+            <OpenForApplication
+              t={t}
+              bookingData={data?.data}
+              onOpenApplications={() => setShowApplications(true)}
+            />
+          )}
           {status === 'confirmed' && data && data.data && <Success t={t} bookingData={data.data} onGoHome={closeModal} />}
           {status === 'failed' && data && data.data && <Failed t={t} bookingData={data.data} onGoHome={closeModal} />}
         </View>
       </SafeAreaView>
+{/* 
+      <ApplicationTechnicianModal
+        visible={showApplications}
+        onClose={closeApplications}
+        data={applications}
+        isSubmitting={selectMutation.isPending}
+        preview={applicationPreview}
+        previewLoading={previewLoading}
+        loadingText={t('common.loading')}
+        onSelect={(application: BookingApplicationItem) => {
+          if (!bookingId) return;
+
+          setApplicationPreview(null);
+          setPreviewLoading(true);
+          bookingApi.previewApplicationSelection(bookingId, application.id)
+            .then((response) => {
+              setApplicationSelection({
+                application,
+                preview: response.data,
+              });
+              setApplicationSelectionSource('result');
+              setKtv(null);
+              closeApplications();
+              router.push('/(app)/(customer)/(service)/application-technician-detail');
+            })
+            .catch((err) => {
+              error({ message: getMessageError(err, t) || t('common_error.request_error') });
+            })
+            .finally(() => {
+              setPreviewLoading(false);
+            });
+        }}
+      /> */}
+    </>
   );
 };
 
@@ -78,6 +141,74 @@ const Processing = ({ t }: { t: TFunction }) => (
         </Text>
       </View>
     </ScrollView>
+  </>
+);
+
+const WaitingKtvConfirm = ({
+  t,
+  bookingData,
+}: {
+  t: TFunction;
+  bookingData?: BookingCheckItem;
+}) => (
+  <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }} showsVerticalScrollIndicator={false}>
+    <View className="flex-1 items-center justify-center px-6">
+      <View className="mb-4 rounded-full bg-amber-50 p-4">
+        <ActivityIndicator size={80} color={DefaultColor.yellow[500]} />
+      </View>
+      <Text className="text-center font-inter-bold text-2xl text-gray-800">
+        {t('booking.waiting_ktv_confirm_title')}
+      </Text>
+      <Text className="mt-2 text-center text-sm text-gray-500">
+        {t('booking.waiting_ktv_confirm_desc')}
+      </Text>
+      {bookingData?.ktv_confirm_deadline_at ? (
+        <Text className="mt-3 text-center text-xs text-amber-700">
+          {t('booking.confirm_deadline_label', {
+            time: bookingData.ktv_confirm_deadline_at,
+          })}
+        </Text>
+      ) : null}
+    </View>
+  </ScrollView>
+);
+
+const OpenForApplication = ({
+  t,
+  bookingData,
+  onOpenApplications,
+}: {
+  t: TFunction;
+  bookingData?: BookingCheckItem;
+  onOpenApplications: () => void;
+}) => (
+  <>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }} showsVerticalScrollIndicator={false}>
+      <View className="flex-1 items-center justify-center px-6">
+        <View className="mb-4 rounded-full bg-blue-50 p-4">
+          <ActivityIndicator size={80} color={DefaultColor.base['primary-color-2']} />
+        </View>
+        <Text className="text-center font-inter-bold text-2xl text-gray-800">
+          {t('booking.open_for_application_title')}
+        </Text>
+        <Text className="mt-2 text-center text-sm text-gray-500">
+          {t('booking.open_for_application_desc')}
+        </Text>
+        {!!bookingData?.reason_cancel && (
+          <Text className="mt-3 text-center text-xs text-slate-500">{bookingData.reason_cancel}</Text>
+        )}
+      </View>
+    </ScrollView>
+    <View className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white p-4">
+      <TouchableOpacity
+        onPress={onOpenApplications}
+        className="items-center justify-center rounded-full bg-primary-color-2 py-3"
+      >
+        <Text className="font-inter-bold text-base text-white">
+          {t('booking.select_technician_action')}
+        </Text>
+      </TouchableOpacity>
+    </View>
   </>
 );
 
@@ -205,7 +336,7 @@ const InfoCard = ({ t, bookingData }: { t: TFunction; bookingData: BookingCheckI
               {t('services.booking_technician')}
             </Text>
             <Text className={`flex-1 text-right font-inter-medium text-sm text-gray-800`}>
-              {bookingData.technician}
+              {bookingData.technician || t('booking.unassigned_technician')}
             </Text>
           </View>
         </View>

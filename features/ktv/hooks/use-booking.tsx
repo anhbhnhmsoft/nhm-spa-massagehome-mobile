@@ -1,6 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { useBookingDetailsQuery } from './use-query';
-import { useFinishBookingMutation, useStartBookingMutation, } from './use-mutation';
+import { useApplicationBookingDetailsQuery, useBookingDetailsQuery } from './use-query';
+import {
+  useApplyApplicationBookingMutation,
+  useConfirmApplicationBookingMutation,
+  useFinishBookingMutation,
+  useStartBookingMutation,
+} from './use-mutation';
 import * as Notifications from 'expo-notifications';
 import { useBookingStore } from '@/lib/ktv/useBookingStore';
 import { useTranslation } from 'react-i18next';
@@ -130,13 +135,25 @@ export const useSetBookingStart = () => {
  * Dùng cho màn chi tiết booking
  * @param id
  */
-export const useBooking = (id: string) => {
+export const useBooking = (id: string, mode: 'booking' | 'application' = 'booking') => {
   // Khai báo các state cần sử dụng
   const { t } = useTranslation();
-  const { error } = useToast();
-  const { data, refetch, isRefetching, isLoading } = useBookingDetailsQuery(id);
+  const { error, success } = useToast();
+  const bookingQuery = useBookingDetailsQuery(id, mode === 'booking');
+  const routeWantsApplication = mode === 'application';
+  const bookingIsOpenForApplication = bookingQuery.data?.status === _BookingStatus.OPEN_FOR_APPLICATION;
+  const shouldUseApplicationQuery = routeWantsApplication || bookingIsOpenForApplication;
+  const applicationQuery = useApplicationBookingDetailsQuery(id, shouldUseApplicationQuery);
+  const data = shouldUseApplicationQuery ? (applicationQuery.data ?? bookingQuery.data) : bookingQuery.data;
+  const refetch = shouldUseApplicationQuery ? applicationQuery.refetch : bookingQuery.refetch;
+  const isRefetching = shouldUseApplicationQuery ? applicationQuery.isRefetching : bookingQuery.isRefetching;
+  const isLoading = shouldUseApplicationQuery ? applicationQuery.isLoading : bookingQuery.isLoading;
   const { mutate: startBookingMutate, isPending: isStartBookingPending } =
     useStartBookingMutation();
+  const { mutate: applyBookingMutate, isPending: isApplyBookingPending } =
+    useApplyApplicationBookingMutation();
+  const { mutate: confirmBookingMutate, isPending: isConfirmBookingPending } =
+    useConfirmApplicationBookingMutation();
 
   const _hydrated = useBookingStore((s) => s._hydrated);
   const hydrate = useBookingStore((s) => s.hydrate);
@@ -213,21 +230,68 @@ export const useBooking = (id: string) => {
     return data?.status === _BookingStatus.CONFIRMED && bookingStart === null;
   }, [data?.status, bookingStart]);
 
+  const canApplyBooking = useMemo(() => {
+    if (!data) return false;
+    return data.status === _BookingStatus.OPEN_FOR_APPLICATION && !data.has_applied;
+  }, [data]);
+
+  const canConfirmBooking = useMemo(() => {
+    if (!data) return false;
+    return data.status === _BookingStatus.WAITING_KTV_CONFIRM;
+  }, [data]);
 
   // có thể hủy dịch vụ
   const canCancelBooking = useMemo(() => {
     if (!data) return false;
-    return data.status === _BookingStatus.CONFIRMED;
+    return [_BookingStatus.CONFIRMED, _BookingStatus.WAITING_KTV_CONFIRM].includes(data.status);
   }, [data, bookingStart]);
+
+  const handleApplyBooking = () => {
+    if (!data?.id) return;
+    applyBookingMutate(data.id, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookings'] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookingDetails', data.id] });
+        success({ message: t('booking.application_success_mobile') });
+        await refetch();
+      },
+      onError: (err: any) => {
+        error({ message: err?.message || t('common_error.request_error') });
+      },
+    });
+  };
+
+  const handleConfirmBooking = () => {
+    if (!data?.id) return;
+    confirmBookingMutate(data.id, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', data.id] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookingDetails', data.id] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-dashboard'] });
+        success({ message: t('booking.confirmed_successfully_mobile') });
+        await refetch();
+      },
+      onError: (err: any) => {
+        error({ message: err?.message || t('common_error.request_error') });
+      },
+    });
+  };
 
   return {
     booking: data,
     handleStartBooking,
+    handleApplyBooking,
+    handleConfirmBooking,
     canStartBooking,
+    canApplyBooking,
+    canConfirmBooking,
     canCancelBooking,
     refetch,
     timeLeft,
     isLoadingBooking: isRefetching || isLoading,
     isStartBookingPending,
+    isApplyBookingPending,
+    isConfirmBookingPending,
   };
 };

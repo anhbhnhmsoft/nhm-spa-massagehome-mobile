@@ -49,7 +49,7 @@ import { ListTransactionItem } from '@/features/payment/types';
 import { TFunction } from 'i18next';
 import GradientBackground from '@/components/styles/gradient-background';
 import dayjs from 'dayjs';
-import { CouponUserItem } from '@/features/service/types';
+import { CouponItem as CouponServiceItem, CouponUserListItem } from '@/features/service/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Text} from '@/components/ui/text'
 
@@ -787,13 +787,24 @@ export const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
   );
 };
 
-// Coupon Item
-export const CouponItem = ({ item }: { item: CouponUserItem }) => {
-  const { t } = useTranslation();
+const resolveCouponItem = (item: CouponUserListItem): CouponServiceItem | null => {
+  if ('coupon' in item && item.coupon) return item.coupon;
+  if ('is_percentage' in item) return item;
+  return null;
+};
 
-  const discountDisplay = item.coupon.is_percentage
-    ? `${Number(item.coupon.discount_value)}%`
-    : formatCurrency(item.coupon.discount_value);
+// Coupon Item
+export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
+  const { t } = useTranslation();
+  const coupon = resolveCouponItem(item);
+
+  if (!coupon) {
+    return null;
+  }
+
+  const discountDisplay = coupon.is_percentage
+    ? `${Number(coupon.discount_value)}%`
+    : formatCurrency(coupon.discount_value);
 
   return (
     <View className="flex-row overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
@@ -806,12 +817,12 @@ export const CouponItem = ({ item }: { item: CouponUserItem }) => {
       <View className="flex-1 justify-between p-3">
         <View>
           <Text className="font-inter-bold text-sm text-slate-700" numberOfLines={2}>
-            {item.coupon.label}
+            {coupon.label}
           </Text>
         </View>
         <View className="mt-2 flex-row items-end justify-between">
           <Text className="rounded bg-blue-100 px-2 py-0.5 font-inter-medium text-xs text-primary-color-1">
-            {item.coupon.code}
+            {coupon.code}
           </Text>
         </View>
       </View>

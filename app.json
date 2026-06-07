@@ -2,7 +2,7 @@
   "expo": {
     "name": "Masa Home",
     "slug": "massage-home-spa",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "masa-spa",
@@ -29,7 +29,7 @@
       "bundleIdentifier": "com.nhmsoftbujhuyanh.massagehomespa"
     },
     "android": {
-      "versionCode": 12,
+      "versionCode": 13,
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",

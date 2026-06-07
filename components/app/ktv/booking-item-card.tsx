@@ -92,9 +92,9 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
           </Text>
         </View>
 
-        <View className="mt-2 flex-row items-center gap-2">
+        <View className="mt-3 gap-2">
           <Pressable
-            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
+            className="flex-row items-center justify-center rounded-md bg-primary-color-2 px-3 py-2"
             onPress={() => {
               if (!item?.lat && !item?.lng) {
                 return;
@@ -106,39 +106,40 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
               {t('booking.see_directions')}
             </Text>
           </Pressable>
-          <Pressable
-            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
-            onPress={() => {
-              if (item?.user?.id) {
-                joinRoomChat(
-                  {
-                    user_id: item?.user?.id,
-                  },
-                  'ktv'
-                );
-              }
-            }}>
-            <Icon as={MessageCircle} size={14} className="mr-2 text-white" />
-            <Text className="font-inter-medium text-sm text-white">{t('booking.inbox')}</Text>
-          </Pressable>
-          <Pressable
-            className="mt-3 flex-row items-center self-start rounded-md bg-primary-color-2 px-3 py-2"
-            onPress={async () => {
-              const phoneNumber = item?.user?.phone;
-              if (phoneNumber) {
-                await Linking.openURL(`tel:${phoneNumber}`);
-              } else {
-                // Hiển thị thông báo nếu không có số điện thoại
-                Alert.alert(
-                  t('common.no_phone'),
-                  t('common.no_phone_message'),
-                  [{ text: t('common.ok') }]
-                );
-              }
-            }}>
-            <Icon as={Phone} size={14} className="mr-2 text-white" />
-            <Text className="font-inter-medium text-sm text-white">{t('common.call')}</Text>
-          </Pressable>
+          <View className="flex-row gap-2">
+            <Pressable
+              className="flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-3 py-2"
+              onPress={() => {
+                if (item?.user?.id) {
+                  joinRoomChat(
+                    {
+                      user_id: item?.user?.id,
+                    },
+                    'ktv'
+                  );
+                }
+              }}>
+              <Icon as={MessageCircle} size={14} className="mr-2 text-white" />
+              <Text className="font-inter-medium text-sm text-white">{t('booking.inbox')}</Text>
+            </Pressable>
+            <Pressable
+              className="flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-3 py-2"
+              onPress={async () => {
+                const phoneNumber = item?.user?.phone;
+                if (phoneNumber) {
+                  await Linking.openURL(`tel:${phoneNumber}`);
+                } else {
+                  Alert.alert(
+                    t('common.no_phone'),
+                    t('common.no_phone_message'),
+                    [{ text: t('common.ok') }]
+                  );
+                }
+              }}>
+              <Icon as={Phone} size={14} className="mr-2 text-white" />
+              <Text className="font-inter-medium text-sm text-white">{t('common.call')}</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Pressable>

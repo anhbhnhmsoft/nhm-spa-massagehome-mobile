@@ -1,6 +1,6 @@
 import React, { ComponentType, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { CreditCard, Motorbike, Share2, Star, TrendingUp, Users } from 'lucide-react-native';
+import { Motorbike, Share2, Star, TrendingUp, Users } from 'lucide-react-native';
 import { HeaderAppKTV } from '@/components/app/ktv/header-app';
 import { getTabBarHeight } from '@/components/styles/style';
 import { useDashboardTotalIncome } from '@/features/ktv/hooks';

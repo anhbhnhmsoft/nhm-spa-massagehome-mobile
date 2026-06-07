@@ -199,7 +199,9 @@
       "COMPLETED": "已完成",
       "CANCELED": "已取消",
       "PAYMENT_FAILED": "支付失败",
-      "WAITING_CANCEL": "等待取消"
+      "WAITING_CANCEL": "等待取消",
+      "WAITING_KTV_CONFIRM": "等待技师确认",
+      "OPEN_FOR_APPLICATION": "开放接单申请"
     },
     "payment_type": {
       "QR_BANKING": "银行扫码转账",
@@ -822,7 +824,23 @@
     "price_transportation": "交通价格",
     "no_customer_notes": "没有客户备注",
     "no_cancel_reason": "没有取消原因",
-    "cancel_pending_note": "取消请求将发送给管理员进行审核。",
+    "apply_now": "立即申请",
+    "applied_label": "已申请",
+    "application_detail_title": "接单详情",
+    "confirm_booking_action": "确认接单",
+    "confirm_booking_action_desc": "您确认接下此订单吗？",
+    "application_success_mobile": "申请接单成功",
+    "confirmed_successfully_mobile": "订单确认成功",
+    "waiting_ktv_confirm_title": "等待技师确认",
+    "waiting_ktv_confirm_desc": "您选择的技师有 3 分钟时间确认此订单。",
+    "open_for_application_title": "订单正在等待技师申请",
+    "open_for_application_desc": "您可以查看已申请的技师并选择合适的人选。",
+    "select_technician_title": "选择技师",
+    "select_technician_action": "查看已申请技师",
+    "application_candidate": "申请者",
+    "unassigned_technician": "尚未确定技师",
+    "confirm_deadline_label": "确认截止时间：{{time}}",
+    "cancel_pending_note": "订单将自动取消，系统会按规则处理退款。",
     "start_error_booking": "开始服务时出错，请稍后重试。",
     "warning_alert_service_booking_confirm": "您有 1 个服务已确认在 {{time}}，请联系技师确认或联系客户服务转移订单",
     "warning_alert_service_booking_ongoing": "您有 1 个服务正在进行中在 {{time}}，请联系技师确认或联系客户服务转移订单",
@@ -900,6 +918,7 @@
       "new_reviews": "今日新评价",
       "no_review_new_today": "今日暂无新评价",
       "order_in_progress": "进行中的订单",
+      "application_bookings": "新的接单申请",
       "ktv_had_order_in_progress": "技师已在 {{time}} 有订单在进行中"
     },
     "services": {

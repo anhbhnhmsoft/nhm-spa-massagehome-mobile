@@ -17,31 +17,48 @@ import { Divider } from '@/components/ui/divider';
 import { useCancelBooking } from '@/features/booking/hooks';
 import { CancelBookingBottomSheet } from '@/components/app/customer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { queryClient } from '@/lib/provider/query-provider';
+import { _BookingStatus } from '@/features/service/const';
 
 export default function BookingDetails() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, mode } = useLocalSearchParams<{ id: string; mode?: 'booking' | 'application' }>();
   const { t } = useTranslation();
   const {
     booking,
     handleStartBooking,
+    handleApplyBooking,
+    handleConfirmBooking,
     canStartBooking,
+    canApplyBooking,
+    canConfirmBooking,
     canCancelBooking,
     refetch,
     timeLeft,
     isLoadingBooking,
     isStartBookingPending,
-  } = useBooking(id);
+    isApplyBookingPending,
+    isConfirmBookingPending,
+  } = useBooking(id, mode || 'booking');
 
   const {
     ref: refCancel,
     handleOpen: handleOpenCancel,
     handleSubmit,
     loading: loadingCancel,
-  } = useCancelBooking(() => refetch());
+  } = useCancelBooking(async () => {
+    queryClient.removeQueries({ queryKey: ['ktvApi-applicationBookingDetails', id], exact: true });
+    await queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', id] });
+    await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookingDetails', id] });
+    await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+    await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookings'] });
+    await queryClient.invalidateQueries({ queryKey: ['ktvApi-dashboard'] });
+    await refetch();
+  });
 
   const joinRoomChat = useGetRoomChat();
 
   const inset = useSafeAreaInsets();
+  const isOpenForApplication = booking?.status === _BookingStatus.OPEN_FOR_APPLICATION;
 
 
   return (
@@ -245,7 +262,7 @@ export default function BookingDetails() {
                   </Text>
                 </View>
               </View>
-              {!!booking?.reason_cancel && (
+              {!!booking?.reason_cancel && !isOpenForApplication && (
                 <View>
                   {/* Header Ghi chú */}
                   <View className="mb-3 flex-row items-center">
@@ -290,17 +307,18 @@ export default function BookingDetails() {
                 </Text>
               </View>
 
-              {/* Phí vận chuyển */}
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center">
-                  <Text className="font-inter-medium text-[13px] text-slate-500">
-                    {t('booking.price_transportation')}
+              {!isOpenForApplication && (
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center">
+                    <Text className="font-inter-medium text-[13px] text-slate-500">
+                      {t('booking.price_transportation')}
+                    </Text>
+                  </View>
+                  <Text className="font-inter-semibold text-[14px] text-slate-500">
+                    {formatBalance(booking?.price_transportation || 0)} {t('common.currency')}
                   </Text>
                 </View>
-                <Text className="font-inter-semibold text-[14px] text-slate-500">
-                  {formatBalance(booking?.price_transportation || 0)} {t('common.currency')}
-                </Text>
-              </View>
+              )}
               {/* Đường kẻ gạch ngang mảnh hơn */}
               <Divider />
 
@@ -319,7 +337,7 @@ export default function BookingDetails() {
       </ScrollView>
 
       {/* Action Buttons */}
-      {(canStartBooking || canCancelBooking || timeLeft !== null) && (
+      {(canStartBooking || canCancelBooking || canConfirmBooking || canApplyBooking || timeLeft !== null) && (
         <View
           className="border-t border-slate-100 bg-white p-4"
           style={{ paddingBottom: inset.bottom }}>
@@ -337,6 +355,30 @@ export default function BookingDetails() {
                 </Text>
               </View>
             </View>
+          )}
+
+          {canApplyBooking && (
+            <TouchableOpacity
+              onPress={handleApplyBooking}
+              disabled={isApplyBookingPending}
+              className="mb-2 flex-row items-center justify-center rounded-2xl bg-primary-color-2 py-3">
+              <Text className="ml-2 font-inter-semibold text-lg text-white">
+                {isApplyBookingPending ? t('common.loading') : t('booking.apply_now')}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {canConfirmBooking && (
+            <TouchableOpacity
+              onPress={handleConfirmBooking}
+              disabled={isConfirmBookingPending}
+              className="mb-2 flex-row items-center justify-center rounded-2xl bg-primary-color-2 py-3">
+              <Text className="ml-2 font-inter-semibold text-lg text-white">
+                {isConfirmBookingPending
+                  ? t('common.loading')
+                  : t('booking.confirm_booking_action')}
+              </Text>
+            </TouchableOpacity>
           )}
 
           {canStartBooking && (

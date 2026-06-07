@@ -9,6 +9,8 @@ export enum _BookingStatus {
   CANCELED = 5,
   PAYMENT_FAILED = 6,
   WAITING_CANCEL = 7,
+  WAITING_KTV_CONFIRM = 8,
+  OPEN_FOR_APPLICATION = 9,
 }
 
 export const _BookingStatusMap = {
@@ -20,14 +22,18 @@ export const _BookingStatusMap = {
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
   [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.WAITING_CANCEL',
+  [_BookingStatus.WAITING_KTV_CONFIRM]: 'enum.booking_status.WAITING_KTV_CONFIRM',
+  [_BookingStatus.OPEN_FOR_APPLICATION]: 'enum.booking_status.OPEN_FOR_APPLICATION',
 } as const;
 
 export const getBookingStatusStyle = (status: _BookingStatus) => {
   switch (status) {
     case _BookingStatus.PENDING:
+    case _BookingStatus.WAITING_KTV_CONFIRM:
+    case _BookingStatus.OPEN_FOR_APPLICATION:
       return {
         background: DefaultColor.yellow[100],
-        text_color: DefaultColor.white[700],
+        text_color: DefaultColor.yellow[700],
         label: _BookingStatusMap[status],
       };
     case _BookingStatus.CONFIRMED:
@@ -67,6 +73,8 @@ export const getBookingStatusStyle = (status: _BookingStatus) => {
 export const getStatusColor = (status: _BookingStatus) => {
   switch (status) {
     case _BookingStatus.PENDING:
+    case _BookingStatus.WAITING_KTV_CONFIRM:
+    case _BookingStatus.OPEN_FOR_APPLICATION:
       return 'bg-yellow-100 text-yellow-700';
     case _BookingStatus.CONFIRMED:
       return 'bg-blue-100 text-blue-700';

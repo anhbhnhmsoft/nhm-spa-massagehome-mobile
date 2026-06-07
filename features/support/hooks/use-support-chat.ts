@@ -157,6 +157,25 @@ export const useSupportChat = (ticketId?: string | number) => {
       });
     };
 
+    const handleSupportTicketEvent = async (payload: any) => {
+      const eventTicket = payload?.ticket;
+      if (!eventTicket?.id) return;
+      if (String(eventTicket.id) !== String(ticketId)) return;
+
+      await queryClient.invalidateQueries({ queryKey: ['supportApi-ticket', ticketId] });
+      await queryClient.invalidateQueries({ queryKey: ['supportApi-tickets'] });
+      await queryClient.invalidateQueries({ queryKey: ['supportApi-messages', ticketId] });
+
+      if (eventTicket.status === 'closed') {
+        queryClient.removeQueries({ queryKey: ['supportApi-messages', ticketId] });
+        setActiveSupportRoomId(null);
+        resetSupportUnreadCount();
+        if (mounted) {
+          goBack();
+        }
+      }
+    };
+
     const connect = async () => {
       try {
         if (mounted) setJoinStatus('joining');
@@ -166,6 +185,7 @@ export const useSupportChat = (ticketId?: string | number) => {
         await SocketService.joinRoom(roomId);
         setActiveSupportRoomId(roomId);
         SocketService.onSupportMessageNew(handleSupportMessage);
+        SocketService.onSupportTicketEvent(handleSupportTicketEvent);
         if (mounted) setJoinStatus('joined');
         if (ticket?.id) {
           seenMessages(
@@ -202,6 +222,7 @@ export const useSupportChat = (ticketId?: string | number) => {
       leaveSupportRoom();
       sub.remove();
       SocketService.offSupportMessageNew(handleSupportMessage);
+      SocketService.offSupportTicketEvent(handleSupportTicketEvent);
     };
   }, [
     ticketId,

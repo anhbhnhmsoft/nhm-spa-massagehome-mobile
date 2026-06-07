@@ -21,6 +21,9 @@ type Props = {
 };
 
 export const BookingDetailBottomSheet: FC<Props> = ({ item, ref, onDismiss, t }) => {
+  const displayKtv = item?.status === _BookingStatus.OPEN_FOR_APPLICATION
+    ? item?.selected_ktv_user
+    : item?.ktv_user;
 
   const styleStatus = useMemo(() => {
     if (item) {
@@ -46,16 +49,16 @@ export const BookingDetailBottomSheet: FC<Props> = ({ item, ref, onDismiss, t })
             <View className="flex-row items-center rounded-xl border border-slate-100 bg-slate-50 p-3">
               <View className="mr-3">
                 <Avatar
-                  source={item.ktv_user.avatar_url}
+                  source={displayKtv?.avatar_url}
                   size={48}
                 />
               </View>
               <View>
                 <Text className="font-inter-bold text-base text-slate-800">
-                  {item.ktv_user.name}
+                  {displayKtv?.name || t('booking.unassigned_technician')}
                 </Text>
                 <Text className="font-inter-bold text-xs text-slate-500">
-                  ID: {item.ktv_user.id}
+                  ID: {displayKtv?.id || '-'}
                 </Text>
               </View>
             </View>
@@ -147,8 +150,7 @@ export const BookingDetailBottomSheet: FC<Props> = ({ item, ref, onDismiss, t })
           </View>
 
           {/* Note cancel */}
-          {(item.status === _BookingStatus.CANCELED ||
-            item.status === _BookingStatus.WAITING_CANCEL) && (
+          {item.status === _BookingStatus.CANCELED && (
             <View className="mb-8">
               <Text className="mb-3 font-inter-bold text-sm uppercase text-slate-500">
                 {t('booking.cancel_reasons')}

@@ -1,5 +1,5 @@
 import { BookingItem } from '@/features/booking/types';
-import {  TouchableOpacity, View } from 'react-native';
+import {  Pressable, TouchableOpacity, View } from 'react-native';
 import { Calendar, MapPin} from 'lucide-react-native';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,32 +15,37 @@ import { Card } from '@/components/ui/card';
 type Props = {
   item: BookingItem;
   openDetail: (item: BookingItem) => void;
+  handleOpenApplications?: (item: BookingItem) => void;
   handleOpenCancelBooking: (id: string) => void;
   getRoomChat: ReturnType<typeof useGetRoomChat>;
   handleOpenReview: (id: string) => void;
 }
 
-export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenCancelBooking, getRoomChat, handleOpenReview }) => {
+export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenApplications, handleOpenCancelBooking, getRoomChat, handleOpenReview }) => {
   const { t } = useTranslation();
+  const displayKtv = item.status === _BookingStatus.OPEN_FOR_APPLICATION
+    ? item.selected_ktv_user
+    : item.ktv_user;
 
 
   const styleStatus = getBookingStatusStyle(item.status);
 
   return (
-    <Card containerClassName="mb-4">
+    <Pressable onPress={() => openDetail(item)}>
+      <Card containerClassName="mb-4">
       {/* --- HÀNG 1: THÔNG TIN VÀ TRẠNG THÁI --- */}
       <View className="mb-4 flex-row justify-between items-start">
         {/* Bên Trái: Avatar + Tên KTV + Tên Dịch vụ */}
         <View className="flex-row flex-1 mr-3">
           <View className="mr-3">
             <Avatar
-              source={item.ktv_user.avatar_url}
+              source={displayKtv?.avatar_url}
               size={48}
             />
           </View>
           <View className="flex-1 justify-center">
             <Text className="font-inter-bold text-base text-slate-800">
-              {item.ktv_user.name}
+              {displayKtv?.name || t('booking.unassigned_technician')}
             </Text>
             <Text className="text-xs text-slate-500 mt-1" numberOfLines={1}>
               {item.service.name}
@@ -99,7 +104,10 @@ export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenCancelBooki
           <>
             <TouchableOpacity
               disabled={item.has_reviews}
-              onPress={() => handleOpenReview(item.id)}
+              onPress={(event) => {
+                event.stopPropagation();
+                handleOpenReview(item.id);
+              }}
               className={cn(
                 'flex-1 items-center justify-center rounded-lg bg-orange-500 py-2',
                 item.has_reviews && 'cursor-not-allowed bg-slate-400'
@@ -109,11 +117,26 @@ export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenCancelBooki
               </Text>
             </TouchableOpacity>
           </>
+        ) : item.status === _BookingStatus.OPEN_FOR_APPLICATION ? (
+          <>
+            <TouchableOpacity
+              onPress={(event) => {
+                event.stopPropagation();
+                handleOpenApplications?.(item);
+              }}
+              className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
+              <Text className="font-inter-bold text-xs text-white">{t('booking.select_technician_action')}</Text>
+            </TouchableOpacity>
+          </>
         ) : (
           <>
             {/* Inbox Button */}
             <TouchableOpacity
-              onPress={() => getRoomChat({ user_id: item.ktv_user.id })}
+              disabled={!displayKtv?.id}
+              onPress={(event) => {
+                event.stopPropagation();
+                return displayKtv?.id ? getRoomChat({ user_id: displayKtv.id }) : null;
+              }}
               className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
               <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
             </TouchableOpacity>
@@ -121,21 +144,31 @@ export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenCancelBooki
         )}
         {/* Detail Button */}
         <TouchableOpacity
-          onPress={() => openDetail(item)}
+          onPress={(event) => {
+            event.stopPropagation();
+            openDetail(item);
+          }}
           className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
           <Text className="font-inter-bold text-xs text-slate-600">{t('booking.detail')}</Text>
         </TouchableOpacity>
 
         {/* cancel Button */}
-        {item.status === _BookingStatus.CONFIRMED && (
+        {[
+          _BookingStatus.CONFIRMED,
+          _BookingStatus.WAITING_KTV_CONFIRM,
+          _BookingStatus.OPEN_FOR_APPLICATION,
+        ].includes(item.status) && (
           <TouchableOpacity
-            onPress={() => handleOpenCancelBooking(item.id)}
+            onPress={(event) => {
+              event.stopPropagation();
+              handleOpenCancelBooking(item.id);
+            }}
             className="flex-1 items-center justify-center rounded-lg bg-slate-100 py-2">
             <Text className="font-inter-bold text-xs text-slate-600">{t('common.cancel')}</Text>
           </TouchableOpacity>
         )}
       </View>
-    </Card>
+      </Card>
+    </Pressable>
   );
 };
-

@@ -199,7 +199,9 @@
       "COMPLETED": "Hoàn thành",
       "CANCELED": "Hủy",
       "PAYMENT_FAILED": "Thanh toán thất bại",
-      "WAITING_CANCEL": "Chờ hủy"
+      "WAITING_CANCEL": "Chờ hủy",
+      "WAITING_KTV_CONFIRM": "Chờ KTV xác nhận",
+      "OPEN_FOR_APPLICATION": "Đang mở ứng đơn"
     },
     "payment_type": {
       "QR_BANKING": "Chuyển khoản QR Banking",
@@ -817,7 +819,23 @@
     "price_transportation": "Tiền di chuyển",
     "no_customer_notes": "Không có ghi chú từ khách hàng",
     "no_cancel_reason": "Không có lý do hủy",
-    "cancel_pending_note": "Yêu cầu hủy sẽ được gửi đến quản trị viên để xét duyệt.",
+    "apply_now": "Ứng đơn ngay",
+    "applied_label": "Đã ứng",
+    "application_detail_title": "Chi tiết đơn ứng",
+    "confirm_booking_action": "Xác nhận đơn",
+    "confirm_booking_action_desc": "Bạn xác nhận nhận thực hiện đơn hàng này?",
+    "application_success_mobile": "Ứng đơn thành công",
+    "confirmed_successfully_mobile": "Xác nhận đơn thành công",
+    "waiting_ktv_confirm_title": "Đang chờ KTV xác nhận",
+    "waiting_ktv_confirm_desc": "KTV bạn chọn đang có 3 phút để xác nhận đơn hàng này.",
+    "open_for_application_title": "Đơn hàng đang chờ KTV ứng đơn",
+    "open_for_application_desc": "Bạn có thể xem danh sách KTV đã ứng và chọn người phù hợp.",
+    "select_technician_title": "Chọn kỹ thuật viên",
+    "select_technician_action": "Xem ứng viên",
+    "application_candidate": "Ứng viên",
+    "unassigned_technician": "Chưa chốt kỹ thuật viên",
+    "confirm_deadline_label": "Hạn xác nhận: {{time}}",
+    "cancel_pending_note": "Đơn hàng sẽ được hủy tự động và hệ thống xử lý hoàn tiền theo quy định.",
     "start_error_booking": "Đã xảy ra lỗi khi bắt đầu dịch vụ. Vui lòng thử lại.",
     "warning_alert_service_booking_confirm": "Bạn đang có 1 dịch vụ đã xác nhận làm vào lúc {{time}}, vui lòng liên hệ với Kĩ thuật viên để xác nhận hoặc liên hệ với tổng đài để chuyển đơn",
     "warning_alert_service_booking_ongoing": "Bạn đang có 1 dịch vụ đang diễn ra bắt đầu vào lúc {{time}}",
@@ -897,6 +915,7 @@
       "new_reviews": "Đánh giá mới hôm nay",
       "no_review_new_today": "Chưa có đánh giá mới hôm nay",
       "order_in_progress": "Đơn đang làm",
+      "application_bookings": "Đơn ứng mới",
       "ktv_had_order_in_progress": "Thời gian sớm nhất có thể phục vụ là {{time}}"
     },
     "services": {

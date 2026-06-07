@@ -23,6 +23,10 @@ export default function ServiceLayout() {
             animation: 'slide_from_bottom',
         }}
         />
+        <Stack.Screen
+          name="application-technician-detail"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </>
   );

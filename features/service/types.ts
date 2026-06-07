@@ -59,6 +59,8 @@ export type CouponItem = {
   used_count: number; // Số lần sử dụng hiện tại.
   display_ads: boolean; // Có hiển thị trong quảng cáo không
   banners: string | null; // Banner hiển thị khi áp dụng coupon (null nếu không có)
+  is_collected?: boolean;
+  is_used?: boolean;
 };
 export type ListCouponRequest = BaseSearchRequest<{}>;
 
@@ -73,7 +75,8 @@ export type CouponUserItem = {
 };
 
 export type CouponUserListRequest = BaseSearchRequest<object>;
-export type CouponUserListResponse = ResponseDataSuccessType<Paginator<CouponUserItem>>;
+export type CouponUserListItem = CouponItem | CouponUserItem;
+export type CouponUserListResponse = ResponseDataSuccessType<Paginator<CouponUserListItem>>;
 
 export type SendReviewRequest = {
   service_booking_id: string;

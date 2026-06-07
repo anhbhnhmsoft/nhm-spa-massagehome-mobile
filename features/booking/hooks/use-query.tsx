@@ -1,6 +1,10 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import bookingApi from '@/features/booking/api';
-import { ListBookingRequest, ListBookingResponse } from '@/features/booking/types';
+import {
+  BookingApplicationListResponse,
+  ListBookingRequest,
+  ListBookingResponse,
+} from '@/features/booking/types';
 
 
 /**
@@ -21,6 +25,10 @@ export const useQueryBookingCheck = (id: string | null) => {
 
       // Nếu chưa có data (lần đầu) hoặc status là 'waiting' -> Poll mỗi 5 giây (5000ms)
       if (!currentData || currentData.data.status === 'waiting') {
+        return 5000;
+      }
+
+      if (currentData.data.status === 'waiting_ktv_confirm' || currentData.data.status === 'open_for_application') {
         return 5000;
       }
 
@@ -61,3 +69,13 @@ export const useInfiniteBookingList = (
   });
 };
 
+export const useBookingApplicationsQuery = (
+  bookingId: string | undefined,
+  params: { page?: number; per_page?: number } = { page: 1, per_page: 20 }
+) => {
+  return useQuery<BookingApplicationListResponse>({
+    queryKey: ['bookingApi-applications', bookingId, params],
+    queryFn: () => bookingApi.listApplications(bookingId!, params),
+    enabled: !!bookingId,
+  });
+};

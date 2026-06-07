@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { Icon } from '@/components/ui/icon';
-import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { Text } from '@/components/ui/text';
 import { DashboardBookingStatus } from '@/features/profile/types';
 import { Card } from '@/components/ui/card';
@@ -29,11 +28,6 @@ const ORDER_MENU_ITEMS = [
     status: _BookingStatus.ONGOING,
     icon: Heart,
     label: _BookingStatusMap[_BookingStatus.ONGOING],
-  },
-  {
-    status: _BookingStatus.WAITING_CANCEL,
-    icon: CalendarOff,
-    label: _BookingStatusMap[_BookingStatus.WAITING_CANCEL],
   },
 ];
 export const OrderBoardProfile = ({ dashboardData }: OrderBoardProfileProps) => {

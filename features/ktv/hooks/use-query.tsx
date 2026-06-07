@@ -48,13 +48,45 @@ export const useInfiniteBookingList = (params: ListBookingRequest) => {
   });
 };
 
+export const useInfiniteApplicationBookingList = (params: ListBookingRequest) => {
+  return useInfiniteQuery<ListBookingResponse>({
+    queryKey: ['ktvApi-applicationBookings', params],
+    queryFn: async ({ pageParam }) => {
+      return ktvApi.applicationBookings({
+        ...params,
+        page: pageParam as number,
+        per_page: params.per_page,
+      });
+    },
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.data?.meta?.current_page ?? 1;
+      const lastPageNum = lastPage.data?.meta?.last_page ?? 1;
+      if (currentPage < lastPageNum) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+  });
+};
+
 
 // Lấy thông tin chi tiết booking
-export const useBookingDetailsQuery = (id: string) => {
+export const useBookingDetailsQuery = (id: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['bookingApi-details-ktv', id],
     queryFn: () => ktvApi.bookingDetails(id),
     select: (res) => res.data,
+    enabled: !!id && enabled,
+  });
+};
+
+export const useApplicationBookingDetailsQuery = (id: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ['ktvApi-applicationBookingDetails', id],
+    queryFn: () => ktvApi.applicationBookingDetails(id),
+    select: (res) => res.data,
+    enabled: !!id && enabled,
   });
 };
 
@@ -83,5 +115,3 @@ export const useConfigScheduleQuery = () => {
     select: (res) => res.data,
   });
 };
-
-

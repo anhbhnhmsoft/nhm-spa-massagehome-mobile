@@ -6,6 +6,7 @@ import {
   ConfigSchedulesResponse,
   DashboardKtvResponse,
   DashboardQueryParams,
+  ConfirmApplicationBookingResponse,
   DetailInfoKTVResponse,
   DetailServiceRequest,
   EditConfigScheduleRequest,
@@ -44,6 +45,24 @@ const ktvApi = {
   // api cho màn hình list-booking
   bookings: async (params: ListBookingRequest): Promise<ListBookingResponse> => {
     const response = await client.get(`${defaultUri}/list-booking`, { params });
+    return response.data;
+  },
+  applicationBookings: async (params: ListBookingRequest): Promise<ListBookingResponse> => {
+    const response = await client.get(`${defaultUri}/application-bookings`, { params });
+    return response.data;
+  },
+  applicationBookingDetails: async (id: string): Promise<BookingDetailsResponse> => {
+    const response = await client.get(`${defaultUri}/application-bookings/${id}`);
+    return response.data;
+  },
+  applyApplicationBooking: async (id: string): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/application-bookings/${id}/apply`);
+    return response.data;
+  },
+  confirmBooking: async (id: string): Promise<ConfirmApplicationBookingResponse> => {
+    const response = await client.post(`${defaultUri}/confirm-booking`, {
+      booking_id: id,
+    });
     return response.data;
   },
   // api cho màn hình booking-details

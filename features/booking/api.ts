@@ -1,6 +1,9 @@
 import { client } from '@/lib/axios-client';
 import {
   BookingCheckResponse,
+  BookingApplicationListResponse,
+  BookingApplicationPreviewResponse,
+  BookingApplicationSelectResponse,
   BookingServiceRequest,
   BookingServiceResponse,
   ListBookingRequest,
@@ -40,6 +43,18 @@ const bookingApi = {
    */
   checkBooking: async (id: string): Promise<BookingCheckResponse> => {
     const response = await client.get(`${defaultUri}/${id}`);
+    return response.data;
+  },
+  listApplications: async (bookingId: string, params?: { page?: number; per_page?: number }): Promise<BookingApplicationListResponse> => {
+    const response = await client.get(`${defaultUri}/${bookingId}/applications`, { params });
+    return response.data;
+  },
+  previewApplicationSelection: async (bookingId: string, applicationId: string): Promise<BookingApplicationPreviewResponse> => {
+    const response = await client.get(`${defaultUri}/${bookingId}/applications/${applicationId}/preview`);
+    return response.data;
+  },
+  selectApplication: async (bookingId: string, applicationId: string): Promise<BookingApplicationSelectResponse> => {
+    const response = await client.post(`${defaultUri}/${bookingId}/applications/${applicationId}/select`);
     return response.data;
   },
   /**

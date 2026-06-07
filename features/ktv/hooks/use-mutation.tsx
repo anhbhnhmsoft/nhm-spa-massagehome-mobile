@@ -23,6 +23,18 @@ export const useStartBookingMutation = () => {
   });
 };
 
+export const useApplyApplicationBookingMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => ktvApi.applyApplicationBooking(id),
+  });
+};
+
+export const useConfirmApplicationBookingMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => ktvApi.confirmBooking(id),
+  });
+};
+
 
 //  hoàn thành booking
 export const useFinishBookingMutation = () => {
