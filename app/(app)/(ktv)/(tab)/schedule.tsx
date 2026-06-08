@@ -107,11 +107,16 @@ export default function ScheduleScreen() {
   }, []);
 
   const handleGoApplicationDetails = useCallback((item: BookingItem) => {
+    if (item.status !== _BookingStatus.OPEN_FOR_APPLICATION) {
+      handleGoDetails(item);
+      return;
+    }
+
     router.push({
       pathname: '/(app)/(ktv)/(service)/booking-details',
       params: { id: item.id, mode: 'application' },
     });
-  }, []);
+  }, [handleGoDetails]);
 
   const calculateDistance = useCalculateDistance();
 
@@ -139,12 +144,20 @@ export default function ScheduleScreen() {
     if (!bookingId || mode !== 'applications' || applicationQuery.isLoading) return;
     if (handledRouteBookingRef.current === bookingId) return;
 
-    const targetBooking = applicationData.find((item) => item.id === bookingId);
+    const targetBooking =
+      applicationData.find((item) => item.id === bookingId) ||
+      data.find((item) => item.id === bookingId);
     if (!targetBooking) return;
 
     handledRouteBookingRef.current = bookingId;
-    handleGoApplicationDetails(targetBooking);
-  }, [applicationData, applicationQuery.isLoading, bookingId, handleGoApplicationDetails, mode]);
+
+    if (targetBooking.status === _BookingStatus.OPEN_FOR_APPLICATION) {
+      handleGoApplicationDetails(targetBooking);
+      return;
+    }
+
+    handleGoDetails(targetBooking);
+  }, [applicationData, applicationQuery.isLoading, bookingId, data, handleGoApplicationDetails, handleGoDetails, mode]);
 
   return (
     <View className="flex-1 bg-slate-50">
