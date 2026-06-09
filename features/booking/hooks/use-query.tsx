@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import type { UseQueryOptions } from '@tanstack/react-query';
 import bookingApi from '@/features/booking/api';
 import {
   BookingApplicationListResponse,
@@ -71,11 +72,17 @@ export const useInfiniteBookingList = (
 
 export const useBookingApplicationsQuery = (
   bookingId: string | undefined,
-  params: { page?: number; per_page?: number } = { page: 1, per_page: 20 }
+  params: { page?: number; per_page?: number } = { page: 1, per_page: 20 },
+  options: Pick<
+    UseQueryOptions<BookingApplicationListResponse>,
+    'enabled' | 'refetchInterval' | 'refetchIntervalInBackground'
+  > = {}
 ) => {
   return useQuery<BookingApplicationListResponse>({
     queryKey: ['bookingApi-applications', bookingId, params],
     queryFn: () => bookingApi.listApplications(bookingId!, params),
-    enabled: !!bookingId,
+    enabled: !!bookingId && (options.enabled ?? true),
+    refetchInterval: options.refetchInterval,
+    refetchIntervalInBackground: options.refetchIntervalInBackground,
   });
 };

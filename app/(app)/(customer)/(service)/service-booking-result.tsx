@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -28,6 +28,8 @@ import dayjs from 'dayjs';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { Image } from 'expo-image';
 
 import DefaultColor from '@/components/styles/color';
 import Avatar from '@/components/ui/avatar';
@@ -49,6 +51,7 @@ import { cn, formatBalance, formatDistance, getMessageError } from '@/lib/utils'
 const { height: windowHeight } = Dimensions.get('window');
 
 type MapLibreModule = typeof import('@maplibre/maplibre-react-native');
+type PointAnnotationRef = import('@maplibre/maplibre-react-native').PointAnnotationRef;
 
 let mapLibreModule: MapLibreModule | null | undefined;
 
@@ -110,14 +113,22 @@ const ServiceBookingResultScreen = () => {
   const configQuery = useConfigApplicationQuery(true);
   const cancelMutation = useCancelBookingMutation();
   const [previewLoadingId, setPreviewLoadingId] = useState<string | null>(null);
+  const isFocused = useIsFocused();
+  const refetchApplications = applicationsQuery.refetch;
 
   const bookingData = data?.data;
   const mapStyleURL = configQuery.data?.map?.style_url || undefined;
   const isWaitingAssignment = status === 'waiting' || status === 'waiting_ktv_confirm' || status === 'open_for_application';
 
   const closeModal = useCallback(() => {
-    resetNav('/(app)/(customer)/(tab)');
+    resetNav('/(app)/(customer)/(tab)/orders');
   }, [resetNav]);
+
+  useEffect(() => {
+    if (!isFocused || !bookingId) return;
+    refetch();
+    refetchApplications();
+  }, [bookingId, isFocused, refetch, refetchApplications]);
 
   const handleSelectApplication = useCallback((application: BookingApplicationItem) => {
     if (!bookingId) return;
@@ -185,6 +196,7 @@ const ServiceBookingResultScreen = () => {
           mapStyleURL={mapStyleURL}
           onCancel={handleCancel}
           cancelLoading={cancelMutation.isPending}
+          onClose={closeModal}
           onSelectApplication={handleSelectApplication}
           previewLoadingId={previewLoadingId}
         />
@@ -216,6 +228,7 @@ type AssignmentMapResultProps = {
   mapStyleURL?: string;
   onCancel: () => void;
   cancelLoading: boolean;
+  onClose: () => void;
   onSelectApplication: (application: BookingApplicationItem) => void;
   previewLoadingId: string | null;
 };
@@ -228,6 +241,7 @@ const AssignmentMapResult = ({
   mapStyleURL,
   onCancel,
   cancelLoading,
+  onClose,
   onSelectApplication,
   previewLoadingId,
 }: AssignmentMapResultProps) => {
@@ -251,6 +265,12 @@ const AssignmentMapResult = ({
           styleURL={mapStyleURL}
         />
         <TouchableOpacity
+          onPress={onClose}
+          className="absolute left-5 top-5 h-12 w-12 items-center justify-center rounded-full bg-white/95 shadow-lg"
+        >
+          <Icon as={X} size={22} className="text-slate-700" />
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={onCancel}
           disabled={cancelLoading}
           className="absolute right-6 top-5 rounded-3xl bg-red-500 px-7 py-4 shadow-lg"
@@ -272,7 +292,7 @@ const AssignmentMapResult = ({
           {t('booking.assignment_auto_cancel_in', { time: countdown })}
         </Text>
         <View className="mt-5 h-1.5 overflow-hidden rounded-full bg-slate-100">
-          <View className="h-full w-1/5 rounded-full bg-[#5E8B55]" />
+          <View className="h-full w-1/5 rounded-full bg-[#2563EB]" />
         </View>
 
         <View className="mt-7 flex-row items-end justify-between">
@@ -284,7 +304,7 @@ const AssignmentMapResult = ({
               {t('booking.application_count_subtitle', { name: originalName })}
             </Text>
           </View>
-          {applicationsLoading ? <ActivityIndicator color="#5E8B55" /> : null}
+          {applicationsLoading ? <ActivityIndicator color="#2563EB" /> : null}
         </View>
 
         <ScrollView
@@ -333,51 +353,102 @@ const BookingAssignmentMap = ({
   const applicantMarkers = useMemo(() => applications
     .map((application) => ({
       id: application.id,
+      name: application.ktv.name,
+      avatarUrl: application.ktv.avatar_url,
       coordinate: coordinateFrom(application.ktv.location?.latitude, application.ktv.location?.longitude),
     }))
-    .filter((item): item is { id: string; coordinate: [number, number] } => !!item.coordinate), [applications]);
+    .filter((item): item is {
+      id: string;
+      name: string | null;
+      avatarUrl: string | null;
+      coordinate: [number, number];
+    } => !!item.coordinate), [applications]);
 
   const centerCoordinate = customerCoordinate || originalCoordinate || applicantMarkers[0]?.coordinate;
   const MapLibreGL = getMapLibreModule();
-  console.log('MapLibreGL', MapLibreGL);
+
   if (!styleURL || !centerCoordinate || !MapLibreGL) {
     return (
-      <View className="flex-1 items-center justify-center bg-[#DCEEFF] px-8">
-        <MapPin size={36} color="#2563EB" />
-        <Text className="mt-3 text-center font-inter-semibold text-base text-[#1E3A8A]">
-          {t('common_error.program_error')}
-        </Text>
+      <View className="flex-1 justify-between bg-[#DCEEFF] px-5 py-6">
+        <View className="rounded-3xl bg-white/80 p-4">
+          <Text className="font-inter-bold text-lg text-[#1E3A8A]">
+            {t('booking.application_count_title', { count: applications.length })}
+          </Text>
+          <Text className="mt-1 text-sm text-[#315C9C]">
+            {t('common_error.program_error')}
+          </Text>
+        </View>
+        <View className="items-center justify-center">
+          <View className="rounded-full bg-white/90 p-5 shadow-sm">
+            <MapPin size={42} color="#2563EB" />
+          </View>
+        </View>
+        <MapLegend t={t} applicantCount={applications.length} />
       </View>
     );
   }
 
   return (
-    <MapLibreGL.MapView style={{ flex: 1 }} mapStyle={styleURL} logoEnabled={false} attributionEnabled={false}>
-      <MapLibreGL.Camera centerCoordinate={centerCoordinate} zoomLevel={12} />
-      {customerCoordinate ? (
-        <MapLibreGL.PointAnnotation id="customer-location" coordinate={customerCoordinate}>
-          <MapMarker tone="customer" label="H" />
-        </MapLibreGL.PointAnnotation>
-      ) : null}
-      {originalCoordinate ? (
-        <MapLibreGL.PointAnnotation id="original-ktv-location" coordinate={originalCoordinate}>
-          <MapMarker tone="original" />
-        </MapLibreGL.PointAnnotation>
-      ) : null}
-      {applicantMarkers.map((marker) => (
-        <MapLibreGL.PointAnnotation key={marker.id} id={`applicant-${marker.id}`} coordinate={marker.coordinate}>
-          <MapMarker tone="applicant" />
-        </MapLibreGL.PointAnnotation>
-      ))}
-    </MapLibreGL.MapView>
+    <View className="flex-1">
+      <MapLibreGL.MapView style={{ flex: 1 }} mapStyle={styleURL} logoEnabled={false} attributionEnabled={false}>
+        <MapLibreGL.Camera centerCoordinate={centerCoordinate} zoomLevel={12} />
+        {customerCoordinate ? (
+          <MapLibreGL.PointAnnotation id="customer-location" coordinate={customerCoordinate}>
+            <MapMarker tone="customer" label="H" />
+          </MapLibreGL.PointAnnotation>
+        ) : null}
+        {originalCoordinate ? (
+          <MapLibreGL.PointAnnotation id="original-ktv-location" coordinate={originalCoordinate}>
+            <MapMarker tone="original" label="G" />
+          </MapLibreGL.PointAnnotation>
+        ) : null}
+        {applicantMarkers.map((marker, index) => (
+          <ApplicantAvatarAnnotation
+            key={marker.id}
+            MapLibreGL={MapLibreGL}
+            id={`applicant-${marker.id}`}
+            coordinate={marker.coordinate}
+            avatarUrl={marker.avatarUrl}
+            name={marker.name}
+            index={index + 1}
+          />
+        ))}
+      </MapLibreGL.MapView>
+      <View className="absolute bottom-6 left-5 right-5">
+        <View className="mb-3 self-start rounded-2xl bg-white/95 px-4 py-3 shadow-lg">
+          <Text className="font-inter-bold text-base text-slate-950">
+            {t('booking.application_count_title', { count: applications.length })}
+          </Text>
+        </View>
+        <MapLegend t={t} applicantCount={applications.length} />
+      </View>
+    </View>
   );
 };
 
+const MapLegend = ({ t, applicantCount }: { t: TFunction; applicantCount: number }) => (
+  <View className="flex-row flex-wrap gap-2 rounded-2xl bg-white/95 p-3 shadow-lg">
+    <LegendItem color="#EF4444" label={t('services.booking_location')} />
+    <LegendItem color="#F59E0B" label={t('services.booking_technician')} />
+    <LegendItem color="#2563EB" label={t('booking.application_count_title', { count: applicantCount })} />
+  </View>
+);
+
+const LegendItem = ({ color, label }: { color: string; label: string }) => (
+  <View className="flex-row items-center rounded-full bg-slate-50 px-3 py-1.5">
+    <View className="mr-2 h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+    <Text className="text-xs text-slate-600" numberOfLines={1}>
+      {label}
+    </Text>
+  </View>
+);
+
 const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant'; label?: string }) => {
-  const isCustomer = tone === 'customer';
   const markerClass = cn(
-    'items-center justify-center rounded-full border-2 shadow-lg',
-    isCustomer ? 'h-9 w-9 border-white bg-red-500' : 'h-10 w-10 border-white bg-[#6E8952]'
+    'items-center justify-center rounded-full border-2 border-white shadow-lg',
+    tone === 'customer' && 'h-10 w-10 bg-red-500',
+    tone === 'original' && 'h-10 w-10 bg-amber-500',
+    tone === 'applicant' && 'h-10 w-10 bg-blue-600'
   );
 
   return (
@@ -388,6 +459,57 @@ const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant
         <User size={22} color="white" />
       )}
     </View>
+  );
+};
+
+const ApplicantAvatarAnnotation = ({
+  MapLibreGL,
+  id,
+  coordinate,
+  avatarUrl,
+  name,
+  index,
+}: {
+  MapLibreGL: MapLibreModule;
+  id: string;
+  coordinate: [number, number];
+  avatarUrl: string | null;
+  name: string | null;
+  index: number;
+}) => {
+  const annotationRef = useRef<PointAnnotationRef | null>(null);
+
+  const refreshAnnotation = useCallback(() => {
+    requestAnimationFrame(() => {
+      annotationRef.current?.refresh();
+    });
+  }, []);
+
+  return (
+    <MapLibreGL.PointAnnotation ref={annotationRef} id={id} coordinate={coordinate} anchor={{ x: 0.5, y: 1 }}>
+      <View className="items-center">
+        <View className="h-[52px] w-[52px] items-center justify-center rounded-full border-[3px] border-white bg-white shadow-xl">
+          {avatarUrl ? (
+            <Image
+              source={{ uri: avatarUrl }}
+              style={{ width: 46, height: 46, borderRadius: 9999 }}
+              contentFit="cover"
+              onLoad={refreshAnnotation}
+              onError={refreshAnnotation}
+            />
+          ) : (
+            <View className="h-[46px] w-[46px] items-center justify-center rounded-full bg-blue-600">
+              <User size={24} color="white" />
+            </View>
+          )}
+        </View>
+        <View className="-mt-2 rounded-full bg-blue-600 px-2 py-0.5 shadow-md">
+          <Text className="font-inter-bold text-[10px] text-white" numberOfLines={1}>
+            {name || `KTV ${index}`}
+          </Text>
+        </View>
+      </View>
+    </MapLibreGL.PointAnnotation>
   );
 };
 

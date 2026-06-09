@@ -81,6 +81,16 @@ export default function OrdersScreen() {
   const applicationsQuery = useBookingApplicationsQuery(applicationBooking?.id);
   const selectApplicationMutation = useSelectBookingApplicationMutation();
 
+  const handlePressBookingCard = useCallback((item: BookingItem) => {
+    if (item.status === _BookingStatus.OPEN_FOR_APPLICATION) {
+      setBookingId(item.id);
+      router.push('/(app)/(customer)/(service)/service-booking-result');
+      return;
+    }
+
+    openDetail(item);
+  }, [openDetail, setBookingId]);
+
   const handleOpenApplications = useCallback((item: BookingItem) => {
     setApplicationBooking(item);
   }, []);
@@ -219,6 +229,7 @@ export default function OrdersScreen() {
               item={item}
               key={item.id}
               openDetail={openDetail}
+              onPress={handlePressBookingCard}
               handleOpenApplications={handleOpenApplications}
               handleOpenCancelBooking={handleOpenCancel}
               getRoomChat={getRoomChat}

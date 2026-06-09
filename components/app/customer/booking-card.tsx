@@ -19,9 +19,18 @@ type Props = {
   handleOpenCancelBooking: (id: string) => void;
   getRoomChat: ReturnType<typeof useGetRoomChat>;
   handleOpenReview: (id: string) => void;
+  onPress?: (item: BookingItem) => void;
 }
 
-export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenApplications, handleOpenCancelBooking, getRoomChat, handleOpenReview }) => {
+export const BookingCard: FC<Props> = ({
+  item,
+  openDetail,
+  handleOpenApplications,
+  handleOpenCancelBooking,
+  getRoomChat,
+  handleOpenReview,
+  onPress,
+}) => {
   const { t } = useTranslation();
   const displayKtv = item.status === _BookingStatus.OPEN_FOR_APPLICATION
     ? item.selected_ktv_user
@@ -31,7 +40,7 @@ export const BookingCard: FC<Props> = ({ item, openDetail, handleOpenApplication
   const styleStatus = getBookingStatusStyle(item.status);
 
   return (
-    <Pressable onPress={() => openDetail(item)}>
+    <Pressable onPress={() => (onPress ? onPress(item) : openDetail(item))}>
       <Card containerClassName="mb-4">
       {/* --- HÀNG 1: THÔNG TIN VÀ TRẠNG THÁI --- */}
       <View className="mb-4 flex-row justify-between items-start">
