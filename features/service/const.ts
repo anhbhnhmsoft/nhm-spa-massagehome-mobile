@@ -21,10 +21,14 @@ export const _BookingStatusMap = {
   [_BookingStatus.COMPLETED]: 'enum.booking_status.COMPLETED',
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
-  [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.WAITING_CANCEL',
+  [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.CANCELED',
   [_BookingStatus.WAITING_KTV_CONFIRM]: 'enum.booking_status.WAITING_KTV_CONFIRM',
   [_BookingStatus.OPEN_FOR_APPLICATION]: 'enum.booking_status.OPEN_FOR_APPLICATION',
 } as const;
+
+export const BOOKING_STATUS_FILTER_OPTIONS = Object.entries(_BookingStatusMap).filter(
+  ([key]) => Number(key) !== _BookingStatus.WAITING_CANCEL
+);
 
 export const getBookingStatusStyle = (status: _BookingStatus) => {
   switch (status) {
@@ -55,6 +59,7 @@ export const getBookingStatusStyle = (status: _BookingStatus) => {
         label: _BookingStatusMap[status],
       };
     case _BookingStatus.CANCELED:
+    case _BookingStatus.WAITING_CANCEL:
     case _BookingStatus.PAYMENT_FAILED:
       return {
         background: DefaultColor.red[100],
@@ -83,6 +88,7 @@ export const getStatusColor = (status: _BookingStatus) => {
     case _BookingStatus.COMPLETED:
       return 'bg-green-100 text-green-500';
     case _BookingStatus.CANCELED:
+    case _BookingStatus.WAITING_CANCEL:
     case _BookingStatus.PAYMENT_FAILED:
       return 'bg-red-100 text-red-700';
     default:

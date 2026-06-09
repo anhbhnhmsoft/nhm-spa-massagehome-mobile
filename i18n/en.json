@@ -842,7 +842,7 @@
     "application_candidate": "Applicant",
     "unassigned_technician": "Technician not selected",
     "confirm_deadline_label": "Confirmation deadline: {{time}}",
-    "cancel_pending_note": "The booking will be cancelled automatically and the refund will be processed by the system.",
+    "cancel_pending_note": "This booking will be cancelled immediately and the refund will be processed by the system.",
     "start_error_booking": "An error occurred while starting the service. Please try again.",
     "warning_alert_service_booking_confirm": "You have 1 service confirmed at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",
     "warning_alert_service_booking_ongoing": "You have 1 service ongoing at {{time}}, please contact the technician to confirm or contact the customer service to transfer the order",

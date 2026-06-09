@@ -843,7 +843,7 @@
     "application_candidate": "Ứng viên",
     "unassigned_technician": "Chưa chốt kỹ thuật viên",
     "confirm_deadline_label": "Hạn xác nhận: {{time}}",
-    "cancel_pending_note": "Đơn hàng sẽ được hủy tự động và hệ thống xử lý hoàn tiền theo quy định.",
+    "cancel_pending_note": "Đơn hàng sẽ được hủy ngay và hệ thống xử lý hoàn tiền theo quy định.",
     "start_error_booking": "Đã xảy ra lỗi khi bắt đầu dịch vụ. Vui lòng thử lại.",
     "warning_alert_service_booking_confirm": "Bạn đang có 1 dịch vụ đã xác nhận làm vào lúc {{time}}, vui lòng liên hệ với Kĩ thuật viên để xác nhận hoặc liên hệ với tổng đài để chuyển đơn",
     "warning_alert_service_booking_ongoing": "Bạn đang có 1 dịch vụ đang diễn ra bắt đầu vào lúc {{time}}",

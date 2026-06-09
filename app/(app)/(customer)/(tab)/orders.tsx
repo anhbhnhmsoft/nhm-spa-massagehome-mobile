@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useBookingList, useCancelBooking } from '@/features/booking/hooks';
 import React, { useCallback, useEffect, useState } from 'react';
-import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
+import { BOOKING_STATUS_FILTER_OPTIONS, _BookingStatus } from '@/features/service/const';
 import { FlatList, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { cn } from '@/lib/utils';
 import {
@@ -171,7 +171,7 @@ export default function OrdersScreen() {
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {Object.entries(_BookingStatusMap).map(([key, value], index) => {
+          {BOOKING_STATUS_FILTER_OPTIONS.map(([key, value], index) => {
             const checked = params?.filter?.status === Number(key);
             return (
               <TouchableOpacity

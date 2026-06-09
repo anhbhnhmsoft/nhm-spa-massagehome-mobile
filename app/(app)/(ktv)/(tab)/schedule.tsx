@@ -5,7 +5,7 @@ import { getTabBarHeight } from '@/components/styles/style';
 import { Text } from '@/components/ui/text';
 import { BookingItem, ListBookingRequest } from '@/features/booking/types';
 import { useSchedule } from '@/features/ktv/hooks';
-import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
+import { BOOKING_STATUS_FILTER_OPTIONS, _BookingStatus } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { t } from 'i18next';
@@ -36,7 +36,7 @@ const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
           gap: 8,
         }}>
         {/* Các trạng thái */}
-        {Object.entries(_BookingStatusMap).map(([key, value]) => {
+        {BOOKING_STATUS_FILTER_OPTIONS.map(([key, value]) => {
           const status = Number(key) as _BookingStatus;
           const checked = currentStatus === status;
 

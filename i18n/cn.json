@@ -848,7 +848,7 @@
     "application_candidate": "申请者",
     "unassigned_technician": "尚未确定技师",
     "confirm_deadline_label": "确认截止时间：{{time}}",
-    "cancel_pending_note": "订单将自动取消，系统会按规则处理退款。",
+    "cancel_pending_note": "订单将立即取消，系统会按规则处理退款。",
     "start_error_booking": "开始服务时出错，请稍后重试。",
     "warning_alert_service_booking_confirm": "您有 1 个服务已确认在 {{time}}，请联系技师确认或联系客户服务转移订单",
     "warning_alert_service_booking_ongoing": "您有 1 个服务正在进行中在 {{time}}，请联系技师确认或联系客户服务转移订单",

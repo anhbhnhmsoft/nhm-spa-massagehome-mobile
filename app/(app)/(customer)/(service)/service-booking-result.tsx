@@ -165,8 +165,8 @@ const ServiceBookingResultScreen = () => {
                 reason: t('booking.customer_cancel_from_result_reason'),
               },
               {
-                onSuccess: async () => {
-                  success({ message: t('booking.waiting_cancel') });
+                onSuccess: async (res) => {
+                  success({ message: res.message || t('enum.booking_status.CANCELED') });
                   await queryClient.invalidateQueries({ queryKey: ['bookingApi-checkBooking', bookingId] });
                   await queryClient.invalidateQueries({ queryKey: ['bookingApi-listBookings'] });
                   await refetch();

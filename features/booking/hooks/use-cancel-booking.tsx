@@ -10,7 +10,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 export const useCancelBooking = (onSuccess: () => void) => {
   const ref  = useRef<BottomSheetModal>(null);
 
-  const { error } = useToast();
+  const { error, success } = useToast();
   const { mutate: cancelBooking, isPending: loading } = useCancelBookingMutation();
 
   const [bookingIdCancel, setBookingIdCancel] = useState<string>('');
@@ -37,7 +37,8 @@ export const useCancelBooking = (onSuccess: () => void) => {
               cancelBooking(
                 { booking_id: bookingIdCancel, reason },
                 {
-                  onSuccess: async () => {
+                  onSuccess: async (res) => {
+                    success({ message: res.message || t('enum.booking_status.CANCELED') });
                     onSuccess();
                     ref.current?.dismiss();
                   },
@@ -54,7 +55,7 @@ export const useCancelBooking = (onSuccess: () => void) => {
         ]
       );
     },
-    [bookingIdCancel, onSuccess]
+    [bookingIdCancel, error, onSuccess, success]
   );
 
   const handleOpen = useCallback((bookingId: string) => {
