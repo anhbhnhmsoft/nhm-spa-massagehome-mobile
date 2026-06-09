@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApplicationBookingDetailsQuery, useBookingDetailsQuery } from './use-query';
 import {
   useApplyApplicationBookingMutation,
@@ -20,7 +20,7 @@ import {
   getMessageError,
   getRemainingTime,
 } from '@/lib/utils';
-import {  StartBookingResponse } from '@/features/ktv/types';
+import { BookingDetailsResponse, StartBookingResponse } from '@/features/ktv/types';
 import { useAuthStore } from '@/features/auth/stores';
 import { _UserRole } from '@/features/auth/const';
 import { useApplicationStore } from '@/features/app/stores';
@@ -135,19 +135,74 @@ export const useSetBookingStart = () => {
  * Dùng cho màn chi tiết booking
  * @param id
  */
-export const useBooking = (id: string, mode: 'booking' | 'application' = 'booking') => {
+type BookingDetailMode = 'booking' | 'application';
+
+export const useBooking = (id: string, mode: BookingDetailMode = 'booking') => {
   // Khai báo các state cần sử dụng
   const { t } = useTranslation();
   const { error, success } = useToast();
-  const bookingQuery = useBookingDetailsQuery(id, mode === 'booking');
-  const routeWantsApplication = mode === 'application';
-  const bookingIsOpenForApplication = bookingQuery.data?.status === _BookingStatus.OPEN_FOR_APPLICATION;
-  const shouldUseApplicationQuery = routeWantsApplication || bookingIsOpenForApplication;
-  const applicationQuery = useApplicationBookingDetailsQuery(id, shouldUseApplicationQuery);
-  const data = shouldUseApplicationQuery ? (applicationQuery.data ?? bookingQuery.data) : bookingQuery.data;
-  const refetch = shouldUseApplicationQuery ? applicationQuery.refetch : bookingQuery.refetch;
-  const isRefetching = shouldUseApplicationQuery ? applicationQuery.isRefetching : bookingQuery.isRefetching;
-  const isLoading = shouldUseApplicationQuery ? applicationQuery.isLoading : bookingQuery.isLoading;
+  const [detailMode, setDetailMode] = useState<BookingDetailMode>(mode);
+  const bookingIdRef = useRef(id);
+  const applicationDetailFallbackRef = useRef(false);
+
+  useEffect(() => {
+    if (bookingIdRef.current !== id) {
+      bookingIdRef.current = id;
+      applicationDetailFallbackRef.current = false;
+      setDetailMode(mode);
+    }
+  }, [id, mode]);
+
+  const isApplicationDetailMode = detailMode === 'application';
+  const bookingQuery = useBookingDetailsQuery(id, !isApplicationDetailMode);
+  const applicationQuery = useApplicationBookingDetailsQuery(id, isApplicationDetailMode);
+
+  const promoteBookingDetail = useCallback((booking: BookingDetailsResponse['data'], message = '') => {
+    queryClient.setQueryData<BookingDetailsResponse>(
+      ['bookingApi-details-ktv', booking.id],
+      {
+        message,
+        data: booking,
+      }
+    );
+    setDetailMode('booking');
+  }, []);
+
+  useEffect(() => {
+    if (!isApplicationDetailMode || !applicationQuery.data) return;
+    applicationDetailFallbackRef.current = false;
+    if (applicationQuery.data.status !== _BookingStatus.OPEN_FOR_APPLICATION) {
+      promoteBookingDetail(applicationQuery.data);
+    }
+  }, [applicationQuery.data, isApplicationDetailMode, promoteBookingDetail]);
+
+  useEffect(() => {
+    if (applicationDetailFallbackRef.current) return;
+    if (isApplicationDetailMode || bookingQuery.data?.status !== _BookingStatus.OPEN_FOR_APPLICATION) return;
+    setDetailMode('application');
+  }, [bookingQuery.data?.status, isApplicationDetailMode]);
+
+  useEffect(() => {
+    if (isApplicationDetailMode && applicationQuery.isError) {
+      applicationDetailFallbackRef.current = true;
+      setDetailMode('booking');
+    }
+  }, [applicationQuery.isError, isApplicationDetailMode]);
+
+  const data = isApplicationDetailMode ? applicationQuery.data : bookingQuery.data;
+  const refetch = useCallback(async () => {
+    if (isApplicationDetailMode) {
+      const result = await applicationQuery.refetch();
+      if (result.data && result.data.status !== _BookingStatus.OPEN_FOR_APPLICATION) {
+        promoteBookingDetail(result.data);
+      }
+      return result;
+    }
+
+    return bookingQuery.refetch();
+  }, [applicationQuery.refetch, bookingQuery.refetch, isApplicationDetailMode, promoteBookingDetail]);
+  const isRefetching = isApplicationDetailMode ? applicationQuery.isRefetching : bookingQuery.isRefetching;
+  const isLoading = isApplicationDetailMode ? applicationQuery.isLoading : bookingQuery.isLoading;
   const { mutate: startBookingMutate, isPending: isStartBookingPending } =
     useStartBookingMutation();
   const { mutate: applyBookingMutate, isPending: isApplyBookingPending } =
@@ -265,13 +320,15 @@ export const useBooking = (id: string, mode: 'booking' | 'application' = 'bookin
   const handleConfirmBooking = () => {
     if (!data?.id) return;
     confirmBookingMutate(data.id, {
-      onSuccess: async () => {
+      onSuccess: async (res) => {
+        promoteBookingDetail(res.data, res.message);
+        queryClient.removeQueries({ queryKey: ['ktvApi-applicationBookingDetails', data.id], exact: true });
         await queryClient.invalidateQueries({ queryKey: ['bookingApi-details-ktv', data.id] });
         await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookingDetails', data.id] });
         await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-applicationBookings'] });
         await queryClient.invalidateQueries({ queryKey: ['ktvApi-dashboard'] });
         success({ message: t('booking.confirmed_successfully_mobile') });
-        await refetch();
       },
       onError: (err: any) => {
         error({ message: err?.message || t('common_error.request_error') });

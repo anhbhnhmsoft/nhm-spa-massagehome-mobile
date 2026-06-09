@@ -8,7 +8,7 @@ import { useSchedule } from '@/features/ktv/hooks';
 import { _BookingStatus, _BookingStatusMap } from '@/features/service/const';
 import { cn } from '@/lib/utils';
 import { router, useLocalSearchParams } from 'expo-router';
-import { t, TFunction } from 'i18next';
+import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
@@ -18,7 +18,6 @@ import { useInfiniteApplicationBookingList } from '@/features/ktv/hooks/use-quer
 
 
 interface HeaderFilterProps {
-  t: TFunction;
   params: ListBookingRequest;
   setFilter: (filter: Partial<ListBookingRequest['filter']>) => void;
 }
@@ -91,6 +90,7 @@ export default function ScheduleScreen() {
   const applicationData = useMemo<BookingItem[]>(() => {
     return applicationQuery.data?.pages.flatMap((page) => page.data.data) || [];
   }, [applicationQuery.data]);
+  const listData = mode === 'applications' ? applicationData : data;
   const handledRouteBookingRef = useRef<string | null>(null);
   const wasFocusedRef = useRef(false);
 
@@ -105,18 +105,6 @@ export default function ScheduleScreen() {
       },
     });
   }, []);
-
-  const handleGoApplicationDetails = useCallback((item: BookingItem) => {
-    if (item.status !== _BookingStatus.OPEN_FOR_APPLICATION) {
-      handleGoDetails(item);
-      return;
-    }
-
-    router.push({
-      pathname: '/(app)/(ktv)/(service)/booking-details',
-      params: { id: item.id, mode: 'application' },
-    });
-  }, [handleGoDetails]);
 
   const calculateDistance = useCalculateDistance();
 
@@ -151,13 +139,8 @@ export default function ScheduleScreen() {
 
     handledRouteBookingRef.current = bookingId;
 
-    if (targetBooking.status === _BookingStatus.OPEN_FOR_APPLICATION) {
-      handleGoApplicationDetails(targetBooking);
-      return;
-    }
-
     handleGoDetails(targetBooking);
-  }, [applicationData, applicationQuery.isLoading, bookingId, data, handleGoApplicationDetails, handleGoDetails, mode]);
+  }, [applicationData, applicationQuery.isLoading, bookingId, data, handleGoDetails, mode]);
 
   return (
     <View className="flex-1 bg-slate-50">
@@ -188,28 +171,19 @@ export default function ScheduleScreen() {
           </TouchableOpacity>
         </View>
         <FlatList
-          data={mode === 'applications' ? applicationData : data}
+          data={listData}
           keyExtractor={(item) => `${mode}-${item.id}`}
           renderItem={({ item }) => (
             <View className="px-4" key={item.id}>
-              {mode === 'applications' ? (
-                <BookingItemKtv
-                  item={item}
-                  onPress={handleGoApplicationDetails}
-                  calculateDistance={calculateDistance}
-                  joinRoomChat={joinRoomChat}
-                />
-              ) : (
-                <BookingItemKtv
-                  item={item}
-                  onPress={handleGoDetails}
-                  calculateDistance={calculateDistance}
-                  joinRoomChat={joinRoomChat}
-                />
-              )}
+              <BookingItemKtv
+                item={item}
+                onPress={handleGoDetails}
+                calculateDistance={calculateDistance}
+                joinRoomChat={joinRoomChat}
+              />
             </View>
           )}
-          ListHeaderComponent={mode === 'bookings' ? <HeaderFilter params={params} setFilter={setFilter} t={t} /> : <View className="h-4" />}
+          ListHeaderComponent={mode === 'bookings' ? <HeaderFilter params={params} setFilter={setFilter} /> : <View className="h-4" />}
           ListEmptyComponent={<Empty />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
