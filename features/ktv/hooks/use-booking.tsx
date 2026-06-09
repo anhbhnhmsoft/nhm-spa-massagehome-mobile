@@ -232,12 +232,13 @@ export const useBooking = (id: string, mode: 'booking' | 'application' = 'bookin
 
   const canApplyBooking = useMemo(() => {
     if (!data) return false;
-    return data.status === _BookingStatus.OPEN_FOR_APPLICATION && !data.has_applied;
+    return data.status === _BookingStatus.OPEN_FOR_APPLICATION && !data.has_applied && !data.is_original_ktv;
   }, [data]);
 
   const canConfirmBooking = useMemo(() => {
     if (!data) return false;
-    return data.status === _BookingStatus.WAITING_KTV_CONFIRM;
+    return data.status === _BookingStatus.WAITING_KTV_CONFIRM
+      || (data.status === _BookingStatus.OPEN_FOR_APPLICATION && !!data.is_original_ktv);
   }, [data]);
 
   // có thể hủy dịch vụ

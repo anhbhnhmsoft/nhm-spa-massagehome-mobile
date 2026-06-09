@@ -13,7 +13,19 @@ export type BookingCheckItem = {
   price_transportation: string;
   total_price: string;
   reason_cancel: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
+  ktv_latitude?: string | number | null;
+  ktv_longitude?: string | number | null;
+  original_ktv_user?: {
+    id: string | null;
+    name: string | null;
+    avatar_url: string | null;
+    latitude: string | number | null;
+    longitude: string | number | null;
+  } | null;
   ktv_confirm_deadline_at?: string | null;
+  assignment_deadline_at?: string | null;
   application_opened_at?: string | null;
   application_open_reason?: string | null;
 };
@@ -30,11 +42,14 @@ export type BookingApplicationTechnician = {
   avatar_url: string | null;
   experience?: number | null;
   bio?: Record<string, string> | null;
+  rating?: number | null;
+  review_count?: number | null;
   location?: {
     address: string | null;
     latitude: string | number | null;
     longitude: string | number | null;
   };
+  distance?: number | null;
 };
 
 export type BookingApplicationItem = {
@@ -86,6 +101,7 @@ export type BookingItem = {
   application_opened_at?: string | null;
   application_open_reason?: string | null;
   has_applied?: boolean;
+  is_original_ktv?: boolean;
   application_status?: number | null;
   distance?: number | null;
   note: string | null;

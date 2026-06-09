@@ -128,7 +128,12 @@ export const useNotification = () => {
        if (
          user?.role === _UserRole.KTV &&
          bookingId &&
-         [NotificationType.APPLICATION_BOOKING_AVAILABLE, NotificationType.BOOKING_KTV_RELEASED, NotificationType.BOOKING_KTV_CONFIRM_TIMEOUT].includes(type)
+         [
+           NotificationType.NEW_BOOKING_REQUEST,
+           NotificationType.APPLICATION_BOOKING_AVAILABLE,
+           NotificationType.BOOKING_KTV_RELEASED,
+           NotificationType.BOOKING_KTV_CONFIRM_TIMEOUT,
+         ].includes(type)
        ) {
          router.push({
            pathname: '/(app)/(ktv)/(tab)/schedule',

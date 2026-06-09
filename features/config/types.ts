@@ -29,5 +29,13 @@ export type ConfigApplicationResponse = ResponseDataSuccessType<{
   android_version: string;
   appstore_url: string;
   chplay_url: string;
+  map?: {
+    provider: 'goong';
+    style_url: string | null;
+    style_urls?: {
+      default?: string | null;
+      highlight?: string | null;
+      satellite?: string | null;
+    };
+  };
 }>
-
