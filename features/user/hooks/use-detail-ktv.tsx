@@ -3,10 +3,11 @@ import { useMutationKtvDetail } from '@/features/user/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { goBack } from '@/lib/utils';
-import { KTVDetail, ServiceCategoryItem } from '@/features/user/types';
+import { ServiceCategoryItem } from '@/features/user/types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { usePrepareBookingStore } from '@/features/profile/stores';
 import { useRouter } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
 
 /**
  * Xử lý man chi tiết KTV
@@ -29,13 +30,14 @@ export const useDetailKtv = () => {
   const [loading,setLoading] = useState(false);
 
   const router = useRouter();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    // Nếu không có massager, quay lại màn hình trước
-    if (!ktv) {
+    // Chỉ tự thoát khi màn detail đang focus, tránh pop nhầm khi screen nằm dưới modal/result.
+    if (isFocused && !ktv) {
       goBack();
     }
-  }, [ktv]);
+  }, [isFocused, ktv]);
 
   // Lấy lại thông tin của KTV
   const refreshPage = useCallback(() => {
@@ -91,7 +93,7 @@ export const useDetailKtv = () => {
 
 
   return {
-    detail: ktv as KTVDetail,
+    detail: ktv,
     loading,
     refreshPage,
     bottomServiceRef,

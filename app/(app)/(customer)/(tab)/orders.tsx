@@ -26,7 +26,6 @@ import { getMessageError } from '@/lib/utils';
 import useToast from '@/features/app/hooks/use-toast';
 import { queryClient } from '@/lib/provider/query-provider';
 import { useBookingStore } from '@/features/booking/stores';
-import { useUserServiceStore } from '@/features/user/stores';
 
 export default function OrdersScreen() {
   const { t } = useTranslation();
@@ -34,7 +33,6 @@ export default function OrdersScreen() {
   const setBookingId = useBookingStore((state) => state.setBookingId);
   const setApplicationSelection = useBookingStore((state) => state.setApplicationSelection);
   const setApplicationSelectionSource = useBookingStore((state) => state.setApplicationSelectionSource);
-  const setKtv = useUserServiceStore((state) => state.setKtv);
 
   const {
     data,
@@ -114,9 +112,8 @@ export default function OrdersScreen() {
           preview: response.data,
         });
         setApplicationSelectionSource('orders');
-        setKtv(null);
         handleCloseApplications();
-        router.push('/(app)/(customer)/(service)/application-technician-detail');
+        router.push({ pathname: '/(app)/(customer)/(service)/application-technician-detail' });
       })
       .catch((err) => {
         setApplicationPreview(null);
@@ -125,7 +122,7 @@ export default function OrdersScreen() {
       .finally(() => {
         setPreviewLoading(false);
       });
-  }, [applicationBooking?.id, error, handleCloseApplications, setApplicationSelection, setApplicationSelectionSource, setBookingId, setKtv, t]);
+  }, [applicationBooking?.id, error, handleCloseApplications, setApplicationSelection, setApplicationSelectionSource, setBookingId, t]);
 
   const handleSelectApplication = useCallback((application: BookingApplicationItem) => {
     if (!applicationBooking?.id) return;

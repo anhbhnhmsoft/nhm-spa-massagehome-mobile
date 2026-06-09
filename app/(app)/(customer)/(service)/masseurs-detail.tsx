@@ -1,9 +1,10 @@
 import React from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, Text, View } from 'react-native';
 import { useDetailKtv } from '@/features/user/hooks';
 import { useTranslation } from 'react-i18next';
 import Empty from '@/components/empty';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import HeaderBack from '@/components/header-back';
 import {
   CarouselImageKtvSection,
   InfoKtvSection,
@@ -27,6 +28,24 @@ const MasseurDetailScreen = () => {
     handleDismissServiceSheet,
     handlePrepareBooking,
   } = useDetailKtv();
+
+  if (!detail) {
+    return (
+      <View className="flex-1 bg-slate-50">
+        <HeaderBack />
+        <View className="flex-1 items-center justify-center px-6">
+          {loading ? (
+            <>
+              <ActivityIndicator />
+              <Text className="mt-3 text-sm text-slate-500">{t('common.loading')}</Text>
+            </>
+          ) : (
+            <Empty />
+          )}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <>

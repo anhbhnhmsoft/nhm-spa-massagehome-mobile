@@ -44,7 +44,6 @@ import { BookingApplicationItem, BookingCheckItem } from '@/features/booking/typ
 import useToast from '@/features/app/hooks/use-toast';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
 import { useConfigApplicationQuery } from '@/features/config/hooks/use-query';
-import { useUserServiceStore } from '@/features/user/stores';
 import { queryClient } from '@/lib/provider/query-provider';
 import { cn, formatBalance, formatDistance, getMessageError } from '@/lib/utils';
 
@@ -107,7 +106,6 @@ const ServiceBookingResultScreen = () => {
   const resetNav = useResetNav();
   const setApplicationSelection = useBookingStore((state) => state.setApplicationSelection);
   const setApplicationSelectionSource = useBookingStore((state) => state.setApplicationSelectionSource);
-  const setKtv = useUserServiceStore((state) => state.setKtv);
 
   const { status, data, bookingId, applications, applicationsQuery, refetch } = useCheckBooking();
   const configQuery = useConfigApplicationQuery(true);
@@ -141,14 +139,13 @@ const ServiceBookingResultScreen = () => {
           preview: response.data,
         });
         setApplicationSelectionSource('result');
-        setKtv(null);
-        router.push('/(app)/(customer)/(service)/application-technician-detail');
+        router.push({ pathname: '/(app)/(customer)/(service)/application-technician-detail' });
       })
       .catch((err) => {
         error({ message: getMessageError(err, t) || t('common_error.request_error') });
       })
       .finally(() => setPreviewLoadingId(null));
-  }, [bookingId, error, setApplicationSelection, setApplicationSelectionSource, setKtv, t]);
+  }, [bookingId, error, setApplicationSelection, setApplicationSelectionSource, t]);
 
   const handleCancel = useCallback(() => {
     if (!bookingId) return;
@@ -561,7 +558,10 @@ const ApplicationCandidateCard = ({
           <TouchableOpacity
             onPress={onSelect}
             disabled={disabled}
-            className="min-w-[78px] items-center justify-center rounded-full bg-[#5F934F] px-5 py-2"
+            className={cn(
+              'min-w-[78px] items-center justify-center rounded-full px-5 py-2',
+              disabled ? 'bg-blue-300' : 'bg-[#2563EB]'
+            )}
           >
             {loading ? (
               <ActivityIndicator color="white" size="small" />

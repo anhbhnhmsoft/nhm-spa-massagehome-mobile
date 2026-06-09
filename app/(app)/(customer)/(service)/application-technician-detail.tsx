@@ -35,9 +35,10 @@ export default function ApplicationTechnicianDetailScreen() {
   const { mutate, isPending } = useMutationKtvDetail();
   const selectMutation = useSelectBookingApplicationMutation();
   const requestedKtvIdRef = useRef<string | null>(null);
+  const selectedKtvId = selectedApplication?.ktv.id ?? null;
+  const hasSelectedKtvDetail = !!ktv && !!selectedKtvId && ktv.id === selectedKtvId;
 
   useEffect(() => {
-    const selectedKtvId = selectedApplication?.ktv.id ?? null;
     if (!selectedKtvId) return;
     if (ktv?.id === selectedKtvId) {
       requestedKtvIdRef.current = selectedKtvId;
@@ -56,7 +57,7 @@ export default function ApplicationTechnicianDetailScreen() {
         error({ message: getMessageError(err, t) || t('common_error.request_error') });
       },
     });
-  }, [ktv?.id, mutate, selectedApplication?.ktv.id, setKtv]);
+  }, [ktv?.id, mutate, selectedKtvId, setKtv]);
 
   const handleBack = () => {
     requestedKtvIdRef.current = null;
@@ -104,7 +105,7 @@ export default function ApplicationTechnicianDetailScreen() {
     );
   }
 
-  if (!ktv || isPending) {
+  if (!hasSelectedKtvDetail || isPending) {
     return (
       <SafeAreaView className="flex-1 bg-slate-50">
         <HeaderBack title="booking.select_technician_title" onBack={handleBack} />
