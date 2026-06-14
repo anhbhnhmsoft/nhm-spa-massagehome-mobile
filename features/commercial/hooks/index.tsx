@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCollectCouponMutation } from '@/features/commercial/hooks/use-mutation';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import { router } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useAuthStore } from '@/features/auth/stores';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { _UserRole } from '@/features/auth/const';
@@ -45,11 +46,11 @@ export const useCommercialCoupon = () => {
         } else {
           // không thì chuyển hướng đến trang ví
           router.push({
-            pathname: '/(app)/(profile)/wallet',
+            pathname: '/(app)/(customer)/(profile)/wallet' as Href,
             params: {
               toTabWallet: 'coupon',
             },
-          });
+          } as Href);
         }
       },
       onError: (err) => {

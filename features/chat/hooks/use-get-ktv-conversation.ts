@@ -66,6 +66,9 @@ export const useGetKTVConversations = () => {
             // Mới tinh -> Tạo mới đúng chuẩn Type KTVConversationItem
             foundItem = {
               id: payload.room_id,
+              can_send: true,
+              chat_state: 'active',
+              closed_reason: null,
               customer: {
                 id: payload.sender_id,
                 name: payload.sender_name,
@@ -82,7 +85,9 @@ export const useGetKTVConversations = () => {
 
           // CHÈN LÊN ĐẦU TRANG 1
           if (draft.pages.length > 0) {
-            draft.pages[0].data.data.unshift(foundItem);
+            if (foundItem) {
+              draft.pages[0].data.data.unshift(foundItem);
+            }
           }
         });
       });

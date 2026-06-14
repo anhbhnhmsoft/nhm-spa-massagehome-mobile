@@ -4,7 +4,7 @@ import { Image, TouchableOpacity, View } from 'react-native';
 import { Bath, Medal } from 'lucide-react-native';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useKTVSearchStore } from '@/features/user/stores';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import {Text} from '@/components/ui/text';
 import { useTranslation } from 'react-i18next';
 import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
@@ -21,7 +21,7 @@ const CategoryCard = ({ item }: { item: CategoryItem }) => {
       category_id: item.id,
       category_name: item.name,
     });
-    router.push('/(app)/(tab)/masseurs');
+    router.push('/(app)/(customer)/(tab)/masseurs' as Href);
   });
 
   return(

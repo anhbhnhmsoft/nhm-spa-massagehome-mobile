@@ -66,7 +66,7 @@ export default function SupportChatViewScreen() {
   const locale = useMemo(() => {
     const lang = i18n.language?.toLowerCase() ?? 'vi';
     if (lang.startsWith('en')) return 'en';
-    if (lang.startsWith('zh') || lang.startsWith('cn')) return 'zh';
+    if (lang.startsWith('zh') || lang.startsWith('cn')) return 'cn';
     return 'vi';
   }, [i18n.language]);
 

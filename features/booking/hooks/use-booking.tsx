@@ -14,6 +14,8 @@ import {
 } from '@/features/booking/hooks/use-mutation';
 import { useBookingStore } from '@/features/booking/stores';
 import { router } from 'expo-router';
+import { useWalletStore } from '@/features/payment/stores';
+import { useConfigPaymentMutation } from '@/features/payment/hooks/use-mutation';
 
 /**
  * Hook dùng cho booking
@@ -26,8 +28,13 @@ export const useBooking = () => {
   const userLocation = useApplicationStore((s) => s.location);
 
   const setBookingId = useBookingStore((s) => s.setBookingId);
+  const setPendingTopupBookingPayload = useBookingStore((s) => s.setPendingTopupBookingPayload);
+  const pendingTopupBookingPayload = useBookingStore((s) => s.pending_topup_booking_payload);
 
   const setLoading = useApplicationStore((s) => s.setLoading);
+  const setConfigPayment = useWalletStore((state) => state.setConfigPayment);
+  const setDepositContext = useWalletStore((state) => state.setDepositContext);
+  const { mutate: mutateConfigPayment } = useConfigPaymentMutation();
 
   const form = useForm<BookingServiceRequest>({
     mode: 'onChange',
@@ -80,6 +87,11 @@ export const useBooking = () => {
       coupon_id: null,
     });
   }, [item]);
+
+  useEffect(() => {
+    if (!pendingTopupBookingPayload) return;
+    form.reset(pendingTopupBookingPayload);
+  }, [form, pendingTopupBookingPayload]);
 
   // auto fill location
   useEffect(() => {
@@ -161,10 +173,36 @@ export const useBooking = () => {
 
   const handleBookingService = useCallback(
     (data: BookingServiceRequest) => {
+      if (dataPricing && !dataPricing.is_balance_enough) {
+        const missingAmount = String(Math.ceil(dataPricing.required_topup_amount || 0));
+        setLoading(true);
+        setPendingTopupBookingPayload(data);
+        mutateConfigPayment(undefined, {
+          onSuccess: (res) => {
+            setConfigPayment(res.data);
+            setDepositContext({
+              source: 'booking_topup',
+              amountPreset: missingAmount,
+              returnPath: '/(app)/(customer)/(service)/service-booking',
+            });
+            router.push('/(app)/(customer)/(profile)/deposit');
+          },
+          onError: (err) => {
+            const message = getMessageError(err, t);
+            setError(message || t('common_error.unknown_error'));
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        });
+        return;
+      }
+
       setLoading(true);
       mutateBookingService(data, {
         onSuccess: (res) => {
           setBookingId(res.data.booking_id);
+          setPendingTopupBookingPayload(null);
           router.push('/(app)/(customer)/(service)/service-booking-result');
         },
         onError: (err) => {
@@ -176,7 +214,7 @@ export const useBooking = () => {
         },
       });
     },
-    [t]
+    [dataPricing, mutateConfigPayment, setConfigPayment, setDepositContext, setPendingTopupBookingPayload, t]
   );
 
   useEffect(() => {

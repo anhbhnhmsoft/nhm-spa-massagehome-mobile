@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { MotiView } from 'moti';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AlertCircle,
@@ -245,6 +246,7 @@ const AssignmentMapResult = ({
   const deadline = bookingData.assignment_deadline_at || bookingData.ktv_confirm_deadline_at;
   const [countdown, setCountdown] = useState(formatCountdown(deadline));
   const originalName = bookingData.original_ktv_user?.name || bookingData.technician || t('booking.unassigned_technician');
+  const shouldUseFullScreenMap = applications.length === 0;
 
   useEffect(() => {
     setCountdown(formatCountdown(deadline));
@@ -254,7 +256,7 @@ const AssignmentMapResult = ({
 
   return (
     <View className="flex-1 bg-white">
-      <View style={{ height: Math.max(310, windowHeight * 0.44) }}>
+      <View style={{ height: shouldUseFullScreenMap ? windowHeight : Math.max(300, windowHeight * 0.42) }}>
         <BookingAssignmentMap
           t={t}
           bookingData={bookingData}
@@ -270,34 +272,35 @@ const AssignmentMapResult = ({
         <TouchableOpacity
           onPress={onCancel}
           disabled={cancelLoading}
-          className="absolute right-6 top-5 rounded-3xl bg-red-500 px-7 py-4 shadow-lg"
+          className="absolute right-5 top-5 rounded-3xl bg-red-500 px-5 py-3 shadow-lg"
         >
-          <Text className="font-inter-bold text-lg text-white">
+          <Text className="font-inter-bold text-[15px] text-white">
             {cancelLoading ? t('common.loading') : t('booking.cancel_order_short')}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View className="-mt-5 flex-1 rounded-t-[30px] bg-white px-6 pt-4 shadow-2xl">
+      {!shouldUseFullScreenMap ? (
+      <View className="-mt-5 flex-1 rounded-t-[30px] bg-white px-5 pt-3 shadow-2xl">
         <View className="mb-4 items-center">
           <View className="h-1.5 w-12 rounded-full bg-slate-300" />
         </View>
-        <Text className="font-inter-bold text-[22px] leading-8 text-slate-950">
+        <Text className="font-inter-bold text-[18px] leading-7 text-slate-950">
           {t('booking.assignment_waiting_title', { name: originalName })}
         </Text>
-        <Text className="mt-2 text-base text-slate-500">
+        <Text className="mt-2 text-[14px] text-slate-500">
           {t('booking.assignment_auto_cancel_in', { time: countdown })}
         </Text>
         <View className="mt-5 h-1.5 overflow-hidden rounded-full bg-slate-100">
           <View className="h-full w-1/5 rounded-full bg-[#2563EB]" />
         </View>
 
-        <View className="mt-7 flex-row items-end justify-between">
+        <View className="mt-5 flex-row items-end justify-between">
           <View className="flex-1 pr-3">
-            <Text className="font-inter-bold text-[22px] text-slate-950">
+            <Text className="font-inter-bold text-[18px] text-slate-950">
               {t('booking.application_count_title', { count: applications.length })}
             </Text>
-            <Text className="mt-2 text-base text-slate-500">
+            <Text className="mt-2 text-[14px] text-slate-500">
               {t('booking.application_count_subtitle', { name: originalName })}
             </Text>
           </View>
@@ -305,13 +308,13 @@ const AssignmentMapResult = ({
         </View>
 
         <ScrollView
-          className="mt-4 flex-1"
-          contentContainerStyle={{ paddingBottom: 28 }}
+          className="mt-3 flex-1"
+          contentContainerStyle={{ paddingBottom: 22 }}
           showsVerticalScrollIndicator={false}
         >
           {applications.length === 0 && !applicationsLoading ? (
             <View className="items-center justify-center rounded-3xl bg-slate-50 px-6 py-10">
-              <Text className="text-center text-base text-slate-500">
+              <Text className="text-center text-[14px] text-slate-500">
                 {t('booking.no_application_waiting')}
               </Text>
             </View>
@@ -326,6 +329,7 @@ const AssignmentMapResult = ({
           ))}
         </ScrollView>
       </View>
+      ) : null}
     </View>
   );
 };
@@ -411,9 +415,9 @@ const BookingAssignmentMap = ({
           />
         ))}
       </MapLibreGL.MapView>
-      <View className="absolute bottom-6 left-5 right-5">
+        <View className="absolute bottom-6 left-5 right-5">
         <View className="mb-3 self-start rounded-2xl bg-white/95 px-4 py-3 shadow-lg">
-          <Text className="font-inter-bold text-base text-slate-950">
+          <Text className="font-inter-bold text-[14px] text-slate-950">
             {t('booking.application_count_title', { count: applications.length })}
           </Text>
         </View>
@@ -449,12 +453,30 @@ const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant
   );
 
   return (
-    <View className={markerClass}>
-      {label ? (
-        <Text className="font-inter-bold text-white">{label}</Text>
-      ) : (
-        <User size={22} color="white" />
-      )}
+    <View className="items-center justify-center">
+      {tone === 'customer' ? (
+        <>
+          <MotiView
+            from={{ scale: 0.8, opacity: 0.45 }}
+            animate={{ scale: 2.2, opacity: 0 }}
+            transition={{ type: 'timing', duration: 1800, loop: true }}
+            className="absolute h-10 w-10 rounded-full bg-red-400"
+          />
+          <MotiView
+            from={{ scale: 0.8, opacity: 0.35 }}
+            animate={{ scale: 2.8, opacity: 0 }}
+            transition={{ type: 'timing', duration: 2200, loop: true, delay: 300 }}
+            className="absolute h-10 w-10 rounded-full bg-red-300"
+          />
+        </>
+      ) : null}
+      <View className={markerClass}>
+        {label ? (
+          <Text className="font-inter-bold text-white">{label}</Text>
+        ) : (
+          <User size={22} color="white" />
+        )}
+      </View>
     </View>
   );
 };
@@ -527,51 +549,49 @@ const ApplicationCandidateCard = ({
     : null;
 
   return (
-    <View className="mb-5 flex-row rounded-3xl bg-white p-1 shadow-sm">
+    <TouchableOpacity
+      onPress={onSelect}
+      disabled={disabled || loading}
+      activeOpacity={0.85}
+      className="mb-3 flex-row rounded-[22px] bg-white p-1 shadow-sm"
+    >
       <Avatar source={application.ktv.avatar_url} size={112} borderWidth={0} style={{ borderRadius: 16 }} fallbackIconSize={34} />
-      <View className="ml-4 flex-1 py-2">
+      <View className="ml-3 flex-1 py-1.5">
         <View className="flex-row items-start justify-between">
           <View className="flex-1 pr-2">
-            <Text className="font-inter-bold text-xl text-slate-950" numberOfLines={1}>
+            <Text className="font-inter-bold text-[18px] text-slate-950" numberOfLines={1}>
               {application.ktv.name || '-'}
             </Text>
-            <View className="mt-3 flex-row items-center">
-              <Star size={18} color="#F2A900" fill="#F2A900" />
-              <Text className="ml-1 font-inter-bold text-base text-[#D99A00]">
+            <View className="mt-2 flex-row items-center">
+              <Star size={16} color="#F2A900" fill="#F2A900" />
+              <Text className="ml-1 font-inter-bold text-[14px] text-[#D99A00]">
                 {(application.ktv.rating || 0).toFixed(1)}
               </Text>
-              <Text className="ml-1 text-base text-slate-500">
+              <Text className="ml-1 text-[13px] text-slate-500">
                 ({application.ktv.review_count || 0} {t('common.review')})
               </Text>
             </View>
           </View>
-          <Text className="font-inter-bold text-sm text-red-400">
+          <Text className="font-inter-bold text-[12px] text-red-400">
             {t('booking.technician_ready')}
           </Text>
         </View>
 
-        <View className="mt-5 flex-row items-end justify-between">
+        <View className="mt-3 flex-row items-end justify-between">
           <View className="flex-row items-center">
-            <MapPin size={18} color="#8A8F98" />
-            <Text className="ml-1 text-base text-slate-500">{distance || '--'}</Text>
+            <MapPin size={16} color="#8A8F98" />
+            <Text className="ml-1 text-[13px] text-slate-500">{distance || '--'}</Text>
           </View>
-          <TouchableOpacity
-            onPress={onSelect}
-            disabled={disabled}
-            className={cn(
-              'min-w-[78px] items-center justify-center rounded-full px-5 py-2',
-              disabled ? 'bg-blue-300' : 'bg-[#2563EB]'
-            )}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text className="font-inter-bold text-base text-white">{t('common.select')}</Text>
-            )}
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator color="#2563EB" size="small" />
+          ) : (
+            <Text className="text-[12px] font-inter-semibold text-[#2563EB]">
+              {t('common.select')}
+            </Text>
+          )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

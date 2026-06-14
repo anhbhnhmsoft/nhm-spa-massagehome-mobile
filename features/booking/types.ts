@@ -38,7 +38,6 @@ export type BookingCheckResponse = ResponseDataSuccessType<{
 export type BookingApplicationTechnician = {
   id: string | null;
   name: string | null;
-  phone: string | null;
   avatar_url: string | null;
   experience?: number | null;
   bio?: Record<string, string> | null;
@@ -70,6 +69,7 @@ export type ListBookingRequest = BaseSearchRequest<{
 
 export type BookingItem = {
   id: string;
+  service_category_name?: string | null;
   service: {
     id: string;
     name: string;
@@ -91,6 +91,7 @@ export type BookingItem = {
     avatar_url: string | null;
     phone: string | null;
   };
+  customer_gender?: string | null;
   address: string;
   booking_time: string;
   start_time: string | null;
@@ -106,11 +107,18 @@ export type BookingItem = {
   distance?: number | null;
   note: string | null;
   duration: number;
+  service_duration_total?: number;
   status: _BookingStatus;
   price: number;
   price_discount: number;
   price_transportation: number;
   total_price: number;
+  ktv_service_income?: number;
+  ktv_income_total?: number;
+  is_customer_contact_visible?: boolean;
+  can_chat?: boolean;
+  can_call?: boolean;
+  can_open_map?: boolean;
   coupon: {
     id: string;
     label: string;
@@ -154,6 +162,9 @@ export type PrepareBookingResponse = ResponseDataSuccessType<{
   discount_coupon: number; // Giảm giá coupon
   final_price: number; // Giá cuối cùng sau khi áp dụng coupon
   distance: number; // Khoảng cách từ kỹ thuật viên đến khách hàng
+  wallet_balance: number;
+  is_balance_enough: boolean;
+  required_topup_amount: number;
   booking_today: {
     id: string;
     status: _BookingStatus.ONGOING | _BookingStatus.CONFIRMED;

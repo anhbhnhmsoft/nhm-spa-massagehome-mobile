@@ -358,6 +358,16 @@ export default function BookingConfirmationScreen() {
           <Text className="text-xl font-extrabold text-primary-color-2">
             {formatBalance(dataPricing?.final_price ?? tempPrice)} {t('common.currency')}
           </Text>
+          {!!dataPricing && (
+            <View className="mt-1">
+              <Text className="text-[11px] text-slate-500">
+                {t('services.price_service')}: {formatBalance(dataPricing.price)} {t('common.currency')}
+              </Text>
+              <Text className="text-[11px] text-slate-500">
+                {t('services.distance_price')}: {formatBalance(dataPricing.price_distance)} {t('common.currency')}
+              </Text>
+            </View>
+          )}
         </View>
 
         <TouchableOpacity
@@ -367,7 +377,9 @@ export default function BookingConfirmationScreen() {
             'bg-slate-400': !canSubmitBooking,
             'bg-primary-color-2': canSubmitBooking,
           })}>
-          <Text className="text-white font-inter-bold text-base mr-2">{t('services.btn_booking')}</Text>
+          <Text className="text-white font-inter-bold text-base mr-2">
+            {dataPricing && !dataPricing.is_balance_enough ? t('payment.deposit_title') : t('services.btn_booking')}
+          </Text>
           <Ionicons name="chevron-forward" size={18} color="white" />
         </TouchableOpacity>
       </View>

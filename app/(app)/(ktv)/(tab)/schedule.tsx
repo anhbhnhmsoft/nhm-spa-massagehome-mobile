@@ -6,69 +6,29 @@ import { Text } from '@/components/ui/text';
 import { BookingItem, ListBookingRequest } from '@/features/booking/types';
 import { useSchedule } from '@/features/ktv/hooks';
 import { BOOKING_STATUS_FILTER_OPTIONS, _BookingStatus } from '@/features/service/const';
-import { cn } from '@/lib/utils';
+import { cn, getMessageError } from '@/lib/utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { useGetRoomChat } from '@/features/chat/hooks';
-import { useInfiniteApplicationBookingList } from '@/features/ktv/hooks/use-query';
+import SelectModal, { SelectOption } from '@/components/select-modal';
+import { SlidersHorizontal } from 'lucide-react-native';
+import { Icon } from '@/components/ui/icon';
+import { useApplyApplicationBookingMutation } from '@/features/ktv/hooks/use-mutation';
+import { queryClient } from '@/lib/provider/query-provider';
+import useToast from '@/features/app/hooks/use-toast';
 
-
-interface HeaderFilterProps {
-  params: ListBookingRequest;
-  setFilter: (filter: Partial<ListBookingRequest['filter']>) => void;
-}
-
-const HeaderFilter = ({ params, setFilter }: HeaderFilterProps) => {
-  const currentStatus = params.filter?.status;
-
-  return (
-    <View className="mb-4 mt-4 px-4">
-      <ScrollView
-        horizontal
-        className="bg-white py-2 rounded-lg shadow-lg border border-slate-100"
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          gap: 8,
-        }}>
-        {/* Các trạng thái */}
-        {BOOKING_STATUS_FILTER_OPTIONS.map(([key, value]) => {
-          const status = Number(key) as _BookingStatus;
-          const checked = currentStatus === status;
-
-          return (
-            <TouchableOpacity
-              key={key}
-              onPress={() => setFilter({ status })}
-              className={cn(
-                'flex-row items-center px-4 py-1.5',
-                checked && 'rounded-sm bg-primary-color-2'
-              )}>
-              <Text
-                className={cn(
-                  'text-base',
-                  checked ? 'font-inter-bold text-white' : 'font-inter-medium text-primary-color-3'
-                )}>
-                {t(value)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-};
 
 /* ================= SCREEN ================= */
 
 export default function ScheduleScreen() {
   const { mode: routeMode, bookingId } = useLocalSearchParams<{ mode?: 'bookings' | 'applications'; bookingId?: string }>();
-  const [mode, setMode] = useState<'bookings' | 'applications'>('bookings');
+  const [isFilterVisible, setFilterVisible] = useState(false);
   const isFocused = useIsFocused();
+  const { error } = useToast();
   const {
     data,
     fetchNextPage,
@@ -79,18 +39,6 @@ export default function ScheduleScreen() {
     setFilter,
     params,
   } = useSchedule();
-  const applicationParams = useMemo<ListBookingRequest>(() => ({
-    filter: {
-      status: _BookingStatus.OPEN_FOR_APPLICATION,
-    },
-    page: 1,
-    per_page: 10,
-  }), []);
-  const applicationQuery = useInfiniteApplicationBookingList(applicationParams);
-  const applicationData = useMemo<BookingItem[]>(() => {
-    return applicationQuery.data?.pages.flatMap((page) => page.data.data) || [];
-  }, [applicationQuery.data]);
-  const listData = mode === 'applications' ? applicationData : data;
   const handledRouteBookingRef = useRef<string | null>(null);
   const wasFocusedRef = useRef(false);
 
@@ -109,12 +57,26 @@ export default function ScheduleScreen() {
   const calculateDistance = useCalculateDistance();
 
   const joinRoomChat = useGetRoomChat();
+  const { mutate: applyBooking, isPending: isApplyBookingPending } = useApplyApplicationBookingMutation();
+
+  const handleApplyNow = useCallback((item: BookingItem) => {
+    applyBooking(item.id, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-dashboard'] });
+        await refetch();
+      },
+      onError: (err) => {
+        error({ message: getMessageError(err, t) || t('common_error.request_error') });
+      },
+    });
+  }, [applyBooking, error, refetch]);
 
   useEffect(() => {
     if (routeMode === 'applications') {
-      setMode('applications');
+      setFilter({ status: _BookingStatus.OPEN_FOR_APPLICATION });
     }
-  }, [routeMode]);
+  }, [routeMode, setFilter]);
 
   useEffect(() => {
     if (!isFocused) {
@@ -125,54 +87,46 @@ export default function ScheduleScreen() {
 
     wasFocusedRef.current = true;
     refetch();
-    applicationQuery.refetch();
-  }, [applicationQuery.refetch, isFocused, refetch]);
+  }, [isFocused, refetch]);
 
   useEffect(() => {
-    if (!bookingId || mode !== 'applications' || applicationQuery.isLoading) return;
+    if (!bookingId) return;
     if (handledRouteBookingRef.current === bookingId) return;
 
-    const targetBooking =
-      applicationData.find((item) => item.id === bookingId) ||
-      data.find((item) => item.id === bookingId);
+    const targetBooking = data.find((item) => item.id === bookingId);
     if (!targetBooking) return;
 
     handledRouteBookingRef.current = bookingId;
 
     handleGoDetails(targetBooking);
-  }, [applicationData, applicationQuery.isLoading, bookingId, data, handleGoDetails, mode]);
+  }, [bookingId, data, handleGoDetails]);
+
+  const filterOptions: SelectOption[] = BOOKING_STATUS_FILTER_OPTIONS.map(([key, value]) => ({
+    value: Number(key),
+    label: t(value),
+  }));
+
+  const selectedFilterLabel = filterOptions.find((item) => item.value === params.filter?.status)?.label || t('common.all');
 
   return (
     <View className="flex-1 bg-slate-50">
       <HeaderAppKTV />
       <View className="flex-1">
-        <View className="mx-4 mt-4 flex-row rounded-lg border border-slate-100 bg-white p-1">
+        <View className="px-4 pt-4">
           <TouchableOpacity
-            onPress={() => setMode('bookings')}
-            className={cn(
-              'flex-1 items-center rounded-md py-2',
-              mode === 'bookings' ? 'bg-primary-color-2' : 'bg-white'
-            )}
+            onPress={() => setFilterVisible(true)}
+            className="flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3"
           >
-            <Text className={cn(mode === 'bookings' ? 'text-white font-inter-bold' : 'text-slate-600')}>
-              {t('ktv.index.upcoming')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setMode('applications')}
-            className={cn(
-              'flex-1 items-center rounded-md py-2',
-              mode === 'applications' ? 'bg-primary-color-2' : 'bg-white'
-            )}
-          >
-            <Text className={cn(mode === 'applications' ? 'text-white font-inter-bold' : 'text-slate-600')}>
-              {t('ktv.index.application_bookings')}
-            </Text>
+            <View className="flex-row items-center">
+              <Icon as={SlidersHorizontal} size={18} className="text-slate-500" />
+              <Text className="ml-2 text-[13px] font-inter-medium text-slate-500">{t('common.filter')}</Text>
+            </View>
+            <Text className="text-[13px] font-inter-bold text-slate-800">{selectedFilterLabel}</Text>
           </TouchableOpacity>
         </View>
         <FlatList
-          data={listData}
-          keyExtractor={(item) => `${mode}-${item.id}`}
+          data={data}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View className="px-4" key={item.id}>
               <BookingItemKtv
@@ -180,10 +134,12 @@ export default function ScheduleScreen() {
                 onPress={handleGoDetails}
                 calculateDistance={calculateDistance}
                 joinRoomChat={joinRoomChat}
+                onApplyNow={item.status === _BookingStatus.OPEN_FOR_APPLICATION ? handleApplyNow : undefined}
+                applying={isApplyBookingPending}
               />
             </View>
           )}
-          ListHeaderComponent={mode === 'bookings' ? <HeaderFilter params={params} setFilter={setFilter} /> : <View className="h-4" />}
+          ListHeaderComponent={<View className="h-4" />}
           ListEmptyComponent={<Empty />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -192,22 +148,27 @@ export default function ScheduleScreen() {
           }}
           onEndReachedThreshold={0.5}
           onEndReached={() => {
-            if (mode === 'applications') {
-              if (applicationQuery.hasNextPage && !applicationQuery.isFetchingNextPage) {
-                applicationQuery.fetchNextPage();
-              }
-            } else {
-              if (hasNextPage && !isFetchingNextPage) {
-                fetchNextPage();
-              }
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
             }
           }}
           refreshControl={
             <RefreshControl
-              refreshing={mode === 'applications' ? applicationQuery.isRefetching : isRefetching}
-              onRefresh={() => (mode === 'applications' ? applicationQuery.refetch() : refetch())}
+              refreshing={isRefetching}
+              onRefresh={() => refetch()}
             />
           }
+        />
+        <SelectModal
+          isVisible={isFilterVisible}
+          onClose={() => setFilterVisible(false)}
+          data={filterOptions}
+          value={params.filter?.status}
+          onSelect={(item) => {
+            setFilter({
+              status: Number(item.value),
+            });
+          }}
         />
       </View>
     </View>

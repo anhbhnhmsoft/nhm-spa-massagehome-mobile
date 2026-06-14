@@ -40,7 +40,7 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
   const [selectedMessage, setSelectedMessage] = useState<PayloadNewMessage | null>(null);
   const [inputText, setInputText] = useState('');
 
-  const { messages, submitMessage, joinStatus, historyQuery, user, room, params } = useChat(useFor);
+  const { messages, submitMessage, joinStatus, historyQuery, user, room, params, canSend } = useChat(useFor);
 
   const handleSend = useCallback(() => {
     const text = inputText.trim();
@@ -119,6 +119,12 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
         />
 
         {/* Input */}
+        {!canSend ? (
+          <View className="border-t border-gray-100 bg-slate-50 px-4 py-4 pb-6">
+            <Text className="text-center text-sm text-slate-500">
+            </Text>
+          </View>
+        ) : null}
         <View className="flex-row items-center border-t border-gray-100 bg-white p-3 pb-6">
           <TextInput
             className="mr-3 max-h-24 flex-1 rounded-full bg-gray-100 px-5 py-3 text-base"
@@ -127,8 +133,9 @@ export default function ChatViewScreen({ useFor }: { useFor: 'ktv' | 'customer' 
             onChangeText={setInputText}
             multiline
             returnKeyType="default"
+            editable={canSend}
           />
-          <SendButton disabled={!inputText.trim()} onPress={handleSend} />
+          <SendButton disabled={!canSend || !inputText.trim()} onPress={handleSend} />
         </View>
       </KeyboardAvoidingView>
 

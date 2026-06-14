@@ -78,16 +78,11 @@ export const useSupportChat = (ticketId?: string | number) => {
               const senderId = msg.sender_id ?? msg.sender_user_id ?? msg.sender_admin_id ?? msg.id;
               msgs.unshift({
                 ...msg,
-                sender_id: senderId,
-                status_sent: msg.status_sent ?? 'sent',
               } as SupportMessage);
             } else {
-              const senderId = msg.sender_id ?? msg.sender_user_id ?? msg.sender_admin_id ?? msgs[idx].id;
               msgs[idx] = {
                 ...msgs[idx],
                 ...msg,
-                sender_id: senderId,
-                status_sent: msg.status_sent ?? msgs[idx].status_sent,
               };
             }
           })

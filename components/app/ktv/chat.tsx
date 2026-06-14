@@ -6,9 +6,11 @@ import {Image} from "expo-image"
 import DefaultColor from '@/components/styles/color';
 import dayjs from 'dayjs';
 import { useGetRoomChat } from '@/features/chat/hooks';
+import { useTranslation } from 'react-i18next';
 
 export const ChatItem = ({ item }: { item: KTVConversationItem }) => {
   const joinRoomChat = useGetRoomChat();
+  const { t } = useTranslation();
   return (
     <TouchableOpacity
       className="flex-row items-center border-b border-gray-100 bg-white px-4 py-4"
@@ -54,9 +56,15 @@ export const ChatItem = ({ item }: { item: KTVConversationItem }) => {
             "text-xs",
             item.unread_count > 0 ? "font-inter-bold text-primary-color-2" : "text-gray-400"
           )}>
-            {item.latest_message ? dayjs(item.latest_message.created_at).format('HH:mm') : ""}
+          {item.latest_message ? dayjs(item.latest_message.created_at).format('HH:mm') : ""}
           </Text>
         </View>
+
+        {!item.can_send ? (
+          <Text className="mb-1 text-[11px] text-slate-400">
+            {t('booking.chat_closed')}
+          </Text>
+        ) : null}
 
         <View className="flex-row items-center justify-between">
           {/* Last Message Preview */}

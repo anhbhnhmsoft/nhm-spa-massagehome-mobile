@@ -8,7 +8,7 @@ import { Text } from '@/components/ui/text';
 import {  useCheckAuthToRedirect } from '@/features/auth/hooks';
 import { Icon } from '@/components/ui/icon';
 import { ListLocationModal } from '@/components/app/location';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useApplicationStore } from '@/features/app/stores';
 
 type HeaderAppProps = {
@@ -64,7 +64,7 @@ export function HeaderApp({
           <TouchableOpacity
             className="relative"
             onPress={() => {
-              redirectAuth(() => router.push('/(app)/(notification)/notificaton'));
+              redirectAuth(() => router.push('/(app)/(notification)/notification' as Href));
             }}
           >
             <Icon as={Bell} size={24} className="text-white" />

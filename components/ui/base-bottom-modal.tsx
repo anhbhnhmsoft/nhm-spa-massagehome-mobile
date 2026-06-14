@@ -68,10 +68,10 @@ const BaseBottomModal = ({
               <View className="flex-row justify-between items-center mb-6">
                 <View className="flex-1 mr-4">
                   {title && (
-                    <Text className="text-lg font-inter-bold text-slate-800">{title}</Text>
+                    <Text className="text-[16px] font-inter-bold text-slate-800">{title}</Text>
                   )}
                   {description && (
-                    <Text className="text-slate-400 text-sm mt-1">{description}</Text>
+                    <Text className="text-slate-400 text-[13px] mt-1">{description}</Text>
                   )}
                 </View>
                 <TouchableOpacity

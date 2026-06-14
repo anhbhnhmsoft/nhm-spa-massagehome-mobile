@@ -149,7 +149,7 @@ export const useNotification = () => {
          // Nếu có support_ticket_id, điều hướng thẳng vào phòng chat
          router.push({
            pathname: '/(app)/(customer)/(service)/support-chat',
-           params: { ticketId: data.support_ticket_id }
+           params: { ticketId: String(data.support_ticket_id) }
          });
        }
     });

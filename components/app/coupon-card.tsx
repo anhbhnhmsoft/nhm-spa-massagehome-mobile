@@ -23,6 +23,7 @@ export const CouponCardBooking: FC<CouponCardBookingProps> = ({ item, isSelected
   const discountDisplay = item.is_percentage
     ? `${Number(item.discount_value)}%`
     : formatCurrency(item.discount_value);
+  const remainingQuantity = item.remaining_quantity === null ? t('common.unlimited') : String(item.remaining_quantity);
 
   return (
     <Pressable
@@ -80,6 +81,14 @@ export const CouponCardBooking: FC<CouponCardBookingProps> = ({ item, isSelected
               {t('common.max_discount')}: <Text className="font-inter-medium text-slate-700">{formatCurrency(item.max_discount)}</Text>
             </Text>
           )}
+
+          <Text className="text-[10px] text-slate-500">
+            {t('common.used_count')}: <Text className="font-inter-medium text-slate-700">{item.used_count}</Text>
+          </Text>
+
+          <Text className="text-[10px] text-slate-500">
+            {t('common.remaining_quantity')}: <Text className="font-inter-medium text-slate-700">{remainingQuantity}</Text>
+          </Text>
 
           <Text className="text-[10px] text-slate-400">
             {t('common.expire_date')}: {dayjs(item.end_at).format('DD/MM/YYYY')}

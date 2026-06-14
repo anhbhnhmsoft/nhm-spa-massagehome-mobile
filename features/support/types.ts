@@ -5,6 +5,7 @@ export type SupportCategory = {
   id: string;
   name: Record<_LanguageCode | string, string>;
   description: Record<_LanguageCode | string, string>;
+  message: Record<_LanguageCode | string, string>;
   position: number;
   is_active: boolean;
 };

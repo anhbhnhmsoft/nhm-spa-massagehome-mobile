@@ -47,7 +47,7 @@ export const Card = ({
       {(title || headerRightText) && (
         <View className="flex-row justify-between items-center mb-4 px-1">
           {title && (
-            <Text className="text-[16px] font-inter-bold text-slate-900">
+            <Text className="text-[15px] font-inter-bold text-slate-900">
               {title}
             </Text>
           )}
@@ -57,7 +57,7 @@ export const Card = ({
               onPress={onHeaderRightPress}
               className="flex-row items-center"
             >
-              <Text className="text-[12px] text-slate-400 font-inter-medium mr-1">
+              <Text className="text-[11px] text-slate-400 font-inter-medium mr-1">
                 {headerRightText}
               </Text>
               <ChevronRight size={14} color={DefaultColor.slate[400]} />

@@ -1,4 +1,4 @@
-import { AlipayData, ConfigPaymentItem, QRBankData, QRWechatData } from '@/features/payment/types';
+import { AlipayData, ConfigPaymentItem, DepositContext, QRBankData, QRWechatData } from '@/features/payment/types';
 import { create } from 'zustand';
 
 interface IWalletStore {
@@ -11,6 +11,7 @@ interface IWalletStore {
   qrBankData: QRBankData | null;
   qrWechatData: QRWechatData | null;
   alipayData: AlipayData | null;
+  depositContext: DepositContext | null;
 
   setConfigPayment: (configPayment: ConfigPaymentItem | null) => void;
   // Cập nhật thông tin giao dịch hiện tại
@@ -18,6 +19,7 @@ interface IWalletStore {
   setQrBankData: (qrBankData: QRBankData | null) => void;
   setQrWechatData: (qrWechatData: QRWechatData | null) => void;
   setAlipayData: (alipayData: AlipayData | null) => void;
+  setDepositContext: (depositContext: DepositContext | null) => void;
   refreshWallet: (need_refresh: boolean) => void;
 }
 
@@ -30,6 +32,7 @@ export const useWalletStore = create<IWalletStore>((set) => ({
   qrBankData: null,
   qrWechatData: null,
   alipayData: null,
+  depositContext: null,
 
   setConfigPayment: (configPayment) => set({ configPayment }),
   // Cập nhật thông tin giao dịch hiện tại
@@ -38,4 +41,5 @@ export const useWalletStore = create<IWalletStore>((set) => ({
   refreshWallet: (need_refresh) => set({ need_refresh }),
   setQrWechatData: (qrWechatData) => set({ qrWechatData }),
   setAlipayData: (alipayData) => set({ alipayData }),
+  setDepositContext: (depositContext) => set({ depositContext }),
 }));

@@ -6,6 +6,7 @@ import {
   useWalletQuery,
 } from '@/features/payment/hooks/use-query';
 import { router } from 'expo-router';
+import type { Href } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useConfigPaymentMutation,
@@ -39,6 +40,7 @@ import { Alert } from 'react-native';
 import { _UserRole } from '@/features/auth/const';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useBookingStore } from '@/features/booking/stores';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
@@ -172,6 +174,8 @@ export const useWallet = (useFor: _UserRole) => {
  */
 export const useDeposit = () => {
   const configPayment = useWalletStore((state) => state.configPayment);
+  const depositContext = useWalletStore((state) => state.depositContext);
+  const setDepositContext = useWalletStore((state) => state.setDepositContext);
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
   const { t } = useTranslation();
@@ -191,7 +195,7 @@ export const useDeposit = () => {
   // Form dùng để validate và submit
   const form = useForm<DepositRequest>({
     defaultValues: {
-      amount: '',
+      amount: depositContext?.amountPreset ?? '',
       payment_type: _PaymentType.QR_BANKING,
     },
     resolver: zodResolver(
@@ -268,15 +272,23 @@ export const useDeposit = () => {
     }
   }, [configPayment]);
 
+  useEffect(() => {
+    if (depositContext?.amountPreset) {
+      form.setValue('amount', depositContext.amountPreset);
+    }
+  }, [depositContext?.amountPreset, form]);
+
   const handleCloseWechat = useCallback(() => {
     setQrWechatData(null);
+    setDepositContext(null);
     refreshWallet(true);
-  }, []);
+  }, [refreshWallet, setDepositContext, setQrWechatData]);
 
   const hadnleCloseAlipay = useCallback(() => {
     setAlipayData(null);
+    setDepositContext(null);
     refreshWallet(true);
-  }, []);
+  }, [refreshWallet, setAlipayData, setDepositContext]);
 
   return {
     configPayment: configPayment as ConfigPaymentItem,
@@ -294,6 +306,9 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
   const { t } = useTranslation();
   const { success } = useToast();
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
+  const depositContext = useWalletStore((state) => state.depositContext);
+  const setDepositContext = useWalletStore((state) => state.setDepositContext);
+  const pendingTopupBookingPayload = useBookingStore((state) => state.pending_topup_booking_payload);
 
   // State lưu trữ dữ liệu QRBankData khi nạp tiền chuyển khoản
   const qrBankData = useWalletStore((state) => state.qrBankData);
@@ -330,6 +345,11 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
           resetNav('/(app)/(ktv)/(service)/wallet');
           break;
         case _UserRole.CUSTOMER:
+          if (depositContext?.source === 'booking_topup' && pendingTopupBookingPayload) {
+            setDepositContext(null);
+            resetNav((depositContext.returnPath || '/(app)/(customer)/(service)/service-booking') as Href);
+            break;
+          }
           resetNav('/(app)/(customer)/(profile)/wallet');
           break;
         case _UserRole.AGENCY:
@@ -339,7 +359,7 @@ export const useCheckPaymentQRCode = (useFor: _UserRole) => {
           break;
       }
     }
-  }, [pollData?.data, useFor]);
+  }, [depositContext, pendingTopupBookingPayload, pollData?.data, resetNav, setDepositContext, success, t, useFor]);
 
   const closeModal = () => {
     setTransactionId(null);

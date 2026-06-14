@@ -135,15 +135,19 @@ export default function BookingDetails() {
                   <Text className="font-inter-bold text-lg text-slate-800">
                     {booking?.user?.name}
                   </Text>
+                  <Text className="mt-1 text-sm text-slate-500">
+                    {booking?.customer_gender || '-'}
+                  </Text>
                 </View>
               </View>
               {/* Container cho 2 nút */}
-              <View className="mt-4 flex-row gap-2">
+              {booking?.is_customer_contact_visible ? (
+                <View className="mt-4 flex-row gap-2">
                 {/* Nút Nhắn tin */}
                 <TouchableOpacity
                   className="flex-1 flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3"
                   onPress={() => {
-                    if (booking?.user?.id) {
+                    if (booking?.user?.id && booking?.can_chat) {
                       joinRoomChat(
                         {
                           user_id: booking?.user?.id,
@@ -173,7 +177,11 @@ export default function BookingDetails() {
                   <Ionicons name="call-outline" size={18} color="white" />
                   <Text className="ml-2 font-inter-bold text-white">{t('common.call')}</Text>
                 </TouchableOpacity>
-              </View>
+                </View>
+              ) : (
+                <Text className="mt-4 text-sm text-slate-500">
+                </Text>
+              )}
             </View>
           </View>
 
@@ -221,7 +229,7 @@ export default function BookingDetails() {
                   <Text className="ml-2 text-xs text-slate-400">{t('booking.duration')}</Text>
                 </View>
                 <Text className="font-inter-bold text-slate-800">
-                  {booking?.duration} {t('common.minute')}
+                  {booking?.service_duration_total || booking?.duration} {t('common.minute')}
                 </Text>
               </View>
             </View>
@@ -325,10 +333,10 @@ export default function BookingDetails() {
               {/* Giá cuối cùng */}
               <View className="flex-row items-center justify-between">
                 <Text className="font-inter-bold text-[15px] text-slate-900">
-                  {t('booking.final_price')}
+                  {t('booking.payment_received')}
                 </Text>
                 <Text className="font-inter-bold text-[18px] text-primary-color-2">
-                  {formatBalance(booking?.total_price || 0)} {t('common.currency')}
+                  {formatBalance(booking?.ktv_income_total || 0)} {t('common.currency')}
                 </Text>
               </View>
             </View>

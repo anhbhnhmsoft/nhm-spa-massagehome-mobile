@@ -52,6 +52,12 @@ export type DepositRequest = {
   payment_type: _PaymentType;
 };
 
+export type DepositContext = {
+  source: 'wallet' | 'booking_topup';
+  amountPreset?: string | null;
+  returnPath?: string | null;
+};
+
 export type DepositItem = {
   transaction_id: string;
   payment_type: _PaymentType;

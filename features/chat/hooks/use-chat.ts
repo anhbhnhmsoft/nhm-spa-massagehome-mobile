@@ -74,7 +74,7 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
 
   const submitMessage = useCallback(
     (content: string) => {
-      if (!room || !user) return;
+      if (!room || !user || !room.can_send) return;
 
       const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       const tempMsg: PayloadNewMessage = {
@@ -177,5 +177,6 @@ export const useChat = (useFor: 'ktv' | 'customer') => {
     user,
     room,
     params,
+    canSend: !!room?.can_send,
   };
 };

@@ -51,12 +51,14 @@ export type CouponItem = {
   description: string | null; // Mô tả chi tiết về coupon
   for_service_id: string | null; // Dịch vụ áp dụng (null nếu áp dụng cho tất cả dịch vụ)
   is_percentage: boolean; // Có phải là giảm theo phần trăm không
+  discount_type: 'fixed_amount' | 'percentage';
   discount_value: string; // Giá trị giảm (dạng số)
   max_discount: string; // Số tiền tối đa được giảm
   start_at: string; // Thời gian bắt đầu áp dụng
   end_at: string; // Thời gian kết thúc áp dụng
   usage_limit: number; // Số lần sử dụng tối đa
   used_count: number; // Số lần sử dụng hiện tại.
+  remaining_quantity: number | null;
   display_ads: boolean; // Có hiển thị trong quảng cáo không
   banners: string | null; // Banner hiển thị khi áp dụng coupon (null nếu không có)
   is_collected?: boolean;

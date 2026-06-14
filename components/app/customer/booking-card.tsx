@@ -140,15 +140,16 @@ export const BookingCard: FC<Props> = ({
         ) : (
           <>
             {/* Inbox Button */}
-            <TouchableOpacity
-              disabled={!displayKtv?.id}
-              onPress={(event) => {
-                event.stopPropagation();
-                return displayKtv?.id ? getRoomChat({ user_id: displayKtv.id }) : null;
-              }}
-              className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
-              <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
-            </TouchableOpacity>
+            {displayKtv?.id && item.can_chat !== false ? (
+              <TouchableOpacity
+                onPress={(event) => {
+                  event.stopPropagation();
+                  return getRoomChat({ user_id: String(displayKtv.id) });
+                }}
+                className="flex-1 items-center justify-center rounded-lg bg-primary-color-2 py-2">
+                <Text className="font-inter-bold text-xs text-white">{t('booking.inbox')}</Text>
+              </TouchableOpacity>
+            ) : null}
           </>
         )}
         {/* Detail Button */}

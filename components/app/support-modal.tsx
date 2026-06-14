@@ -31,7 +31,7 @@ type Props = {
   supportChanel: Array<{
     key: _ConfigKey;
     value: string;
-  }> | undefined;
+  }> | undefined | null;
 };
 
 /** Badge màu tương ứng với status ticket */
@@ -70,7 +70,7 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
   const locale = useMemo(() => {
     const lang = i18n.language?.toLowerCase() ?? 'vi';
     if (lang.startsWith('en')) return 'en';
-    if (lang.startsWith('zh') || lang.startsWith('cn')) return 'zh';
+    if (lang.startsWith('zh') || lang.startsWith('cn')) return 'cn';
     return 'vi';
   }, [i18n.language]);
 
@@ -161,12 +161,22 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
         item.description?.vi ??
         Object.values(item.description ?? {})[0] ??
         '';
+      const message =
+        item.message?.[locale] ??
+        item.message?.vi ??
+        Object.values(item.message ?? {})[0] ??
+        '';
       const active = selectedCategoryId === item.id;
 
       return (
         <TouchableOpacity
           key={item.id}
-          onPress={() => setSelectedCategoryId(item.id)}
+          onPress={() => {
+            setSelectedCategoryId(item.id);
+            if (!note.trim() && message) {
+              setNote(message);
+            }
+          }}
           activeOpacity={0.8}
           style={[styles.categoryCard, active && styles.categoryCardActive]}
         >
@@ -184,7 +194,7 @@ const SupportModal = ({ isVisible, onClose, supportChanel }: Props) => {
         </TouchableOpacity>
       );
     },
-    [locale, selectedCategoryId, t]
+    [locale, note, selectedCategoryId, t]
   );
 
   /** Render một ticket đang mở */

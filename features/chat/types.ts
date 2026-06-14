@@ -14,6 +14,9 @@ export type RoomItem = {
   id: string; // ID của phòng chat
   partner_id: string; // ID của đối tượng chat (như KTV)
   partner_name: string; // Tên đối tượng chat (như KTV)
+  can_send: boolean;
+  chat_state: 'active' | 'closed';
+  closed_reason: string | null;
 };
 
 export type JoinRoomResponse = ResponseDataSuccessType<RoomItem>;
@@ -49,6 +52,9 @@ export type KTVConversationRequest = BaseSearchRequest<object>;
 
 export type KTVConversationItem = {
   id: string; // ID của phòng chat
+  can_send: boolean;
+  chat_state: 'active' | 'closed';
+  closed_reason: string | null;
   customer: {
     id: string; // ID của khách hàng
     name: string; // Tên của khách hàng
