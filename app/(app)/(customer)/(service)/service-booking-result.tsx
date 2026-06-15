@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { MotiView } from 'moti';
+import { Easing } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AlertCircle,
@@ -345,25 +346,53 @@ const BookingAssignmentMap = ({
   applications: BookingApplicationItem[];
   styleURL?: string;
 }) => {
-  const customerCoordinate = coordinateFrom(bookingData.latitude, bookingData.longitude);
-  const originalCoordinate = coordinateFrom(
-    bookingData.original_ktv_user?.latitude || bookingData.ktv_latitude,
-    bookingData.original_ktv_user?.longitude || bookingData.ktv_longitude
+  const customerCoordinate = useMemo(
+    () => coordinateFrom(bookingData.latitude, bookingData.longitude),
+    [bookingData.latitude, bookingData.longitude]
+  );
+  const originalCoordinate = useMemo(
+    () =>
+      coordinateFrom(
+        bookingData.original_ktv_user?.latitude || bookingData.ktv_latitude,
+        bookingData.original_ktv_user?.longitude || bookingData.ktv_longitude
+      ),
+    [
+      bookingData.original_ktv_user?.latitude,
+      bookingData.original_ktv_user?.longitude,
+      bookingData.ktv_latitude,
+      bookingData.ktv_longitude,
+    ]
   );
 
-  const applicantMarkers = useMemo(() => applications
-    .map((application) => ({
-      id: application.id,
-      name: application.ktv.name,
-      avatarUrl: application.ktv.avatar_url,
-      coordinate: coordinateFrom(application.ktv.location?.latitude, application.ktv.location?.longitude),
+  const applicantMarkersDeps = JSON.stringify(
+    applications.map((app) => ({
+      id: app.id,
+      name: app.ktv.name,
+      avatarUrl: app.ktv.avatar_url,
+      latitude: app.ktv.location?.latitude,
+      longitude: app.ktv.location?.longitude,
     }))
-    .filter((item): item is {
-      id: string;
-      name: string | null;
-      avatarUrl: string | null;
-      coordinate: [number, number];
-    } => !!item.coordinate), [applications]);
+  );
+
+  const applicantMarkers = useMemo(
+    () =>
+      applications
+        .map((application) => ({
+          id: application.id,
+          name: application.ktv.name,
+          avatarUrl: application.ktv.avatar_url,
+          coordinate: coordinateFrom(application.ktv.location?.latitude, application.ktv.location?.longitude),
+        }))
+        .filter(
+          (item): item is {
+            id: string;
+            name: string | null;
+            avatarUrl: string | null;
+            coordinate: [number, number];
+          } => !!item.coordinate
+        ),
+    [applicantMarkersDeps]
+  );
 
   const centerCoordinate = customerCoordinate || originalCoordinate || applicantMarkers[0]?.coordinate;
   const MapLibreGL = getMapLibreModule();
@@ -444,6 +473,27 @@ const LegendItem = ({ color, label }: { color: string; label: string }) => (
   </View>
 );
 
+const RadarSweepLine = ({ rotateOffset, opacity, color, width }: { rotateOffset: string; opacity: number; color: string; width: number }) => (
+  <View
+    style={{
+      position: 'absolute',
+      width: 160,
+      height: 160,
+      transform: [{ rotate: rotateOffset }],
+      alignItems: 'center',
+    }}
+  >
+    <View
+      style={{
+        width: width,
+        height: 80,
+        backgroundColor: color,
+        opacity: opacity,
+      }}
+    />
+  </View>
+);
+
 const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant'; label?: string }) => {
   const markerClass = cn(
     'items-center justify-center rounded-full border-2 border-white shadow-lg',
@@ -456,48 +506,88 @@ const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant
     <View className="items-center justify-center">
       {tone === 'customer' ? (
         <>
-          <MotiView
-            from={{ scale: 1.0, opacity: 0.7 }}
-            animate={{ scale: 4.0, opacity: 0 }}
-            transition={{ type: 'timing', duration: 2400, loop: true }}
+          {/* Static Radar Grid Background */}
+          {/* Outer circle */}
+          <View
             style={{
               position: 'absolute',
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              borderWidth: 1.5,
-              borderColor: '#93c5fd', // DefaultColor.blue[300]
-              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+              width: 160,
+              height: 160,
+              borderRadius: 80,
+              borderWidth: 1,
+              borderColor: 'rgba(59, 130, 246, 0.25)',
+              backgroundColor: 'rgba(59, 130, 246, 0.03)',
             }}
           />
-          <MotiView
-            from={{ scale: 1.0, opacity: 0.7 }}
-            animate={{ scale: 4.0, opacity: 0 }}
-            transition={{ type: 'timing', duration: 2400, loop: true, delay: 800 }}
+          {/* Middle circle */}
+          <View
             style={{
               position: 'absolute',
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              borderWidth: 1.5,
-              borderColor: '#93c5fd',
-              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+              width: 110,
+              height: 110,
+              borderRadius: 55,
+              borderWidth: 1,
+              borderColor: 'rgba(59, 130, 246, 0.18)',
             }}
           />
-          <MotiView
-            from={{ scale: 1.0, opacity: 0.7 }}
-            animate={{ scale: 4.0, opacity: 0 }}
-            transition={{ type: 'timing', duration: 2400, loop: true, delay: 1600 }}
+          {/* Inner circle */}
+          <View
             style={{
               position: 'absolute',
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              borderWidth: 1.5,
-              borderColor: '#93c5fd',
-              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              borderWidth: 1,
+              borderColor: 'rgba(59, 130, 246, 0.12)',
             }}
           />
+          {/* Crosshairs - Horizontal */}
+          <View
+            style={{
+              position: 'absolute',
+              width: 160,
+              height: 1,
+              backgroundColor: 'rgba(59, 130, 246, 0.12)',
+            }}
+          />
+          {/* Crosshairs - Vertical */}
+          <View
+            style={{
+              position: 'absolute',
+              width: 1,
+              height: 160,
+              backgroundColor: 'rgba(59, 130, 246, 0.12)',
+            }}
+          />
+
+          {/* Rotating Sweeper */}
+          <MotiView
+            from={{ rotate: '0deg' }}
+            animate={{ rotate: '360deg' }}
+            transition={{
+              type: 'timing',
+              duration: 3500,
+              loop: true,
+              easing: Easing.linear,
+            }}
+            style={{
+              position: 'absolute',
+              width: 160,
+              height: 160,
+            }}
+          >
+            {/* The main sweep line (brightest blue) */}
+            <RadarSweepLine rotateOffset="0deg" color="#3b82f6" width={2.5} opacity={1.0} />
+            {/* Trailing soft-gradient line sweeps */}
+            <RadarSweepLine rotateOffset="-1.5deg" color="#60a5fa" width={3.5} opacity={0.8} />
+            <RadarSweepLine rotateOffset="-3.5deg" color="#60a5fa" width={4.5} opacity={0.65} />
+            <RadarSweepLine rotateOffset="-6deg" color="#93c5fd" width={6} opacity={0.5} />
+            <RadarSweepLine rotateOffset="-9.5deg" color="#93c5fd" width={8} opacity={0.4} />
+            <RadarSweepLine rotateOffset="-14deg" color="#bfdbfe" width={11} opacity={0.3} />
+            <RadarSweepLine rotateOffset="-19.5deg" color="#bfdbfe" width={14} opacity={0.2} />
+            <RadarSweepLine rotateOffset="-26deg" color="#dbeafe" width={18} opacity={0.12} />
+            <RadarSweepLine rotateOffset="-34deg" color="#dbeafe" width={22} opacity={0.06} />
+          </MotiView>
         </>
       ) : null}
       <View className={markerClass}>
