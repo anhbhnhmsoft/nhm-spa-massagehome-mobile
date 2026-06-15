@@ -2,6 +2,7 @@ import React, { FC, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   RefreshControl,
@@ -805,24 +806,123 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
   const discountDisplay = coupon.is_percentage
     ? `${Number(coupon.discount_value)}%`
     : formatCurrency(coupon.discount_value);
+  const isExpired = dayjs(coupon.end_at).isBefore(dayjs());
+  const isUsed = Boolean(coupon.is_used);
+  const isOutOfQuantity = coupon.remaining_quantity !== null && coupon.remaining_quantity <= 0;
+  const isInactive = isExpired || isUsed || isOutOfQuantity;
+  const remainingLabel = coupon.remaining_quantity === null
+    ? t('common.unlimited')
+    : `${coupon.remaining_quantity}`;
+  const usageLabel = coupon.discount_type === 'percentage'
+    ? t('common.max_discount')
+    : t('common.discount');
+  const usageValue = coupon.discount_type === 'percentage' && Number(coupon.max_discount) > 0
+    ? formatCurrency(coupon.max_discount)
+    : discountDisplay;
+  const statusLabel = isUsed
+    ? t('booking.has_reviews')
+    : isExpired
+      ? t('common.expired')
+      : isOutOfQuantity
+        ? t('common.sold_out')
+        : t('common.active');
 
   return (
-    <View className="flex-row overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
-      <View className="w-24 items-center justify-center border-r border-dashed border-white bg-primary-color-2 p-2">
-        <Text className="font-inter-extrabold text-xl text-white">{discountDisplay}</Text>
-        <Text className="mt-1 text-center text-xs text-teal-100">{t('common.discount')}</Text>
-      </View>
-
-      {/* Right Side: Info */}
-      <View className="flex-1 justify-between p-3">
-        <View>
-          <Text className="font-inter-bold text-sm text-slate-700" numberOfLines={2}>
-            {coupon.label}
-          </Text>
+    <View className={cn(
+      'overflow-hidden rounded-2xl border bg-white shadow-sm',
+      isInactive ? 'border-slate-200' : 'border-slate-100'
+    )}>
+      {coupon.banners ? (
+        <Image
+          source={{ uri: coupon.banners }}
+          className="h-32 w-full"
+          resizeMode="cover"
+        />
+      ) : (
+        <View className="h-28 w-full bg-primary-color-2 px-4 py-4">
+          <View className="flex-row items-start justify-between">
+            <View className="flex-1 pr-3">
+              <Text className="font-inter-bold text-[11px] uppercase text-blue-100">
+                {coupon.code}
+              </Text>
+              <Text className="mt-2 font-inter-extrabold text-[24px] text-white">{discountDisplay}</Text>
+              <Text className="mt-1 text-[12px] text-blue-100">{t('common.discount')}</Text>
+            </View>
+            <View className={cn(
+              'rounded-full px-3 py-1',
+              isInactive ? 'bg-white/20' : 'bg-white/15'
+            )}>
+              <Text className="font-inter-bold text-[11px] text-white">{statusLabel}</Text>
+            </View>
+          </View>
         </View>
-        <View className="mt-2 flex-row items-end justify-between">
-          <Text className="rounded bg-blue-100 px-2 py-0.5 font-inter-medium text-xs text-primary-color-1">
+      )}
+
+      <View className="p-4">
+        <View className="flex-row items-start justify-between">
+          <View className="flex-1 pr-3">
+            <Text className="font-inter-bold text-[15px] text-slate-800" numberOfLines={2}>
+              {coupon.label}
+            </Text>
+            {coupon.description ? (
+              <Text className="mt-1 text-[13px] leading-5 text-slate-500" numberOfLines={3}>
+                {coupon.description}
+              </Text>
+            ) : null}
+          </View>
+          {!coupon.banners ? null : (
+            <View className={cn(
+              'rounded-full px-3 py-1',
+              isInactive ? 'bg-slate-100' : 'bg-blue-50'
+            )}>
+              <Text className={cn(
+                'font-inter-bold text-[11px]',
+                isInactive ? 'text-slate-500' : 'text-primary-color-2'
+              )}>
+                {statusLabel}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View className="mt-4 gap-2 rounded-xl bg-slate-50 p-3">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[12px] text-slate-500">{t('common.discount')}</Text>
+            <Text className="font-inter-bold text-[13px] text-slate-800">{discountDisplay}</Text>
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[12px] text-slate-500">{usageLabel}</Text>
+            <Text className="font-inter-semibold text-[13px] text-slate-700">{usageValue}</Text>
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[12px] text-slate-500">{t('common.expire_date')}</Text>
+            <Text className="font-inter-semibold text-[13px] text-slate-700">
+              {dayjs(coupon.end_at).format('DD/MM/YYYY')}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[12px] text-slate-500">{t('common.used_count')}</Text>
+            <Text className="font-inter-semibold text-[13px] text-slate-700">{coupon.used_count}</Text>
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-[12px] text-slate-500">{t('common.remaining_quantity')}</Text>
+            <Text className="font-inter-semibold text-[13px] text-slate-700">{remainingLabel}</Text>
+          </View>
+        </View>
+
+        <View className="mt-4 flex-row items-center justify-between">
+          <Text className="rounded-md bg-slate-100 px-2.5 py-1 font-inter-medium text-[12px] text-slate-600">
             {coupon.code}
+          </Text>
+          <Text className={cn(
+            'font-inter-semibold text-[12px]',
+            isInactive ? 'text-slate-400' : 'text-primary-color-2'
+          )}>
+            {coupon.discount_type === 'percentage' ? '%' : t('common.currency')}
           </Text>
         </View>
       </View>
