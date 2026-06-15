@@ -46,7 +46,6 @@ import { useCancelBookingMutation } from '@/features/booking/hooks/use-mutation'
 import { useBookingStore } from '@/features/booking/stores';
 import { BookingApplicationItem, BookingCheckItem } from '@/features/booking/types';
 import useToast from '@/features/app/hooks/use-toast';
-import useResetNav from '@/features/app/hooks/use-reset-nav';
 import { useConfigApplicationQuery } from '@/features/config/hooks/use-query';
 import { queryClient } from '@/lib/provider/query-provider';
 import { cn, formatBalance, formatDistance, getMessageError } from '@/lib/utils';
@@ -161,7 +160,6 @@ const getCoordinateBounds = (coordinates: [number, number][]) => {
 const ServiceBookingResultScreen = () => {
   const { t } = useTranslation();
   const { error, success } = useToast();
-  const resetNav = useResetNav();
   const setApplicationSelection = useBookingStore((state) => state.setApplicationSelection);
   const setApplicationSelectionSource = useBookingStore((state) => state.setApplicationSelectionSource);
 
@@ -177,8 +175,8 @@ const ServiceBookingResultScreen = () => {
   const isWaitingAssignment = status === 'waiting' || status === 'waiting_ktv_confirm' || status === 'open_for_application';
 
   const closeModal = useCallback(() => {
-    resetNav('/(app)/(customer)/(tab)/orders');
-  }, [resetNav]);
+    router.dismissTo('/(app)/(customer)/(tab)/orders');
+  }, []);
 
   useEffect(() => {
     if (!isFocused || !bookingId) return;
