@@ -3,6 +3,7 @@ import type { UseQueryOptions } from '@tanstack/react-query';
 import bookingApi from '@/features/booking/api';
 import {
   BookingApplicationListResponse,
+  BookingCheckResponse,
   ListBookingRequest,
   ListBookingResponse,
 } from '@/features/booking/types';
@@ -13,7 +14,7 @@ import {
  * @param id
  */
 export const useQueryBookingCheck = (id: string | null) => {
-  return useQuery({
+  return useQuery<BookingCheckResponse, Error, BookingCheckResponse['data']>({
     queryKey: ['bookingApi-checkBooking', id],
     queryFn: () => bookingApi.checkBooking(id || ''),
     // 1. Chỉ chạy query khi có bookingId
@@ -23,17 +24,18 @@ export const useQueryBookingCheck = (id: string | null) => {
     refetchInterval: (query) => {
       // Lấy data hiện tại từ state
       const currentData = query.state.data;
+      const currentStatus = currentData?.data.status;
 
       // Nếu chưa có data (lần đầu) hoặc status là 'waiting' -> Poll mỗi 5 giây (5000ms)
-      if (!currentData || currentData.data.status === 'waiting') {
+      if (!currentData || currentStatus === 'waiting') {
         return 5000;
       }
 
-      if (currentData.data.status === 'waiting_ktv_confirm' || currentData.data.status === 'open_for_application') {
+      if (currentStatus === 'waiting_ktv_confirm' || currentStatus === 'open_for_application') {
         return 5000;
       }
 
-      // Nếu status là 'confirmed' hoặc 'failed' -> Return false để DỪNG polling
+      // Nếu status đã kết thúc -> DỪNG polling
       return false;
     },
 

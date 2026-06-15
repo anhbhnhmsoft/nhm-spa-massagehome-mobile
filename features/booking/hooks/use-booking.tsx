@@ -1,8 +1,8 @@
 import { usePrepareBookingStore } from '@/features/profile/stores';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getMessageError, goBack } from '@/lib/utils';
 import { useApplicationStore } from '@/features/app/stores';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -68,6 +68,26 @@ export const useBooking = () => {
       coupon_id: null,
     },
   });
+  const { watch } = form;
+  const currentOptionIds = useMemo(
+    () => item?.service.options.map((option) => option.id) || [],
+    [item]
+  ) as string[];
+
+  const isPendingPayloadMatchedCurrentItem = useCallback(() => {
+    if (!item || !pendingTopupBookingPayload) return false;
+
+    const pendingOptionIds = Array.isArray(pendingTopupBookingPayload.option_ids)
+      ? pendingTopupBookingPayload.option_ids
+      : [];
+
+    return (
+      pendingTopupBookingPayload.category_id === item.service.category_id
+      && pendingTopupBookingPayload.ktv_id === item.ktv.id
+      && pendingOptionIds.length === currentOptionIds.length
+      && pendingOptionIds.every((optionId: string, index: number) => optionId === currentOptionIds[index])
+    );
+  }, [currentOptionIds, item, pendingTopupBookingPayload]);
 
   // redirect nếu không có item
   useEffect(() => {
@@ -76,31 +96,52 @@ export const useBooking = () => {
       return;
     }
 
+    const shouldRestorePendingPayload = isPendingPayloadMatchedCurrentItem();
+
     form.reset({
       category_id: item.service.category_id,
-      option_ids: item.service.options.map((option) => option.id),
+      option_ids: currentOptionIds,
       ktv_id: item.ktv.id,
-      note: '',
-      address: '',
-      latitude: 0,
-      longitude: 0,
-      coupon_id: null,
+      note: shouldRestorePendingPayload ? pendingTopupBookingPayload?.note || '' : '',
+      address: shouldRestorePendingPayload ? pendingTopupBookingPayload?.address || '' : '',
+      latitude: shouldRestorePendingPayload ? Number(pendingTopupBookingPayload?.latitude ?? 0) : 0,
+      longitude: shouldRestorePendingPayload ? Number(pendingTopupBookingPayload?.longitude ?? 0) : 0,
+      coupon_id: shouldRestorePendingPayload ? pendingTopupBookingPayload?.coupon_id || null : null,
     });
-  }, [item]);
 
-  useEffect(() => {
-    if (!pendingTopupBookingPayload) return;
-    form.reset(pendingTopupBookingPayload);
-  }, [form, pendingTopupBookingPayload]);
+    if (pendingTopupBookingPayload && !shouldRestorePendingPayload) {
+      setPendingTopupBookingPayload(null);
+    }
+  }, [
+    currentOptionIds,
+    form,
+    isPendingPayloadMatchedCurrentItem,
+    item,
+    pendingTopupBookingPayload,
+    setPendingTopupBookingPayload,
+  ]);
 
   // auto fill location
   useEffect(() => {
     if (!userLocation) return;
 
-    form.setValue('address', userLocation.address);
-    form.setValue('latitude', userLocation.location.coords.latitude);
-    form.setValue('longitude', userLocation.location.coords.longitude);
-  }, [userLocation]);
+    const currentAddress = form.getValues('address');
+    const currentLatitude = form.getValues('latitude');
+    const currentLongitude = form.getValues('longitude');
+    const hasExistingAddress = !!currentAddress?.trim();
+    const hasExistingCoordinates =
+      Number.isFinite(currentLatitude) &&
+      Number.isFinite(currentLongitude) &&
+      !(currentLatitude === 0 && currentLongitude === 0);
+
+    if (hasExistingAddress && hasExistingCoordinates) {
+      return;
+    }
+
+    form.setValue('address', userLocation.address, { shouldValidate: true });
+    form.setValue('latitude', userLocation.location.coords.latitude, { shouldValidate: true });
+    form.setValue('longitude', userLocation.location.coords.longitude, { shouldValidate: true });
+  }, [form, userLocation]);
 
   const queryCoupon = useQueryListCoupon({ filter: {} }, true);
 
@@ -116,11 +157,15 @@ export const useBooking = () => {
 
   const latestPrepareRequestRef = useRef(0);
 
-  const latitude = useWatch({ control: form.control, name: 'latitude' });
-  const longitude = useWatch({ control: form.control, name: 'longitude' });
-  const address = useWatch({ control: form.control, name: 'address' });
-
-  const coupon_id = useWatch({ control: form.control, name: 'coupon_id' });
+  const latitude = watch('latitude');
+  const longitude = watch('longitude');
+  const address = watch('address');
+  const coupon_id = watch('coupon_id');
+  const hasValidAddress = !!address?.trim();
+  const hasValidCoordinates =
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    !(latitude === 0 && longitude === 0);
 
   const handleSelectCoupon = useCallback((couponId: string | null) => {
     setError(null);
@@ -132,9 +177,6 @@ export const useBooking = () => {
   }, [form]);
 
   useEffect(() => {
-    const hasValidAddress = !!address?.trim();
-    const hasValidCoordinates = !!latitude && !!longitude;
-
     if (!item || !hasValidAddress || !hasValidCoordinates) {
       setDataPricing(null);
       setError(null);
@@ -169,14 +211,23 @@ export const useBooking = () => {
         }
       );
     }
-  }, [address, latitude, longitude, coupon_id, item, t]);
+  }, [address, coupon_id, hasValidAddress, hasValidCoordinates, item, latitude, longitude, mutatePrepareBooking, t]);
 
   const handleBookingService = useCallback(
     (data: BookingServiceRequest) => {
+      if (!item) return;
+
+      const bookingPayload: BookingServiceRequest = {
+        ...data,
+        category_id: item.service.category_id,
+        option_ids: item.service.options.map((option) => option.id),
+        ktv_id: item.ktv.id,
+      };
+
       if (dataPricing && !dataPricing.is_balance_enough) {
         const missingAmount = String(Math.ceil(dataPricing.required_topup_amount || 0));
         setLoading(true);
-        setPendingTopupBookingPayload(data);
+        setPendingTopupBookingPayload(bookingPayload);
         mutateConfigPayment(undefined, {
           onSuccess: (res) => {
             setConfigPayment(res.data);
@@ -199,7 +250,7 @@ export const useBooking = () => {
       }
 
       setLoading(true);
-      mutateBookingService(data, {
+      mutateBookingService(bookingPayload, {
         onSuccess: (res) => {
           setBookingId(res.data.booking_id);
           setPendingTopupBookingPayload(null);
@@ -214,7 +265,18 @@ export const useBooking = () => {
         },
       });
     },
-    [dataPricing, mutateConfigPayment, setConfigPayment, setDepositContext, setPendingTopupBookingPayload, t]
+    [
+      dataPricing,
+      item,
+      mutateBookingService,
+      mutateConfigPayment,
+      setBookingId,
+      setConfigPayment,
+      setDepositContext,
+      setLoading,
+      setPendingTopupBookingPayload,
+      t,
+    ]
   );
 
   useEffect(() => {
@@ -229,7 +291,7 @@ export const useBooking = () => {
     dataPricing,
     error,
     loadingPrepareBooking,
-    canSubmitBooking: !!address?.trim() && !!latitude && !!longitude && !loadingPrepareBooking,
+    canSubmitBooking: hasValidAddress && hasValidCoordinates && !loadingPrepareBooking,
     handleSelectCoupon,
     handleBookingService,
   };

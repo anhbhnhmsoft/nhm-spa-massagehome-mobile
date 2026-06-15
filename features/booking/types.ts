@@ -30,8 +30,16 @@ export type BookingCheckItem = {
   application_open_reason?: string | null;
 };
 
+export type BookingCheckStatus =
+  | 'waiting'
+  | 'waiting_ktv_confirm'
+  | 'open_for_application'
+  | 'confirmed'
+  | 'failed'
+  | 'canceled';
+
 export type BookingCheckResponse = ResponseDataSuccessType<{
-  status: 'waiting' | 'waiting_ktv_confirm' | 'open_for_application' | 'confirmed' | 'failed';
+  status: BookingCheckStatus;
   data?: BookingCheckItem;
 }>;
 

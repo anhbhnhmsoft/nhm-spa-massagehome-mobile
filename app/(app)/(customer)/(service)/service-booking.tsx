@@ -49,7 +49,6 @@ export default function BookingConfirmationScreen() {
   const tempDuration = useMemo(() => item.service.options.reduce((acc, cur) => acc + cur.duration, 0), [item.service.options]);
   const tempPrice = useMemo(() => item.service.options.reduce((acc, cur) => acc + Number(cur.price), 0), [item.service.options]);
 
-
   return (
     <SafeAreaView className="flex-1 relative bg-slate-50" edges={['top', 'bottom']}>
       <FocusAwareStatusBar style={'dark'} />
@@ -129,7 +128,7 @@ export default function BookingConfirmationScreen() {
             </View>
 
             {/* Tiền khoảng cách */}
-            {!!dataPricing?.price_distance && (
+            {dataPricing && (
               <View className="flex-row items-center justify-between gap-2 mb-3">
                 <Text className="text-slate-500 text-sm">{t('services.distance_price')}</Text>
                 <Text className="font-inter-semibold text-sm">{formatBalance(dataPricing.price_distance ?? 0)} {t('common.currency')}</Text>

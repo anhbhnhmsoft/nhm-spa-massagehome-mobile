@@ -112,10 +112,10 @@ export default function ScheduleScreen() {
     <View className="flex-1 bg-slate-50">
       <HeaderAppKTV />
       <View className="flex-1">
-        <View className="px-4 pt-4">
+        <View className="px-4 pt-3">
           <TouchableOpacity
             onPress={() => setFilterVisible(true)}
-            className="flex-row items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3"
+            className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2.5"
           >
             <View className="flex-row items-center">
               <Icon as={SlidersHorizontal} size={18} className="text-slate-500" />
@@ -139,11 +139,11 @@ export default function ScheduleScreen() {
               />
             </View>
           )}
-          ListHeaderComponent={<View className="h-4" />}
+          ListHeaderComponent={<View className="h-2.5" />}
           ListEmptyComponent={<Empty />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            gap: 12,
+            gap: 8,
             paddingBottom: TAB_BAR_HEIGHT + 20,
           }}
           onEndReachedThreshold={0.5}

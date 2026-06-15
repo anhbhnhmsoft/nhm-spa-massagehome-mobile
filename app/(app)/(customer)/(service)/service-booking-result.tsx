@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  InteractionManager,
   NativeModules,
   Platform,
   ScrollView,
@@ -33,7 +34,6 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
-import { Image } from 'expo-image';
 
 import DefaultColor from '@/components/styles/color';
 import Avatar from '@/components/ui/avatar';
@@ -48,13 +48,18 @@ import { BookingApplicationItem, BookingCheckItem } from '@/features/booking/typ
 import useToast from '@/features/app/hooks/use-toast';
 import { useConfigApplicationQuery } from '@/features/config/hooks/use-query';
 import { queryClient } from '@/lib/provider/query-provider';
-import { cn, formatBalance, formatDistance, getMessageError } from '@/lib/utils';
+import { formatBalance, formatDistance, getMessageError } from '@/lib/utils';
 
 const { height: windowHeight } = Dimensions.get('window');
 
 type MapLibreModule = typeof import('@maplibre/maplibre-react-native');
 type CameraRef = import('@maplibre/maplibre-react-native').CameraRef;
-type PointAnnotationRef = import('@maplibre/maplibre-react-native').PointAnnotationRef;
+type MapViewRef = import('@maplibre/maplibre-react-native').MapViewRef;
+type CircleLayerStyle = import('@maplibre/maplibre-react-native').CircleLayerStyle;
+type SymbolLayerStyle = import('@maplibre/maplibre-react-native').SymbolLayerStyle;
+type MapPointProperties = { label: string };
+type MapPointFeature = GeoJSON.Feature<GeoJSON.Point, MapPointProperties>;
+type MapPointFeatureCollection = GeoJSON.FeatureCollection<GeoJSON.Point, MapPointProperties>;
 
 type BookingAssignmentMapProps = {
   t: TFunction;
@@ -63,7 +68,59 @@ type BookingAssignmentMapProps = {
   styleURL?: string;
 };
 
-const CUSTOMER_RADAR_REFRESH_MS = 120;
+const customerHaloLayerStyle: CircleLayerStyle = {
+  circleRadius: 42,
+  circleColor: '#DBEAFE',
+  circleOpacity: 0.36,
+  circleStrokeColor: '#93C5FD',
+  circleStrokeWidth: 1,
+  circlePitchScale: 'viewport',
+};
+
+const customerRingLayerStyle: CircleLayerStyle = {
+  circleRadius: 22,
+  circleColor: '#2563EB',
+  circleOpacity: 0.24,
+  circleStrokeColor: '#FFFFFF',
+  circleStrokeWidth: 2,
+  circlePitchScale: 'viewport',
+};
+
+const customerDotLayerStyle: CircleLayerStyle = {
+  circleRadius: 10,
+  circleColor: '#2563EB',
+  circleStrokeColor: '#FFFFFF',
+  circleStrokeWidth: 3,
+  circlePitchScale: 'viewport',
+};
+
+const originalMarkerLayerStyle: CircleLayerStyle = {
+  circleRadius: 18,
+  circleColor: '#F59E0B',
+  circleStrokeColor: '#FFFFFF',
+  circleStrokeWidth: 3,
+  circlePitchScale: 'viewport',
+};
+
+const applicantMarkerLayerStyle: CircleLayerStyle = {
+  circleRadius: 18,
+  circleColor: '#2563EB',
+  circleStrokeColor: '#FFFFFF',
+  circleStrokeWidth: 3,
+  circlePitchScale: 'viewport',
+};
+
+const mapLabelLayerStyle: SymbolLayerStyle = {
+  textField: ['get', 'label'] as const,
+  textSize: 11,
+  textColor: '#FFFFFF',
+  textAllowOverlap: true,
+  textIgnorePlacement: true,
+  textPitchAlignment: 'viewport',
+  textRotationAlignment: 'viewport',
+  textHaloColor: 'rgba(15, 23, 42, 0.12)',
+  textHaloWidth: 0.5,
+};
 
 let mapLibreModule: MapLibreModule | null | undefined;
 
@@ -101,6 +158,25 @@ const coordinateFrom = (
 
   return [lng, lat];
 };
+
+const mapPointFeature = (
+  id: string,
+  coordinate: [number, number],
+  label: string
+): MapPointFeature => ({
+  type: 'Feature',
+  id,
+  properties: { label },
+  geometry: {
+    type: 'Point',
+    coordinates: coordinate,
+  },
+});
+
+const mapPointCollection = (features: MapPointFeature[]): MapPointFeatureCollection => ({
+  type: 'FeatureCollection',
+  features,
+});
 
 const formatCountdown = (deadline?: string | null) => {
   if (!deadline) return '--:--';
@@ -160,13 +236,19 @@ const getCoordinateBounds = (coordinates: [number, number][]) => {
 const ServiceBookingResultScreen = () => {
   const { t } = useTranslation();
   const { error, success } = useToast();
+  const setBookingId = useBookingStore((state) => state.setBookingId);
   const setApplicationSelection = useBookingStore((state) => state.setApplicationSelection);
   const setApplicationSelectionSource = useBookingStore((state) => state.setApplicationSelectionSource);
+  const clearApplicationSelection = useBookingStore((state) => state.clearApplicationSelection);
 
   const { status, data, bookingId, applications, applicationsQuery, refetch } = useCheckBooking();
   const configQuery = useConfigApplicationQuery(true);
   const cancelMutation = useCancelBookingMutation();
   const [previewLoadingId, setPreviewLoadingId] = useState<string | null>(null);
+  const [isClosingScreen, setIsClosingScreen] = useState(false);
+  const closeFrameRef = useRef<number | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeInteractionRef = useRef<{ cancel: () => void } | null>(null);
   const isFocused = useIsFocused();
   const refetchApplications = applicationsQuery.refetch;
 
@@ -175,14 +257,40 @@ const ServiceBookingResultScreen = () => {
   const isWaitingAssignment = status === 'waiting' || status === 'waiting_ktv_confirm' || status === 'open_for_application';
 
   const closeModal = useCallback(() => {
-    router.dismissTo('/(app)/(customer)/(tab)/orders');
-  }, []);
+    if (isClosingScreen) {
+      return;
+    }
+
+    setIsClosingScreen(true);
+
+    closeFrameRef.current = requestAnimationFrame(() => {
+      closeInteractionRef.current = InteractionManager.runAfterInteractions(() => {
+        closeTimeoutRef.current = setTimeout(() => {
+          router.dismissTo('/(app)/(customer)/(tab)/orders');
+        }, Platform.OS === 'ios' && isWaitingAssignment ? 220 : 0);
+      });
+    });
+  }, [isClosingScreen, isWaitingAssignment, status]);
 
   useEffect(() => {
     if (!isFocused || !bookingId) return;
     refetch();
     refetchApplications();
   }, [bookingId, isFocused, refetch, refetchApplications]);
+
+  useEffect(() => {
+    return () => {
+      if (closeFrameRef.current !== null) {
+        cancelAnimationFrame(closeFrameRef.current);
+      }
+      if (closeTimeoutRef.current !== null) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+      closeInteractionRef.current?.cancel();
+      clearApplicationSelection();
+      setBookingId(null);
+    };
+  }, [clearApplicationSelection, setBookingId]);
 
   const handleSelectApplication = useCallback((application: BookingApplicationItem) => {
     if (!bookingId) return;
@@ -221,11 +329,12 @@ const ServiceBookingResultScreen = () => {
                 reason: t('booking.customer_cancel_from_result_reason'),
               },
               {
-                onSuccess: async (res) => {
+                onSuccess: (res) => {
                   success({ message: res.message || t('enum.booking_status.CANCELED') });
-                  await queryClient.invalidateQueries({ queryKey: ['bookingApi-checkBooking', bookingId] });
-                  await queryClient.invalidateQueries({ queryKey: ['bookingApi-listBookings'] });
-                  await refetch();
+                  closeModal();
+                  void queryClient.invalidateQueries({ queryKey: ['bookingApi-checkBooking', bookingId] });
+                  void queryClient.invalidateQueries({ queryKey: ['bookingApi-listBookings'] });
+                  void queryClient.invalidateQueries({ queryKey: ['bookingApi-applications', bookingId] });
                 },
                 onError: (err) => {
                   error({ message: getMessageError(err, t) || t('common_error.request_error') });
@@ -236,7 +345,7 @@ const ServiceBookingResultScreen = () => {
         },
       ]
     );
-  }, [bookingId, cancelMutation, error, refetch, success, t]);
+  }, [bookingId, cancelMutation, closeModal, error, success, t]);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
@@ -250,6 +359,7 @@ const ServiceBookingResultScreen = () => {
           onCancel={handleCancel}
           cancelLoading={cancelMutation.isPending}
           onClose={closeModal}
+          isClosingScreen={isClosingScreen}
           onSelectApplication={handleSelectApplication}
           previewLoadingId={previewLoadingId}
         />
@@ -257,14 +367,16 @@ const ServiceBookingResultScreen = () => {
         <View className="flex-1">
           {status !== 'waiting' && (
             <View className="flex-row justify-end px-4 pt-2">
-              <TouchableOpacity onPress={closeModal} className="rounded-full bg-gray-100 p-2">
+              <TouchableOpacity onPress={closeModal} disabled={isClosingScreen} className="rounded-full bg-gray-100 p-2">
                 <Icon as={X} size={24} className="text-gray-700" />
               </TouchableOpacity>
             </View>
           )}
           {status === 'waiting' && <Processing t={t} />}
           {status === 'confirmed' && data?.data && <Success t={t} bookingData={data.data} onGoHome={closeModal} />}
-          {status === 'failed' && data?.data && <Failed t={t} bookingData={data.data} onGoHome={closeModal} />}
+          {(status === 'failed' || status === 'canceled') && data?.data && (
+            <Failed t={t} bookingData={data.data} onGoHome={closeModal} />
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -282,6 +394,7 @@ type AssignmentMapResultProps = {
   onCancel: () => void;
   cancelLoading: boolean;
   onClose: () => void;
+  isClosingScreen: boolean;
   onSelectApplication: (application: BookingApplicationItem) => void;
   previewLoadingId: string | null;
 };
@@ -295,6 +408,7 @@ const AssignmentMapResult = ({
   onCancel,
   cancelLoading,
   onClose,
+  isClosingScreen,
   onSelectApplication,
   previewLoadingId,
 }: AssignmentMapResultProps) => {
@@ -305,25 +419,30 @@ const AssignmentMapResult = ({
   return (
     <View className="flex-1 bg-white">
       <View style={{ height: shouldUseFullScreenMap ? windowHeight : Math.max(300, windowHeight * 0.42) }}>
-        <BookingAssignmentMap
-          t={t}
-          bookingData={bookingData}
-          applications={applications}
-          styleURL={mapStyleURL}
-        />
+        {isClosingScreen ? (
+          <ClosingMapPlaceholder t={t} />
+        ) : (
+          <BookingAssignmentMap
+            t={t}
+            bookingData={bookingData}
+            applications={applications}
+            styleURL={mapStyleURL}
+          />
+        )}
         <TouchableOpacity
           onPress={onClose}
+          disabled={isClosingScreen}
           className="absolute left-5 top-5 h-12 w-12 items-center justify-center rounded-full bg-white/95 shadow-lg"
         >
           <Icon as={X} size={22} className="text-slate-700" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onCancel}
-          disabled={cancelLoading}
+          disabled={cancelLoading || isClosingScreen}
           className="absolute right-5 top-5 rounded-3xl bg-red-500 px-5 py-3 shadow-lg"
         >
           <Text className="font-inter-bold text-[15px] text-white">
-            {cancelLoading ? t('common.loading') : t('booking.cancel_order_short')}
+            {cancelLoading || isClosingScreen ? t('common.loading') : t('booking.cancel_order_short')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -403,6 +522,8 @@ const BookingAssignmentMap = memo(({
   styleURL,
 }: BookingAssignmentMapProps) => {
   const cameraRef = useRef<CameraRef | null>(null);
+  const mapRef = useRef<MapViewRef | null>(null);
+  const [customerScreenPoint, setCustomerScreenPoint] = useState<[number, number] | null>(null);
   const customerCoordinate = useMemo(
     () => coordinateFrom(bookingData.latitude, bookingData.longitude),
     [bookingData.latitude, bookingData.longitude]
@@ -458,17 +579,47 @@ const BookingAssignmentMap = memo(({
       ),
     [applicantMarkers, customerCoordinate, originalCoordinate]
   );
+  const customerShape = useMemo(
+    () => mapPointCollection(customerCoordinate ? [mapPointFeature('customer', customerCoordinate, '')] : []),
+    [customerCoordinate]
+  );
+  const originalShape = useMemo(
+    () => mapPointCollection(originalCoordinate ? [mapPointFeature('original', originalCoordinate, 'G')] : []),
+    [originalCoordinate]
+  );
+  const applicantShape = useMemo(
+    () => mapPointCollection(
+      applicantMarkers.map((marker, index) => mapPointFeature(marker.id, marker.coordinate, `${index + 1}`))
+    ),
+    [applicantMarkers]
+  );
   const centerCoordinate = mapCoordinates[0];
   const MapLibreGL = getMapLibreModule();
   const defaultCameraSettings = useMemo(
     () => (centerCoordinate ? { centerCoordinate, zoomLevel: 12 } : undefined),
     [centerCoordinate]
   );
+  const syncCustomerOverlayPosition = useCallback(() => {
+    if (!mapRef.current || !customerCoordinate) {
+      setCustomerScreenPoint(null);
+      return;
+    }
+
+    mapRef.current
+      .getPointInView(customerCoordinate)
+      .then((point) => {
+        setCustomerScreenPoint(point);
+      })
+      .catch(() => {
+        setCustomerScreenPoint(null);
+      });
+  }, [customerCoordinate]);
 
   useEffect(() => {
     if (!cameraRef.current || !MapLibreGL || !styleURL || mapCoordinates.length === 0) return;
 
     const cameraPadding = applications.length > 0 ? [72, 40, 136, 40] : [72, 40, 104, 40];
+    let syncTimeout: ReturnType<typeof setTimeout> | null = null;
     const frameId = requestAnimationFrame(() => {
       if (!cameraRef.current) return;
 
@@ -478,15 +629,22 @@ const BookingAssignmentMap = memo(({
           zoomLevel: 12,
           animationDuration: 0,
         });
+        syncTimeout = setTimeout(syncCustomerOverlayPosition, 80);
         return;
       }
 
       const bounds = getCoordinateBounds(mapCoordinates);
       cameraRef.current.fitBounds(bounds.ne, bounds.sw, cameraPadding, 650);
+      syncTimeout = setTimeout(syncCustomerOverlayPosition, 700);
     });
 
-    return () => cancelAnimationFrame(frameId);
-  }, [MapLibreGL, applications.length, mapCoordinates, styleURL]);
+    return () => {
+      cancelAnimationFrame(frameId);
+      if (syncTimeout) {
+        clearTimeout(syncTimeout);
+      }
+    };
+  }, [MapLibreGL, applications.length, mapCoordinates, styleURL, syncCustomerOverlayPosition]);
 
   if (!styleURL || !centerCoordinate || !MapLibreGL) {
     return (
@@ -511,28 +669,42 @@ const BookingAssignmentMap = memo(({
 
   return (
     <View className="flex-1">
-      <MapLibreGL.MapView style={{ flex: 1 }} mapStyle={styleURL} logoEnabled={false} attributionEnabled={false}>
+      <MapLibreGL.MapView
+        ref={mapRef}
+        style={{ flex: 1 }}
+        mapStyle={styleURL}
+        logoEnabled={false}
+        attributionEnabled={false}
+        onDidFinishLoadingMap={syncCustomerOverlayPosition}
+        onRegionDidChange={syncCustomerOverlayPosition}
+      >
         <MapLibreGL.Camera ref={cameraRef} defaultSettings={defaultCameraSettings} />
-        {customerCoordinate ? (
-          <CustomerRadarAnnotation MapLibreGL={MapLibreGL} coordinate={customerCoordinate} />
-        ) : null}
-        {originalCoordinate ? (
-          <MapLibreGL.PointAnnotation id="original-ktv-location" coordinate={originalCoordinate}>
-            <MapMarker tone="original" label="G" />
-          </MapLibreGL.PointAnnotation>
-        ) : null}
-        {applicantMarkers.map((marker, index) => (
-          <ApplicantAvatarAnnotation
-            key={marker.id}
-            MapLibreGL={MapLibreGL}
-            id={`applicant-${marker.id}`}
-            coordinate={marker.coordinate}
-            avatarUrl={marker.avatarUrl}
-            name={marker.name}
-            index={index + 1}
-          />
-        ))}
+        <MapLibreGL.ShapeSource id="booking-customer-source" shape={customerShape}>
+          <MapLibreGL.CircleLayer id="booking-customer-halo-layer" style={customerHaloLayerStyle} />
+          <MapLibreGL.CircleLayer id="booking-customer-ring-layer" style={customerRingLayerStyle} />
+          <MapLibreGL.CircleLayer id="booking-customer-dot-layer" style={customerDotLayerStyle} />
+        </MapLibreGL.ShapeSource>
+        <MapLibreGL.ShapeSource id="booking-original-source" shape={originalShape}>
+          <MapLibreGL.CircleLayer id="booking-original-marker-layer" style={originalMarkerLayerStyle} />
+          <MapLibreGL.SymbolLayer id="booking-original-label-layer" style={mapLabelLayerStyle} />
+        </MapLibreGL.ShapeSource>
+        <MapLibreGL.ShapeSource id="booking-applicant-source" shape={applicantShape}>
+          <MapLibreGL.CircleLayer id="booking-applicant-marker-layer" style={applicantMarkerLayerStyle} />
+          <MapLibreGL.SymbolLayer id="booking-applicant-label-layer" style={mapLabelLayerStyle} />
+        </MapLibreGL.ShapeSource>
       </MapLibreGL.MapView>
+      {customerScreenPoint ? (
+        <View
+          pointerEvents="none"
+          className="absolute"
+          style={{
+            left: customerScreenPoint[0] - 80,
+            top: customerScreenPoint[1] - 80,
+          }}
+        >
+          <CustomerRadarOverlay />
+        </View>
+      ) : null}
         <View className="absolute bottom-6 left-5 right-5">
         <View className="mb-3 self-start rounded-2xl bg-white/95 px-4 py-3 shadow-lg">
           <Text className="font-inter-bold text-[14px] text-slate-950">
@@ -557,6 +729,17 @@ const MapLegend = ({ t, applicantCount }: { t: TFunction; applicantCount: number
   </View>
 );
 
+const ClosingMapPlaceholder = ({ t }: { t: TFunction }) => (
+  <View className="flex-1 items-center justify-center bg-[#DCEEFF] px-5">
+    <View className="items-center rounded-3xl bg-white/90 px-5 py-4 shadow-sm">
+      <ActivityIndicator color="#2563EB" />
+      <Text className="mt-3 text-center font-inter-semibold text-sm text-[#315C9C]">
+        {t('common.loading')}
+      </Text>
+    </View>
+  </View>
+);
+
 const LegendItem = ({ color, label }: { color: string; label: string }) => (
   <View className="flex-row items-center rounded-full bg-slate-50 px-3 py-1.5">
     <View className="mr-2 h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -566,7 +749,17 @@ const LegendItem = ({ color, label }: { color: string; label: string }) => (
   </View>
 );
 
-const RadarSweepLine = ({ rotateOffset, opacity, color, width }: { rotateOffset: string; opacity: number; color: string; width: number }) => (
+const RadarSweepLine = ({
+  rotateOffset,
+  opacity,
+  color,
+  width,
+}: {
+  rotateOffset: string;
+  opacity: number;
+  color: string;
+  width: number;
+}) => (
   <View
     style={{
       position: 'absolute',
@@ -587,8 +780,8 @@ const RadarSweepLine = ({ rotateOffset, opacity, color, width }: { rotateOffset:
   </View>
 );
 
-const CustomerRadarMarker = memo(() => (
-  <View className="h-28 w-28 items-center justify-center">
+const CustomerRadarOverlay = memo(() => (
+  <View className="h-[160px] w-[160px] items-center justify-center">
     <View
       style={{
         position: 'absolute',
@@ -670,126 +863,6 @@ const CustomerRadarMarker = memo(() => (
     </View>
   </View>
 ));
-
-const CustomerRadarAnnotation = ({
-  MapLibreGL,
-  coordinate,
-}: {
-  MapLibreGL: MapLibreModule;
-  coordinate: [number, number];
-}) => {
-  const annotationRef = useRef<PointAnnotationRef | null>(null);
-
-  useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-
-    // PointAnnotation on iOS snapshots its child view, so we refresh it lightly to keep the radar alive.
-    const refreshAnnotation = () => {
-      requestAnimationFrame(() => {
-        annotationRef.current?.refresh();
-      });
-    };
-
-    refreshAnnotation();
-    const timer = setInterval(refreshAnnotation, CUSTOMER_RADAR_REFRESH_MS);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  if (Platform.OS === 'android') {
-    return (
-      <MapLibreGL.MarkerView coordinate={coordinate} anchor={{ x: 0.5, y: 0.5 }} allowOverlap>
-        <CustomerRadarMarker />
-      </MapLibreGL.MarkerView>
-    );
-  }
-
-  return (
-    <MapLibreGL.PointAnnotation
-      ref={annotationRef}
-      id="customer-location"
-      coordinate={coordinate}
-      anchor={{ x: 0.5, y: 0.5 }}
-    >
-      <CustomerRadarMarker />
-    </MapLibreGL.PointAnnotation>
-  );
-};
-
-const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant'; label?: string }) => {
-  if (tone === 'customer') {
-    return <CustomerRadarMarker />;
-  }
-
-  const markerClass = cn(
-    'items-center justify-center rounded-full border-2 border-white shadow-lg',
-    tone === 'original' && 'h-10 w-10 bg-amber-500',
-    tone === 'applicant' && 'h-10 w-10 bg-blue-600'
-  );
-
-  return (
-    <View className="items-center justify-center">
-      <View className={markerClass}>
-        {label ? (
-          <Text className="font-inter-bold text-white">{label}</Text>
-        ) : (
-          <User size={22} color="white" />
-        )}
-      </View>
-    </View>
-  );
-};
-
-const ApplicantAvatarAnnotation = ({
-  MapLibreGL,
-  id,
-  coordinate,
-  avatarUrl,
-  name,
-  index,
-}: {
-  MapLibreGL: MapLibreModule;
-  id: string;
-  coordinate: [number, number];
-  avatarUrl: string | null;
-  name: string | null;
-  index: number;
-}) => {
-  const annotationRef = useRef<PointAnnotationRef | null>(null);
-
-  const refreshAnnotation = useCallback(() => {
-    requestAnimationFrame(() => {
-      annotationRef.current?.refresh();
-    });
-  }, []);
-
-  return (
-    <MapLibreGL.PointAnnotation ref={annotationRef} id={id} coordinate={coordinate} anchor={{ x: 0.5, y: 1 }}>
-      <View className="items-center">
-        <View className="h-[52px] w-[52px] items-center justify-center rounded-full border-[3px] border-white bg-white shadow-xl">
-          {avatarUrl ? (
-            <Image
-              source={{ uri: avatarUrl }}
-              style={{ width: 46, height: 46, borderRadius: 9999 }}
-              contentFit="cover"
-              onLoad={refreshAnnotation}
-              onError={refreshAnnotation}
-            />
-          ) : (
-            <View className="h-[46px] w-[46px] items-center justify-center rounded-full bg-blue-600">
-              <User size={24} color="white" />
-            </View>
-          )}
-        </View>
-        <View className="-mt-2 rounded-full bg-blue-600 px-2 py-0.5 shadow-md">
-          <Text className="font-inter-bold text-[10px] text-white" numberOfLines={1}>
-            {name || `KTV ${index}`}
-          </Text>
-        </View>
-      </View>
-    </MapLibreGL.PointAnnotation>
-  );
-};
 
 const ApplicationCandidateCard = ({
   application,
