@@ -457,16 +457,46 @@ const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant
       {tone === 'customer' ? (
         <>
           <MotiView
-            from={{ scale: 0.8, opacity: 0.45 }}
-            animate={{ scale: 2.2, opacity: 0 }}
-            transition={{ type: 'timing', duration: 1800, loop: true }}
-            className="absolute h-10 w-10 rounded-full bg-red-400"
+            from={{ scale: 1.0, opacity: 0.7 }}
+            animate={{ scale: 4.0, opacity: 0 }}
+            transition={{ type: 'timing', duration: 2400, loop: true }}
+            style={{
+              position: 'absolute',
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              borderWidth: 1.5,
+              borderColor: '#93c5fd', // DefaultColor.blue[300]
+              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+            }}
           />
           <MotiView
-            from={{ scale: 0.8, opacity: 0.35 }}
-            animate={{ scale: 2.8, opacity: 0 }}
-            transition={{ type: 'timing', duration: 2200, loop: true, delay: 300 }}
-            className="absolute h-10 w-10 rounded-full bg-red-300"
+            from={{ scale: 1.0, opacity: 0.7 }}
+            animate={{ scale: 4.0, opacity: 0 }}
+            transition={{ type: 'timing', duration: 2400, loop: true, delay: 800 }}
+            style={{
+              position: 'absolute',
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              borderWidth: 1.5,
+              borderColor: '#93c5fd',
+              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+            }}
+          />
+          <MotiView
+            from={{ scale: 1.0, opacity: 0.7 }}
+            animate={{ scale: 4.0, opacity: 0 }}
+            transition={{ type: 'timing', duration: 2400, loop: true, delay: 1600 }}
+            style={{
+              position: 'absolute',
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              borderWidth: 1.5,
+              borderColor: '#93c5fd',
+              backgroundColor: 'rgba(147, 197, 253, 0.15)',
+            }}
           />
         </>
       ) : null}
