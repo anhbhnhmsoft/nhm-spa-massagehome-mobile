@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Dimensions,
   NativeModules,
+  Platform,
   ScrollView,
   TouchableOpacity,
   View,
@@ -18,6 +19,7 @@ import {
   CheckCircle,
   DollarSign,
   Home,
+  LocateFixed,
   MapPin,
   Star,
   TicketPercent,
@@ -52,7 +54,17 @@ import { cn, formatBalance, formatDistance, getMessageError } from '@/lib/utils'
 const { height: windowHeight } = Dimensions.get('window');
 
 type MapLibreModule = typeof import('@maplibre/maplibre-react-native');
+type CameraRef = import('@maplibre/maplibre-react-native').CameraRef;
 type PointAnnotationRef = import('@maplibre/maplibre-react-native').PointAnnotationRef;
+
+type BookingAssignmentMapProps = {
+  t: TFunction;
+  bookingData: BookingCheckItem;
+  applications: BookingApplicationItem[];
+  styleURL?: string;
+};
+
+const CUSTOMER_RADAR_REFRESH_MS = 120;
 
 let mapLibreModule: MapLibreModule | null | undefined;
 
@@ -100,6 +112,50 @@ const formatCountdown = (deadline?: string | null) => {
   const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
   const seconds = (diff % 60).toString().padStart(2, '0');
   return `${minutes}:${seconds}`;
+};
+
+const buildApplicationsMapSignature = (applications: BookingApplicationItem[]) =>
+  applications
+    .map((application) => [
+      application.id,
+      application.ktv.name || '',
+      application.ktv.avatar_url || '',
+      application.ktv.location?.latitude || '',
+      application.ktv.location?.longitude || '',
+    ].join(':'))
+    .join('|');
+
+const buildBookingAssignmentMapSignature = (
+  bookingData: BookingCheckItem,
+  applications: BookingApplicationItem[],
+  styleURL?: string
+) => [
+  styleURL || '',
+  bookingData.latitude || '',
+  bookingData.longitude || '',
+  bookingData.original_ktv_user?.latitude || bookingData.ktv_latitude || '',
+  bookingData.original_ktv_user?.longitude || bookingData.ktv_longitude || '',
+  buildApplicationsMapSignature(applications),
+].join('|');
+
+const getCoordinateBounds = (coordinates: [number, number][]) => {
+  const [firstLng, firstLat] = coordinates[0];
+  let minLng = firstLng;
+  let maxLng = firstLng;
+  let minLat = firstLat;
+  let maxLat = firstLat;
+
+  coordinates.slice(1).forEach(([lng, lat]) => {
+    minLng = Math.min(minLng, lng);
+    maxLng = Math.max(maxLng, lng);
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+  });
+
+  return {
+    ne: [maxLng, maxLat] as [number, number],
+    sw: [minLng, minLat] as [number, number],
+  };
 };
 
 const ServiceBookingResultScreen = () => {
@@ -245,15 +301,8 @@ const AssignmentMapResult = ({
   previewLoadingId,
 }: AssignmentMapResultProps) => {
   const deadline = bookingData.assignment_deadline_at || bookingData.ktv_confirm_deadline_at;
-  const [countdown, setCountdown] = useState(formatCountdown(deadline));
   const originalName = bookingData.original_ktv_user?.name || bookingData.technician || t('booking.unassigned_technician');
   const shouldUseFullScreenMap = applications.length === 0;
-
-  useEffect(() => {
-    setCountdown(formatCountdown(deadline));
-    const timer = setInterval(() => setCountdown(formatCountdown(deadline)), 1000);
-    return () => clearInterval(timer);
-  }, [deadline]);
 
   return (
     <View className="flex-1 bg-white">
@@ -289,9 +338,7 @@ const AssignmentMapResult = ({
         <Text className="font-inter-bold text-[18px] leading-7 text-slate-950">
           {t('booking.assignment_waiting_title', { name: originalName })}
         </Text>
-        <Text className="mt-2 text-[14px] text-slate-500">
-          {t('booking.assignment_auto_cancel_in', { time: countdown })}
-        </Text>
+        <AssignmentCountdownText t={t} deadline={deadline} />
         <View className="mt-5 h-1.5 overflow-hidden rounded-full bg-slate-100">
           <View className="h-full w-1/5 rounded-full bg-[#2563EB]" />
         </View>
@@ -335,17 +382,29 @@ const AssignmentMapResult = ({
   );
 };
 
-const BookingAssignmentMap = ({
+const AssignmentCountdownText = ({ t, deadline }: { t: TFunction; deadline?: string | null }) => {
+  const [countdown, setCountdown] = useState(() => formatCountdown(deadline));
+
+  useEffect(() => {
+    setCountdown(formatCountdown(deadline));
+    const timer = setInterval(() => setCountdown(formatCountdown(deadline)), 1000);
+    return () => clearInterval(timer);
+  }, [deadline]);
+
+  return (
+    <Text className="mt-2 text-[14px] text-slate-500">
+      {t('booking.assignment_auto_cancel_in', { time: countdown })}
+    </Text>
+  );
+};
+
+const BookingAssignmentMap = memo(({
   t,
   bookingData,
   applications,
   styleURL,
-}: {
-  t: TFunction;
-  bookingData: BookingCheckItem;
-  applications: BookingApplicationItem[];
-  styleURL?: string;
-}) => {
+}: BookingAssignmentMapProps) => {
+  const cameraRef = useRef<CameraRef | null>(null);
   const customerCoordinate = useMemo(
     () => coordinateFrom(bookingData.latitude, bookingData.longitude),
     [bookingData.latitude, bookingData.longitude]
@@ -394,8 +453,42 @@ const BookingAssignmentMap = ({
     [applicantMarkersDeps]
   );
 
-  const centerCoordinate = customerCoordinate || originalCoordinate || applicantMarkers[0]?.coordinate;
+  const mapCoordinates = useMemo(
+    () =>
+      [customerCoordinate, originalCoordinate, ...applicantMarkers.map((marker) => marker.coordinate)].filter(
+        (coordinate): coordinate is [number, number] => !!coordinate
+      ),
+    [applicantMarkers, customerCoordinate, originalCoordinate]
+  );
+  const centerCoordinate = mapCoordinates[0];
   const MapLibreGL = getMapLibreModule();
+  const defaultCameraSettings = useMemo(
+    () => (centerCoordinate ? { centerCoordinate, zoomLevel: 12 } : undefined),
+    [centerCoordinate]
+  );
+
+  useEffect(() => {
+    if (!cameraRef.current || !MapLibreGL || !styleURL || mapCoordinates.length === 0) return;
+
+    const cameraPadding = applications.length > 0 ? [72, 40, 136, 40] : [72, 40, 104, 40];
+    const frameId = requestAnimationFrame(() => {
+      if (!cameraRef.current) return;
+
+      if (mapCoordinates.length === 1) {
+        cameraRef.current.setCamera({
+          centerCoordinate: mapCoordinates[0],
+          zoomLevel: 12,
+          animationDuration: 0,
+        });
+        return;
+      }
+
+      const bounds = getCoordinateBounds(mapCoordinates);
+      cameraRef.current.fitBounds(bounds.ne, bounds.sw, cameraPadding, 650);
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [MapLibreGL, applications.length, mapCoordinates, styleURL]);
 
   if (!styleURL || !centerCoordinate || !MapLibreGL) {
     return (
@@ -421,11 +514,9 @@ const BookingAssignmentMap = ({
   return (
     <View className="flex-1">
       <MapLibreGL.MapView style={{ flex: 1 }} mapStyle={styleURL} logoEnabled={false} attributionEnabled={false}>
-        <MapLibreGL.Camera centerCoordinate={centerCoordinate} zoomLevel={12} />
+        <MapLibreGL.Camera ref={cameraRef} defaultSettings={defaultCameraSettings} />
         {customerCoordinate ? (
-          <MapLibreGL.PointAnnotation id="customer-location" coordinate={customerCoordinate}>
-            <MapMarker tone="customer" label="H" />
-          </MapLibreGL.PointAnnotation>
+          <CustomerRadarAnnotation MapLibreGL={MapLibreGL} coordinate={customerCoordinate} />
         ) : null}
         {originalCoordinate ? (
           <MapLibreGL.PointAnnotation id="original-ktv-location" coordinate={originalCoordinate}>
@@ -454,11 +545,15 @@ const BookingAssignmentMap = ({
       </View>
     </View>
   );
-};
+}, (prevProps, nextProps) => (
+  prevProps.t === nextProps.t
+  && buildBookingAssignmentMapSignature(prevProps.bookingData, prevProps.applications, prevProps.styleURL)
+    === buildBookingAssignmentMapSignature(nextProps.bookingData, nextProps.applications, nextProps.styleURL)
+));
 
 const MapLegend = ({ t, applicantCount }: { t: TFunction; applicantCount: number }) => (
   <View className="flex-row flex-wrap gap-2 rounded-2xl bg-white/95 p-3 shadow-lg">
-    <LegendItem color="#EF4444" label={t('services.booking_location')} />
+    <LegendItem color={DefaultColor.blue[300]} label={t('services.booking_location')} />
     <LegendItem color="#F59E0B" label={t('services.booking_technician')} />
     <LegendItem color="#2563EB" label={t('booking.application_count_title', { count: applicantCount })} />
   </View>
@@ -494,102 +589,148 @@ const RadarSweepLine = ({ rotateOffset, opacity, color, width }: { rotateOffset:
   </View>
 );
 
+const CustomerRadarMarker = memo(() => (
+  <View className="h-28 w-28 items-center justify-center">
+    <View
+      style={{
+        position: 'absolute',
+        width: 160,
+        height: 160,
+        borderRadius: 80,
+        borderWidth: 1,
+        borderColor: 'rgba(147, 197, 253, 0.7)',
+        backgroundColor: 'rgba(219, 234, 254, 0.22)',
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: 110,
+        height: 110,
+        borderRadius: 55,
+        borderWidth: 1,
+        borderColor: 'rgba(96, 165, 250, 0.35)',
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: 'rgba(59, 130, 246, 0.18)',
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: 160,
+        height: 1,
+        backgroundColor: 'rgba(59, 130, 246, 0.12)',
+      }}
+    />
+    <View
+      style={{
+        position: 'absolute',
+        width: 1,
+        height: 160,
+        backgroundColor: 'rgba(59, 130, 246, 0.12)',
+      }}
+    />
+
+    <MotiView
+      from={{ rotate: '0deg' }}
+      animate={{ rotate: '360deg' }}
+      transition={{
+        type: 'timing',
+        duration: 3200,
+        loop: true,
+        repeatReverse: false,
+        easing: Easing.linear,
+      }}
+      style={{
+        position: 'absolute',
+        width: 160,
+        height: 160,
+      }}
+    >
+      <RadarSweepLine rotateOffset="0deg" color="#3b82f6" width={2.5} opacity={1} />
+      <RadarSweepLine rotateOffset="-1.5deg" color="#60a5fa" width={3.5} opacity={0.82} />
+      <RadarSweepLine rotateOffset="-3.5deg" color="#60a5fa" width={4.5} opacity={0.68} />
+      <RadarSweepLine rotateOffset="-6deg" color="#93c5fd" width={6} opacity={0.52} />
+      <RadarSweepLine rotateOffset="-9.5deg" color="#93c5fd" width={8} opacity={0.4} />
+      <RadarSweepLine rotateOffset="-14deg" color="#bfdbfe" width={11} opacity={0.28} />
+      <RadarSweepLine rotateOffset="-19.5deg" color="#bfdbfe" width={14} opacity={0.18} />
+      <RadarSweepLine rotateOffset="-26deg" color="#dbeafe" width={18} opacity={0.1} />
+    </MotiView>
+
+    <View className="h-12 w-12 items-center justify-center rounded-full border-[3px] border-white bg-blue-500 shadow-lg">
+      <View className="h-8 w-8 items-center justify-center rounded-full bg-blue-50">
+        <Icon as={LocateFixed} size={18} color={DefaultColor.blue[500]} />
+      </View>
+    </View>
+  </View>
+));
+
+const CustomerRadarAnnotation = ({
+  MapLibreGL,
+  coordinate,
+}: {
+  MapLibreGL: MapLibreModule;
+  coordinate: [number, number];
+}) => {
+  const annotationRef = useRef<PointAnnotationRef | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+
+    // PointAnnotation on iOS snapshots its child view, so we refresh it lightly to keep the radar alive.
+    const refreshAnnotation = () => {
+      requestAnimationFrame(() => {
+        annotationRef.current?.refresh();
+      });
+    };
+
+    refreshAnnotation();
+    const timer = setInterval(refreshAnnotation, CUSTOMER_RADAR_REFRESH_MS);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  if (Platform.OS === 'android') {
+    return (
+      <MapLibreGL.MarkerView coordinate={coordinate} anchor={{ x: 0.5, y: 0.5 }} allowOverlap>
+        <CustomerRadarMarker />
+      </MapLibreGL.MarkerView>
+    );
+  }
+
+  return (
+    <MapLibreGL.PointAnnotation
+      ref={annotationRef}
+      id="customer-location"
+      coordinate={coordinate}
+      anchor={{ x: 0.5, y: 0.5 }}
+    >
+      <CustomerRadarMarker />
+    </MapLibreGL.PointAnnotation>
+  );
+};
+
 const MapMarker = ({ tone, label }: { tone: 'customer' | 'original' | 'applicant'; label?: string }) => {
+  if (tone === 'customer') {
+    return <CustomerRadarMarker />;
+  }
+
   const markerClass = cn(
     'items-center justify-center rounded-full border-2 border-white shadow-lg',
-    tone === 'customer' && 'h-10 w-10 bg-red-500',
     tone === 'original' && 'h-10 w-10 bg-amber-500',
     tone === 'applicant' && 'h-10 w-10 bg-blue-600'
   );
 
   return (
     <View className="items-center justify-center">
-      {tone === 'customer' ? (
-        <>
-          {/* Static Radar Grid Background */}
-          {/* Outer circle */}
-          <View
-            style={{
-              position: 'absolute',
-              width: 160,
-              height: 160,
-              borderRadius: 80,
-              borderWidth: 1,
-              borderColor: 'rgba(59, 130, 246, 0.25)',
-              backgroundColor: 'rgba(59, 130, 246, 0.03)',
-            }}
-          />
-          {/* Middle circle */}
-          <View
-            style={{
-              position: 'absolute',
-              width: 110,
-              height: 110,
-              borderRadius: 55,
-              borderWidth: 1,
-              borderColor: 'rgba(59, 130, 246, 0.18)',
-            }}
-          />
-          {/* Inner circle */}
-          <View
-            style={{
-              position: 'absolute',
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              borderWidth: 1,
-              borderColor: 'rgba(59, 130, 246, 0.12)',
-            }}
-          />
-          {/* Crosshairs - Horizontal */}
-          <View
-            style={{
-              position: 'absolute',
-              width: 160,
-              height: 1,
-              backgroundColor: 'rgba(59, 130, 246, 0.12)',
-            }}
-          />
-          {/* Crosshairs - Vertical */}
-          <View
-            style={{
-              position: 'absolute',
-              width: 1,
-              height: 160,
-              backgroundColor: 'rgba(59, 130, 246, 0.12)',
-            }}
-          />
-
-          {/* Rotating Sweeper */}
-          <MotiView
-            from={{ rotate: '0deg' }}
-            animate={{ rotate: '360deg' }}
-            transition={{
-              type: 'timing',
-              duration: 3500,
-              loop: true,
-              easing: Easing.linear,
-            }}
-            style={{
-              position: 'absolute',
-              width: 160,
-              height: 160,
-            }}
-          >
-            {/* The main sweep line (brightest blue) */}
-            <RadarSweepLine rotateOffset="0deg" color="#3b82f6" width={2.5} opacity={1.0} />
-            {/* Trailing soft-gradient line sweeps */}
-            <RadarSweepLine rotateOffset="-1.5deg" color="#60a5fa" width={3.5} opacity={0.8} />
-            <RadarSweepLine rotateOffset="-3.5deg" color="#60a5fa" width={4.5} opacity={0.65} />
-            <RadarSweepLine rotateOffset="-6deg" color="#93c5fd" width={6} opacity={0.5} />
-            <RadarSweepLine rotateOffset="-9.5deg" color="#93c5fd" width={8} opacity={0.4} />
-            <RadarSweepLine rotateOffset="-14deg" color="#bfdbfe" width={11} opacity={0.3} />
-            <RadarSweepLine rotateOffset="-19.5deg" color="#bfdbfe" width={14} opacity={0.2} />
-            <RadarSweepLine rotateOffset="-26deg" color="#dbeafe" width={18} opacity={0.12} />
-            <RadarSweepLine rotateOffset="-34deg" color="#dbeafe" width={22} opacity={0.06} />
-          </MotiView>
-        </>
-      ) : null}
       <View className={markerClass}>
         {label ? (
           <Text className="font-inter-bold text-white">{label}</Text>
