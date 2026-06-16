@@ -21,7 +21,7 @@ export const _BookingStatusMap = {
   [_BookingStatus.COMPLETED]: 'enum.booking_status.COMPLETED',
   [_BookingStatus.CANCELED]: 'enum.booking_status.CANCELED',
   [_BookingStatus.PAYMENT_FAILED]: 'enum.booking_status.PAYMENT_FAILED',
-  [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.CANCELED',
+  [_BookingStatus.WAITING_CANCEL]: 'enum.booking_status.WAITING_CANCEL',
   [_BookingStatus.WAITING_KTV_CONFIRM]: 'enum.booking_status.WAITING_KTV_CONFIRM',
   [_BookingStatus.OPEN_FOR_APPLICATION]: 'enum.booking_status.OPEN_FOR_APPLICATION',
 } as const;

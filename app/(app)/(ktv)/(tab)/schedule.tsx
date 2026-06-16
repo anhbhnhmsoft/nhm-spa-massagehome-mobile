@@ -17,7 +17,7 @@ import { useGetRoomChat } from '@/features/chat/hooks';
 import SelectModal, { SelectOption } from '@/components/select-modal';
 import { SlidersHorizontal } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
-import { useApplyApplicationBookingMutation } from '@/features/ktv/hooks/use-mutation';
+import { useApplyApplicationBookingMutation, useConfirmApplicationBookingMutation } from '@/features/ktv/hooks/use-mutation';
 import { queryClient } from '@/lib/provider/query-provider';
 import useToast from '@/features/app/hooks/use-toast';
 
@@ -58,6 +58,7 @@ export default function ScheduleScreen() {
 
   const joinRoomChat = useGetRoomChat();
   const { mutate: applyBooking, isPending: isApplyBookingPending } = useApplyApplicationBookingMutation();
+  const { mutate: confirmBooking, isPending: isConfirmBookingPending } = useConfirmApplicationBookingMutation();
 
   const handleApplyNow = useCallback((item: BookingItem) => {
     applyBooking(item.id, {
@@ -71,6 +72,19 @@ export default function ScheduleScreen() {
       },
     });
   }, [applyBooking, error, refetch]);
+
+  const handleConfirmNow = useCallback((item: BookingItem) => {
+    confirmBooking(item.id, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-bookings'] });
+        await queryClient.invalidateQueries({ queryKey: ['ktvApi-dashboard'] });
+        await refetch();
+      },
+      onError: (err) => {
+        error({ message: getMessageError(err, t) || t('common_error.request_error') });
+      },
+    });
+  }, [confirmBooking, error, refetch]);
 
   useEffect(() => {
     if (routeMode === 'applications') {
@@ -135,7 +149,9 @@ export default function ScheduleScreen() {
                 calculateDistance={calculateDistance}
                 joinRoomChat={joinRoomChat}
                 onApplyNow={item.status === _BookingStatus.OPEN_FOR_APPLICATION ? handleApplyNow : undefined}
+                onConfirmNow={item.status === _BookingStatus.OPEN_FOR_APPLICATION ? handleConfirmNow : undefined}
                 applying={isApplyBookingPending}
+                confirming={isConfirmBookingPending}
               />
             </View>
           )}

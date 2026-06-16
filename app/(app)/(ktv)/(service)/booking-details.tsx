@@ -1,5 +1,5 @@
 import { Image, ScrollView, Text, TouchableOpacity, View, Linking, Alert} from 'react-native';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import HeaderBack from '@/components/header-back';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +19,17 @@ import { CancelBookingBottomSheet } from '@/components/app/customer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { queryClient } from '@/lib/provider/query-provider';
 import { _BookingStatus } from '@/features/service/const';
+
+const formatCountdown = (deadline?: string | null) => {
+  if (!deadline) return null;
+
+  const diff = dayjs(deadline).diff(dayjs(), 'second');
+  if (diff <= 0) return '00:00';
+
+  const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+  const seconds = (diff % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
 
 export default function BookingDetails() {
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: 'booking' | 'application' }>();
@@ -59,6 +70,28 @@ export default function BookingDetails() {
 
   const inset = useSafeAreaInsets();
   const isOpenForApplication = booking?.status === _BookingStatus.OPEN_FOR_APPLICATION;
+  const actionDeadline = useMemo(() => {
+    if (!booking) return null;
+    if (booking.status === _BookingStatus.OPEN_FOR_APPLICATION || booking.status === _BookingStatus.WAITING_KTV_CONFIRM) {
+      return booking.ktv_confirm_deadline_at || null;
+    }
+    return null;
+  }, [booking]);
+  const [actionCountdown, setActionCountdown] = useState<string | null>(formatCountdown(actionDeadline));
+
+  useEffect(() => {
+    if (!actionDeadline) {
+      setActionCountdown(null);
+      return;
+    }
+
+    setActionCountdown(formatCountdown(actionDeadline));
+    const timer = setInterval(() => {
+      setActionCountdown(formatCountdown(actionDeadline));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [actionDeadline]);
 
 
   return (
@@ -251,6 +284,16 @@ export default function BookingDetails() {
             </View>
           </View>
 
+          {actionCountdown ? (
+            <View className="px-4 pb-2">
+              <View className="rounded-2xl bg-amber-50 px-4 py-3">
+                <Text className="font-inter-semibold text-[13px] text-amber-700">
+                  {t('booking.confirm_deadline_label', { time: actionCountdown })}
+                </Text>
+              </View>
+            </View>
+          ) : null}
+
           {/* Notes */}
           <View className="px-4">
             <View className="mb-4 gap-2 rounded-2xl bg-slate-50 p-3">
@@ -294,42 +337,7 @@ export default function BookingDetails() {
           {/* Bảng tính giá */}
           <View className="px-4">
             <View className="mb-4 rounded-xl border border-slate-50 bg-white p-5">
-              {/* Giá gốc */}
-              <View className="mb-3 flex-row items-center justify-between">
-                <Text className="font-inter-medium text-[14px] text-slate-500">
-                  {t('booking.original_price')}
-                </Text>
-                <Text className={'font-inter-medium text-[14px] text-slate-700'}>
-                  {formatBalance(booking?.price || 0)} {t('common.currency')}
-                </Text>
-              </View>
-              {/*Giá giảm giá*/}
-              <View className="mb-3 flex-row items-center justify-between">
-                <View className="flex-row items-center">
-                  <Text className="font-inter-medium text-[13px] text-slate-500">
-                    {t('booking.price_discount')}
-                  </Text>
-                </View>
-                <Text className="font-inter-semibold text-[14px] text-slate-500">
-                  {formatBalance(booking?.price_discount || 0)} {t('common.currency')}
-                </Text>
-              </View>
-
-              {!isOpenForApplication && (
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center">
-                    <Text className="font-inter-medium text-[13px] text-slate-500">
-                      {t('booking.price_transportation')}
-                    </Text>
-                  </View>
-                  <Text className="font-inter-semibold text-[14px] text-slate-500">
-                    {formatBalance(booking?.price_transportation || 0)} {t('common.currency')}
-                  </Text>
-                </View>
-              )}
-              {/* Đường kẻ gạch ngang mảnh hơn */}
-              <Divider />
-
+x
               {/* Giá cuối cùng */}
               <View className="flex-row items-center justify-between">
                 <Text className="font-inter-bold text-[15px] text-slate-900">

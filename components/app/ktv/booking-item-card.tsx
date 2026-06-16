@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View,  Pressable, Linking, Alert } from 'react-native';
 import { Icon } from '@/components/ui/icon';
 import { DollarSign, MapPin, Navigation2, Timer, User, MessageCircle, Map, Phone } from 'lucide-react-native';
@@ -13,21 +13,50 @@ import { cn, formatDistance, openMap } from '@/lib/utils';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import { useGetRoomChat } from '@/features/chat/hooks';
 
+const formatCountdown = (deadline?: string | null) => {
+  if (!deadline) return null;
+
+  const diff = dayjs(deadline).diff(dayjs(), 'second');
+  if (diff <= 0) return '00:00';
+
+  const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+  const seconds = (diff % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
+
 export interface BookingItemProps {
   item: BookingItem;
   onPress?: (e: BookingItem) => void;
   calculateDistance: ReturnType<typeof useCalculateDistance>;
   joinRoomChat: ReturnType<typeof useGetRoomChat>;
   onApplyNow?: (e: BookingItem) => void;
+  onConfirmNow?: (e: BookingItem) => void;
   applying?: boolean;
+  confirming?: boolean;
 }
 
-export default function BookingItemKtv({ item, onPress, calculateDistance, joinRoomChat, onApplyNow, applying = false }: BookingItemProps) {
+export default function BookingItemKtv({
+  item,
+  onPress,
+  calculateDistance,
+  joinRoomChat,
+  onApplyNow,
+  onConfirmNow,
+  applying = false,
+  confirming = false,
+}: BookingItemProps) {
   const { t } = useTranslation();
 
   const styles = getBookingStatusStyle(item.status);
   const isApplicationBooking = item.status === _BookingStatus.OPEN_FOR_APPLICATION;
-  const applicationDisabled = applying || item.has_applied || item.application_status === 1;
+  const isOriginalKtv = !!item.is_original_ktv;
+  const hasApplied = !!item.has_applied || item.application_status === 1;
+  const applicationDisabled = applying || hasApplied;
+  const confirmDisabled = confirming;
+  const actionDeadline = isApplicationBooking || item.status === _BookingStatus.WAITING_KTV_CONFIRM
+    ? item.ktv_confirm_deadline_at
+    : null;
+  const [countdown, setCountdown] = useState<string | null>(formatCountdown(actionDeadline));
 
   const distance = useMemo(() => {
     if (item?.lat && item?.lng) {
@@ -38,6 +67,20 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
     }
     return null;
   }, [calculateDistance, item.lat, item.lng]);
+
+  useEffect(() => {
+    if (!actionDeadline) {
+      setCountdown(null);
+      return;
+    }
+
+    setCountdown(formatCountdown(actionDeadline));
+    const timer = setInterval(() => {
+      setCountdown(formatCountdown(actionDeadline));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [actionDeadline]);
 
   // {distance ? formatDistance(distance) : '-'}
 
@@ -107,6 +150,14 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
           </View>
         ) : null}
 
+        {countdown ? (
+          <View className="mt-1.5 self-start rounded-full bg-amber-50 px-2.5 py-1">
+            <Text className="font-inter-semibold text-[11px] text-amber-700">
+              {t('booking.confirm_deadline_label', { time: countdown })}
+            </Text>
+          </View>
+        ) : null}
+
         <View className="mt-2 flex-row flex-wrap gap-1.5">
           {item.can_open_map ? (
             <Pressable
@@ -123,7 +174,21 @@ export default function BookingItemKtv({ item, onPress, calculateDistance, joinR
               </Text>
             </Pressable>
           ) : null}
-          {isApplicationBooking ? (
+          {isApplicationBooking && isOriginalKtv ? (
+            <Pressable
+              disabled={confirmDisabled}
+              className={cn(
+                'min-w-[92px] flex-1 flex-row items-center justify-center rounded-md px-2 py-1.5',
+                confirmDisabled ? 'bg-slate-300' : 'bg-primary-color-2'
+              )}
+              onPress={() => onConfirmNow?.(item)}
+            >
+              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
+                {confirming ? t('common.loading') : t('booking.confirm_booking_action')}
+              </Text>
+            </Pressable>
+          ) : null}
+          {isApplicationBooking && !isOriginalKtv ? (
             <Pressable
               disabled={applicationDisabled}
               className={cn(
