@@ -337,7 +337,6 @@ export default function BookingDetails() {
           {/* Bảng tính giá */}
           <View className="px-4">
             <View className="mb-4 rounded-xl border border-slate-50 bg-white p-5">
-x
               {/* Giá cuối cùng */}
               <View className="flex-row items-center justify-between">
                 <Text className="font-inter-bold text-[15px] text-slate-900">
