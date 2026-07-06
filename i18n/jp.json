@@ -229,12 +229,17 @@
       "PAYMENT_KTV_EARN_TRANSPORT": "移動収入",
       "REFUND_CUSTOMER_TRANSPORT": "予約キャンセル時の返金",
       "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "交通費の返金",
+      "SUBTRACT_MONEY_DISCOUNT_SERVICE": "割引分の入金",
+      "REFUND_MONEY_DISCOUNT_SERVICE": "割引分の取り消し",
+      "DEPOSIT_ALIPAY_PAY": "Alipayでチャージ",
       "DEPOSIT_WECHAT_ALIPAY": "Alipayでチャージ"
     },
     "transaction_status": {
       "PENDING": "処理待ち",
       "COMPLETED": "完了",
-      "FAILED": "失敗"
+      "FAILED": "失敗",
+      "CANCELLED": "キャンセル",
+      "REFUNDED": "返金済み"
     },
     "gender": {
       "MALE": "男性",
@@ -618,6 +623,12 @@
     "alipay_scan_instruction": "Alipayアプリを開いてQRコードをスキャンして支払いを行ってください",
     "amount": "金額",
     "transfer_note": "振込内容",
+    "transaction_status_title": "取引ステータス",
+    "transaction_information": "取引情報",
+    "payment_instruction": "支払い案内",
+    "point_amount": "ポイント数",
+    "balance_after_transaction": "取引後残高",
+    "expired_at": "有効期限",
     "note_important": "この内容を正確に入力してください",
     "processing_transaction": "システムがWeChat支払いを処理中です。このプロセスには15〜30分かかる場合があります",
     "processing_transaction_alipay": "システムがAlipay支払いを処理中です。このプロセスには15〜30分かかる場合があります",

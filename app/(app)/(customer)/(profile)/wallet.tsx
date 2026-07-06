@@ -22,6 +22,7 @@ export default function WalletScreen() {
     queryTransactionList,
     queryCouponUserList,
     goToDepositScreen,
+    goToTransactionStatusScreen,
     refresh,
   } = useWallet(_UserRole.CUSTOMER);
 
@@ -76,7 +77,13 @@ export default function WalletScreen() {
                 onRefresh={() => refresh()}
               />
             }
-            renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
+            renderItem={({ item }) => (
+              <TransactionItem
+                item={item}
+                key={item.id}
+                onPress={() => goToTransactionStatusScreen(item.id)}
+              />
+            )}
             ListEmptyComponent={<Empty />}
           />
         )}

@@ -53,7 +53,9 @@ export enum _TransactionType {
   PAYMENT_KTV_EARN_TRANSPORT = 15, // Nhận tiền từ di chuyển ( Cộng tiền KTV)
   REFUND_CUSTOMER_TRANSPORT = 16, // Hoàn tiền cho customer khi hủy booking
   PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL = 17, // thu hồi tiền thanh toán cho KTV khi hủy booking
-  DEPOSIT_WECHAT_ALIPAY = 20, // Nạp tiền qua Wechat Pay
+  SUBTRACT_MONEY_DISCOUNT_SERVICE = 18, // Trừ tiền giảm giá dịch vụ
+  REFUND_MONEY_DISCOUNT_SERVICE = 19, // Hoàn tiền giảm giá dịch vụ
+  DEPOSIT_ALIPAY_PAY = 20, // Nạp tiền qua Alipay
 }
 
 export const _TransactionTypeMap = {
@@ -76,25 +78,35 @@ export const _TransactionTypeMap = {
   [_TransactionType.REFUND_CUSTOMER_TRANSPORT]: 'enum.transaction_type.REFUND_CUSTOMER_TRANSPORT',
   [_TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL]:
     'enum.transaction_type.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL',
-  [_TransactionType.DEPOSIT_WECHAT_ALIPAY]: 'enum.transaction_type.DEPOSIT_WECHAT_ALIPAY',
+  [_TransactionType.SUBTRACT_MONEY_DISCOUNT_SERVICE]:
+    'enum.transaction_type.SUBTRACT_MONEY_DISCOUNT_SERVICE',
+  [_TransactionType.REFUND_MONEY_DISCOUNT_SERVICE]:
+    'enum.transaction_type.REFUND_MONEY_DISCOUNT_SERVICE',
+  [_TransactionType.DEPOSIT_ALIPAY_PAY]: 'enum.transaction_type.DEPOSIT_ALIPAY_PAY',
 };
 
 export enum _TransactionStatus {
   PENDING = 1,
   COMPLETED = 2,
   FAILED = 3,
+  CANCELLED = 4,
+  REFUNDED = 5,
 }
 
 export const _TransactionStatusColor = {
   [_TransactionStatus.PENDING]: DefaultColor.yellow[500],
   [_TransactionStatus.COMPLETED]: DefaultColor.green[500],
   [_TransactionStatus.FAILED]: DefaultColor.red[500],
+  [_TransactionStatus.CANCELLED]: DefaultColor.slate[500],
+  [_TransactionStatus.REFUNDED]: DefaultColor.blue[500],
 } as Record<_TransactionStatus, string>;
 
 export const _TransactionStatusMap = {
   [_TransactionStatus.PENDING]: 'enum.transaction_status.PENDING',
   [_TransactionStatus.COMPLETED]: 'enum.transaction_status.COMPLETED',
   [_TransactionStatus.FAILED]: 'enum.transaction_status.FAILED',
+  [_TransactionStatus.CANCELLED]: 'enum.transaction_status.CANCELLED',
+  [_TransactionStatus.REFUNDED]: 'enum.transaction_status.REFUNDED',
 };
 
 // Các loại giao dịch vào wallet
@@ -111,7 +123,8 @@ export const _TransactionInType = [
   _TransactionType.REFUND_CUSTOMER_TRANSPORT,
   _TransactionType.PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL,
   _TransactionType.PAYMENT_KTV_EARN_TRANSPORT,
-  _TransactionType.DEPOSIT_WECHAT_ALIPAY,
+  _TransactionType.SUBTRACT_MONEY_DISCOUNT_SERVICE,
+  _TransactionType.DEPOSIT_ALIPAY_PAY,
   _TransactionType.PAYMENT,
 ] as readonly _TransactionType[];
 
@@ -121,6 +134,7 @@ export const _TransactionOutType = [
   _TransactionType.PAYMENT,
   _TransactionType.RETRIEVE_PAYMENT_REFUND_KTV,
   _TransactionType.PAYMENT_FEE_TRANSPORT,
+  _TransactionType.REFUND_MONEY_DISCOUNT_SERVICE,
 ] as readonly _TransactionType[];
 
 // Các loại thông tin rút tiền

@@ -32,6 +32,8 @@ export type ListTransactionItem = {
 
 export type ListTransactionResponse = ResponseDataSuccessType<Paginator<ListTransactionItem>>;
 
+export type TransactionDetailKind = 'deposit_qr' | 'deposit_wechat' | 'deposit_alipay' | 'generic';
+
 export type ConfigPaymentItem = {
   currency_exchange_rate: string; // Tỷ giá đổi tiền giữa VND và point
   exchange_rate_vnd_cny: string; // Tỷ giá đổi tiền giữa VND và CNY
@@ -99,6 +101,24 @@ export type CheckTransactionRequest = {
 export type CheckTransactionResponse = ResponseDataSuccessType<{
   is_completed: boolean;
 }>;
+
+export type TransactionDetailItem = {
+  id: string;
+  type: _TransactionType;
+  money_amount: string;
+  exchange_rate_point: string;
+  point_amount: string;
+  balance_after: string | null;
+  status: _TransactionStatus;
+  transaction_code: string | null;
+  description: string | null;
+  created_at: string;
+  expired_at: string | null;
+  detail_kind: TransactionDetailKind;
+  payment_data: QRBankData | QRWechatData | AlipayData | null;
+};
+
+export type TransactionDetailResponse = ResponseDataSuccessType<TransactionDetailItem>;
 
 type InfoWithdrawConfigBank = {
   bank_bin: string;

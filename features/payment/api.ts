@@ -12,6 +12,7 @@ import {
   ListTransactionRequest,
   ListTransactionResponse,
   RequestWithdrawRequest,
+  TransactionDetailResponse,
   WalletResponse,
 } from '@/features/payment/types';
 import { ResponseSuccessType } from '@/lib/types';
@@ -27,6 +28,11 @@ const paymentApi = {
   // Lấy lịch sử giao dịch
   listTransaction: async (params: ListTransactionRequest): Promise<ListTransactionResponse> => {
     const response = await client.get(`${defaultUri}/transactions`, { params });
+    return response.data;
+  },
+  // Lấy chi tiết giao dịch
+  transactionDetail: async (id: string): Promise<TransactionDetailResponse> => {
+    const response = await client.get(`${defaultUri}/transactions/${id}`);
     return response.data;
   },
   // Lấy thông tin cấu hình thanh toán

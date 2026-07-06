@@ -2,12 +2,13 @@ import {
   useInfiniteTransactionList,
   useQueryInfoWithdraw,
   useQueryListBankInfo,
-  useTransactionPolling,
+  useTransactionDetail,
   useWalletQuery,
+  transactionDetailQueryKey,
 } from '@/features/payment/hooks/use-query';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import type { Href } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   useConfigPaymentMutation,
   useCreateWithdrawInfoMutation,
@@ -19,17 +20,20 @@ import { useWalletStore } from '@/features/payment/stores';
 import { useApplicationStore } from '@/features/app/stores';
 import useErrorToast from '@/features/app/hooks/use-error-toast';
 import {
-  AlipayData,
   ConfigPaymentItem,
   CreateWithdrawInfoRequest,
   DepositRequest,
   ListTransactionRequest,
-  QRBankData,
-  QRWechatData,
   RequestWithdrawRequest,
+  TransactionDetailItem,
 } from '@/features/payment/types';
 import { useForm } from 'react-hook-form';
-import { _PaymentType, _UserWithdrawInfoType } from '@/features/payment/consts';
+import {
+  _PaymentType,
+  _TransactionStatus,
+  _TransactionType,
+  _UserWithdrawInfoType,
+} from '@/features/payment/consts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -39,8 +43,7 @@ import { getMessageError } from '@/lib/utils';
 import { Alert } from 'react-native';
 import { _UserRole } from '@/features/auth/const';
 import useResetNav from '@/features/app/hooks/use-reset-nav';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useBookingStore } from '@/features/booking/stores';
+import { useQueryClient } from '@tanstack/react-query';
 
 /**
  * Hook dùng cho màn danh sách giao dịch
@@ -63,6 +66,67 @@ export const useGetTransactionList = (params: ListTransactionRequest, enabled?: 
     data,
     pagination,
   };
+};
+
+const getDepositPathByRole = (useFor: _UserRole): Href => {
+  switch (useFor) {
+    case _UserRole.CUSTOMER:
+      return '/(app)/(customer)/(profile)/deposit';
+    case _UserRole.KTV:
+      return '/(app)/(ktv)/(service)/deposit';
+    case _UserRole.AGENCY:
+      return '/(app)/(agency)/(service)/deposit';
+  }
+};
+
+const getWalletPathByRole = (useFor: _UserRole): Href => {
+  switch (useFor) {
+    case _UserRole.CUSTOMER:
+      return '/(app)/(customer)/(profile)/wallet';
+    case _UserRole.KTV:
+      return '/(app)/(ktv)/(service)/wallet';
+    case _UserRole.AGENCY:
+      return '/(app)/(agency)/(tab)/wallet';
+  }
+};
+
+const getTransactionStatusPathByRole = (useFor: _UserRole): Href => {
+  switch (useFor) {
+    case _UserRole.CUSTOMER:
+      return '/(app)/(customer)/(profile)/transaction-status' as Href;
+    case _UserRole.KTV:
+      return '/(app)/(ktv)/(service)/transaction-status' as Href;
+    case _UserRole.AGENCY:
+      return '/(app)/(agency)/(service)/transaction-status' as Href;
+  }
+};
+
+const getTransactionTypeByPaymentType = (paymentType: _PaymentType): _TransactionType => {
+  switch (paymentType) {
+    case _PaymentType.QR_BANKING:
+      return _TransactionType.DEPOSIT_QR_CODE;
+    case _PaymentType.WECHAT_PAY:
+      return _TransactionType.DEPOSIT_WECHAT_PAY;
+    case _PaymentType.ALI_PAY:
+      return _TransactionType.DEPOSIT_ALIPAY_PAY;
+    default:
+      return _TransactionType.DEPOSIT_QR_CODE;
+  }
+};
+
+const getDetailKindByPaymentType = (
+  paymentType: _PaymentType
+): TransactionDetailItem['detail_kind'] => {
+  switch (paymentType) {
+    case _PaymentType.QR_BANKING:
+      return 'deposit_qr';
+    case _PaymentType.WECHAT_PAY:
+      return 'deposit_wechat';
+    case _PaymentType.ALI_PAY:
+      return 'deposit_alipay';
+    default:
+      return 'generic';
+  }
 };
 
 /**
@@ -137,17 +201,7 @@ export const useWallet = (useFor: _UserRole) => {
     mutateConfigPayment(undefined, {
       onSuccess: (res) => {
         setConfigPayment(res.data);
-        switch (useFor) {
-          case _UserRole.CUSTOMER:
-            router.push('/(app)/(customer)/(profile)/deposit');
-            break;
-          case _UserRole.KTV:
-            router.push('/(app)/(ktv)/(service)/deposit');
-            break;
-          case _UserRole.AGENCY:
-            router.push('/(app)/(agency)/(service)/deposit');
-            break;
-        }
+        router.push(getDepositPathByRole(useFor));
       },
       onError: (err) => {
         handleError(err);
@@ -158,6 +212,16 @@ export const useWallet = (useFor: _UserRole) => {
     });
   };
 
+  const goToTransactionStatusScreen = (transactionId: string) => {
+    router.push({
+      pathname: getTransactionStatusPathByRole(useFor),
+      params: {
+        transactionId,
+        origin: 'history',
+      },
+    } as Href);
+  };
+
   return {
     tab,
     setTab,
@@ -165,6 +229,7 @@ export const useWallet = (useFor: _UserRole) => {
     queryTransactionList,
     queryCouponUserList,
     goToDepositScreen,
+    goToTransactionStatusScreen,
     refresh,
   };
 };
@@ -172,22 +237,13 @@ export const useWallet = (useFor: _UserRole) => {
 /**
  * Hook dùng cho màn nạp tiền
  */
-export const useDeposit = () => {
+export const useDeposit = (useFor: _UserRole) => {
   const configPayment = useWalletStore((state) => state.configPayment);
   const depositContext = useWalletStore((state) => state.depositContext);
-  const setDepositContext = useWalletStore((state) => state.setDepositContext);
   const setLoading = useApplicationStore((state) => state.setLoading);
   const handleError = useErrorToast();
+  const queryClient = useQueryClient();
   const { t } = useTranslation();
-
-  // State lưu trữ dữ liệu QRBankData khi nạp tiền qua VietQR
-  const setTransactionId = useWalletStore((state) => state.setTransactionId);
-  const setQrBankData = useWalletStore((state) => state.setQrBankData);
-  // State lưu trữ dữ liệu QRWechatData khi nạp tiền qua Wechat Pay
-  const setQrWechatData = useWalletStore((state) => state.setQrWechatData);
-  // State lưu trữ dữ liệu AlipayData khi nạp tiền qua Alipay
-  const setAlipayData = useWalletStore((state) => state.setAlipayData);
-  const refreshWallet = useWalletStore((state) => state.refreshWallet);
 
   // Mutate function dùng để gọi API nạp tiền
   const { mutate: mutateDeposit } = useDepositMutation();
@@ -237,24 +293,42 @@ export const useDeposit = () => {
     mutateDeposit(data, {
       onSuccess: (res) => {
         const resData = res.data;
-        setTransactionId(resData.transaction_id);
-        // Tùy vào payment_type, có thể là QRBankData hoặc ZaloPayData hoặc MomoPayData
-        switch (data.payment_type) {
-          case _PaymentType.QR_BANKING:
-            const qrBankData = resData.data_payment as QRBankData;
-            setQrBankData(qrBankData);
-            break;
-          case _PaymentType.WECHAT_PAY:
-            const qrWechatData = resData.data_payment as QRWechatData;
-            setQrWechatData(qrWechatData);
-            break;
-          case _PaymentType.ALI_PAY:
-            const alipayData = resData.data_payment as AlipayData;
-            setAlipayData(alipayData);
-            break;
-          default:
-            break;
-        }
+        const moneyAmount = String(
+          (resData.data_payment as { amount?: string | number })?.amount ?? data.amount
+        );
+        const exchangeRatePoint = String(configPayment?.currency_exchange_rate ?? '1');
+        const pointAmount =
+          Number(exchangeRatePoint) > 0
+            ? String(Number(moneyAmount) / Number(exchangeRatePoint))
+            : '0';
+        const transactionDetail: TransactionDetailItem = {
+          id: resData.transaction_id,
+          type: getTransactionTypeByPaymentType(data.payment_type),
+          money_amount: moneyAmount,
+          exchange_rate_point: exchangeRatePoint,
+          point_amount: pointAmount,
+          balance_after: null,
+          status: _TransactionStatus.PENDING,
+          transaction_code: (resData.data_payment as { description?: string })?.description ?? null,
+          description: (resData.data_payment as { description?: string })?.description ?? null,
+          created_at: new Date().toISOString(),
+          expired_at: null,
+          detail_kind: getDetailKindByPaymentType(data.payment_type),
+          payment_data: resData.data_payment,
+        };
+
+        queryClient.setQueryData(transactionDetailQueryKey(resData.transaction_id), {
+          message: res.message,
+          data: transactionDetail,
+        });
+
+        router.replace({
+          pathname: getTransactionStatusPathByRole(useFor),
+          params: {
+            transactionId: resData.transaction_id,
+            origin: 'deposit',
+          },
+        } as Href);
       },
       onError: (err) => {
         handleError(err);
@@ -278,98 +352,89 @@ export const useDeposit = () => {
     }
   }, [depositContext?.amountPreset, form]);
 
-  const handleCloseWechat = useCallback(() => {
-    setQrWechatData(null);
-    setDepositContext(null);
-    refreshWallet(true);
-  }, [refreshWallet, setDepositContext, setQrWechatData]);
-
-  const hadnleCloseAlipay = useCallback(() => {
-    setAlipayData(null);
-    setDepositContext(null);
-    refreshWallet(true);
-  }, [refreshWallet, setAlipayData, setDepositContext]);
-
   return {
     configPayment: configPayment as ConfigPaymentItem,
     form,
     submitDeposit,
-    handleCloseWechat,
-    hadnleCloseAlipay,
   };
 };
 
-/**
- * Hook dùng cho màn kiểm tra nạp tiền qua QR Banking
- */
-export const useCheckPaymentQRCode = (useFor: _UserRole) => {
+export const useTransactionStatusScreen = (useFor: _UserRole) => {
   const { t } = useTranslation();
+  const handleError = useErrorToast();
   const { success } = useToast();
-  const bottomSheetRef = React.useRef<BottomSheetModal>(null);
+  const resetNav = useResetNav();
+  const queryClient = useQueryClient();
+  const refreshWallet = useWalletStore((state) => state.refreshWallet);
   const depositContext = useWalletStore((state) => state.depositContext);
   const setDepositContext = useWalletStore((state) => state.setDepositContext);
-  const pendingTopupBookingPayload = useBookingStore((state) => state.pending_topup_booking_payload);
+  const { transactionId, origin } = useLocalSearchParams<{
+    transactionId?: string;
+    origin?: 'deposit' | 'history';
+  }>();
 
-  // State lưu trữ dữ liệu QRBankData khi nạp tiền chuyển khoản
-  const qrBankData = useWalletStore((state) => state.qrBankData);
-  const transactionId = useWalletStore((state) => state.transactionId);
-  const setTransactionId = useWalletStore((state) => state.setTransactionId);
-  const setQrBankData = useWalletStore((state) => state.setQrBankData);
-
-  const refreshWallet = useWalletStore((state) => state.refreshWallet);
-
-  const { data: pollData } = useTransactionPolling(transactionId);
+  const normalizedOrigin = origin === 'deposit' ? 'deposit' : 'history';
+  const transactionIdValue = Array.isArray(transactionId) ? transactionId[0] : transactionId;
+  const transactionDetailQuery = useTransactionDetail(transactionIdValue ?? null);
+  const redirectedRef = useRef(false);
 
   useEffect(() => {
-    if (!bottomSheetRef.current) {
-      return;
-    }
-    if (transactionId && qrBankData) {
-      bottomSheetRef.current?.present();
-    }
-  }, [transactionId, qrBankData]);
-
-  const resetNav = useResetNav();
-
-  useEffect(() => {
-    // Kiểm tra nếu is_completed = true
-    if (pollData?.data?.is_completed) {
-      // 1. Thông báo thành công
-      success({
-        message: t('payment.success.deposit'),
-      });
-      closeModal();
-      refreshWallet(true);
-      switch (useFor) {
-        case _UserRole.KTV:
-          resetNav('/(app)/(ktv)/(service)/wallet');
-          break;
-        case _UserRole.CUSTOMER:
-          if (depositContext?.source === 'booking_topup' && pendingTopupBookingPayload) {
-            setDepositContext(null);
-            resetNav((depositContext.returnPath || '/(app)/(customer)/(service)/service-booking') as Href);
-            break;
-          }
-          resetNav('/(app)/(customer)/(profile)/wallet');
-          break;
-        case _UserRole.AGENCY:
-          resetNav('/(app)/(agency)/(tab)/wallet');
-          break;
-        default:
-          break;
+    if (transactionDetailQuery.error) {
+      handleError(transactionDetailQuery.error);
+      if (!transactionDetailQuery.data) {
+        router.back();
       }
     }
-  }, [depositContext, pendingTopupBookingPayload, pollData?.data, resetNav, setDepositContext, success, t, useFor]);
+  }, [handleError, transactionDetailQuery.data, transactionDetailQuery.error]);
 
-  const closeModal = () => {
-    setTransactionId(null);
-    setQrBankData(null);
-    bottomSheetRef.current?.dismiss();
-  };
+  useEffect(() => {
+    const detail = transactionDetailQuery.data?.data;
+    if (!detail || normalizedOrigin !== 'deposit' || redirectedRef.current) {
+      return;
+    }
+    if (detail.status !== _TransactionStatus.COMPLETED) {
+      return;
+    }
+
+    redirectedRef.current = true;
+    success({
+      message: t('payment.success.deposit'),
+    });
+    refreshWallet(true);
+    queryClient.invalidateQueries({
+      queryKey: ['paymentApi-myWallet'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['paymentApi-listTransaction'],
+    });
+
+    if (useFor === _UserRole.CUSTOMER && depositContext?.source === 'booking_topup') {
+      const returnPath = (depositContext.returnPath ||
+        '/(app)/(customer)/(service)/service-booking') as Href;
+      setDepositContext(null);
+      resetNav(returnPath);
+      return;
+    }
+
+    setDepositContext(null);
+    resetNav(getWalletPathByRole(useFor));
+  }, [
+    depositContext,
+    normalizedOrigin,
+    queryClient,
+    refreshWallet,
+    resetNav,
+    setDepositContext,
+    success,
+    t,
+    transactionDetailQuery.data?.data,
+    useFor,
+  ]);
+
   return {
-    bottomSheetRef,
-    closeModal,
-    qrBankData,
+    origin: normalizedOrigin,
+    transactionId: transactionIdValue ?? null,
+    transactionDetailQuery,
   };
 };
 

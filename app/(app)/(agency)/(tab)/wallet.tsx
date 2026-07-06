@@ -11,9 +11,13 @@ export default function WalletScreen() {
   const { t } = useTranslation();
   const [visibleWithdraw, setVisibleWithdraw] = useState(false);
 
-  const { queryWallet, queryTransactionList, goToDepositScreen, refresh } = useWallet(
-    _UserRole.AGENCY
-  );
+  const {
+    queryWallet,
+    queryTransactionList,
+    goToDepositScreen,
+    goToTransactionStatusScreen,
+    refresh,
+  } = useWallet(_UserRole.AGENCY);
   return (
     <>
       <View className="flex-1 bg-slate-50">
@@ -54,7 +58,13 @@ export default function WalletScreen() {
               onRefresh={() => refresh()}
             />
           }
-          renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
+          renderItem={({ item }) => (
+            <TransactionItem
+              item={item}
+              key={item.id}
+              onPress={() => goToTransactionStatusScreen(item.id)}
+            />
+          )}
           ListEmptyComponent={<Empty />}
         />
       </View>

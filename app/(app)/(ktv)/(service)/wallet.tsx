@@ -1,4 +1,4 @@
-import { FlatList, RefreshControl} from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import HeaderBack from '@/components/header-back';
@@ -13,9 +13,13 @@ export default function WalletScreen() {
   const { t } = useTranslation();
   const [visibleWithdraw, setVisibleWithdraw] = useState(false);
 
-  const { queryWallet, queryTransactionList, goToDepositScreen, refresh } = useWallet(
-    _UserRole.KTV
-  );
+  const {
+    queryWallet,
+    queryTransactionList,
+    goToDepositScreen,
+    goToTransactionStatusScreen,
+    refresh,
+  } = useWallet(_UserRole.KTV);
 
   return (
     <>
@@ -57,7 +61,13 @@ export default function WalletScreen() {
               onRefresh={() => refresh()}
             />
           }
-          renderItem={({ item }) => <TransactionItem item={item} key={item.id} />}
+          renderItem={({ item }) => (
+            <TransactionItem
+              item={item}
+              key={item.id}
+              onPress={() => goToTransactionStatusScreen(item.id)}
+            />
+          )}
           ListEmptyComponent={<Empty />}
         />
       </SafeAreaView>
@@ -66,4 +76,3 @@ export default function WalletScreen() {
     </>
   );
 }
-

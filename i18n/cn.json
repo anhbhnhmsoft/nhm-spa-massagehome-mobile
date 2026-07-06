@@ -231,12 +231,17 @@
       "PAYMENT_KTV_EARN_TRANSPORT": "支付运输奖励",
       "REFUND_CUSTOMER_TRANSPORT": "退款客户运输",
       "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "退款KTV运输",
+      "SUBTRACT_MONEY_DISCOUNT_SERVICE": "服务折扣入账",
+      "REFUND_MONEY_DISCOUNT_SERVICE": "服务折扣撤回",
+      "DEPOSIT_ALIPAY_PAY": "通过支付宝充值",
       "DEPOSIT_WECHAT_ALIPAY": "通过支付宝充值"
     },
     "transaction_status": {
       "PENDING": "处理中",
       "COMPLETED": "已完成",
-      "FAILED": "失败"
+      "FAILED": "失败",
+      "CANCELLED": "已取消",
+      "REFUNDED": "已退款"
     },
     "gender": {
       "MALE": "男",
@@ -619,6 +624,12 @@
     "processing_transaction_alipay": "系统正在处理支付宝付款。此过程可能需要15至30分钟",
     "amount": "金额",
     "transfer_note": "转账备注",
+    "transaction_status_title": "交易状态",
+    "transaction_information": "交易信息",
+    "payment_instruction": "支付说明",
+    "point_amount": "Point 数量",
+    "balance_after_transaction": "交易后余额",
+    "expired_at": "过期时间",
     "note_important": "请务必填写正确的转账备注",
     "processing_transaction": "微信支付正在处理中，系统确认可能需要 15–30 分钟",
     "exchange_rate_wechat_pay": "兑换率: {{priceCny}} CNY",

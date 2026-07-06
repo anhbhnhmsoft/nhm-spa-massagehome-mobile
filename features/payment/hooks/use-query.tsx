@@ -1,7 +1,14 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import paymentApi from '@/features/payment/api';
-import { ListTransactionRequest, ListTransactionResponse } from '@/features/payment/types';
+import {
+  ListTransactionRequest,
+  ListTransactionResponse,
+  TransactionDetailResponse,
+} from '@/features/payment/types';
+import { _TransactionStatus } from '@/features/payment/consts';
 
+export const transactionDetailQueryKey = (transactionId: string | null) =>
+  ['paymentApi-transactionDetail', transactionId] as const;
 
 /**
  * Lấy thông tin ví
@@ -10,9 +17,9 @@ export const useWalletQuery = () => {
   return useQuery({
     queryKey: ['paymentApi-myWallet'],
     queryFn: () => paymentApi.myWallet(),
-    select: res => res.data,
+    select: (res) => res.data,
   });
-}
+};
 
 /**
  * Lấy thông tin giao dịch theo transactionId - dùng polling để kiểm tra trạng thái giao dịch
@@ -43,14 +50,30 @@ export const useTransactionPolling = (transactionId: string | null) => {
   });
 };
 
+export const useTransactionDetail = (transactionId: string | null) => {
+  return useQuery<TransactionDetailResponse>({
+    queryKey: transactionDetailQueryKey(transactionId),
+    queryFn: async () => {
+      return await paymentApi.transactionDetail(transactionId || '');
+    },
+    enabled: !!transactionId,
+    refetchInterval: (query) => {
+      const data = query.state.data?.data;
+      if (!data || data.status !== _TransactionStatus.PENDING) {
+        return false;
+      }
+      return 5000;
+    },
+    refetchOnWindowFocus: true,
+  });
+};
+
 /**
  * Lấy danh sách giao dịch
  * @param params
  * @param enabled
  */
-export const useInfiniteTransactionList = (
-  params: ListTransactionRequest, enabled?: boolean
-) => {
+export const useInfiniteTransactionList = (params: ListTransactionRequest, enabled?: boolean) => {
   return useInfiniteQuery<ListTransactionResponse>({
     queryKey: ['paymentApi-listTransaction', params],
     queryFn: async ({ pageParam }) => {
@@ -80,16 +103,16 @@ export const useQueryInfoWithdraw = (enabled?: boolean) => {
   return useQuery({
     queryKey: ['paymentApi-infoWithdraw'],
     queryFn: () => paymentApi.infoWithdraw(),
-    select: res => res.data,
+    select: (res) => res.data,
     enabled,
   });
-}
+};
 
 export const useQueryListBankInfo = (enabled?: boolean) => {
   return useQuery({
     queryKey: ['paymentApi-listBankInfo'],
     queryFn: () => paymentApi.listBankInfo(),
-    select: res => res.data,
+    select: (res) => res.data,
     enabled,
   });
-}
+};

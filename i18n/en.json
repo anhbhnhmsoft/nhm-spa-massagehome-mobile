@@ -231,12 +231,17 @@
       "PAYMENT_KTV_EARN_TRANSPORT": "Earn Transport Fee",
       "REFUND_CUSTOMER_TRANSPORT": "Refund Customer Transport",
       "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Refund KTV Transport",
+      "SUBTRACT_MONEY_DISCOUNT_SERVICE": "Discount credit",
+      "REFUND_MONEY_DISCOUNT_SERVICE": "Discount reversal",
+      "DEPOSIT_ALIPAY_PAY": "Deposit via Alipay",
       "DEPOSIT_WECHAT_ALIPAY": "Deposit via Alipay"
     },
     "transaction_status": {
       "PENDING": "Pending",
       "COMPLETED": "Completed",
-      "FAILED": "Failed"
+      "FAILED": "Failed",
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded"
     },
     "gender": {
       "MALE": "Male",
@@ -621,6 +626,12 @@
     "processing_transaction_alipay": "The system is processing the Alipay payment. This process may take 15–30 minutes",
     "amount": "Amount",
     "transfer_note": "Transfer note",
+    "transaction_status_title": "Transaction Status",
+    "transaction_information": "Transaction Information",
+    "payment_instruction": "Payment Instructions",
+    "point_amount": "Point Amount",
+    "balance_after_transaction": "Balance After Transaction",
+    "expired_at": "Expires At",
     "note_important": "Please enter this note exactly as shown",
     "processing_transaction": "WeChat payment is being processed. This may take 15–30 minutes to complete",
     "exchange_rate_wechat_pay": "Exchange Rate: {{priceCny}} CNY",

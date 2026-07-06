@@ -7,6 +7,7 @@ export default function ServiceAgencyLayout() {
       <FocusAwareStatusBar hidden={true} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="deposit" />
+        <Stack.Screen name="transaction-status" />
         <Stack.Screen name="affiliate" />
         <Stack.Screen name="edit-info" />
       </Stack>

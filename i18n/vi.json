@@ -1,10 +1,10 @@
 {
   "common": {
-    "note":"Ghi chú",
+    "note": "Ghi chú",
     "no_phone": "Không có số điện thoại",
-    "create":"Tạo",
-    "pending":"Đang chờ",
-    "assigned_user":"Nhân viên phụ trách",
+    "create": "Tạo",
+    "pending": "Đang chờ",
+    "assigned_user": "Nhân viên phụ trách",
     "no_phone_message": "Ngươi dùng này không có số điện thoại.",
     "call": "Gọi điện thoại",
     "login": "Đăng nhập",
@@ -231,12 +231,17 @@
       "PAYMENT_KTV_EARN_TRANSPORT": "Nhận tiền từ di chuyển",
       "REFUND_CUSTOMER_TRANSPORT": "Hoàn tiền khi hủy booking",
       "PAYMENT_REFUND_KTV_FOR_BOOKING_CANCEL": "Hoàn tiền di chuyển",
+      "SUBTRACT_MONEY_DISCOUNT_SERVICE": "Cộng tiền giảm giá dịch vụ",
+      "REFUND_MONEY_DISCOUNT_SERVICE": "Thu hồi tiền giảm giá dịch vụ",
+      "DEPOSIT_ALIPAY_PAY": "Nạp tiền qua Alipay",
       "DEPOSIT_WECHAT_ALIPAY": "Nạp tiền qua Alipay"
     },
     "transaction_status": {
       "PENDING": "Chờ xử lý",
       "COMPLETED": "Hoàn thành",
-      "FAILED": "Thất bại"
+      "FAILED": "Thất bại",
+      "CANCELLED": "Đã hủy",
+      "REFUNDED": "Đã hoàn tiền"
     },
     "gender": {
       "MALE": "Nam",
@@ -620,6 +625,12 @@
     "alipay_scan_instruction": "Mở ứng dụng Alipay và quét mã QR để thanh toán",
     "amount": "Số tiền",
     "transfer_note": "Nội dung chuyển khoản",
+    "transaction_status_title": "Trạng thái giao dịch",
+    "transaction_information": "Thông tin giao dịch",
+    "payment_instruction": "Hướng dẫn thanh toán",
+    "point_amount": "Số point",
+    "balance_after_transaction": "Số dư sau giao dịch",
+    "expired_at": "Hết hạn lúc",
     "note_important": "Vui lòng nhập chính xác nội dung này",
     "processing_transaction": "Hệ thống đang xử lý thanh toán WeChat. Quá trình này có thể mất từ 15–30 phút",
     "processing_transaction_alipay": "Hệ thống đang xử lý thanh toán Alipay. Quá trình này có thể mất từ 15–30 phút",

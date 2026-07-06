@@ -10,6 +10,7 @@ export default function ServiceKtvLayout() {
         <Stack.Screen name="edit-info" />
         <Stack.Screen name="wallet" />
         <Stack.Screen name="deposit" />
+        <Stack.Screen name="transaction-status" />
         <Stack.Screen name="take-picture-image" />
         <Stack.Screen name="affiliate" />
         <Stack.Screen name="config-schedule" />

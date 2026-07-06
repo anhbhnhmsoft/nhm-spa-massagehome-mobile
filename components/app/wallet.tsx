@@ -35,7 +35,6 @@ import { Controller } from 'react-hook-form';
 import SelectModal from '@/components/select-modal';
 import { cn, formatBalance, formatCurrency } from '@/lib/utils';
 import {
-
   _QUICK_WITHDRAW_AMOUNTS,
   _TransactionInType,
   _TransactionOutType,
@@ -52,7 +51,7 @@ import GradientBackground from '@/components/styles/gradient-background';
 import dayjs from 'dayjs';
 import { CouponItem as CouponServiceItem, CouponUserListItem } from '@/features/service/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {Text} from '@/components/ui/text'
+import { Text } from '@/components/ui/text';
 
 // Modal Rút Tiền
 type WithdrawModalProps = {
@@ -88,7 +87,7 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
             <View className="w-full rounded-t-3xl bg-white shadow-2xl" style={{ height: '80%' }}>
               {/* Header Modal */}
               <View className="flex-row items-center justify-between border-b border-gray-100 p-5">
-                <Text className="text-lg font-inter-bold text-gray-800">
+                <Text className="font-inter-bold text-lg text-gray-800">
                   {t('payment.withdraw.title_modal')}
                 </Text>
                 <TouchableOpacity
@@ -169,13 +168,12 @@ export const WithdrawModal = ({ isVisible, onClose }: WithdrawModalProps) => {
               {/* Footer: Thêm mới */}
               <View
                 style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-                className="border-t border-gray-100 p-5"
-              >
+                className="border-t border-gray-100 p-5">
                 <TouchableOpacity
                   className="flex-row items-center justify-center rounded-xl bg-primary-color-2 py-3.5"
                   onPress={() => setShowModalCreateInfo(true)}>
                   <Plus size={22} color="white" />
-                  <Text className="ml-2 text-base font-inter-bold text-white">
+                  <Text className="ml-2 font-inter-bold text-base text-white">
                     {t('payment.withdraw.add_new_account')}
                   </Text>
                 </TouchableOpacity>
@@ -259,7 +257,7 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
               <View className="h-[85%] w-full rounded-t-3xl bg-white shadow-2xl">
                 {/* Header */}
                 <View className="flex-row items-center justify-between border-b border-gray-100 p-5">
-                  <Text className="text-xl font-inter-bold text-gray-800">
+                  <Text className="font-inter-bold text-xl text-gray-800">
                     {t('payment.withdraw.add_new_account')}
                   </Text>
                   <TouchableOpacity
@@ -384,8 +382,7 @@ const CreateInfoWithdrawModal: FC<CreateInfoWithdrawModalProps> = ({
                 {/* Footer: Submit Button */}
                 <View
                   style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-                  className="border-t border-gray-100 bg-white p-5"
-                >
+                  className="border-t border-gray-100 bg-white p-5">
                   <TouchableOpacity
                     onPress={submitCreateWithdrawInfo}
                     disabled={loading}
@@ -449,9 +446,13 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
       feeAmount,
       exchangeRate,
       withdrawMoney,
-      feePercent
+      feePercent,
     };
-  }, [watchedAmount, configPayment?.currency_exchange_rate, configPayment?.fee_withdraw_percentage]);
+  }, [
+    watchedAmount,
+    configPayment?.currency_exchange_rate,
+    configPayment?.fee_withdraw_percentage,
+  ]);
 
   return (
     <ModalToast
@@ -533,7 +534,8 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
                     </View>
                     <View className="mt-4 flex-row flex-wrap gap-2">
                       <Text className="font-inter-bold text-base text-primary-color-1">
-                        {t('payment.withdraw.withdraw_fee')}: {formatBalance(Number(withdrawCalculation.feePercent))} %
+                        {t('payment.withdraw.withdraw_fee')}:{' '}
+                        {formatBalance(Number(withdrawCalculation.feePercent))} %
                       </Text>
                     </View>
                   </View>
@@ -563,16 +565,19 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
                 {/* Footer Submit */}
                 <View
                   style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-                  className="border-t border-gray-100 bg-white p-5"
-                >
-                  <View className="mb-2 flex-row justify-between items-center">
-                    <Text className="text-sm text-gray-500">{t('payment.withdraw.total_withdraw')}:</Text>
+                  className="border-t border-gray-100 bg-white p-5">
+                  <View className="mb-2 flex-row items-center justify-between">
+                    <Text className="text-sm text-gray-500">
+                      {t('payment.withdraw.total_withdraw')}:
+                    </Text>
                     <View className="flex-row items-center justify-center gap-2">
                       <Text className="font-inter-bold text-lg text-gray-900">
-                        {withdrawCalculation.withdrawMoney ? formatBalance(withdrawCalculation.withdrawMoney) : '0'} {t('common.currency')}
+                        {withdrawCalculation.withdrawMoney
+                          ? formatBalance(withdrawCalculation.withdrawMoney)
+                          : '0'}{' '}
+                        {t('common.currency')}
                       </Text>
                     </View>
-
                   </View>
                   <TouchableOpacity
                     onPress={submitRequestWithdraw}
@@ -596,7 +601,6 @@ const CreateWithdrawTicketModal = ({ id, setId }: CreateWithdrawTicketModalProps
   );
 };
 
-
 // Header Wallet
 type HeaderWalletProps = {
   queryWallet: ReturnType<typeof useWallet>['queryWallet'];
@@ -608,15 +612,13 @@ type HeaderWalletProps = {
 };
 
 export const HeaderWallet = ({
-                        queryWallet,
-                        setTab,
-                        tab,
-                        t,
-                        goToDepositScreen,
-                        setVisibleWithdraw,
-                      }: HeaderWalletProps) => {
-
-
+  queryWallet,
+  setTab,
+  tab,
+  t,
+  goToDepositScreen,
+  setVisibleWithdraw,
+}: HeaderWalletProps) => {
   return (
     <View>
       {/* HEADER WALLET */}
@@ -640,12 +642,16 @@ export const HeaderWallet = ({
                   </Text>
                   <Text className="font-inter-bold text-sm text-white">{t('common.currency')}</Text>
                 </View>
-                {queryWallet.data?.frozen_balance && Number(queryWallet.data?.frozen_balance) > 0 && (
-                  <View className="flex-row items-end gap-1 mt-2">
-                    <Text className="text-xs text-slate-100 font-inter-italic">
-                      {t('wallet.frozen_balance')}: {formatBalance(queryWallet.data?.frozen_balance || 0)} {t('common.currency')}
-                  </Text>
-                </View>)}
+                {queryWallet.data?.frozen_balance &&
+                  Number(queryWallet.data?.frozen_balance) > 0 && (
+                    <View className="mt-2 flex-row items-end gap-1">
+                      <Text className="font-inter-italic text-xs text-slate-100">
+                        {t('wallet.frozen_balance')}:{' '}
+                        {formatBalance(queryWallet.data?.frozen_balance || 0)}{' '}
+                        {t('common.currency')}
+                      </Text>
+                    </View>
+                  )}
               </View>
             )}
           </View>
@@ -743,11 +749,21 @@ export const HeaderWallet = ({
 };
 
 // Transaction Item
-export const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
+export const TransactionItem = ({
+  item,
+  onPress,
+}: {
+  item: ListTransactionItem;
+  onPress?: () => void;
+}) => {
   const { t } = useTranslation();
 
   return (
-    <View className="shadow-xs flex-row items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
+    <TouchableOpacity
+      disabled={!onPress}
+      activeOpacity={0.85}
+      onPress={onPress}
+      className="shadow-xs flex-row items-center justify-between rounded-xl border border-slate-200 bg-white p-4">
       {/* Left: Icon & Title */}
       <View className="flex-1 flex-row items-center gap-3">
         <View
@@ -784,7 +800,7 @@ export const TransactionItem = ({ item }: { item: ListTransactionItem }) => {
           {dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss')}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -810,15 +826,14 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
   const isUsed = Boolean(coupon.is_used);
   const isOutOfQuantity = coupon.remaining_quantity !== null && coupon.remaining_quantity <= 0;
   const isInactive = isExpired || isUsed || isOutOfQuantity;
-  const remainingLabel = coupon.remaining_quantity === null
-    ? t('common.unlimited')
-    : `${coupon.remaining_quantity}`;
-  const usageLabel = coupon.discount_type === 'percentage'
-    ? t('common.max_discount')
-    : t('common.discount');
-  const usageValue = coupon.discount_type === 'percentage' && Number(coupon.max_discount) > 0
-    ? formatCurrency(coupon.max_discount)
-    : discountDisplay;
+  const remainingLabel =
+    coupon.remaining_quantity === null ? t('common.unlimited') : `${coupon.remaining_quantity}`;
+  const usageLabel =
+    coupon.discount_type === 'percentage' ? t('common.max_discount') : t('common.discount');
+  const usageValue =
+    coupon.discount_type === 'percentage' && Number(coupon.max_discount) > 0
+      ? formatCurrency(coupon.max_discount)
+      : discountDisplay;
   const statusLabel = isUsed
     ? t('booking.has_reviews')
     : isExpired
@@ -828,16 +843,13 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
         : t('common.active');
 
   return (
-    <View className={cn(
-      'overflow-hidden rounded-2xl border bg-white shadow-sm',
-      isInactive ? 'border-slate-200' : 'border-slate-100'
-    )}>
+    <View
+      className={cn(
+        'overflow-hidden rounded-2xl border bg-white shadow-sm',
+        isInactive ? 'border-slate-200' : 'border-slate-100'
+      )}>
       {coupon.banners ? (
-        <Image
-          source={{ uri: coupon.banners }}
-          className="h-32 w-full"
-          resizeMode="cover"
-        />
+        <Image source={{ uri: coupon.banners }} className="h-32 w-full" resizeMode="cover" />
       ) : (
         <View className="h-28 w-full bg-primary-color-2 px-4 py-4">
           <View className="flex-row items-start justify-between">
@@ -845,13 +857,13 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
               <Text className="font-inter-bold text-[11px] uppercase text-blue-100">
                 {coupon.code}
               </Text>
-              <Text className="mt-2 font-inter-extrabold text-[24px] text-white">{discountDisplay}</Text>
+              <Text className="mt-2 font-inter-extrabold text-[24px] text-white">
+                {discountDisplay}
+              </Text>
               <Text className="mt-1 text-[12px] text-blue-100">{t('common.discount')}</Text>
             </View>
-            <View className={cn(
-              'rounded-full px-3 py-1',
-              isInactive ? 'bg-white/20' : 'bg-white/15'
-            )}>
+            <View
+              className={cn('rounded-full px-3 py-1', isInactive ? 'bg-white/20' : 'bg-white/15')}>
               <Text className="font-inter-bold text-[11px] text-white">{statusLabel}</Text>
             </View>
           </View>
@@ -871,14 +883,13 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
             ) : null}
           </View>
           {!coupon.banners ? null : (
-            <View className={cn(
-              'rounded-full px-3 py-1',
-              isInactive ? 'bg-slate-100' : 'bg-blue-50'
-            )}>
-              <Text className={cn(
-                'font-inter-bold text-[11px]',
-                isInactive ? 'text-slate-500' : 'text-primary-color-2'
-              )}>
+            <View
+              className={cn('rounded-full px-3 py-1', isInactive ? 'bg-slate-100' : 'bg-blue-50')}>
+              <Text
+                className={cn(
+                  'font-inter-bold text-[11px]',
+                  isInactive ? 'text-slate-500' : 'text-primary-color-2'
+                )}>
                 {statusLabel}
               </Text>
             </View>
@@ -905,7 +916,9 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
 
           <View className="flex-row items-center justify-between">
             <Text className="text-[12px] text-slate-500">{t('common.used_count')}</Text>
-            <Text className="font-inter-semibold text-[13px] text-slate-700">{coupon.used_count}</Text>
+            <Text className="font-inter-semibold text-[13px] text-slate-700">
+              {coupon.used_count}
+            </Text>
           </View>
 
           <View className="flex-row items-center justify-between">
@@ -918,10 +931,11 @@ export const CouponItem = ({ item }: { item: CouponUserListItem }) => {
           <Text className="rounded-md bg-slate-100 px-2.5 py-1 font-inter-medium text-[12px] text-slate-600">
             {coupon.code}
           </Text>
-          <Text className={cn(
-            'font-inter-semibold text-[12px]',
-            isInactive ? 'text-slate-400' : 'text-primary-color-2'
-          )}>
+          <Text
+            className={cn(
+              'font-inter-semibold text-[12px]',
+              isInactive ? 'text-slate-400' : 'text-primary-color-2'
+            )}>
             {coupon.discount_type === 'percentage' ? '%' : t('common.currency')}
           </Text>
         </View>
