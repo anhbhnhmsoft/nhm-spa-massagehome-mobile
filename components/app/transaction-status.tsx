@@ -82,7 +82,28 @@ const PaymentImageCard = ({ uri, onSave }: { uri: string; onSave: () => void }) 
       setLoadingImage(false);
       return;
     }
+
     setLoadingImage(true);
+
+    let active = true;
+    const fallbackTimer = setTimeout(() => {
+      if (active) {
+        setLoadingImage(false);
+      }
+    }, 4000);
+
+    Image.prefetch(uri)
+      .catch(() => null)
+      .finally(() => {
+        if (active) {
+          setLoadingImage(false);
+        }
+      });
+
+    return () => {
+      active = false;
+      clearTimeout(fallbackTimer);
+    };
   }, [uri]);
 
   if (!uri) {
@@ -94,10 +115,12 @@ const PaymentImageCard = ({ uri, onSave }: { uri: string; onSave: () => void }) 
       <View className="items-center">
         <View className="relative rounded-xl border border-slate-100 bg-white p-2">
           <Image
+            key={uri}
             source={{ uri }}
             style={{ width: 176, height: 176 }}
             resizeMode="contain"
             onLoadStart={() => setLoadingImage(true)}
+            onLoad={() => setLoadingImage(false)}
             onLoadEnd={() => setLoadingImage(false)}
             onError={() => setLoadingImage(false)}
           />
@@ -228,8 +251,6 @@ export default function TransactionStatus({ useFor }: { useFor: _UserRole }) {
           gap: 12,
         }}
         showsVerticalScrollIndicator={false}>
-       
-
         {(detail.detail_kind === 'deposit_qr' ||
           detail.detail_kind === 'deposit_wechat' ||
           detail.detail_kind === 'deposit_alipay') && (
