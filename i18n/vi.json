@@ -312,6 +312,22 @@
     "save_success": "Đã cập nhật thông tin chuyên môn & địa điểm!",
     "save_error": "Có lỗi xảy ra khi lưu!"
   },
+  "service_request_form": {
+    "title": "Gửi yêu cầu dịch vụ cho CSKH",
+    "subtitle": "CSKH MasaHome sẽ tìm KTV phù hợp nhất theo yêu cầu của bạn",
+    "service_label": "Chọn Dịch Vụ Cần Phục Vụ",
+    "techniques_label": "Kỹ Thật Mong Muốn (Có thể chọn nhiều)",
+    "urgency_label": "Mức Độ Gấp",
+    "address_label": "Địa Chỉ Phục Vụ",
+    "address_placeholder": "Nhập địa chỉ nhà riêng/khách sạn của bạn...",
+    "note_label": "Ghi Chú Cho CSKH",
+    "note_placeholder": "Nhập thêm thông tin độ tuổi, yêu cầu đặc biệt...",
+    "submit_button": "Gửi Yêu Cầu Cho CSKH",
+    "submit_success": "Yêu cầu dịch vụ của bạn đã được gửi thành công!",
+    "proposals_title": "Đề xuất KTV từ CSKH",
+    "accept_button": "Đồng Ý Chốt Booking",
+    "reject_button": "Đổi KTV Khác"
+  },
   "tab": {
     "home": "Trang chủ",
     "services": "Dịch vụ",
@@ -1112,5 +1128,17 @@
   "danger_support": {
     "success": "Bạn đã gửi yêu cầu hỗ trợ!",
     "error": "Đã xảy ra lỗi, vui lòng thử lại sau"
+  },
+  "proactive_matching": {
+    "direct_invite_title": "Lời mời trực tiếp từ KTV gần đây",
+    "accept_and_book": "Đồng ý & Đặt lịch",
+    "reject": "Từ chối",
+    "note_placeholder": "Lời nhắn cho khách hàng...",
+    "send_invite": "Gửi lời mời",
+    "send_service_invite": "Gửi lời mời dịch vụ",
+    "nearby_customers": "Khách hàng đang tìm dịch vụ quanh bạn",
+    "km_away": "km",
+    "relative_area": "Khu vực gần bạn",
+    "customer_masked": "Khách hàng"
   }
 }

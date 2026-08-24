@@ -312,6 +312,22 @@
     "save_success": "Competency & locations updated successfully!",
     "save_error": "An error occurred while saving!"
   },
+  "service_request_form": {
+    "title": "Send Service Request to CSKH",
+    "subtitle": "MasaHome CSKH will find the best-matched KTV according to your requirements",
+    "service_label": "Select Service",
+    "techniques_label": "Desired Techniques (Multiple choices allowed)",
+    "urgency_label": "Urgency Level",
+    "address_label": "Service Location Address",
+    "address_placeholder": "Enter your home or hotel address...",
+    "note_label": "Note for CSKH",
+    "note_placeholder": "Enter additional requests or age preferences...",
+    "submit_button": "Submit Request to CSKH",
+    "submit_success": "Your service request was submitted successfully!",
+    "proposals_title": "CSKH Proposed KTVs",
+    "accept_button": "Accept & Confirm Booking",
+    "reject_button": "Request Another KTV"
+  },
   "tab": {
     "home": "Home",
     "services": "Services",
@@ -1109,5 +1125,17 @@
   "danger_support": {
     "success": "Your danger support request has been sent",
     "error": "An error occurred, please try again later"
+  },
+  "proactive_matching": {
+    "direct_invite_title": "Direct Invitation from Nearby KTV",
+    "accept_and_book": "Accept & Book",
+    "reject": "Decline",
+    "note_placeholder": "Message for customer...",
+    "send_invite": "Send Invitation",
+    "send_service_invite": "Send Service Invitation",
+    "nearby_customers": "Customers searching for service near you",
+    "km_away": "km",
+    "relative_area": "Area near you",
+    "customer_masked": "Customer"
   }
 }
