@@ -14,3 +14,17 @@ export type DashboardProfileCustomer = {
 };
 
 export type DashboardProfileResponse = ResponseDataSuccessType<DashboardProfileCustomer>;
+
+export type CustomerCrmPreferences = {
+  languages: string[];
+  province_id?: string | null;
+  district_id?: string | null;
+  ward_id?: string | null;
+  address_detail?: string | null;
+  preferred_services: string[];
+  preferred_techniques: string[];
+  preferred_time_slots: number[];
+  demand_status: number;
+};
+
+export type CustomerCrmPreferencesResponse = ResponseDataSuccessType<CustomerCrmPreferences>;

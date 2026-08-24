@@ -146,7 +146,34 @@ export type EditProfileKtvRequest = {
   new_pass?: string;
 };
 
-export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV>;
+export type KtvVerificationInfo = {
+  contact_phone?: string | null;
+  contact_verified: boolean;
+  portrait_verified: boolean;
+  portrait_verified_at?: string | null;
+  certificate_verified: boolean;
+  certificates: Array<{ id: string; file_path: string; uploaded_at?: string }>;
+  techniques: string[];
+  strength_service_ids: number[];
+  province_code?: string | null;
+  district_code?: string | null;
+  ward_code?: string | null;
+  priority_areas: string[];
+  service_locations: string[];
+};
+
+export type UpdateVerificationRequest = {
+  contact_phone?: string;
+  techniques?: string[];
+  strength_service_ids?: number[];
+  province_code?: string;
+  district_code?: string;
+  ward_code?: string;
+  priority_areas?: string[];
+  service_locations?: string[];
+};
+
+export type DetailInfoKTVResponse = ResponseDataSuccessType<DetailInfoKTV & { verification?: KtvVerificationInfo }>;
 
 export type QRCodeAgencyResponse = ResponseDataSuccessType<{ agency_id: string }>;
 

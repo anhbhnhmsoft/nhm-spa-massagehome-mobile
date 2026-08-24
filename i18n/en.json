@@ -281,7 +281,36 @@
       "PENDING": "Pending",
       "APPROVED": "Approved",
       "REJECTED": "Rejected"
+    },
+    "KtvTechnique": {
+      "acupressure": "Acupressure",
+      "massage": "Massage",
+      "therapy": "Therapy",
+      "stretching": "Stretching",
+      "aroma_relax": "Aroma Relaxation"
+    },
+    "KtvServiceLocation": {
+      "home": "Home / Apartment",
+      "hotel": "Hotel / Motel"
     }
+  },
+  "ktv_verification": {
+    "title": "KTV Verification & Competency Profile",
+    "verification_status": "MasaHome Verification Status",
+    "contact_phone": "Coordination Phone Number",
+    "portrait": "Portrait Verification",
+    "certificate": "Professional Certificate",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "verified_by_masahome": "Verified by MasaHome",
+    "unverified_videocall": "Video Call Unverified",
+    "certificates_count": "Verified ({{count}} certificates)",
+    "no_certificate": "None / Pending Approval",
+    "techniques": "Specialization Techniques",
+    "service_locations": "Service Locations",
+    "save_button": "Save Competency & Locations",
+    "save_success": "Competency & locations updated successfully!",
+    "save_error": "An error occurred while saving!"
   },
   "tab": {
     "home": "Home",

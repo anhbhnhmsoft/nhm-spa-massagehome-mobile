@@ -5,6 +5,7 @@ import {
   DetailServiceRequest,
   EditConfigScheduleRequest,
   EditProfileKtvRequest, SendDangerSupportRequest,
+  UpdateVerificationRequest,
 } from '@/features/ktv/types';
 
 
@@ -90,5 +91,19 @@ export const useLinkReferrerMutation = () => {
 export const useSendDangerSupportMutation = () => {
   return useMutation({
     mutationFn: (data: SendDangerSupportRequest) => ktvApi.sendDangerSupport(data),
+  });
+};
+
+// Cập nhật thông tin xác thực & chuyên môn KTV
+export const useUpdateKtvVerificationMutation = () => {
+  return useMutation({
+    mutationFn: (data: UpdateVerificationRequest) => ktvApi.updateVerification(data),
+  });
+};
+
+// Upload chứng chỉ chuyên môn
+export const useUploadKtvCertificateMutation = () => {
+  return useMutation({
+    mutationFn: (data: FormData) => ktvApi.uploadCertificate(data),
   });
 };

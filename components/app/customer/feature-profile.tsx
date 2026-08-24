@@ -6,7 +6,7 @@ import { _LanguagesMap } from '@/lib/const';
 import { useLogout } from '@/features/auth/hooks';
 import { TouchableOpacity, View } from 'react-native';
 import { Icon } from '@/components/ui/icon';
-import { Bell, Headphones, Info, LogOut, MapPin } from 'lucide-react-native';
+import { Bell, Headphones, Info, LogOut, MapPin, Sparkles } from 'lucide-react-native';
 import { openAboutPage } from '@/lib/utils';
 import { router } from 'expo-router';
 import { ListLocationModal } from '@/components/app/location';
@@ -16,10 +16,14 @@ import Dialog from '@/components/ui/dialog';
 import {Image} from "expo-image";
 import {Text} from "@/components/ui/text";
 import { Card } from '@/components/ui/card';
+import { DemandSurveyModal } from './demand-survey-modal';
 
 
 export const FeatureProfile = () => {
   const { t } = useTranslation();
+
+  // Khảo sát nhu cầu
+  const [surveyVisible, setSurveyVisible] = useState(false);
 
   // Quản lý địa chỉ
   const [visibleLocation, setVisibleLocation] = useState(false);
@@ -106,6 +110,16 @@ export const FeatureProfile = () => {
           <Text className="text-center text-xs text-gray-600">{t('profile.notification')}</Text>
         </TouchableOpacity>
 
+        {/* Nhu cầu cá nhân */}
+        <TouchableOpacity
+          className="mb-3 w-[33%] items-center"
+          onPress={() => setSurveyVisible(true)}>
+          <View className="mb-1 rounded-full bg-gray-50 p-3">
+            <Icon as={Sparkles} size={24} className="text-primary-color-1" />
+          </View>
+          <Text className="text-center text-xs text-gray-600">Nhu cầu cá nhân</Text>
+        </TouchableOpacity>
+
         {/* Đăng xuất */}
         <TouchableOpacity
           className="mb-3 w-[33%] items-center"
@@ -116,6 +130,9 @@ export const FeatureProfile = () => {
           <Text className="text-center text-xs text-gray-600">{t('profile.log_out')}</Text>
         </TouchableOpacity>
       </Card>
+
+      {/* Pop-up Khảo sát nhu cầu */}
+      <DemandSurveyModal visible={surveyVisible} onClose={() => setSurveyVisible(false)} />
 
       {/* Quản lý địa chỉ */}
       <ListLocationModal visible={visibleLocation} onClose={() => setVisibleLocation(false)} />

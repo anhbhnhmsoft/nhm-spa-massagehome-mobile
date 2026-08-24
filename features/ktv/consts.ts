@@ -87,3 +87,29 @@ export const _DefaultValueFormConfigSchedule: EditConfigScheduleRequest = {
   ],
   is_working: false,
 };
+
+export enum _KtvTechnique {
+  ACUPRESSURE = 'acupressure',
+  MASSAGE = 'massage',
+  THERAPY = 'therapy',
+  STRETCHING = 'stretching',
+  AROMA_RELAX = 'aroma_relax',
+}
+
+export const _KtvTechniqueLabels: Record<_KtvTechnique, string> = {
+  [_KtvTechnique.ACUPRESSURE]: 'enum.KtvTechnique.acupressure',
+  [_KtvTechnique.MASSAGE]: 'enum.KtvTechnique.massage',
+  [_KtvTechnique.THERAPY]: 'enum.KtvTechnique.therapy',
+  [_KtvTechnique.STRETCHING]: 'enum.KtvTechnique.stretching',
+  [_KtvTechnique.AROMA_RELAX]: 'enum.KtvTechnique.aroma_relax',
+};
+
+export enum _KtvServiceLocation {
+  HOME = 'home',
+  HOTEL = 'hotel',
+}
+
+export const _KtvServiceLocationLabels: Record<_KtvServiceLocation, string> = {
+  [_KtvServiceLocation.HOME]: 'enum.KtvServiceLocation.home',
+  [_KtvServiceLocation.HOTEL]: 'enum.KtvServiceLocation.hotel',
+};

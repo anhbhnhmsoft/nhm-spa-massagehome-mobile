@@ -115,3 +115,11 @@ export const useConfigScheduleQuery = () => {
     select: (res) => res.data,
   });
 };
+
+export const useKtvVerificationQuery = () => {
+  return useQuery({
+    queryKey: ['ktvApi-verification'],
+    queryFn: () => ktvApi.getVerification(),
+    select: (res) => res.data,
+  });
+};

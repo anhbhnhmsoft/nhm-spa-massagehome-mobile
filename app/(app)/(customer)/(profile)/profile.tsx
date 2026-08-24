@@ -1,10 +1,10 @@
-import { Camera, User as UserIcon } from 'lucide-react-native';
+import { Camera, Sparkles, User as UserIcon } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { BottomEditAvatar } from '@/components/app/profile-tab';
+import { BottomCrmPreferencesModal, BottomEditAvatar } from '@/components/app/profile-tab';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { Icon } from '@/components/ui/icon';
 import { router } from 'expo-router';
@@ -12,12 +12,16 @@ import { useAuthStore } from '@/features/auth/stores';
 import { _Gender, _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
 import HeaderBack from '@/components/header-back';
+import { useQueryCrmPreferences } from '@/features/profile/hooks/use-query';
 
 export default function UserProfile() {
   const { t } = useTranslation();
   const bottomEditAvatar = useRef<BottomSheetModal>(null);
+  const bottomCrmModal = useRef<BottomSheetModal>(null);
   const user = useAuthStore((state) => state.user);
   const [imageError, setImageError] = useState(false);
+
+  const { data: crmPreferences, refetch: refetchCrm } = useQueryCrmPreferences(!!user);
 
   return (
     <>
@@ -40,11 +44,9 @@ export default function UserProfile() {
                     source={{ uri: user.profile.avatar_url }}
                     className="h-28 w-28 rounded-full border-4 border-white"
                     resizeMode="cover"
-                    // Khi lỗi -> Set state -> React render lại -> Chạy xuống dòng fallback dưới
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  // Fallback UI khi không có ảnh hoặc ảnh lỗi
                   <View className="h-28 w-28 items-center justify-center rounded-full border-4 border-white bg-slate-200">
                     <Icon as={UserIcon} size={32} className={'text-slate-400'} />
                   </View>
@@ -76,10 +78,25 @@ export default function UserProfile() {
                     : t('common.unknown')
                 }
               />
-              <View className={'flex-col items-start gap-2 py-4'}>
+              <View className={'flex-col items-start gap-2 py-4 border-b border-gray-400/40'}>
                 <Text className="text-primary-color-3">{t('common.bio')}</Text>
                 <Text className={`text-gray-600`}>{user.profile.bio || t('common.unknown')}</Text>
               </View>
+
+              {/* Nhu cầu CRM & Khảo sát */}
+              <TouchableOpacity
+                className="flex-row items-center justify-between py-4 border-b border-gray-400/40"
+                onPress={() => bottomCrmModal.current?.present()}>
+                <View className="flex-row items-center gap-2">
+                  <Icon as={Sparkles} size={18} className="text-primary-color-2" />
+                  <Text className="font-inter-semibold text-slate-800">
+                    {t('profile.crm_preferences_button', 'Cài đặt Nhu cầu Service & Ngôn ngữ')}
+                  </Text>
+                </View>
+                <Text className="text-xs text-primary-color-2 font-inter-semibold">
+                  {t('common.edit', 'Chỉnh sửa')}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {/* Footer Actions */}
@@ -96,6 +113,11 @@ export default function UserProfile() {
         )}
       </SafeAreaView>
       <BottomEditAvatar ref={bottomEditAvatar} canDelete={user?.profile.avatar_url !== null} />
+      <BottomCrmPreferencesModal
+        ref={bottomCrmModal}
+        initialData={crmPreferences}
+        onSaved={refetchCrm}
+      />
     </>
   );
 }

@@ -281,7 +281,36 @@
       "PENDING": "Chờ xác nhận",
       "APPROVED": "Đã chấp nhận",
       "REJECTED": "Đã từ chối"
+    },
+    "KtvTechnique": {
+      "acupressure": "Ấn huyệt",
+      "massage": "Xoa bóp",
+      "therapy": "Trị liệu",
+      "stretching": "Giãn cơ",
+      "aroma_relax": "Thư giãn tinh dầu"
+    },
+    "KtvServiceLocation": {
+      "home": "Nhà riêng / Căn hộ",
+      "hotel": "Khách sạn / Nhà nghỉ"
     }
+  },
+  "ktv_verification": {
+    "title": "Hồ sơ Xác thực & Chuyên môn KTV",
+    "verification_status": "Trạng thái xác thực MasaHome",
+    "contact_phone": "SĐT liên hệ điều phối",
+    "portrait": "Xác thực chân dung",
+    "certificate": "Chứng chỉ chuyên môn",
+    "verified": "Đã xác thực",
+    "unverified": "Chưa xác thực",
+    "verified_by_masahome": "Đã xác thực bởi MasaHome",
+    "unverified_videocall": "Chưa xác thực Video Call",
+    "certificates_count": "Đã xác thực ({{count}} chứng chỉ)",
+    "no_certificate": "Chưa có / Đang duyệt",
+    "techniques": "Kỹ thuật chuyên môn",
+    "service_locations": "Địa điểm nhận đơn",
+    "save_button": "Lưu chuyên môn & địa điểm",
+    "save_success": "Đã cập nhật thông tin chuyên môn & địa điểm!",
+    "save_error": "Có lỗi xảy ra khi lưu!"
   },
   "tab": {
     "home": "Trang chủ",

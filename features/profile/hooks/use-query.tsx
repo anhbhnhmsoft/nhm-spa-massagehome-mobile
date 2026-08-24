@@ -13,3 +13,17 @@ export const useQueryDashboardProfile = () => {
     select: res => res.data
   });
 };
+
+/**
+ * Lấy thông tin CRM Preferences
+ */
+export const useQueryCrmPreferences = (enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ['profileApi-crmPreferences'],
+    queryFn: async () => {
+      return profileApi.getCrmPreferences();
+    },
+    select: res => res.data,
+    enabled,
+  });
+};

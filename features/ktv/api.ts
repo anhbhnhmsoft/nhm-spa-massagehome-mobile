@@ -18,6 +18,7 @@ import {
   ServiceDetailResponse,
   StartBookingResponse,
   TotalIncomeResponse,
+  UpdateVerificationRequest,
 } from '@/features/ktv/types';
 import { ResponseSuccessType } from '@/lib/types';
 import { UpdateServiceResponse } from '@/features/service/types';
@@ -141,7 +142,26 @@ const ktvApi = {
   sendDangerSupport: async (data: SendDangerSupportRequest): Promise<ResponseSuccessType> => {
     const response = await client.post(`${defaultUri}/danger-support`, data);
     return response.data;
-  }
+  },
+
+  getVerification: async (): Promise<DetailInfoKTVResponse> => {
+    const response = await client.get(`${defaultUri}/verification`);
+    return response.data;
+  },
+
+  updateVerification: async (data: UpdateVerificationRequest): Promise<DetailInfoKTVResponse> => {
+    const response = await client.post(`${defaultUri}/verification`, data);
+    return response.data;
+  },
+
+  uploadCertificate: async (data: FormData): Promise<ResponseSuccessType> => {
+    const response = await client.post(`${defaultUri}/upload-certificate`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
 };
 
 export default ktvApi;
