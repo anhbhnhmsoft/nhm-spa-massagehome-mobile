@@ -354,6 +354,8 @@
     "terms_and_conditions_register_technical": "技术服务条款",
     "terms_and_conditions_register_agency": "合作服务条款",
     "privacy_policy": "隐私政策",
+    "open_document": "打开查看文件",
+    "terms_document_title": "条款与使用政策文件",
     "error_terms_required": "您必须同意条款才能继续",
     "error": {
       "phone_required": "请输入手机号码",

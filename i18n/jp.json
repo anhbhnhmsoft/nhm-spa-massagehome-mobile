@@ -352,6 +352,8 @@
     "terms_and_conditions_register_technical": "技術者登録規約",
     "terms_and_conditions_register_agency": "パートナー登録規約",
     "privacy_policy": "プライバシーポリシー",
+    "open_document": "ドキュメントを開く",
+    "terms_document_title": "利用規約およびポリシー文書",
     "error_terms_required": "続けるには規約に同意する必要があります",
     "error": {
       "phone_required": "電話番号を入力してください",

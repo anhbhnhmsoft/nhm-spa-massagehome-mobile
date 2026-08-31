@@ -399,6 +399,8 @@
     "terms_and_conditions_register_technical": "Terms of Service for Technical",
     "terms_and_conditions_register_agency": "Terms of Service for Agency",
     "privacy_policy": "Privacy Policy",
+    "open_document": "Open Document",
+    "terms_document_title": "Terms and Policies Document",
     "error_terms_required": "You must agree to the terms to continue",
     "error": {
       "phone_required": "Please enter phone number",

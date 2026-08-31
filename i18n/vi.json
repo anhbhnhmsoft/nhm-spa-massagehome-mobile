@@ -399,6 +399,8 @@
     "terms_and_conditions_register_technical": "Điều khoản đăng ký kĩ thuật viên",
     "terms_and_conditions_register_agency": "Điều khoản đăng ký đối tác",
     "privacy_policy": "Chính sách bảo mật",
+    "open_document": "Mở xem tài liệu",
+    "terms_document_title": "Tài liệu điều khoản và chính sách sử dụng",
     "error_terms_required": "Bạn phải đồng ý với điều khoản để tiếp tục",
     "error": {
       "phone_required": "Vui lòng nhập số điện thoại",

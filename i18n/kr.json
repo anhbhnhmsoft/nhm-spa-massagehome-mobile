@@ -352,6 +352,8 @@
     "terms_and_conditions_register_technical": "기술자 등록 약관",
     "terms_and_conditions_register_agency": "파트너 등록 약관",
     "privacy_policy": "개인정보 처리방침",
+    "open_document": "문서 열기",
+    "terms_document_title": "이용약관 및 정책 문서",
     "error_terms_required": "계속하려면 약관에 동의해야 합니다",
     "error": {
       "phone_required": "전화번호를 입력해 주세요",
