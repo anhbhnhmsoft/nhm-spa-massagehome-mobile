@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from '@/components/ui/icon';
-import { Star } from 'lucide-react-native';
+import { Star, ShieldCheck, Award, Wrench } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import { _GenderMap } from '@/features/auth/const';
 import dayjs from 'dayjs';
@@ -75,6 +75,49 @@ export const InfoKtvSection:FC<Props> = ({t, detail}) => {
         </Text>
       </View>
 
+      {/* Huy hiệu xác thực & Chứng chỉ */}
+      {(detail.review_application?.portrait_verified || detail.review_application?.certificate_verified) && (
+        <View className="mt-3 flex-row flex-wrap gap-2">
+          {detail.review_application?.portrait_verified && (
+            <View className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
+              <Icon as={ShieldCheck} size={14} className="text-emerald-600" />
+              <Text className="text-xs font-inter-semibold text-emerald-700">
+                {t('ktv_verification.verified_by_masahome', 'Đã xác thực chân dung bởi MasaHome')}
+              </Text>
+            </View>
+          )}
+          {detail.review_application?.certificate_verified && (
+            <View className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
+              <Icon as={Award} size={14} className="text-emerald-600" />
+              <Text className="text-xs font-inter-semibold text-emerald-700">
+                {t('ktv_verification.certificate', 'Chứng chỉ đã xác thực')}
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Kỹ thuật chuyên môn & Thế mạnh */}
+      {detail.review_application?.techniques && detail.review_application.techniques.length > 0 && (
+        <View className="mt-3">
+          <View className="flex-row items-center gap-1.5 mb-2">
+            <Icon as={Wrench} size={14} className="text-primary-color-2" />
+            <Text className="font-inter-bold text-xs text-slate-800">
+              {t('ktv_verification.techniques', 'Kỹ thuật chuyên môn & Thế mạnh')}
+            </Text>
+          </View>
+          <View className="flex-row flex-wrap gap-1.5">
+            {detail.review_application.techniques.map((techKey) => (
+              <View key={techKey} className="px-2.5 py-1 rounded-lg bg-primary-color-2/10 border border-primary-color-2/20">
+                <Text className="text-xs font-inter-medium text-primary-color-2">
+                  {t(`admin.ktv_technique.${techKey}`, techKey)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
+
       {/* Dịch vụ đang diễn ra */}
       {detail.on_going_booking && (
         <View className="mt-3 flex-row rounded bg-blue-50 px-2 py-1 self-start">
@@ -83,7 +126,6 @@ export const InfoKtvSection:FC<Props> = ({t, detail}) => {
           </Text>
         </View>
       )}
-
 
       {/* Giới thiệu */}
       <View className="mt-3">

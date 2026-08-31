@@ -144,6 +144,15 @@ export const useRegisterTechnical = ({
               }),
             });
           }
+          // Chứng chỉ / bằng cấp chuyên môn (tùy chọn, tối đa 5)
+          const certCount = countByType(files, _PartnerFileType.CERTIFICATE);
+          if (certCount > 5) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['file_uploads', _PartnerFileType.CERTIFICATE],
+              message: t('profile.partner_form.error.invalid_certificate', { max: 5 }),
+            });
+          }
         })
     ),
   });

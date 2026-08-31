@@ -41,6 +41,11 @@ export type ListKTVItem = {
   review_application: {
     experience: number;
     bio: string;
+    is_priority?: boolean;
+    portrait_verified?: boolean;
+    certificate_verified?: boolean;
+    techniques?: string[];
+    strength_service_ids?: (number | string)[];
   };
   location: {
     address: string | null;
@@ -120,6 +125,7 @@ export type CheckApplyPartnerResponse = ResponseDataSuccessType<{
     cccd_back: string | null; // URL of back side of CCCD
     face_with_identity_card: string | null; // URL of face with identity card
     certificate: string | null; // URL of certificate
+    certificates?: string[] | null; // URLs of certificates
     address: string | null;
     latitude?: number;
     longitude?: number;

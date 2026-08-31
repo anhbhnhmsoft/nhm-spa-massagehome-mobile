@@ -3,6 +3,7 @@ export enum _PartnerFileType {
   IDENTITY_CARD_FRONT = 1,
   IDENTITY_CARD_BACK = 2,
   LICENSE = 3,
+  CERTIFICATE = 4,
   KTV_IMAGE_DISPLAY = 5,
   FACE_WITH_IDENTITY_CARD = 6,
 }

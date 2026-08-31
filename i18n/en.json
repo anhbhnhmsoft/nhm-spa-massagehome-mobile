@@ -610,6 +610,10 @@
         "certificate": "Certificates",
         "gallery": "Gallery for Customers"
       },
+      "certificates_title": "Professional Certificates & Degrees (Optional)",
+      "certificates_desc": "Upload your massage/spa training certificates to receive verified badges on your profile (max 5 photos).",
+      "add_certificate": "Add Certificate",
+      "certificate_slot": "Certificate",
       "error": {
         "invalid_realname_length": "Full name must be between {{ min }} and {{ max }} characters.",
         "invalid_nickname_length": "Display name must be between {{ min }} and {{ max }} characters.",
@@ -622,6 +626,7 @@
         "invalid_cccd_front": "Only {{ max }} front ID Card images allowed.",
         "invalid_cccd_back": "Only {{ max }} back ID Card images allowed.",
         "invalid_license": "Only {{ max }} license images allowed.",
+        "invalid_certificate": "Only up to {{ max }} certificate images allowed.",
         "invalid_face_with_id": "Only {{ max }} images allowed for selfie with ID Card.",
         "invalid_ktv_image_display": "Only {{ min }} - {{ max }} images allowed for customer display.",
         "invalid_address": "Please enter your address."

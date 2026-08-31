@@ -610,6 +610,10 @@
         "certificate": "Bằng cấp",
         "gallery": "Ảnh hiển thị cho Khách hàng"
       },
+      "certificates_title": "Bằng cấp / Chứng chỉ chuyên môn (Tùy chọn)",
+      "certificates_desc": "Tải lên chứng chỉ nghề massage/spa, trị liệu để được cấp huy hiệu xác thực trên hồ sơ (tối đa 5 ảnh).",
+      "add_certificate": "Thêm chứng chỉ",
+      "certificate_slot": "Chứng chỉ",
       "error": {
         "invalid_realname_length": "Họ và tên phải có ít nhất {{ min }} ký tự và tối đa {{ max }} ký tự.",
         "invalid_nickname_length": "Tên biệt danh phải có ít nhất {{ min }} ký tự và tối đa {{ max }} ký tự.",
@@ -622,6 +626,7 @@
         "invalid_cccd_front": "Chỉ có thể tải lên {{ max }} ảnh CCCD mặt trước.",
         "invalid_cccd_back": "Chỉ có thể tải lên {{ max }} ảnh CCCD mặt sau.",
         "invalid_license": "Chỉ có thể tải lên {{ max }} ảnh giấy phép hoạt động.",
+        "invalid_certificate": "Chỉ có thể tải lên tối đa {{ max }} ảnh chứng chỉ.",
         "invalid_face_with_id": "Chỉ có thể tải lên {{ max }} ảnh khuôn mặt với CCCD.",
         "invalid_ktv_image_display": "Chỉ có thể tải lên {{ min }} - {{ max }} ảnh hiển thị cho khách hàng.",
         "invalid_address": "Vui lòng nhập địa chỉ."

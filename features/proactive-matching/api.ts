@@ -1,11 +1,11 @@
-import { axiosInstance } from '@/lib/axios-instance';
+import { client } from '@/lib/axios-client';
 import { ResponseDataSuccessType } from '@/lib/types';
 import { KtvProactiveInviteType, NearbyDemandItemType } from './types';
 
 export const proactiveMatchingApi = {
   // KTV quét danh sách khách gần đây
   getNearbyDemands: async (params?: { lat?: number; lng?: number; radius?: number }) => {
-    const response = await axiosInstance.get<ResponseDataSuccessType<NearbyDemandItemType[]>>(
+    const response = await client.get<ResponseDataSuccessType<NearbyDemandItemType[]>>(
       '/service-requests/proactive/nearby-demands',
       { params }
     );
@@ -14,7 +14,7 @@ export const proactiveMatchingApi = {
 
   // KTV gửi lời mời trực tiếp
   sendInvite: async (payload: { customer_id: string; request_id?: number; note?: string }) => {
-    const response = await axiosInstance.post<ResponseDataSuccessType<KtvProactiveInviteType>>(
+    const response = await client.post<ResponseDataSuccessType<KtvProactiveInviteType>>(
       '/service-requests/proactive/send-invite',
       payload
     );
@@ -23,7 +23,7 @@ export const proactiveMatchingApi = {
 
   // Khách hàng lấy danh sách lời mời nhận được
   getCustomerInvites: async () => {
-    const response = await axiosInstance.get<ResponseDataSuccessType<KtvProactiveInviteType[]>>(
+    const response = await client.get<ResponseDataSuccessType<KtvProactiveInviteType[]>>(
       '/service-requests/proactive/customer-invites'
     );
     return response.data;
@@ -31,7 +31,7 @@ export const proactiveMatchingApi = {
 
   // Khách hàng phản hồi (Đồng ý / Từ chối)
   respondInvite: async (inviteId: number, accept: boolean) => {
-    const response = await axiosInstance.post<ResponseDataSuccessType<{ invite: KtvProactiveInviteType; booking?: any }>>(
+    const response = await client.post<ResponseDataSuccessType<{ invite: KtvProactiveInviteType; booking?: any }>>(
       `/service-requests/proactive/invites/${inviteId}/respond`,
       { accept }
     );
@@ -40,7 +40,7 @@ export const proactiveMatchingApi = {
 
   // Khách hàng bật/tắt nhận đề xuất
   toggleStatus: async (enabled: boolean) => {
-    const response = await axiosInstance.post<ResponseDataSuccessType<{ is_proactive_matching_enabled: boolean }>>(
+    const response = await client.post<ResponseDataSuccessType<{ is_proactive_matching_enabled: boolean }>>(
       '/service-requests/proactive/toggle-status',
       { enabled }
     );

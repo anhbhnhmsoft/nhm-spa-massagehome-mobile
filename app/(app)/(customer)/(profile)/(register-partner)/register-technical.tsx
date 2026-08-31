@@ -280,6 +280,61 @@ export default function PartnerRegisterIndividualScreen() {
                 )}
               />
 
+              {/* Bằng cấp / Chứng chỉ chuyên môn (Tùy chọn) */}
+              <Controller
+                control={control}
+                name="file_uploads"
+                render={({ field: { value = [], onChange } }) => {
+                  const certificateFiles = getFilesByType(
+                    value,
+                    _PartnerFileType.CERTIFICATE
+                  );
+                  const errorsFile = getErrorsFileType(errors, _PartnerFileType.CERTIFICATE);
+
+                  return (
+                    <View className="mb-2">
+                      <FormLabel
+                        label={t('profile.partner_form.certificates_title')}
+                        description={t('profile.partner_form.certificates_desc')}
+                      />
+                      <View className="my-2 flex-row flex-wrap gap-3">
+                        {certificateFiles.map((item, index) => (
+                          <ImageRegisterPartnerSlot
+                            key={item.file.uri + item.type_upload + index}
+                            uri={item.file.uri}
+                            label={t('profile.partner_form.certificate_slot')}
+                            isLoading={loadingKey === `cert_${index}`}
+                            disabled={isAnyLoading}
+                            onAdd={() =>
+                              pickImage(`cert_${index}`, (fileInfo) => {
+                                onChange(updateSpecificFile(value, item, fileInfo));
+                              })
+                            }
+                            onRemove={() => onChange(removeSpecificFile(value, item))}
+                          />
+                        ))}
+                        {certificateFiles.length < 5 && (
+                          <ImageRegisterPartnerSlot
+                            uri={null}
+                            label={t('profile.partner_form.add_certificate')}
+                            isLoading={loadingKey === 'cert_new'}
+                            disabled={isAnyLoading}
+                            onAdd={() =>
+                              pickImage('cert_new', (newFileInfo) => {
+                                onChange(
+                                  appendFile(value, _PartnerFileType.CERTIFICATE, newFileInfo)
+                                );
+                              })
+                            }
+                          />
+                        )}
+                        <FormError error={errorsFile} />
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+
               {/* Tên hiển thị */}
               <Controller
                 control={control}

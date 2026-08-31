@@ -238,6 +238,28 @@ export const ModalApplication = ({ t, isVisible, onClose, data }: ModalApplicati
             </View>
           </View>
 
+          {/* Section: Chứng chỉ / Bằng cấp */}
+          {((data.certificates && data.certificates.length > 0) || data.certificate) && (
+            <View className="mb-8">
+              <Text className="text-gray-400 font-inter-bold uppercase text-xs mb-4 tracking-widest">
+                {t('profile.partner_form.modal_application.certificate')} ({data.certificates?.length || 1})
+              </Text>
+              <View className="flex-row flex-wrap justify-between">
+                {data.certificates && data.certificates.length > 0 ? (
+                  data.certificates.map((certUri, idx) => (
+                    <View key={idx} className="w-[48%] mb-4">
+                      <PrivateImage uri={certUri} token={token} />
+                    </View>
+                  ))
+                ) : (
+                  <View className="w-[48%] mb-4">
+                    <PrivateImage uri={data.certificate} token={token} />
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+
           {/* Section 4: Gallery */}
           {data.role == _UserRole.KTV && data.gallery && data.gallery.length > 0 && (
             <View className="mb-10">

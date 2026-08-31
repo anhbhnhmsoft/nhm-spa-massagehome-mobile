@@ -198,7 +198,7 @@ export const BottomCrmPreferencesModal = forwardRef<
       backgroundStyle={{ backgroundColor: '#ffffff', borderRadius: 24 }}
       handleIndicatorStyle={{ backgroundColor: '#cbd5e1' }}
     >
-      <BottomSheetView style={{ paddingBottom: inset.bottom + 10 }} className="flex-1 px-4">
+      <BottomSheetView className="flex-1 px-4">
         {/* Header */}
         <View className="flex-row items-center justify-between border-b border-slate-100 pb-3 pt-1">
           <View className="flex-row items-center gap-2">
@@ -400,9 +400,12 @@ export const BottomCrmPreferencesModal = forwardRef<
         </BottomSheetScrollView>
 
         {/* Footer Actions */}
-        <View className="pt-2 border-t border-slate-100 flex-row gap-3">
+        <View
+          style={{ paddingBottom: Math.max(inset.bottom, 16) + 10 }}
+          className="pt-3 border-t border-slate-100 flex-row gap-3 bg-white"
+        >
           <TouchableOpacity
-            className="flex-1 items-center justify-center py-3 rounded-xl bg-slate-100"
+            className="flex-1 items-center justify-center py-3.5 rounded-xl bg-slate-100 active:bg-slate-200"
             onPress={() => (ref as any)?.current?.dismiss()}
           >
             <Text className="font-inter-semibold text-slate-600 text-sm">
@@ -412,7 +415,7 @@ export const BottomCrmPreferencesModal = forwardRef<
 
           <TouchableOpacity
             className={cn(
-              'flex-1 items-center justify-center py-3 rounded-xl bg-primary-color-2',
+              'flex-1 items-center justify-center py-3.5 rounded-xl bg-primary-color-2 active:bg-primary-color-2/90',
               isPending && 'opacity-60'
             )}
             disabled={isPending}
