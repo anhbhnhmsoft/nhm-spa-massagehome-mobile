@@ -9,9 +9,11 @@ import { ListLocationModal } from '@/components/app/location';
 import {
   CarouselBanner,
   CarouselTechnicalHomePage,
+  CskhMatchingBanner,
   InviteIndividualHomepage,
   ListServiceHomePage,
 } from '@/components/app/customer';
+import { CreateServiceRequestModal } from '@/features/service-request/components';
 
 export default function UserDashboard() {
   const { t } = useTranslation();
@@ -19,6 +21,7 @@ export default function UserDashboard() {
   const queryKTV = useGetListKTVHomepage();
 
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showCskhModal, setShowCskhModal] = useState(false);
 
   const bannerQuery = useListBannerQuery();
 
@@ -61,6 +64,9 @@ export default function UserDashboard() {
         {/* --- QUICK ACTIONS INVITE SECTION --- */}
         <InviteIndividualHomepage t={t} />
 
+        {/* --- CSKH MATCHING PROACTIVE BANNER --- */}
+        <CskhMatchingBanner t={t} onPress={() => setShowCskhModal(true)} />
+
         {/* --- TECHNICIANS SECTION --- */}
         <CarouselTechnicalHomePage queryKTV={queryKTV} t={t} />
 
@@ -69,6 +75,7 @@ export default function UserDashboard() {
       </ScrollView>
 
       <ListLocationModal visible={showLocationModal} onClose={() => setShowLocationModal(false)} />
+      <CreateServiceRequestModal visible={showCskhModal} onClose={() => setShowCskhModal(false)} />
     </View>
   );
 }

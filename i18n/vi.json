@@ -283,15 +283,36 @@
       "REJECTED": "Đã từ chối"
     },
     "KtvTechnique": {
+      "1": "Ấn huyệt",
+      "2": "Xoa bóp",
+      "3": "Trị liệu chuyên sâu",
+      "4": "Giãn cơ",
+      "5": "Thư giãn tinh dầu",
       "acupressure": "Ấn huyệt",
       "massage": "Xoa bóp",
-      "therapy": "Trị liệu",
+      "therapy": "Trị liệu chuyên sâu",
       "stretching": "Giãn cơ",
-      "aroma_relax": "Thư giãn tinh dầu"
+      "aroma_relax": "Thư giãn tinh dầu",
+      "essential_oil": "Thư giãn tinh dầu"
     },
     "KtvServiceLocation": {
       "home": "Nhà riêng / Căn hộ",
       "hotel": "Khách sạn / Nhà nghỉ"
+    }
+  },
+  "admin": {
+    "ktv_technique": {
+      "1": "Ấn huyệt",
+      "2": "Xoa bóp",
+      "3": "Trị liệu chuyên sâu",
+      "4": "Giãn cơ",
+      "5": "Thư giãn tinh dầu",
+      "acupressure": "Ấn huyệt",
+      "massage": "Xoa bóp",
+      "therapy": "Trị liệu chuyên sâu",
+      "stretching": "Giãn cơ",
+      "aroma_relax": "Thư giãn tinh dầu",
+      "essential_oil": "Thư giãn tinh dầu"
     }
   },
   "ktv_verification": {
@@ -463,6 +484,12 @@
     "invite_partner": {
       "title": "Hợp tác",
       "description": "Kinh Doanh"
+    },
+    "cskh_banner": {
+      "badge": "CSKH Matching",
+      "guarantee": "Đảm bảo tay nghề",
+      "title": "Không muốn tự tìm? Nhờ CSKH chọn KTV",
+      "desc": "Gửi yêu cầu theo kỹ thuật & khu vực. CSKH sẽ kết nối KTV phù hợp nhất cho bạn."
     }
   },
   "profile": {

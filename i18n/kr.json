@@ -279,6 +279,38 @@
       "PENDING": "확인 대기",
       "APPROVED": "승인됨",
       "REJECTED": "거절됨"
+    },
+    "KtvTechnique": {
+      "1": "지압 및 혈자리",
+      "2": "마사지",
+      "3": "전문 테라피",
+      "4": "스트레칭",
+      "5": "아로마 힐링",
+      "acupressure": "지압 및 혈자리",
+      "massage": "마사지",
+      "therapy": "전문 테라피",
+      "stretching": "스트레칭",
+      "aroma_relax": "아로마 힐링",
+      "essential_oil": "아로마 힐링"
+    },
+    "KtvServiceLocation": {
+      "home": "자택 / 아파트",
+      "hotel": "호텔"
+    }
+  },
+  "admin": {
+    "ktv_technique": {
+      "1": "지압 및 혈자리",
+      "2": "마사지",
+      "3": "전문 테라피",
+      "4": "스트레칭",
+      "5": "아로마 힐링",
+      "acupressure": "지압 및 혈자리",
+      "massage": "마사지",
+      "therapy": "전문 테라피",
+      "stretching": "스트레칭",
+      "aroma_relax": "아로마 힐링",
+      "essential_oil": "아로마 힐링"
     }
   },
   "tab": {
@@ -414,8 +446,14 @@
       "description": "기술자"
     },
     "invite_partner": {
-      "title": "파트너십",
+      "title": "파트너",
       "description": "비즈니스"
+    },
+    "cskh_banner": {
+      "badge": "고객지원 매칭",
+      "guarantee": "전문 기술 보장",
+      "title": "직접 찾기 어려우신가요? 고객지원이 최적의 관리사를 매칭해 드립니다",
+      "desc": "원하시는 기술과 지역을 전송하세요. 최적의 관리사를 연결해 드립니다."
     }
   },
   "profile": {

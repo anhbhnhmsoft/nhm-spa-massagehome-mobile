@@ -279,6 +279,38 @@
       "PENDING": "確認待ち",
       "APPROVED": "承認済み",
       "REJECTED": "却下済み"
+    },
+    "KtvTechnique": {
+      "1": "指圧・ツボ押し",
+      "2": "マッサージ",
+      "3": "本格セラピー",
+      "4": "ストレッチ",
+      "5": "アロマオイルリラックス",
+      "acupressure": "指圧・ツボ押し",
+      "massage": "マッサージ",
+      "therapy": "本格セラピー",
+      "stretching": "ストレッチ",
+      "aroma_relax": "アロマオイルリラックス",
+      "essential_oil": "アロマオイルリラックス"
+    },
+    "KtvServiceLocation": {
+      "home": "自宅 / マンション",
+      "hotel": "ホテル"
+    }
+  },
+  "admin": {
+    "ktv_technique": {
+      "1": "指圧・ツボ押し",
+      "2": "マッサージ",
+      "3": "本格セラピー",
+      "4": "ストレッチ",
+      "5": "アロマオイルリラックス",
+      "acupressure": "指圧・ツボ押し",
+      "massage": "マッサージ",
+      "therapy": "本格セラピー",
+      "stretching": "ストレッチ",
+      "aroma_relax": "アロマオイルリラックス",
+      "essential_oil": "アロマオイルリラックス"
     }
   },
   "tab": {
@@ -414,8 +446,14 @@
       "description": "技術者"
     },
     "invite_partner": {
-      "title": "パートナー",
+      "title": "提携",
       "description": "ビジネス"
+    },
+    "cskh_banner": {
+      "badge": "カスタマーマッチング",
+      "guarantee": "技術保証",
+      "title": "自分で探すのが面倒？サポートが最適な施術者を提案",
+      "desc": "ご希望の手法や地域を送信してください。最適な施術者をお繋ぎします。"
     }
   },
   "profile": {

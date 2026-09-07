@@ -33,12 +33,13 @@ import { useAuthStore } from '@/features/auth/stores';
 export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [results, setResults] = useState<SearchLocation[]>([]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const handleError = useErrorToast();
   const location = useApplicationStore((s) => s.location);
 
   const {
     mutate: mutateSearchLocation,
-    isPending: isSearching, // Đổi tên isPending thành isSearching để dễ dùng
+    isPending: isSearching,
   } = useMutationSearchLocation();
 
   const { mutate: mutateDetailLocation, isPending: isLoadingDetail } = useMutationDetailLocation();
@@ -47,6 +48,7 @@ export const useSearchLocation = () => {
   const clearKeyword = useCallback(() => {
     setKeyword('');
     setResults([]);
+    setSelectedPlaceId(null);
   }, []);
 
   // Hàm search thực tế
@@ -60,14 +62,11 @@ export const useSearchLocation = () => {
       mutateSearchLocation(
         {
           keyword: text,
-          // Dùng optional chaining cẩn thận hoặc fallback undefined
           latitude: location?.location?.coords?.latitude ?? undefined,
           longitude: location?.location?.coords?.longitude ?? undefined,
         },
         {
           onSuccess: (res) => {
-            // React Query trả về data, ta set vào state
-            // Lưu ý: Đảm bảo res.data đúng format array
             setResults(res.data || []);
           },
         }
@@ -77,7 +76,7 @@ export const useSearchLocation = () => {
   );
 
   // Debounce:
-  const debouncedSearch = useDebounce(performSearch, 600, [performSearch]);
+  const debouncedSearch = useDebounce(performSearch, 400, [performSearch]);
 
   // Xử lý khi text thay đổi
   const handleChangeText = (text: string) => {
@@ -94,14 +93,17 @@ export const useSearchLocation = () => {
 
   // Xử lý khi chọn 1 location từ kết quả
   const handleSelect = (data: SearchLocation, callback: (detail: DetailLocation) => void) => {
+    setSelectedPlaceId(data.place_id);
     mutateDetailLocation(
       { place_id: data.place_id },
       {
         onSuccess: (res) => {
+          setSelectedPlaceId(null);
           clearKeyword();
           callback(res.data);
         },
         onError: (err) => {
+          setSelectedPlaceId(null);
           handleError(err);
         },
       }
@@ -112,6 +114,9 @@ export const useSearchLocation = () => {
     keyword,
     results,
     loading: isSearching || isLoadingDetail,
+    isSearching,
+    isLoadingDetail,
+    selectedPlaceId,
     setKeyword,
     handleChangeText,
     clearKeyword,

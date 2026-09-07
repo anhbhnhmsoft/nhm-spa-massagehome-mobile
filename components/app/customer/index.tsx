@@ -21,3 +21,6 @@ export * from './booking-detail-bottom-sheet';
 export * from './cancel-booking-bottom-sheet';
 export * from './review-service-bottom-sheet';
 export * from './register-application';
+export * from './bottom-crm-preferences-modal';
+export * from './demand-survey-modal';
+export * from './cskh-matching-banner';

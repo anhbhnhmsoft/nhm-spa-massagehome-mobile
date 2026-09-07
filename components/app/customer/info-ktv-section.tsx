@@ -10,6 +10,7 @@ import { TFunction } from 'i18next';
 import { KTVDetail } from '@/features/user/types';
 import useCalculateDistance from '@/features/app/hooks/use-calculate-distance';
 import Avatar from '@/components/ui/avatar';
+import { getKtvTechniqueLabel } from '@/features/ktv/consts';
 
 type Props = {
   t: TFunction;
@@ -108,13 +109,14 @@ export const InfoKtvSection:FC<Props> = ({t, detail}) => {
           </View>
           <View className="flex-row flex-wrap gap-1.5">
             {detail.review_application.techniques.map((techKey) => (
-              <View key={techKey} className="px-2.5 py-1 rounded-lg bg-primary-color-2/10 border border-primary-color-2/20">
+              <View key={String(techKey)} className="px-2.5 py-1 rounded-lg bg-primary-color-2/10 border border-primary-color-2/20">
                 <Text className="text-xs font-inter-medium text-primary-color-2">
-                  {t(`admin.ktv_technique.${techKey}`, techKey)}
+                  {getKtvTechniqueLabel(techKey, t)}
                 </Text>
               </View>
             ))}
           </View>
+
         </View>
       )}
 

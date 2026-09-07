@@ -283,15 +283,36 @@
       "REJECTED": "Rejected"
     },
     "KtvTechnique": {
+      "1": "Acupressure",
+      "2": "Massage",
+      "3": "Deep Therapy",
+      "4": "Stretching",
+      "5": "Aroma Relaxation",
       "acupressure": "Acupressure",
       "massage": "Massage",
-      "therapy": "Therapy",
+      "therapy": "Deep Therapy",
       "stretching": "Stretching",
-      "aroma_relax": "Aroma Relaxation"
+      "aroma_relax": "Aroma Relaxation",
+      "essential_oil": "Aroma Relaxation"
     },
     "KtvServiceLocation": {
       "home": "Home / Apartment",
       "hotel": "Hotel / Motel"
+    }
+  },
+  "admin": {
+    "ktv_technique": {
+      "1": "Acupressure",
+      "2": "Massage",
+      "3": "Deep Therapy",
+      "4": "Stretching",
+      "5": "Aroma Relaxation",
+      "acupressure": "Acupressure",
+      "massage": "Massage",
+      "therapy": "Deep Therapy",
+      "stretching": "Stretching",
+      "aroma_relax": "Aroma Relaxation",
+      "essential_oil": "Aroma Relaxation"
     }
   },
   "ktv_verification": {
@@ -463,6 +484,12 @@
     "invite_partner": {
       "title": "Become",
       "description": "Partner"
+    },
+    "cskh_banner": {
+      "badge": "CSKH Matching",
+      "guarantee": "Verified Skills",
+      "title": "Need help finding? Let Support choose a Masseur",
+      "desc": "Submit your preferred technique & area. Our team will match the best masseur for you."
     }
   },
   "profile": {

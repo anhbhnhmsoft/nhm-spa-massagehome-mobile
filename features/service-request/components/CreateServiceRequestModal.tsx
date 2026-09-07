@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TouchableOpacity,
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, MapPin, Clock, FileText, Check } from 'lucide-react-native';
+import { Sparkles, MapPin, Clock, FileText, Check, Layers } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import BaseBottomModal from '@/components/ui/base-bottom-modal';
 import { useCreateServiceRequestMutation } from '@/features/service-request/hooks/use-mutation';
 import { _UrgencyLevel } from '@/features/service-request/types';
 import { cn } from '@/lib/utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useApplicationStore } from '@/features/app/stores';
 
 interface CreateServiceRequestModalProps {
   visible: boolean;
   onClose: () => void;
-  serviceId: number;
-  serviceTitle: string;
+  serviceId?: number;
+  serviceTitle?: string;
   onSuccess?: () => void;
 }
+
+const DEFAULT_SERVICES = [
+  { id: 1, name: 'Massage toàn thân' },
+  { id: 2, name: 'Massage tay' },
+  { id: 4, name: 'Massage đầu' },
+  { id: 5, name: 'Massage chân' },
+];
 
 const TECHNIQUES_OPTIONS = [
   { id: 'acupressure', labelKey: 'admin.ktv_technique.acupressure', defaultLabel: 'Ấn huyệt' },
@@ -34,21 +43,34 @@ const TECHNIQUES_OPTIONS = [
 export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps> = ({
   visible,
   onClose,
-  serviceId,
-  serviceTitle,
+  serviceId: propServiceId,
+  serviceTitle: propServiceTitle,
   onSuccess,
 }) => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const locationUser = useApplicationStore((s) => s.location);
+
+  const [selectedServiceId, setSelectedServiceId] = useState<number>(propServiceId || 1);
   const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
-  const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(
-    _UrgencyLevel.NEED_NOW
-  );
+  const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(_UrgencyLevel.NEED_NOW);
   const [address, setAddress] = useState<string>('');
   const [note, setNote] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const createMutation = useCreateServiceRequestMutation();
+
+  useEffect(() => {
+    if (propServiceId) {
+      setSelectedServiceId(propServiceId);
+    }
+  }, [propServiceId]);
+
+  useEffect(() => {
+    if (visible && locationUser?.address && !address) {
+      setAddress(locationUser.address);
+    }
+  }, [visible, locationUser]);
 
   const toggleTechnique = (id: string) => {
     setSelectedTechniques((prev) =>
@@ -65,19 +87,31 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
 
     createMutation.mutate(
       {
-        service_id: serviceId,
+        service_id: propServiceId || selectedServiceId,
         preferred_techniques: selectedTechniques,
         urgency_level: urgencyLevel,
         address: address.trim(),
+        latitude: locationUser?.location?.coords?.latitude,
+        longitude: locationUser?.location?.coords?.longitude,
         note: note.trim(),
       },
       {
         onSuccess: () => {
+          Alert.alert(
+            t('common.notification', 'Thông báo'),
+            t(
+              'service_request_form.submit_success',
+              'Yêu cầu dịch vụ đã gửi thành công! CSKH MasaHome sẽ tiếp nhận và đề xuất KTV phù hợp nhất trong ít phút.'
+            )
+          );
           onSuccess?.();
           onClose();
         },
         onError: (err: any) => {
-          setErrorMessage(err?.response?.data?.message || t('common.error_occurred', 'Có lỗi xảy ra, vui lòng thử lại!'));
+          setErrorMessage(
+            err?.response?.data?.message ||
+              t('common.error_occurred', 'Có lỗi xảy ra, vui lòng thử lại!')
+          );
         },
       }
     );
@@ -88,22 +122,60 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
       visible={visible}
       onClose={onClose}
       title={t('service_request_form.title', 'Yêu cầu CSKH tìm KTV')}
-      description={t('service_request_form.subtitle', 'Hệ thống sẽ lọc KTV phù hợp nhất')}
+      description={t('service_request_form.subtitle', 'Hệ thống sẽ lọc KTV phù hợp nhất theo yêu cầu')}
     >
-      <ScrollView showsVerticalScrollIndicator={false} className="max-h-[500px]">
-        {/* Dịch vụ đã chọn */}
-        <View className="mb-4 rounded-xl bg-primary-color-2/10 p-3 border border-primary-color-2/20">
-          <Text className="font-inter-semibold text-xs text-primary-color-2">
-            {t('service_request_form.service_label', 'Dịch vụ')}:{' '}
-            <Text className="font-inter-bold text-sm text-primary-color-2">
-              {serviceTitle}
+      <ScrollView showsVerticalScrollIndicator={false} className="max-h-[520px]">
+        {/* Chọn dịch vụ (Nếu chưa chọn từ trước) */}
+        {propServiceTitle ? (
+          <View className="mb-4 rounded-xl bg-primary-color-2/10 p-3 border border-primary-color-2/20">
+            <Text className="font-inter-semibold text-xs text-primary-color-2">
+              {t('service_request_form.service_label', 'Dịch vụ')}:{' '}
+              <Text className="font-inter-bold text-sm text-primary-color-2">
+                {propServiceTitle}
+              </Text>
             </Text>
-          </Text>
-        </View>
+          </View>
+        ) : (
+          <View className="mb-4">
+            <View className="mb-2 flex-row items-center gap-1.5">
+              <Layers size={14} className="text-primary-color-2" />
+              <Text className="font-inter-semibold text-sm text-slate-800">
+                {t('service_request_form.service_label', 'Chọn dịch vụ cần phục vụ')} *
+              </Text>
+            </View>
+            <View className="flex-row flex-wrap gap-2">
+              {DEFAULT_SERVICES.map((srv) => {
+                const isSelected = selectedServiceId === srv.id;
+                return (
+                  <TouchableOpacity
+                    key={srv.id}
+                    onPress={() => setSelectedServiceId(srv.id)}
+                    className={cn(
+                      'flex-row items-center gap-1 rounded-full px-3.5 py-2 border',
+                      isSelected
+                        ? 'bg-primary-color-2/10 border-primary-color-2'
+                        : 'bg-slate-50 border-slate-200'
+                    )}
+                  >
+                    {isSelected && <Check size={14} className="text-primary-color-2" />}
+                    <Text
+                      className={cn(
+                        'text-xs font-inter-medium',
+                        isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
+                      )}
+                    >
+                      {srv.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        )}
 
         {/* Kỹ thuật mong muốn */}
         <Text className="mb-2 font-inter-semibold text-sm text-slate-800">
-          {t('service_request_form.techniques_label', 'Kỹ thuật mong muốn')}
+          {t('service_request_form.techniques_label', 'Kỹ thuật mong muốn (Có thể chọn nhiều)')}
         </Text>
         <View className="mb-4 flex-row flex-wrap gap-2">
           {TECHNIQUES_OPTIONS.map((item) => {
@@ -139,9 +211,18 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
         </Text>
         <View className="mb-4 flex-col gap-2">
           {[
-            { level: _UrgencyLevel.NEED_NOW, label: t('admin.urgency_level.need_now', 'Cần gấp (30-60 phút)') },
-            { level: _UrgencyLevel.TODAY, label: t('admin.urgency_level.today', 'Trong ngày hôm nay') },
-            { level: _UrgencyLevel.SCHEDULED, label: t('admin.urgency_level.scheduled', 'Đặt lịch hẹn trước') },
+            {
+              level: _UrgencyLevel.NEED_NOW,
+              label: t('admin.urgency_level.need_now', 'Cần gấp (30-60 phút)'),
+            },
+            {
+              level: _UrgencyLevel.TODAY,
+              label: t('admin.urgency_level.today', 'Trong ngày hôm nay'),
+            },
+            {
+              level: _UrgencyLevel.SCHEDULED,
+              label: t('admin.urgency_level.scheduled', 'Đặt lịch hẹn trước'),
+            },
           ].map((item) => {
             const active = urgencyLevel === item.level;
             return (
@@ -155,10 +236,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
                 )}
                 onPress={() => setUrgencyLevel(item.level)}
               >
-                <Clock
-                  size={16}
-                  color={active ? '#10b981' : '#64748B'}
-                />
+                <Clock size={16} color={active ? '#10b981' : '#64748B'} />
                 <Text
                   className={cn(
                     'text-xs font-inter-medium flex-1',
@@ -182,7 +260,10 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
         </View>
         <TextInput
           className="mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 focus:border-primary-color-2 focus:bg-white"
-          placeholder={t('service_request_form.address_placeholder', 'Nhập số nhà, tên đường, phường/xã...')}
+          placeholder={t(
+            'service_request_form.address_placeholder',
+            'Nhập số nhà, tên đường, phường/xã...'
+          )}
           placeholderTextColor="#94A3B8"
           value={address}
           onChangeText={setAddress}
@@ -198,7 +279,10 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
         </View>
         <TextInput
           className="h-20 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 focus:border-primary-color-2 focus:bg-white"
-          placeholder={t('service_request_form.note_placeholder', 'Ví dụ: Cần KTV có tay nghề bấm huyệt tốt...')}
+          placeholder={t(
+            'service_request_form.note_placeholder',
+            'Ví dụ: Cần KTV có tay nghề bấm huyệt tốt...'
+          )}
           placeholderTextColor="#94A3B8"
           value={note}
           onChangeText={setNote}
@@ -211,7 +295,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
         )}
       </ScrollView>
 
-      {/* Footer Submit Action với Safe Area Bottom Padding */}
+      {/* Footer Submit Action */}
       <View
         style={{ paddingBottom: Math.max(insets.bottom, 16) }}
         className="pt-3 border-t border-slate-100 bg-white"

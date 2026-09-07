@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { EditConfigScheduleRequest, ServiceForm } from '@/features/ktv/types';
 
 export const _DefaultValueFormService: ServiceForm = {
@@ -103,6 +104,39 @@ export const _KtvTechniqueLabels: Record<_KtvTechnique, string> = {
   [_KtvTechnique.STRETCHING]: 'enum.KtvTechnique.stretching',
   [_KtvTechnique.AROMA_RELAX]: 'enum.KtvTechnique.aroma_relax',
 };
+
+export const _KtvTechniqueMap: Record<
+  string | number,
+  { labelKey: string; defaultLabel: string }
+> = {
+  1: { labelKey: 'enum.KtvTechnique.acupressure', defaultLabel: 'Ấn huyệt' },
+  acupressure: { labelKey: 'enum.KtvTechnique.acupressure', defaultLabel: 'Ấn huyệt' },
+
+  2: { labelKey: 'enum.KtvTechnique.massage', defaultLabel: 'Xoa bóp' },
+  massage: { labelKey: 'enum.KtvTechnique.massage', defaultLabel: 'Xoa bóp' },
+
+  3: { labelKey: 'enum.KtvTechnique.therapy', defaultLabel: 'Trị liệu chuyên sâu' },
+  therapy: { labelKey: 'enum.KtvTechnique.therapy', defaultLabel: 'Trị liệu chuyên sâu' },
+
+  4: { labelKey: 'enum.KtvTechnique.stretching', defaultLabel: 'Giãn cơ' },
+  stretching: { labelKey: 'enum.KtvTechnique.stretching', defaultLabel: 'Giãn cơ' },
+
+  5: { labelKey: 'enum.KtvTechnique.aroma_relax', defaultLabel: 'Thư giãn tinh dầu' },
+  essential_oil: { labelKey: 'enum.KtvTechnique.aroma_relax', defaultLabel: 'Thư giãn tinh dầu' },
+  aroma_relax: { labelKey: 'enum.KtvTechnique.aroma_relax', defaultLabel: 'Thư giãn tinh dầu' },
+};
+
+export const getKtvTechniqueLabel = (
+  key: string | number,
+  t: TFunction | ((k: string, defaultVal?: string) => string)
+): string => {
+  const item = _KtvTechniqueMap[key];
+  if (item) {
+    return (t as any)(item.labelKey, item.defaultLabel);
+  }
+  return (t as any)(`admin.ktv_technique.${key}`, String(key));
+};
+
 
 export enum _KtvServiceLocation {
   HOME = 'home',

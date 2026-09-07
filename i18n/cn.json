@@ -281,6 +281,38 @@
       "PENDING": "待确认",
       "APPROVED": "已确认",
       "REJECTED": "已拒绝"
+    },
+    "KtvTechnique": {
+      "1": "指压点穴",
+      "2": "推拿按摩",
+      "3": "深度理疗",
+      "4": "肌肉拉伸",
+      "5": "精油舒缓",
+      "acupressure": "指压点穴",
+      "massage": "推拿按摩",
+      "therapy": "深度理疗",
+      "stretching": "肌肉拉伸",
+      "aroma_relax": "精油舒缓",
+      "essential_oil": "精油舒缓"
+    },
+    "KtvServiceLocation": {
+      "home": "住宅 / 公寓",
+      "hotel": "酒店 / 宾馆"
+    }
+  },
+  "admin": {
+    "ktv_technique": {
+      "1": "指压点穴",
+      "2": "推拿按摩",
+      "3": "深度理疗",
+      "4": "肌肉拉伸",
+      "5": "精油舒缓",
+      "acupressure": "指压点穴",
+      "massage": "推拿按摩",
+      "therapy": "深度理疗",
+      "stretching": "肌肉拉伸",
+      "aroma_relax": "精油舒缓",
+      "essential_oil": "精油舒缓"
     }
   },
   "tab": {
@@ -416,8 +448,14 @@
       "description": "成为技师"
     },
     "invite_partner": {
-      "title": "合作",
-      "description": "商业合作"
+      "title": "成为",
+      "description": "合作伙伴"
+    },
+    "cskh_banner": {
+      "badge": "客服匹配",
+      "guarantee": "技能保证",
+      "title": "不想自己找？让客服为您推荐技师",
+      "desc": "提交您期望的手法和区域，客服将为您匹配最合适的技师。"
     }
   },
   "profile": {
