@@ -6,7 +6,7 @@ import {
   useMutationSaveAddress,
   useMutationSearchLocation,
 } from '@/features/location/hooks/use-mutation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGetLocation } from '@/features/app/hooks/use-location';
 import {
   AddressItem,
@@ -28,14 +28,27 @@ import { Alert } from 'react-native';
 import { getMessageError, goBack } from '@/lib/utils';
 import { _AuthStatus } from '@/features/auth/const';
 import { useAuthStore } from '@/features/auth/stores';
+import { debounce } from 'lodash';
 
+// Hook quản lý tìm kiếm location
 // Hook quản lý tìm kiếm location
 export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
+  const [searchedKeyword, setSearchedKeyword] = useState<string>('');
   const [results, setResults] = useState<SearchLocation[]>([]);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const handleError = useErrorToast();
   const location = useApplicationStore((s) => s.location);
+
+  // Ref lưu giữ location để tránh recreate performSearch/debounce khi GPS cập nhật
+  const locationRef = useRef(location);
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
+
+  // Ref lưu giữ từ khóa mới nhất để chống Race Condition khi gõ phím nhanh
+  const latestKeywordRef = useRef<string>('');
+  const debouncedSearchRef = useRef<any>(null);
 
   const {
     mutate: mutateSearchLocation,
@@ -46,61 +59,84 @@ export const useSearchLocation = () => {
 
   // Hàm clear keyword
   const clearKeyword = useCallback(() => {
+    latestKeywordRef.current = '';
     setKeyword('');
+    setSearchedKeyword('');
     setResults([]);
     setSelectedPlaceId(null);
+    debouncedSearchRef.current?.cancel();
   }, []);
 
   // Hàm search thực tế
   const performSearch = useCallback(
     (text: string) => {
-      if (!text || text.length < 2) {
+      const trimmedText = text.trim();
+      if (!trimmedText || trimmedText.length < 2) {
         setResults([]);
+        setSearchedKeyword('');
         return;
       }
 
+      latestKeywordRef.current = trimmedText;
+
+      // Không gửi latitude/longitude khi tìm kiếm theo từ khóa để đảm bảo kết quả nhất quán 100%
+      // trên mọi thiết bị và vị trí (tránh việc API lọc bán kính gây mất kết quả ở tỉnh/thành khác)
       mutateSearchLocation(
         {
-          keyword: text,
-          latitude: location?.location?.coords?.latitude ?? undefined,
-          longitude: location?.location?.coords?.longitude ?? undefined,
+          keyword: trimmedText,
         },
         {
           onSuccess: (res: any) => {
+            // Chống Race Condition: Chỉ chấp nhận kết quả nếu từ khóa vẫn là từ khóa mới nhất
+            if (latestKeywordRef.current !== trimmedText) return;
+
+            let dataItems: SearchLocation[] = [];
             if (Array.isArray(res)) {
-              setResults(res);
+              dataItems = res;
             } else if (Array.isArray(res?.data)) {
-              setResults(res.data);
+              dataItems = res.data;
             } else if (Array.isArray(res?.data?.data)) {
-              setResults(res.data.data);
-            } else {
-              setResults([]);
+              dataItems = res.data.data;
             }
+            setResults(dataItems);
+            setSearchedKeyword(trimmedText);
           },
-          onError: (err) => {
-            setResults([]);
-            handleError(err);
+          onError: () => {
+            // Chống Race Condition
+            if (latestKeywordRef.current !== trimmedText) return;
+            setSearchedKeyword(trimmedText);
           },
         }
       );
     },
-    [location, mutateSearchLocation]
+    [mutateSearchLocation]
   );
 
-  // Debounce:
-  const debouncedSearch = useDebounce(performSearch, 400, [performSearch]);
+  // Khởi tạo Debounce ổn định hoàn toàn không bị reset/cancel khi re-render hoặc vị trí thay đổi
+  useEffect(() => {
+    debouncedSearchRef.current = debounce((text: string) => {
+      performSearch(text);
+    }, 400);
+
+    return () => {
+      debouncedSearchRef.current?.cancel();
+    };
+  }, [performSearch]);
 
   // Xử lý khi text thay đổi
   const handleChangeText = (text: string) => {
     setKeyword(text);
+    const trimmed = text.trim();
+    latestKeywordRef.current = trimmed;
 
-    if (text.length === 0) {
+    if (trimmed.length < 2) {
+      debouncedSearchRef.current?.cancel();
       setResults([]);
+      setSearchedKeyword('');
       return;
     }
 
-    // Gọi debounce
-    debouncedSearch(text);
+    debouncedSearchRef.current?.(trimmed);
   };
 
   // Xử lý khi chọn 1 location từ kết quả
@@ -146,6 +182,7 @@ export const useSearchLocation = () => {
 
   return {
     keyword,
+    searchedKeyword,
     results,
     loading: isSearching || isLoadingDetail,
     isSearching,

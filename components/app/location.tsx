@@ -403,6 +403,7 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
   const insets = useSafeAreaInsets();
   const {
     keyword,
+    searchedKeyword,
     results,
     isSearching,
     isLoadingDetail,
@@ -411,6 +412,13 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
     clearKeyword,
     handleSelect,
   } = useSearchLocation();
+
+  const trimmedKeyword = keyword.trim();
+  const showEmpty =
+    !isSearching &&
+    trimmedKeyword.length >= 2 &&
+    searchedKeyword === trimmedKeyword &&
+    results.length === 0;
 
   return (
     <View className="absolute inset-0 z-20 bg-white" style={{ paddingTop: insets.top }}>
@@ -487,7 +495,7 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
               );
             }}
             ListEmptyComponent={
-              !isSearching && keyword.length >= 2 ? (
+              showEmpty ? (
                 <View className="items-center p-8">
                   <Text className="text-gray-500">{t('location.no_result')}</Text>
                 </View>
