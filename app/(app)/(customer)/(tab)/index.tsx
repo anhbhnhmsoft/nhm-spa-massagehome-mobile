@@ -16,8 +16,11 @@ import {
 } from '@/components/app/customer';
 import { CreateServiceRequestModal } from '@/features/service-request/components';
 
+import { useCheckAuthToRedirect } from '@/features/auth/hooks';
+
 export default function UserDashboard() {
   const { t } = useTranslation();
+  const redirectAuth = useCheckAuthToRedirect();
   const setLocation = useApplicationStore((state) => state.setLocation);
 
   const queryKTV = useGetListKTVHomepage();
@@ -67,7 +70,7 @@ export default function UserDashboard() {
         <InviteIndividualHomepage t={t} />
 
         {/* --- CSKH MATCHING PROACTIVE BANNER --- */}
-        <CskhMatchingBanner t={t} onPress={() => setShowCskhModal(true)} />
+        <CskhMatchingBanner t={t} onPress={() => redirectAuth(() => setShowCskhModal(true))} />
 
         {/* --- TECHNICIANS SECTION --- */}
         <CarouselTechnicalHomePage queryKTV={queryKTV} t={t} />

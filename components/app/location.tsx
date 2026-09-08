@@ -464,7 +464,10 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
                   activeOpacity={0.7}
                   className="flex-row items-center border-b border-gray-100 px-4 py-4 active:bg-gray-50"
                   disabled={isLoadingDetail}
-                  onPress={() => handleSelect(item, onSelectLocation)}>
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    handleSelect(item, onSelectLocation);
+                  }}>
                   <View className="mr-4 rounded-full bg-gray-100 p-2">
                     {isSelected ? (
                       <ActivityIndicator size="small" color="#F97316" />
