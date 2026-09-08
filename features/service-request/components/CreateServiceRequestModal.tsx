@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, MapPin, Clock, FileText, Check, Layers, ChevronRight } from 'lucide-react-native';
+import { MapPin, Clock, FileText, Check, Layers, ChevronRight } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { Icon } from '@/components/ui/icon';
 import BaseBottomModal from '@/components/ui/base-bottom-modal';
@@ -20,6 +20,7 @@ import { useApplicationStore } from '@/features/app/stores';
 import { ListLocationModal } from '@/components/app/location';
 import { useGetLocation } from '@/features/app/hooks/use-location';
 import { SelectAddress } from '@/features/location/types';
+import { useGetCategoryList } from '@/features/service/hooks/use-get-category-list';
 
 interface CreateServiceRequestModalProps {
   visible: boolean;
@@ -28,13 +29,6 @@ interface CreateServiceRequestModalProps {
   serviceTitle?: string;
   onSuccess?: () => void;
 }
-
-const DEFAULT_SERVICES = [
-  { id: 1, nameKey: 'service_request_form.service_body', defaultName: 'Massage toàn thân' },
-  { id: 2, nameKey: 'service_request_form.service_hand', defaultName: 'Massage tay' },
-  { id: 4, nameKey: 'service_request_form.service_head', defaultName: 'Massage đầu' },
-  { id: 5, nameKey: 'service_request_form.service_foot', defaultName: 'Massage chân' },
-];
 
 const TECHNIQUES_OPTIONS = [
   { id: 'acupressure', labelKey: 'admin.ktv_technique.acupressure', defaultLabel: 'Ấn huyệt' },
@@ -55,7 +49,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
   const insets = useSafeAreaInsets();
   const locationUser = useApplicationStore((s) => s.location);
 
-  const [selectedServiceId, setSelectedServiceId] = useState<number>(propServiceId || 1);
+  const [selectedServiceId, setSelectedServiceId] = useState<number>(propServiceId || 0);
   const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
   const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(_UrgencyLevel.NEED_NOW);
   const [address, setAddress] = useState<string>('');
@@ -69,6 +63,18 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
 
   const getCurrentLocation = useGetLocation();
   const createMutation = useCreateServiceRequestMutation();
+
+  // Fetch danh mục dịch vụ từ API (đồng bộ với màn hình Dịch Vụ)
+  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoryList(
+    { per_page: 50 },
+  );
+
+  // Tự động chọn danh mục đầu tiên khi load xong (nếu chưa có propServiceId)
+  useEffect(() => {
+    if (!propServiceId && categories.length > 0 && selectedServiceId === 0) {
+      setSelectedServiceId(Number(categories[0].id));
+    }
+  }, [propServiceId, categories, selectedServiceId]);
 
   useEffect(() => {
     if (propServiceId) {
@@ -183,33 +189,46 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
                   {t('service_request_form.service_label', 'Chọn dịch vụ cần phục vụ')} *
                 </Text>
               </View>
-              <View className="flex-row flex-wrap gap-2">
-                {DEFAULT_SERVICES.map((srv) => {
-                  const isSelected = selectedServiceId === srv.id;
-                  return (
-                    <TouchableOpacity
-                      key={srv.id}
-                      onPress={() => setSelectedServiceId(srv.id)}
-                      className={cn(
-                        'flex-row items-center gap-1 rounded-full px-3.5 py-2 border',
-                        isSelected
-                          ? 'bg-primary-color-2/10 border-primary-color-2'
-                          : 'bg-slate-50 border-slate-200'
-                      )}
-                    >
-                      {isSelected && <Check size={14} className="text-primary-color-2" />}
-                      <Text
+              {isCategoriesLoading ? (
+                // Skeleton loading khi đang fetch categories
+                <View className="flex-row flex-wrap gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <View
+                      key={i}
+                      className="h-9 w-28 rounded-full bg-slate-100 animate-pulse"
+                    />
+                  ))}
+                </View>
+              ) : (
+                <View className="flex-row flex-wrap gap-2">
+                  {categories.map((srv) => {
+                    const srvId = Number(srv.id);
+                    const isSelected = selectedServiceId === srvId;
+                    return (
+                      <TouchableOpacity
+                        key={srv.id}
+                        onPress={() => setSelectedServiceId(srvId)}
                         className={cn(
-                          'text-xs font-inter-medium',
-                          isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
+                          'flex-row items-center gap-1 rounded-full px-3.5 py-2 border',
+                          isSelected
+                            ? 'bg-primary-color-2/10 border-primary-color-2'
+                            : 'bg-slate-50 border-slate-200'
                         )}
                       >
-                        {t(srv.nameKey, srv.defaultName)}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+                        {isSelected && <Check size={14} className="text-primary-color-2" />}
+                        <Text
+                          className={cn(
+                            'text-xs font-inter-medium',
+                            isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
+                          )}
+                        >
+                          {srv.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
             </View>
           )}
 
