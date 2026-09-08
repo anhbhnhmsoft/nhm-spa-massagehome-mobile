@@ -66,8 +66,20 @@ export const useSearchLocation = () => {
           longitude: location?.location?.coords?.longitude ?? undefined,
         },
         {
-          onSuccess: (res) => {
-            setResults(res.data || []);
+          onSuccess: (res: any) => {
+            if (Array.isArray(res)) {
+              setResults(res);
+            } else if (Array.isArray(res?.data)) {
+              setResults(res.data);
+            } else if (Array.isArray(res?.data?.data)) {
+              setResults(res.data.data);
+            } else {
+              setResults([]);
+            }
+          },
+          onError: (err) => {
+            setResults([]);
+            handleError(err);
           },
         }
       );
@@ -97,14 +109,36 @@ export const useSearchLocation = () => {
     mutateDetailLocation(
       { place_id: data.place_id },
       {
-        onSuccess: (res) => {
+        onSuccess: (res: any) => {
           setSelectedPlaceId(null);
           clearKeyword();
-          callback(res.data);
+          const detail = res?.data?.formatted_address
+            ? res.data
+            : res?.formatted_address
+            ? res
+            : null;
+          if (detail) {
+            callback(detail);
+          } else {
+            callback({
+              place_id: data.place_id,
+              formatted_address: data.formatted_address,
+              latitude: 0,
+              longitude: 0,
+            });
+          }
         },
         onError: (err) => {
           setSelectedPlaceId(null);
+          clearKeyword();
           handleError(err);
+          // Fallback để người dùng không bị kẹt ở màn hình tìm kiếm
+          callback({
+            place_id: data.place_id,
+            formatted_address: data.formatted_address,
+            latitude: 0,
+            longitude: 0,
+          });
         },
       }
     );

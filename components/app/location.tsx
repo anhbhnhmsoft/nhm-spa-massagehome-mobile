@@ -267,9 +267,10 @@ const SaveLocationView: FC<SaveLocationViewProps> = ({ onClose }) => {
 
   // Xử lý khi chọn địa điểm từ Search view
   const handleSelectLocation = (location: DetailLocation) => {
-    setValue('address', location.formatted_address, { shouldValidate: true });
-    setValue('latitude', Number(location.latitude), { shouldValidate: true });
-    setValue('longitude', Number(location.longitude), { shouldValidate: true });
+    if (!location) return;
+    setValue('address', location.formatted_address || '', { shouldValidate: true });
+    setValue('latitude', Number(location.latitude) || 0, { shouldValidate: true });
+    setValue('longitude', Number(location.longitude) || 0, { shouldValidate: true });
     setShowSearch(false);
   };
 
@@ -452,13 +453,15 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
         ) : (
           <FlatList
             data={results}
-            keyExtractor={(item) => item.place_id}
-            keyboardShouldPersistTaps="always" // Luôn nhận tap ngay cả khi bàn phím đang mở
+            keyExtractor={(item, index) =>
+              item?.place_id ? `place-${item.place_id}` : `place-index-${index}`
+            }
+            keyboardShouldPersistTaps="always"
             contentContainerStyle={{
               paddingBottom: Math.max(insets.bottom, 16) + 20,
             }}
             renderItem={({ item }) => {
-              const isSelected = selectedPlaceId === item.place_id;
+              const isSelected = Boolean(selectedPlaceId && selectedPlaceId === item?.place_id);
               return (
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -477,7 +480,7 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
                   </View>
                   <View className="flex-1">
                     <Text className="font-inter-medium text-base text-slate-800">
-                      {item.formatted_address}
+                      {item?.formatted_address || ''}
                     </Text>
                   </View>
                 </TouchableOpacity>
