@@ -30,7 +30,36 @@ import { _AuthStatus } from '@/features/auth/const';
 import { useAuthStore } from '@/features/auth/stores';
 import { debounce } from 'lodash';
 
-// Hook quản lý tìm kiếm location
+export const removeVietnameseTones = (str: string): string => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
+};
+
+const isResultRelevant = (formattedAddress: string, query: string): boolean => {
+  if (!formattedAddress || !query) return false;
+  const normAddress = removeVietnameseTones(formattedAddress);
+  const normQuery = removeVietnameseTones(query);
+  const queryTokens = normQuery.split(/\s+/).filter((t) => t.length >= 2);
+
+  if (queryTokens.length === 0) return true;
+
+  // Lọc bỏ các từ đệm quá phổ biến để so sánh chính xác hơn
+  const stopWords = new Set(['duong', 'ngo', 'ngach', 'pho', 'phuong', 'quan', 'tinh', 'thanh']);
+  const keyTokens = queryTokens.filter((t) => !stopWords.has(t));
+  const targetTokens = keyTokens.length > 0 ? keyTokens : queryTokens;
+
+  const matchedCount = targetTokens.filter((token) => normAddress.includes(token)).length;
+
+  if (targetTokens.length >= 2) {
+    return matchedCount >= Math.ceil(targetTokens.length * 0.5);
+  }
+  return matchedCount > 0;
+};
+
 // Hook quản lý tìm kiếm location
 export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
@@ -79,44 +108,81 @@ export const useSearchLocation = () => {
 
       latestKeywordRef.current = trimmedText;
 
-      // Không gửi latitude/longitude khi tìm kiếm theo từ khóa để đảm bảo kết quả nhất quán 100%
-      // trên mọi thiết bị và vị trí (tránh việc API lọc bán kính gây mất kết quả ở tỉnh/thành khác)
-      mutateSearchLocation(
-        {
-          keyword: trimmedText,
-        },
-        {
-          onSuccess: (res: any) => {
-            // Chống Race Condition: Chỉ chấp nhận kết quả nếu từ khóa vẫn là từ khóa mới nhất
-            if (latestKeywordRef.current !== trimmedText) return;
+      const userLat = locationRef.current?.location?.coords?.latitude;
+      const userLng = locationRef.current?.location?.coords?.longitude;
 
-            let dataItems: SearchLocation[] = [];
-            if (Array.isArray(res)) {
-              dataItems = res;
-            } else if (Array.isArray(res?.data)) {
-              dataItems = res.data;
-            } else if (Array.isArray(res?.data?.data)) {
-              dataItems = res.data.data;
-            }
-            setResults(dataItems);
-            setSearchedKeyword(trimmedText);
+      // Kiểm tra xem vị trí người dùng có nằm trong lãnh thổ Việt Nam hay không
+      const isValidVNLocation =
+        typeof userLat === 'number' &&
+        typeof userLng === 'number' &&
+        userLat >= 8.0 &&
+        userLat <= 24.0 &&
+        userLng >= 102.0 &&
+        userLng <= 110.0;
+
+      // Tọa độ định vị: Ưu tiên GPS thực tế của user (nếu ở VN). Nếu ở Simulator hoặc GPS chưa load, mặc định tọa độ Hà Nội (21.0285, 105.8542)
+      const lat = isValidVNLocation ? userLat : 21.0285;
+      const lng = isValidVNLocation ? userLng : 105.8542;
+
+      const executeQuery = (queryStr: string, isFallback = false) => {
+        mutateSearchLocation(
+          {
+            keyword: queryStr,
+            latitude: lat,
+            longitude: lng,
           },
-          onError: () => {
-            // Chống Race Condition
-            if (latestKeywordRef.current !== trimmedText) return;
-            setSearchedKeyword(trimmedText);
-          },
-        }
-      );
+          {
+            onSuccess: (res: any) => {
+              if (latestKeywordRef.current !== trimmedText) return;
+
+              let dataItems: SearchLocation[] = [];
+              if (Array.isArray(res)) {
+                dataItems = res;
+              } else if (Array.isArray(res?.data)) {
+                dataItems = res.data;
+              } else if (Array.isArray(res?.data?.data)) {
+                dataItems = res.data.data;
+              }
+
+              // Lọc bỏ các địa chỉ rác/không phù hợp với từ khóa người dùng gõ
+              const relevantItems = dataItems.filter((item) =>
+                isResultRelevant(item?.formatted_address, trimmedText)
+              );
+
+              // Nếu tìm có dấu bị API trả kết quả lạc đề (như Chu Văn An khi gõ Văn Tiến Dũng) hoặc 0 kết quả,
+              // tự động thử lại bằng từ khóa không dấu (dùng index rộng hơn của Goong API)
+              const unaccented = removeVietnameseTones(trimmedText);
+              if (!isFallback && relevantItems.length === 0 && unaccented !== trimmedText.toLowerCase()) {
+                executeQuery(unaccented, true);
+                return;
+              }
+
+              setResults(relevantItems.length > 0 ? relevantItems : dataItems);
+              setSearchedKeyword(trimmedText);
+            },
+            onError: () => {
+              if (latestKeywordRef.current !== trimmedText) return;
+              const unaccented = removeVietnameseTones(trimmedText);
+              if (!isFallback && unaccented !== trimmedText.toLowerCase()) {
+                executeQuery(unaccented, true);
+                return;
+              }
+              setSearchedKeyword(trimmedText);
+            },
+          }
+        );
+      };
+
+      executeQuery(trimmedText);
     },
     [mutateSearchLocation]
   );
 
-  // Khởi tạo Debounce ổn định hoàn toàn không bị reset/cancel khi re-render hoặc vị trí thay đổi
+  // Khởi tạo Debounce 300ms ổn định hoàn toàn không bị reset/cancel khi re-render
   useEffect(() => {
     debouncedSearchRef.current = debounce((text: string) => {
       performSearch(text);
-    }, 400);
+    }, 300);
 
     return () => {
       debouncedSearchRef.current?.cancel();
@@ -134,6 +200,11 @@ export const useSearchLocation = () => {
       setResults([]);
       setSearchedKeyword('');
       return;
+    }
+
+    // Xóa ngay kết quả cũ nếu từ khóa đã thay đổi để tránh hiển thị sai lệch data của từ khóa cũ
+    if (trimmed !== searchedKeyword) {
+      setResults([]);
     }
 
     debouncedSearchRef.current?.(trimmed);
