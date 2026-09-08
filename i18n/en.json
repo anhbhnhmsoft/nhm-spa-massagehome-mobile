@@ -1,5 +1,6 @@
 {
   "common": {
+    "edit": "Edit",
     "note": "Note",
     "no_phone": "No phone number",
     "create": "Create",
@@ -301,6 +302,11 @@
     }
   },
   "admin": {
+    "urgency_level": {
+      "need_now": "Urgent (30-60 mins)",
+      "today": "Sometime today",
+      "scheduled": "Schedule in advance"
+    },
     "ktv_technique": {
       "1": "Acupressure",
       "2": "Massage",
@@ -348,6 +354,47 @@
     "proposals_title": "CSKH Proposed KTVs",
     "accept_button": "Accept & Confirm Booking",
     "reject_button": "Request Another KTV"
+  },
+  "crm": {
+    "title": "Service Needs Survey",
+    "languages": "Communication Languages",
+    "preferred_services": "Preferred Services",
+    "preferred_techniques": "Preferred Techniques",
+    "preferred_time_slots": "Preferred Time Slots",
+    "demand_status_title": "Current Demand Status",
+    "update_success": "Preferences updated successfully!",
+    "language": {
+      "vi": "Tiếng Việt (Vietnamese)",
+      "en": "English",
+      "zh": "中文 (Chinese)",
+      "ko": "한국어 (Korean)"
+    },
+    "service": {
+      "body": "Full Body Massage",
+      "neck_shoulder": "Neck & Shoulder Care",
+      "traditional": "Traditional Massage",
+      "thai": "Thai Massage",
+      "head": "Head & Facial Care"
+    },
+    "technique": {
+      "acupressure": "Acupressure",
+      "massage": "Massage",
+      "therapy": "Deep Therapy",
+      "stretching": "Stretching",
+      "essential_oil": "Aroma Oil Relaxation"
+    },
+    "time_slot": {
+      "night": "00:00 - 06:00 (Night)",
+      "morning": "06:00 - 12:00 (Morning)",
+      "afternoon": "12:00 - 18:00 (Afternoon)",
+      "evening": "18:00 - 24:00 (Evening)"
+    },
+    "demand_status": {
+      "need_now": "Need service immediately",
+      "comparing": "Exploring & Comparing",
+      "booked": "Booked in advance",
+      "no_need": "No demand currently"
+    }
   },
   "tab": {
     "home": "Home",
@@ -516,6 +563,7 @@
     "choose_from_lib": "Choose from Library",
     "delete_avatar_title": "Delete Avatar",
     "user_info_title": "Account Info",
+    "crm_preferences_button": "Service & Language Preferences",
     "edit_info": "Edit Info",
     "notification": "Notifications",
     "affiliate": "Referral Commission",

@@ -22,40 +22,40 @@ export interface BottomCrmPreferencesModalProps {
 }
 
 const LANGUAGE_OPTIONS = [
-  { value: 'vi', label: 'Tiếng Việt' },
-  { value: 'en', label: 'English' },
-  { value: 'zh', label: '中文 (Tiếng Trung)' },
-  { value: 'ko', label: '한국어 (Tiếng Hàn)' },
+  { value: 'vi', labelKey: 'crm.language.vi', defaultLabel: 'Tiếng Việt' },
+  { value: 'en', labelKey: 'crm.language.en', defaultLabel: 'English' },
+  { value: 'zh', labelKey: 'crm.language.zh', defaultLabel: '中文 (Tiếng Trung)' },
+  { value: 'ko', labelKey: 'crm.language.ko', defaultLabel: '한국어 (Tiếng Hàn)' },
 ];
 
 const SERVICE_OPTIONS = [
-  { value: 'body', label: 'Massage Body' },
-  { value: 'neck_shoulder', label: 'Cổ Vai Gáy' },
-  { value: 'traditional', label: 'Tẩm quất cổ truyền' },
-  { value: 'thai', label: 'Massage Thái' },
-  { value: 'head', label: 'Chăm sóc đầu & da mặt' },
+  { value: 'body', labelKey: 'crm.service.body', defaultLabel: 'Massage Body' },
+  { value: 'neck_shoulder', labelKey: 'crm.service.neck_shoulder', defaultLabel: 'Cổ Vai Gáy' },
+  { value: 'traditional', labelKey: 'crm.service.traditional', defaultLabel: 'Tẩm quất cổ truyền' },
+  { value: 'thai', labelKey: 'crm.service.thai', defaultLabel: 'Massage Thái' },
+  { value: 'head', labelKey: 'crm.service.head', defaultLabel: 'Chăm sóc đầu & da mặt' },
 ];
 
 const TECHNIQUE_OPTIONS = [
-  { value: 'acupressure', label: 'Ấn huyệt' },
-  { value: 'massage', label: 'Xoa bóp' },
-  { value: 'therapy', label: 'Trị liệu chuyên sâu' },
-  { value: 'stretching', label: 'Giãn cơ' },
-  { value: 'essential_oil', label: 'Thư giãn tinh dầu' },
+  { value: 'acupressure', labelKey: 'crm.technique.acupressure', defaultLabel: 'Ấn huyệt' },
+  { value: 'massage', labelKey: 'crm.technique.massage', defaultLabel: 'Xoa bóp' },
+  { value: 'therapy', labelKey: 'crm.technique.therapy', defaultLabel: 'Trị liệu chuyên sâu' },
+  { value: 'stretching', labelKey: 'crm.technique.stretching', defaultLabel: 'Giãn cơ' },
+  { value: 'essential_oil', labelKey: 'crm.technique.essential_oil', defaultLabel: 'Thư giãn tinh dầu' },
 ];
 
 const TIME_SLOT_OPTIONS = [
-  { value: 1, label: '00h - 06h (Đêm)' },
-  { value: 2, label: '06h - 12h (Sáng)' },
-  { value: 3, label: '12h - 18h (Chiều)' },
-  { value: 4, label: '18h - 24h (Tối)' },
+  { value: 1, labelKey: 'crm.time_slot.night', defaultLabel: '00h - 06h (Đêm)' },
+  { value: 2, labelKey: 'crm.time_slot.morning', defaultLabel: '06h - 12h (Sáng)' },
+  { value: 3, labelKey: 'crm.time_slot.afternoon', defaultLabel: '12h - 18h (Chiều)' },
+  { value: 4, labelKey: 'crm.time_slot.evening', defaultLabel: '18h - 24h (Tối)' },
 ];
 
 const DEMAND_STATUS_OPTIONS = [
-  { value: 1, label: 'Cần dịch vụ ngay' },
-  { value: 2, label: 'Đang tìm hiểu & So sánh' },
-  { value: 3, label: 'Đã đặt lịch trước' },
-  { value: 4, label: 'Chưa có nhu cầu lúc này' },
+  { value: 1, labelKey: 'crm.demand_status.need_now', defaultLabel: 'Cần dịch vụ ngay' },
+  { value: 2, labelKey: 'crm.demand_status.comparing', defaultLabel: 'Đang tìm hiểu & So sánh' },
+  { value: 3, labelKey: 'crm.demand_status.booked', defaultLabel: 'Đã đặt lịch trước' },
+  { value: 4, labelKey: 'crm.demand_status.no_need', defaultLabel: 'Chưa có nhu cầu lúc này' },
 ];
 
 export const BottomCrmPreferencesModal = forwardRef<
@@ -110,7 +110,7 @@ export const BottomCrmPreferencesModal = forwardRef<
       {
         onSuccess: () => {
           toast.success({
-            message: t('profile.update_preferences_success', 'Cập nhật nhu cầu thành công!'),
+            message: t('crm.update_success', 'Cập nhật nhu cầu thành công!'),
           });
           onSaved?.();
           (ref as any)?.current?.dismiss();
@@ -141,7 +141,7 @@ export const BottomCrmPreferencesModal = forwardRef<
               <Icon as={Sparkles} size={18} className="text-primary-color-2" />
             </View>
             <Text className="font-inter-bold text-lg text-slate-800">
-              {t('profile.crm_preferences_title', 'Khảo sát Nhu cầu Service')}
+              {t('crm.title', 'Khảo sát Nhu cầu Service')}
             </Text>
           </View>
           <TouchableOpacity
@@ -164,7 +164,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             <View className="flex-row items-center gap-2 mb-2.5">
               <Icon as={Globe} size={16} className="text-primary-color-2" />
               <Text className="font-inter-semibold text-sm text-slate-800">
-                {t('profile.communication_languages', 'Ngôn ngữ giao tiếp')}
+                {t('crm.languages', 'Ngôn ngữ giao tiếp')}
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-2.5">
@@ -188,7 +188,7 @@ export const BottomCrmPreferencesModal = forwardRef<
                         active ? 'text-primary-color-2 font-inter-bold' : 'text-slate-600'
                       )}
                     >
-                      {opt.label}
+                      {t(opt.labelKey, opt.defaultLabel)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -201,7 +201,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             <View className="flex-row items-center gap-2 mb-2.5">
               <Icon as={Sparkles} size={16} className="text-primary-color-2" />
               <Text className="font-inter-semibold text-sm text-slate-800">
-                {t('profile.preferred_services', 'Dịch vụ quan tâm')}
+                {t('crm.preferred_services', 'Dịch vụ quan tâm')}
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-2.5">
@@ -227,7 +227,7 @@ export const BottomCrmPreferencesModal = forwardRef<
                         active ? 'text-primary-color-2 font-inter-bold' : 'text-slate-600'
                       )}
                     >
-                      {opt.label}
+                      {t(opt.labelKey, opt.defaultLabel)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -240,7 +240,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             <View className="flex-row items-center gap-2 mb-2.5">
               <Icon as={Wrench} size={16} className="text-primary-color-2" />
               <Text className="font-inter-semibold text-sm text-slate-800">
-                {t('profile.preferred_techniques', 'Kỹ thuật mong muốn')}
+                {t('crm.preferred_techniques', 'Kỹ thuật mong muốn')}
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-2.5">
@@ -266,7 +266,7 @@ export const BottomCrmPreferencesModal = forwardRef<
                         active ? 'text-primary-color-2 font-inter-bold' : 'text-slate-600'
                       )}
                     >
-                      {opt.label}
+                      {t(opt.labelKey, opt.defaultLabel)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -279,7 +279,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             <View className="flex-row items-center gap-2 mb-2.5">
               <Icon as={Clock} size={16} className="text-primary-color-2" />
               <Text className="font-inter-semibold text-sm text-slate-800">
-                {t('profile.preferred_time_slots', 'Khung giờ quan tâm')}
+                {t('crm.preferred_time_slots', 'Khung giờ quan tâm')}
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-2.5">
@@ -305,7 +305,7 @@ export const BottomCrmPreferencesModal = forwardRef<
                         active ? 'text-primary-color-2 font-inter-bold' : 'text-slate-600'
                       )}
                     >
-                      {opt.label}
+                      {t(opt.labelKey, opt.defaultLabel)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -318,7 +318,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             <View className="flex-row items-center gap-2 mb-2.5">
               <Icon as={Target} size={16} className="text-primary-color-2" />
               <Text className="font-inter-semibold text-sm text-slate-800">
-                {t('profile.demand_status', 'Trạng thái nhu cầu')}
+                {t('crm.demand_status_title', 'Trạng thái nhu cầu')}
               </Text>
             </View>
             <View className="flex-col gap-2.5">
@@ -341,7 +341,7 @@ export const BottomCrmPreferencesModal = forwardRef<
                         active ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
                       )}
                     >
-                      {opt.label}
+                      {t(opt.labelKey, opt.defaultLabel)}
                     </Text>
                     {active && <Icon as={Check} size={16} className="text-primary-color-2" />}
                   </TouchableOpacity>
@@ -376,7 +376,7 @@ export const BottomCrmPreferencesModal = forwardRef<
             >
               {isPending && <ActivityIndicator size="small" color="#ffffff" />}
               <Text className="font-inter-bold text-sm text-white">
-                {isPending ? t('common.saving', 'Đang lưu...') : t('common.save', 'Lưu nhu cầu')}
+                {isPending ? t('common.loading', 'Đang lưu...') : t('common.save', 'Lưu nhu cầu')}
               </Text>
             </TouchableOpacity>
           </View>

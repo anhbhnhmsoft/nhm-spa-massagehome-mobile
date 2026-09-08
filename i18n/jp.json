@@ -1,5 +1,6 @@
 {
   "common": {
+    "edit": "編集",
     "note": "メモ",
     "no_phone": "電話番号なし",
     "create": "作成",
@@ -299,6 +300,11 @@
     }
   },
   "admin": {
+    "urgency_level": {
+      "need_now": "急ぎ (30-60分)",
+      "today": "本日中",
+      "scheduled": "事前予約"
+    },
     "ktv_technique": {
       "1": "指圧・ツボ押し",
       "2": "マッサージ",
@@ -311,6 +317,67 @@
       "stretching": "ストレッチ",
       "aroma_relax": "アロマオイルリラックス",
       "essential_oil": "アロマオイルリラックス"
+    }
+  },
+  "service_request_form": {
+    "title": "サポートへリクエスト送信",
+    "subtitle": "MasaHomeカスタマーサポートが最適なセラピストをご案内します",
+    "service_label": "サービスを選択",
+    "techniques_label": "希望の施術 (複数選択可)",
+    "urgency_label": "緊急度",
+    "address_label": "訪問先住所",
+    "address_placeholder": "自宅やホテルの住所を入力...",
+    "note_label": "サポートへの備考",
+    "note_placeholder": "年齢の希望や特別なご要望を入力...",
+    "submit_button": "リクエストを送信",
+    "submit_success": "リクエストが正常に送信されました！",
+    "proposals_title": "おすすめのセラピスト",
+    "accept_button": "予約を確定する",
+    "reject_button": "他のセラピストを希望",
+    "service_body": "全身マッサージ",
+    "service_hand": "ハンドマッサージ",
+    "service_head": "ヘッドマッサージ",
+    "service_foot": "フットマッサージ"
+  },
+  "crm": {
+    "title": "サービスニーズ調査",
+    "languages": "対応言語",
+    "preferred_services": "興味のあるサービス",
+    "preferred_techniques": "希望する施術",
+    "preferred_time_slots": "希望の時間帯",
+    "demand_status_title": "現在の状況",
+    "update_success": "設定を更新しました！",
+    "language": {
+      "vi": "ベトナム語 (Tiếng Việt)",
+      "en": "英語 (English)",
+      "zh": "中国語 (中文)",
+      "ko": "韓国語 (한국어)"
+    },
+    "service": {
+      "body": "全身マッサージ",
+      "neck_shoulder": "首・肩マッサージ",
+      "traditional": "伝統マッサージ",
+      "thai": "タイ古式マッサージ",
+      "head": "ヘッド＆フェイシャルケア"
+    },
+    "technique": {
+      "acupressure": "指圧",
+      "massage": "揉みほぐし",
+      "therapy": "深層セラピー",
+      "stretching": "ストレッチ",
+      "essential_oil": "アロマオイルリラクゼーション"
+    },
+    "time_slot": {
+      "night": "00:00 - 06:00 (深夜)",
+      "morning": "06:00 - 12:00 (午前)",
+      "afternoon": "12:00 - 18:00 (午後)",
+      "evening": "18:00 - 24:00 (夜)"
+    },
+    "demand_status": {
+      "need_now": "今すぐサービスを希望",
+      "comparing": "検討・比較中",
+      "booked": "事前予約済み",
+      "no_need": "現在は予定なし"
     }
   },
   "tab": {
@@ -480,6 +547,7 @@
     "choose_from_lib": "ライブラリから選ぶ",
     "delete_avatar_title": "プロフィール写真を削除",
     "user_info_title": "アカウント情報",
+    "crm_preferences_button": "サービスと言語の設定",
     "edit_info": "情報を編集",
     "notification": "通知",
     "affiliate": "紹介報酬",

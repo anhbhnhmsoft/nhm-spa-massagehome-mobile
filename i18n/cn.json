@@ -1,5 +1,6 @@
 {
   "common": {
+    "edit": "编辑",
     "note": "备注",
     "no_phone": "没有电话号码",
     "create": "创建",
@@ -301,6 +302,11 @@
     }
   },
   "admin": {
+    "urgency_level": {
+      "need_now": "加急 (30-60分钟)",
+      "today": "今天内",
+      "scheduled": "提前预约"
+    },
     "ktv_technique": {
       "1": "指压点穴",
       "2": "推拿按摩",
@@ -482,6 +488,7 @@
     "choose_from_lib": "从相册选择",
     "delete_avatar_title": "删除头像",
     "user_info_title": "账户信息",
+    "crm_preferences_button": "服务需求与语言设置",
     "edit_info": "编辑信息",
     "notification": "通知",
     "affiliate": "推荐佣金",
@@ -830,6 +837,67 @@
       "invalid_address": "请从建议中选择有效的地址",
       "invalid_location": "请选择有效的坐标",
       "current_location_failed": "无法获取当前位置，请稍后重试。"
+    }
+  },
+  "service_request_form": {
+    "title": "向客服提交服务需求",
+    "subtitle": "MasaHome客服将根据您的要求匹配最合适技师",
+    "service_label": "选择服务项目",
+    "techniques_label": "期望技术 (可多选)",
+    "urgency_label": "紧急程度",
+    "address_label": "服务地址",
+    "address_placeholder": "请输入住宅/酒店地址...",
+    "note_label": "给客服的留言",
+    "note_placeholder": "请输入年龄要求或特殊说明...",
+    "submit_button": "提交需求给客服",
+    "submit_success": "您的服务需求已成功提交！",
+    "proposals_title": "客服推荐技师",
+    "accept_button": "确认预约",
+    "reject_button": "更换技师",
+    "service_body": "全身按摩",
+    "service_hand": "手部按摩",
+    "service_head": "头部按摩",
+    "service_foot": "足部按摩"
+  },
+  "crm": {
+    "title": "服务需求调查",
+    "languages": "交流语言",
+    "preferred_services": "感兴趣的服务",
+    "preferred_techniques": "期望的技术",
+    "preferred_time_slots": "偏好时间段",
+    "demand_status_title": "需求状态",
+    "update_success": "需求设置更新成功！",
+    "language": {
+      "vi": "越南语 (Tiếng Việt)",
+      "en": "英语 (English)",
+      "zh": "中文",
+      "ko": "韩语 (한국어)"
+    },
+    "service": {
+      "body": "全身按摩",
+      "neck_shoulder": "肩颈按摩",
+      "traditional": "传统推拿",
+      "thai": "泰式按摩",
+      "head": "头部与面部护理"
+    },
+    "technique": {
+      "acupressure": "指压穴位",
+      "massage": "揉捏按摩",
+      "therapy": "深度理疗",
+      "stretching": "拉伸舒展",
+      "essential_oil": "精油放松"
+    },
+    "time_slot": {
+      "night": "00:00 - 06:00 (凌晨)",
+      "morning": "06:00 - 12:00 (上午)",
+      "afternoon": "12:00 - 18:00 (下午)",
+      "evening": "18:00 - 24:00 (晚上)"
+    },
+    "demand_status": {
+      "need_now": "立即需要服务",
+      "comparing": "了解并比较中",
+      "booked": "已提前预约",
+      "no_need": "暂无需求"
     }
   },
   "booking": {

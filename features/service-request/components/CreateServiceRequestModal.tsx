@@ -30,10 +30,10 @@ interface CreateServiceRequestModalProps {
 }
 
 const DEFAULT_SERVICES = [
-  { id: 1, name: 'Massage toàn thân' },
-  { id: 2, name: 'Massage tay' },
-  { id: 4, name: 'Massage đầu' },
-  { id: 5, name: 'Massage chân' },
+  { id: 1, nameKey: 'service_request_form.service_body', defaultName: 'Massage toàn thân' },
+  { id: 2, nameKey: 'service_request_form.service_hand', defaultName: 'Massage tay' },
+  { id: 4, nameKey: 'service_request_form.service_head', defaultName: 'Massage đầu' },
+  { id: 5, nameKey: 'service_request_form.service_foot', defaultName: 'Massage chân' },
 ];
 
 const TECHNIQUES_OPTIONS = [
@@ -204,7 +204,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
                           isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
                         )}
                       >
-                        {srv.name}
+                        {t(srv.nameKey, srv.defaultName)}
                       </Text>
                     </TouchableOpacity>
                   );

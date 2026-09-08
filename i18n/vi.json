@@ -1,5 +1,6 @@
 {
   "common": {
+    "edit": "Chỉnh sửa",
     "note": "Ghi chú",
     "no_phone": "Không có số điện thoại",
     "create": "Tạo",
@@ -301,6 +302,11 @@
     }
   },
   "admin": {
+    "urgency_level": {
+      "need_now": "Cần gấp (30-60 phút)",
+      "today": "Trong ngày hôm nay",
+      "scheduled": "Đặt lịch hẹn trước"
+    },
     "ktv_technique": {
       "1": "Ấn huyệt",
       "2": "Xoa bóp",
@@ -348,6 +354,47 @@
     "proposals_title": "Đề xuất KTV từ CSKH",
     "accept_button": "Đồng Ý Chốt Booking",
     "reject_button": "Đổi KTV Khác"
+  },
+  "crm": {
+    "title": "Khảo sát Nhu cầu Service",
+    "languages": "Ngôn ngữ giao tiếp",
+    "preferred_services": "Dịch vụ quan tâm",
+    "preferred_techniques": "Kỹ thuật mong muốn",
+    "preferred_time_slots": "Khung giờ quan tâm",
+    "demand_status_title": "Trạng thái nhu cầu",
+    "update_success": "Cập nhật nhu cầu thành công!",
+    "language": {
+      "vi": "Tiếng Việt",
+      "en": "English",
+      "zh": "中文 (Tiếng Trung)",
+      "ko": "한국어 (Tiếng Hàn)"
+    },
+    "service": {
+      "body": "Massage Body",
+      "neck_shoulder": "Cổ Vai Gáy",
+      "traditional": "Tẩm quất cổ truyền",
+      "thai": "Massage Thái",
+      "head": "Chăm sóc đầu & da mặt"
+    },
+    "technique": {
+      "acupressure": "Ấn huyệt",
+      "massage": "Xoa bóp",
+      "therapy": "Trị liệu chuyên sâu",
+      "stretching": "Giãn cơ",
+      "essential_oil": "Thư giãn tinh dầu"
+    },
+    "time_slot": {
+      "night": "00h - 06h (Đêm)",
+      "morning": "06h - 12h (Sáng)",
+      "afternoon": "12h - 18h (Chiều)",
+      "evening": "18h - 24h (Tối)"
+    },
+    "demand_status": {
+      "need_now": "Cần dịch vụ ngay",
+      "comparing": "Đang tìm hiểu & So sánh",
+      "booked": "Đã đặt lịch trước",
+      "no_need": "Chưa có nhu cầu lúc này"
+    }
   },
   "tab": {
     "home": "Trang chủ",
@@ -516,6 +563,7 @@
     "choose_from_lib": "Chọn từ thư viện",
     "delete_avatar_title": "Xóa ảnh đại diện",
     "user_info_title": "Thông tin tài khoản",
+    "crm_preferences_button": "Cài đặt Nhu cầu Service & Ngôn ngữ",
     "edit_info": "Sửa thông tin",
     "notification": "Thông báo",
     "affiliate": "Giới thiệu hoa hồng",
