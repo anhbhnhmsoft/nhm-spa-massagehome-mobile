@@ -82,7 +82,15 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                       });
                     }
                   } else {
-                    await getCurrentLocation();
+                    const currentLoc = await getCurrentLocation();
+                    if (currentLoc && onSelect) {
+                      onSelect({
+                        address: currentLoc.address,
+                        latitude: currentLoc.location.coords.latitude.toString(),
+                        longitude: currentLoc.location.coords.longitude.toString(),
+                        desc: currentLoc.address,
+                      });
+                    }
                   }
                 }}
                 className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-gray-50">
@@ -260,8 +268,8 @@ const SaveLocationView: FC<SaveLocationViewProps> = ({ onClose }) => {
   // Xử lý khi chọn địa điểm từ Search view
   const handleSelectLocation = (location: DetailLocation) => {
     setValue('address', location.formatted_address, { shouldValidate: true });
-    setValue('latitude', location.latitude, { shouldValidate: true });
-    setValue('longitude', location.longitude, { shouldValidate: true });
+    setValue('latitude', Number(location.latitude), { shouldValidate: true });
+    setValue('longitude', Number(location.longitude), { shouldValidate: true });
     setShowSearch(false);
   };
 

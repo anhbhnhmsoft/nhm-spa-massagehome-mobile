@@ -32,6 +32,7 @@ export const HeaderApp = ({
   const redirectAuth = useCheckAuthToRedirect();
 
   const locationUser = useApplicationStore((state) => state.location);
+  const setLocation = useApplicationStore((state) => state.setLocation);
 
   return (
    <>
@@ -101,7 +102,28 @@ export const HeaderApp = ({
          </View>
        )}
      </View>
-     <ListLocationModal visible={showLocationModal} onClose={() => setShowLocationModal(false)} />
+     <ListLocationModal
+       visible={showLocationModal}
+       onClose={() => setShowLocationModal(false)}
+       onSelect={(selectedLoc) => {
+         setLocation({
+           address: selectedLoc.address,
+           location: {
+             coords: {
+               latitude: Number(selectedLoc.latitude),
+               longitude: Number(selectedLoc.longitude),
+               altitude: null,
+               accuracy: null,
+               altitudeAccuracy: null,
+               heading: null,
+               speed: null,
+             },
+             timestamp: Date.now(),
+           },
+         });
+         setShowLocationModal(false);
+       }}
+     />
    </>
   );
 };

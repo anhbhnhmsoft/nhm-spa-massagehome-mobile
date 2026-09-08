@@ -6,6 +6,7 @@ import { useListBannerQuery } from '@/features/commercial/hooks/use-query';
 import { useTranslation } from 'react-i18next';
 import FocusAwareStatusBar from '@/components/focus-aware-status-bar';
 import { ListLocationModal } from '@/components/app/location';
+import { useApplicationStore } from '@/features/app/stores';
 import {
   CarouselBanner,
   CarouselTechnicalHomePage,
@@ -17,6 +18,7 @@ import { CreateServiceRequestModal } from '@/features/service-request/components
 
 export default function UserDashboard() {
   const { t } = useTranslation();
+  const setLocation = useApplicationStore((state) => state.setLocation);
 
   const queryKTV = useGetListKTVHomepage();
 
@@ -74,7 +76,28 @@ export default function UserDashboard() {
         <ListServiceHomePage queryCategory={queryCategory} t={t} />
       </ScrollView>
 
-      <ListLocationModal visible={showLocationModal} onClose={() => setShowLocationModal(false)} />
+      <ListLocationModal
+        visible={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onSelect={(selectedLoc) => {
+          setLocation({
+            address: selectedLoc.address,
+            location: {
+              coords: {
+                latitude: Number(selectedLoc.latitude),
+                longitude: Number(selectedLoc.longitude),
+                altitude: null,
+                accuracy: null,
+                altitudeAccuracy: null,
+                heading: null,
+                speed: null,
+              },
+              timestamp: Date.now(),
+            },
+          });
+          setShowLocationModal(false);
+        }}
+      />
       <CreateServiceRequestModal visible={showCskhModal} onClose={() => setShowCskhModal(false)} />
     </View>
   );
