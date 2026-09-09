@@ -153,8 +153,13 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
           onClose();
         },
         onError: (err: any) => {
+          const firstValidationMsg = err?.validateError
+            ? Object.values(err.validateError).flat()[0]
+            : null;
           setErrorMessage(
-            err?.response?.data?.message ||
+            (firstValidationMsg as string) ||
+              err?.message ||
+              err?.response?.data?.message ||
               t('common.error_occurred', 'Có lỗi xảy ra, vui lòng thử lại!')
           );
         },
