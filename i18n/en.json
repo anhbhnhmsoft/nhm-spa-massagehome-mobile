@@ -133,7 +133,9 @@
     "choose_method": "Choose how you want to log in or create a new account",
     "login_phone": "Phone number",
     "no_phone_message": "This user has no phone number.",
-    "call": "Call"
+    "call": "Call",
+    "notification": "Notification",
+    "error_occurred": "An error occurred, please try again!"
   },
   "common_success": {
     "save_image_success": "Image saved successfully",
@@ -353,7 +355,11 @@
     "submit_success": "Your service request was submitted successfully!",
     "proposals_title": "CSKH Proposed KTVs",
     "accept_button": "Accept & Confirm Booking",
-    "reject_button": "Request Another KTV"
+    "reject_button": "Request Another KTV",
+    "service_body": "Full Body Massage",
+    "service_hand": "Hand Massage",
+    "service_head": "Head Massage",
+    "service_foot": "Foot Massage"
   },
   "crm": {
     "title": "Service Needs Survey",

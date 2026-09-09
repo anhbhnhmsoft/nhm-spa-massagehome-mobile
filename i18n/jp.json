@@ -133,7 +133,9 @@
     "choose_method": "ログイン方法または新規アカウント作成方法を選択してください",
     "login_phone": "電話番号",
     "no_phone_message": "このユーザーは電話番号を持っていません。",
-    "call": "電話"
+    "call": "電話",
+    "notification": "通知",
+    "error_occurred": "エラーが発生しました。もう一度お試しください。"
   },
   "common_success": {
     "save_image_success": "画像を正常に保存しました",

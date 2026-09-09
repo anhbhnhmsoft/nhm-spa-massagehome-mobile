@@ -133,7 +133,9 @@
     "password_description": "Mật khẩu phải có ít nhất 8 ký tự,ít nhất 1 chữ hoa, 1 chữ thường, 1 chữ số.",
     "status": "Trạng thái",
     "choose_method": "Chọn cách bạn muốn đăng nhập hoặc tạo tài khoản mới",
-    "login_phone": "Số điện thoại"
+    "login_phone": "Số điện thoại",
+    "notification": "Thông báo",
+    "error_occurred": "Có lỗi xảy ra, vui lòng thử lại!"
   },
   "common_success": {
     "save_image_success": "Lưu trữ ảnh thành công",
@@ -353,7 +355,11 @@
     "submit_success": "Yêu cầu dịch vụ của bạn đã được gửi thành công!",
     "proposals_title": "Đề xuất KTV từ CSKH",
     "accept_button": "Đồng Ý Chốt Booking",
-    "reject_button": "Đổi KTV Khác"
+    "reject_button": "Đổi KTV Khác",
+    "service_body": "Massage toàn thân",
+    "service_hand": "Massage tay",
+    "service_head": "Massage đầu",
+    "service_foot": "Massage chân"
   },
   "crm": {
     "title": "Khảo sát Nhu cầu Service",
@@ -867,7 +873,6 @@
     "distance_price": "Cước di chuyển",
     "service_price": "Giá dịch vụ",
     "discount": "Giảm giá",
-
     "review": {
       "title": "Đánh giá dịch vụ",
       "rating": "Mức độ hài lòng",
@@ -1048,10 +1053,8 @@
     "translate": "Dịch",
     "translating": "Đang dịch...",
     "translate_to": "Dịch sang",
-
     "view_original": "Xem bản gốc",
     "view_translation": "Xem bản dịch",
-
     "translation": "— Bản dịch",
     "original": "— Bản gốc"
   },

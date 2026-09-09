@@ -133,7 +133,9 @@
     "choose_method": "로그인 방법 또는 새 계정 생성 방법을 선택하세요",
     "login_phone": "전화번호",
     "no_phone_message": "이 사용자는 전화번호가 없습니다.",
-    "call": "전화"
+    "call": "전화",
+    "notification": "알림",
+    "error_occurred": "오류가 발생했습니다. 다시 시도해 주세요!"
   },
   "common_success": {
     "save_image_success": "이미지를 성공적으로 저장했습니다",
