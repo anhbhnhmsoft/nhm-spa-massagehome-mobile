@@ -911,6 +911,8 @@
     "primary_address": "Địa chỉ hiện tại",
     "no_desc": "Không có ghi chú",
     "get_current_location": "Lấy vị trí hiện tại",
+    "use_current_location": "Sử dụng vị trí hiện tại",
+    "locating_current": "Đang xác định vị trí hiện tại...",
     "loading": "Đang xử lý...",
     "error": {
       "title": "Lỗi địa chỉ",

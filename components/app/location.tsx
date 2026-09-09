@@ -15,6 +15,8 @@ import React, { FC, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useListLocation, useSaveLocation, useSearchLocation } from '@/features/location/hooks';
+import { useApplicationStore } from '@/features/app/stores';
+import { useGetLocation } from '@/features/app/hooks/use-location';
 import { Icon } from '@/components/ui/icon';
 import { ChevronLeft, Map, MapPin, PlusCircle, Star, Tag, Trash2, X } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
@@ -251,7 +253,7 @@ const SaveLocationView: FC<SaveLocationViewProps> = ({ onClose }) => {
   const insets = useSafeAreaInsets();
   const [showSearch, setShowSearch] = useState(false);
 
-  const { form, submit, isEdit, setLocationCurrent, loading } = useSaveLocation(onClose);
+  const { form, submit, isEdit, setLocationCurrent, loading, isLocating } = useSaveLocation(onClose);
 
   // Setup Form
   const {
@@ -293,10 +295,15 @@ const SaveLocationView: FC<SaveLocationViewProps> = ({ onClose }) => {
               {/* Nút Lấy Vị Trí Hiện Tại */}
               <TouchableOpacity
                 onPress={setLocationCurrent}
+                disabled={isLocating}
                 className="flex-row items-center rounded-lg bg-primary-color-2/10 px-3 py-1.5 active:bg-primary-color-2/20">
-                <Icon as={MapPin} size={16} className="mr-1 text-primary-color-2" />
+                {isLocating ? (
+                  <ActivityIndicator size="small" color="#0ea5e9" className="mr-1" />
+                ) : (
+                  <Icon as={MapPin} size={16} className="mr-1 text-primary-color-2" />
+                )}
                 <Text className="font-inter-medium text-xs text-primary-color-2">
-                  {t('location.get_current_location')}
+                  {isLocating ? t('location.loading') : t('location.get_current_location')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -313,6 +320,10 @@ const SaveLocationView: FC<SaveLocationViewProps> = ({ onClose }) => {
                 {currentAddress ? (
                   <Text className="font-inter-medium text-base leading-6 text-slate-800">
                     {currentAddress}
+                  </Text>
+                ) : isLocating ? (
+                  <Text className="font-inter-regular text-base italic text-gray-400">
+                    {t('location.locating_current')}
                   </Text>
                 ) : (
                   <Text className="text-base text-gray-400">
@@ -401,6 +412,10 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
 }) => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const currentLocation = useApplicationStore((s) => s.location);
+  const getCurrentLocation = useGetLocation();
+  const [isGettingCurrent, setIsGettingCurrent] = useState(false);
+
   const {
     keyword,
     searchedKeyword,
@@ -419,6 +434,34 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
     trimmedKeyword.length >= 2 &&
     searchedKeyword === trimmedKeyword &&
     results.length === 0;
+
+  const handleSelectCurrentLocation = async () => {
+    Keyboard.dismiss();
+    if (currentLocation?.address && currentLocation.location?.coords) {
+      onSelectLocation({
+        place_id: 'current_location',
+        formatted_address: currentLocation.address,
+        latitude: Number(currentLocation.location.coords.latitude),
+        longitude: Number(currentLocation.location.coords.longitude),
+      });
+      return;
+    }
+
+    try {
+      setIsGettingCurrent(true);
+      const loc = await getCurrentLocation();
+      if (loc?.address && loc.location?.coords) {
+        onSelectLocation({
+          place_id: 'current_location',
+          formatted_address: loc.address,
+          latitude: Number(loc.location.coords.latitude),
+          longitude: Number(loc.location.coords.longitude),
+        });
+      }
+    } finally {
+      setIsGettingCurrent(false);
+    }
+  };
 
   return (
     <View className="absolute inset-0 z-20 bg-white" style={{ paddingTop: insets.top }}>
@@ -453,6 +496,34 @@ const SearchLocationView: FC<SearchLocationViewProps> = ({
 
       {/* CONTENT */}
       <View className="flex-1 bg-white">
+        {/* NÚT CHỌN NHANH VỊ TRÍ HIỆN TẠI (GPS) */}
+        <TouchableOpacity
+          activeOpacity={0.7}
+          disabled={isGettingCurrent}
+          onPress={handleSelectCurrentLocation}
+          className="flex-row items-center border-b border-orange-100 bg-orange-50/70 px-4 py-3.5 active:bg-orange-100">
+          <View className="mr-3.5 h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+            {isGettingCurrent ? (
+              <ActivityIndicator size="small" color="#F97316" />
+            ) : (
+              <Icon as={MapPin} size={20} className="text-orange-500" />
+            )}
+          </View>
+          <View className="flex-1 pr-2">
+            <View className="flex-row items-center gap-1.5">
+              <Text className="font-inter-bold text-sm text-slate-800">
+                {t('location.use_current_location')}
+              </Text>
+              <View className="rounded bg-orange-500/10 px-1.5 py-0.5">
+                <Text className="font-inter-medium text-[10px] text-orange-600">GPS</Text>
+              </View>
+            </View>
+            <Text className="mt-0.5 font-inter-regular text-xs text-gray-500" numberOfLines={1}>
+              {currentLocation?.address || t('location.get_current_location')}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
         {/* Loading khi đang tìm kiếm */}
         {isSearching ? (
           <View className="py-8 items-center justify-center">

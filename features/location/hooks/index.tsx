@@ -376,6 +376,8 @@ export const useSaveLocation = (onSuccess: () => void) => {
   const setRefreshList = useStoreLocation((s) => s.setRefreshList);
   const setItemAddress = useStoreLocation((s) => s.setItemAddress);
   const getProfile = useGetProfile();
+  const currentLocation = useApplicationStore((s) => s.location);
+  const [isLocating, setIsLocating] = useState<boolean>(false);
 
   const getCurrentLocation = useGetLocation();
 
@@ -390,9 +392,17 @@ export const useSaveLocation = (onSuccess: () => void) => {
   // Form validation
   const form = useForm<SaveAddressRequest>({
     defaultValues: {
-      address: item_address?.address || '',
-      latitude: Number(item_address?.latitude) || undefined,
-      longitude: Number(item_address?.longitude) || undefined,
+      address: item_address?.address || currentLocation?.address || '',
+      latitude:
+        Number(item_address?.latitude) ||
+        (currentLocation?.location?.coords?.latitude
+          ? Number(currentLocation.location.coords.latitude)
+          : undefined),
+      longitude:
+        Number(item_address?.longitude) ||
+        (currentLocation?.location?.coords?.longitude
+          ? Number(currentLocation.location.coords.longitude)
+          : undefined),
       desc: item_address?.desc || '',
     },
     resolver: zodResolver(
@@ -416,13 +426,62 @@ export const useSaveLocation = (onSuccess: () => void) => {
 
   useEffect(() => {
     // Cập nhật lại default values khi item_address thay đổi
-    form.reset({
-      address: item_address?.address || '',
-      latitude: Number(item_address?.latitude) || undefined,
-      longitude: Number(item_address?.longitude) || undefined,
-      desc: item_address?.desc || '',
-    });
+    if (item_address) {
+      form.reset({
+        address: item_address.address || '',
+        latitude: Number(item_address.latitude) || undefined,
+        longitude: Number(item_address.longitude) || undefined,
+        desc: item_address.desc || '',
+      });
+    } else {
+      // Khi thêm địa chỉ mới (!item_address)
+      if (currentLocation?.address && currentLocation.location?.coords) {
+        form.reset({
+          address: currentLocation.address,
+          latitude: Number(currentLocation.location.coords.latitude),
+          longitude: Number(currentLocation.location.coords.longitude),
+          desc: '',
+        });
+      } else {
+        // Tự động lấy vị trí hiện tại ngầm nếu chưa có trong store
+        form.reset({
+          address: '',
+          latitude: undefined,
+          longitude: undefined,
+          desc: '',
+        });
+        (async () => {
+          try {
+            setIsLocating(true);
+            const loc = await getCurrentLocation();
+            if (loc?.address && loc.location?.coords) {
+              form.setValue('address', loc.address, { shouldValidate: true });
+              form.setValue('latitude', Number(loc.location.coords.latitude), { shouldValidate: true });
+              form.setValue('longitude', Number(loc.location.coords.longitude), { shouldValidate: true });
+            }
+          } catch {
+            // Im lặng khi tự động dò vị trí lần đầu
+          } finally {
+            setIsLocating(false);
+          }
+        })();
+      }
+    }
   }, [item_address]);
+
+  // Cập nhật nếu currentLocation trong store vừa load xong
+  useEffect(() => {
+    if (
+      !item_address &&
+      !form.getValues('address') &&
+      currentLocation?.address &&
+      currentLocation.location?.coords
+    ) {
+      form.setValue('address', currentLocation.address, { shouldValidate: true });
+      form.setValue('latitude', Number(currentLocation.location.coords.latitude), { shouldValidate: true });
+      form.setValue('longitude', Number(currentLocation.location.coords.longitude), { shouldValidate: true });
+    }
+  }, [currentLocation]);
 
   const submit = (data: SaveAddressRequest) => {
     if (item_address) {
@@ -473,19 +532,22 @@ export const useSaveLocation = (onSuccess: () => void) => {
 
   const setLocationCurrent = async () => {
     try {
+      setIsLocating(true);
       const location = await getCurrentLocation();
-      if (location) {
-        form.setValue('address', location.address);
-        form.setValue('latitude', location.location.coords.latitude);
-        form.setValue('longitude', location.location.coords.longitude);
+      if (location?.address && location.location?.coords) {
+        form.setValue('address', location.address, { shouldValidate: true });
+        form.setValue('latitude', Number(location.location.coords.latitude), { shouldValidate: true });
+        form.setValue('longitude', Number(location.location.coords.longitude), { shouldValidate: true });
       }
-    } catch  {
+    } catch {
       Alert.alert(
         t('location.error.title'),
         t('location.error.current_location_failed')
       );
+    } finally {
+      setIsLocating(false);
     }
-  }
+  };
 
   return {
     item_address,
@@ -493,6 +555,7 @@ export const useSaveLocation = (onSuccess: () => void) => {
     submit,
     isEdit: Boolean(item_address),
     setLocationCurrent,
+    isLocating,
     loading: isSaving || isEditing,
   };
 };

@@ -886,6 +886,8 @@
     "primary_address": "現在の住所",
     "no_desc": "メモなし",
     "get_current_location": "現在地を取得",
+    "use_current_location": "現在の位置を使用",
+    "locating_current": "現在地を取得中...",
     "loading": "処理中...",
     "error": {
       "title": "住所エラー",
