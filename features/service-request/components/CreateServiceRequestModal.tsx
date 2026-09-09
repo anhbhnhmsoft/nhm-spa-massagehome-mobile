@@ -25,7 +25,7 @@ import { useGetCategoryList } from '@/features/service/hooks/use-get-category-li
 interface CreateServiceRequestModalProps {
   visible: boolean;
   onClose: () => void;
-  serviceId?: number;
+  serviceId?: string | number;
   serviceTitle?: string;
   onSuccess?: () => void;
 }
@@ -49,7 +49,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
   const insets = useSafeAreaInsets();
   const locationUser = useApplicationStore((s) => s.location);
 
-  const [selectedServiceId, setSelectedServiceId] = useState<number>(propServiceId || 0);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | number>(propServiceId || '');
   const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
   const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(_UrgencyLevel.NEED_NOW);
   const [address, setAddress] = useState<string>('');
@@ -71,8 +71,8 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
 
   // Tự động chọn danh mục đầu tiên khi load xong (nếu chưa có propServiceId)
   useEffect(() => {
-    if (!propServiceId && categories.length > 0 && selectedServiceId === 0) {
-      setSelectedServiceId(Number(categories[0].id));
+    if (!propServiceId && categories.length > 0 && !selectedServiceId) {
+      setSelectedServiceId(categories[0].id);
     }
   }, [propServiceId, categories, selectedServiceId]);
 
@@ -207,8 +207,8 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
               ) : (
                 <View className="flex-row flex-wrap gap-2">
                   {categories.map((srv) => {
-                    const srvId = Number(srv.id);
-                    const isSelected = selectedServiceId === srvId;
+                    const srvId = srv.id;
+                    const isSelected = String(selectedServiceId) === String(srvId);
                     return (
                       <TouchableOpacity
                         key={srv.id}
