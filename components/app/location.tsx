@@ -42,8 +42,9 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
     closeSaveModal,
     showSaveModal,
     location,
+    isLocating,
     getCurrentLocation,
-  } = useListLocation();
+  } = useListLocation(visible);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } = queryList;
 
@@ -74,47 +75,62 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={async () => {
-                  if (location) {
+                  let loc = location;
+                  if (!loc) {
+                    loc = await getCurrentLocation();
+                  }
+                  if (loc) {
                     if (onSelect) {
                       onSelect({
-                        address: location.address,
-                        latitude: location.location.coords.latitude.toString(),
-                        longitude: location.location.coords.longitude.toString(),
-                        desc: location.address,
+                        address: loc.address,
+                        latitude: loc.location.coords.latitude.toString(),
+                        longitude: loc.location.coords.longitude.toString(),
+                        desc: loc.address,
                       });
-                    }
-                  } else {
-                    const currentLoc = await getCurrentLocation();
-                    if (currentLoc && onSelect) {
-                      onSelect({
-                        address: currentLoc.address,
-                        latitude: currentLoc.location.coords.latitude.toString(),
-                        longitude: currentLoc.location.coords.longitude.toString(),
-                        desc: currentLoc.address,
-                      });
+                    } else {
+                      // Nếu đang ở màn hình Quản lý địa chỉ: mở form thêm để lưu lại địa chỉ này
+                      createHandler();
                     }
                   }
                 }}
-                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-gray-50">
+                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-orange-100">
                 {/* ICON BÊN TRÁI */}
                 <View
                   className={
                     'mr-4 h-10 w-10 items-center justify-center rounded-full bg-orange-100'
                   }>
-                  <Icon as={Star} size={20} className={'text-orange-500'} fill={'currentColor'} />
+                  {isLocating && !location ? (
+                    <ActivityIndicator size="small" color="#F97316" />
+                  ) : (
+                    <Icon as={Star} size={20} className={'text-orange-500'} fill={'currentColor'} />
+                  )}
                 </View>
                 {/* NỘI DUNG TEXT */}
                 <View className="flex-1 pr-2">
                   <View className="flex-row items-center gap-2">
-                    {/* Tên gợi nhớ (Ví dụ: Nhà riêng) */}
                     <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
-                      {location ? location.address.split(',')[0] : t('header_app.need_location')}
+                      {location
+                        ? location.address.split(',')[0]
+                        : isLocating
+                        ? t('location.locating_current')
+                        : t('header_app.need_location')}
                     </Text>
                   </View>
 
                   {/* Địa chỉ chi tiết */}
-                  <Text className="text-sm text-orange-500">{t('location.primary_address')}</Text>
+                  <Text className="mt-0.5 text-sm text-orange-500" numberOfLines={1}>
+                    {location ? location.address : t('location.primary_address')}
+                  </Text>
                 </View>
+
+                {/* NÚT THAO TÁC (KHI QUẢN LÝ ĐỊA CHỈ) */}
+                {!onSelect && (
+                  <View className="rounded-lg bg-orange-500/10 px-2.5 py-1.5">
+                    <Text className="font-inter-medium text-xs text-orange-600">
+                      {t('location.save_this_address')}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
           )}

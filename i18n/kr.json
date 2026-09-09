@@ -887,6 +887,7 @@
     "no_desc": "메모 없음",
     "get_current_location": "현재 위치 가져오기",
     "use_current_location": "현재 위치 사용",
+    "save_this_address": "위치 저장",
     "locating_current": "현재 위치 확인 중...",
     "loading": "처리 중...",
     "error": {

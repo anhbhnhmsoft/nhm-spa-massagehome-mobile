@@ -834,6 +834,7 @@
     "no_desc": "无备注",
     "get_current_location": "获取当前位置",
     "use_current_location": "使用当前位置",
+    "save_this_address": "保存位置",
     "locating_current": "正在获取当前位置...",
     "loading": "处理中...",
     "error": {

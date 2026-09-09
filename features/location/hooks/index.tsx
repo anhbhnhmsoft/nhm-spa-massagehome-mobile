@@ -284,7 +284,7 @@ export const useGetListAddress = (params: ListAddressRequest) => {
 };
 
 // Hook cho trang danh sách location
-export const useListLocation = () => {
+export const useListLocation = (visible: boolean = true) => {
   const setItemAddress = useStoreLocation((s) => s.setItemAddress);
   const refresh_list = useStoreLocation((s) => s.refresh_list);
   const setRefreshList = useStoreLocation((s) => s.setRefreshList);
@@ -294,6 +294,9 @@ export const useListLocation = () => {
   const handleError = useErrorToast();
   const [showSaveModal, setShowSaveModal] = useState(false);
   const location = useApplicationStore((s) => s.location);
+  const [isLocating, setIsLocating] = useState<boolean>(false);
+
+  const getCurrentLocation = useGetLocation();
 
   useEffect(() => {
     // Nếu không auth, quay lại trang trước
@@ -302,6 +305,25 @@ export const useListLocation = () => {
       return;
     }
   }, [status]);
+
+  // Ngay khi mở modal / màn hình "Địa chỉ đã lưu" (visible === true):
+  // Chủ động lấy/làm mới vị trí GPS hiện tại ngay lập tức để sẵn sàng từ sớm
+  useEffect(() => {
+    if (visible) {
+      (async () => {
+        try {
+          if (!location) {
+            setIsLocating(true);
+          }
+          await getCurrentLocation();
+        } catch {
+          // Bỏ qua lỗi ngầm khi dò vị trí
+        } finally {
+          setIsLocating(false);
+        }
+      })();
+    }
+  }, [visible]);
 
   useEffect(() => {
     // Nếu cần refresh danh sách
@@ -356,8 +378,6 @@ export const useListLocation = () => {
     );
   };
 
-  const getCurrentLocation = useGetLocation();
-
   return {
     queryList,
     createHandler,
@@ -366,7 +386,8 @@ export const useListLocation = () => {
     showSaveModal,
     closeSaveModal,
     location,
-    getCurrentLocation
+    isLocating,
+    getCurrentLocation,
   };
 };
 

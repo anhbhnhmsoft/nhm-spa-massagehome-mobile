@@ -912,6 +912,7 @@
     "no_desc": "No note",
     "get_current_location": "Get Current Location",
     "use_current_location": "Use current location",
+    "save_this_address": "Save location",
     "locating_current": "Detecting current location...",
     "loading": "Processing...",
     "error": {
