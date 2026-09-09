@@ -6,6 +6,7 @@ import {
   useMutationSaveAddress,
   useMutationSearchLocation,
 } from '@/features/location/hooks/use-mutation';
+import locationApi from '@/features/location/api';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGetLocation } from '@/features/app/hooks/use-location';
 import {
@@ -65,6 +66,7 @@ export const useSearchLocation = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [searchedKeyword, setSearchedKeyword] = useState<string>('');
   const [results, setResults] = useState<SearchLocation[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const handleError = useErrorToast();
   const location = useApplicationStore((s) => s.location);
@@ -75,181 +77,212 @@ export const useSearchLocation = () => {
     locationRef.current = location;
   }, [location]);
 
+  // Ref lưu giữ AbortController của request tìm kiếm đang chạy để huỷ khi có request mới
+  const abortControllerRef = useRef<AbortController | null>(null);
   // Ref lưu giữ từ khóa mới nhất để chống Race Condition khi gõ phím nhanh
   const latestKeywordRef = useRef<string>('');
-  const debouncedSearchRef = useRef<any>(null);
-
-  const {
-    mutate: mutateSearchLocation,
-    isPending: isSearching,
-  } = useMutationSearchLocation();
 
   const { mutate: mutateDetailLocation, isPending: isLoadingDetail } = useMutationDetailLocation();
+
+  // Hàm thực thi tìm kiếm thực tế với API
+  const executeSearch = useCallback(async (queryText: string) => {
+    const trimmed = queryText.trim();
+    if (!trimmed || trimmed.length < 2) {
+      setResults([]);
+      setSearchedKeyword('');
+      setIsSearching(false);
+      return;
+    }
+
+    // Huỷ request cũ đang chạy (nếu có)
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setIsSearching(true);
+
+    const userLat = locationRef.current?.location?.coords?.latitude;
+    const userLng = locationRef.current?.location?.coords?.longitude;
+
+    const isValidVNLocation =
+      typeof userLat === 'number' &&
+      typeof userLng === 'number' &&
+      userLat >= 8.0 &&
+      userLat <= 24.0 &&
+      userLng >= 102.0 &&
+      userLng <= 110.0;
+
+    const lat = isValidVNLocation ? userLat : 21.0285;
+    const lng = isValidVNLocation ? userLng : 105.8542;
+
+    const fetchQuery = async (searchStr: string, isFallback = false): Promise<void> => {
+      try {
+        const res = await locationApi.search(
+          {
+            keyword: searchStr,
+            latitude: lat,
+            longitude: lng,
+          },
+          controller.signal
+        );
+
+        // Nếu keyword đã thay đổi (user gõ tiếp từ khác), bỏ qua kết quả này
+        if (latestKeywordRef.current !== trimmed) {
+          return;
+        }
+
+        let dataItems: SearchLocation[] = [];
+        if (Array.isArray(res)) {
+          dataItems = res;
+        } else if (Array.isArray((res as any)?.data)) {
+          dataItems = (res as any).data;
+        } else if (Array.isArray((res as any)?.data?.data)) {
+          dataItems = (res as any).data.data;
+        }
+
+        // Lọc bỏ các địa chỉ rác/không phù hợp với từ khóa người dùng gõ
+        const relevantItems = dataItems.filter((item) =>
+          isResultRelevant(item?.formatted_address, trimmed)
+        );
+
+        // Nếu tìm có dấu bị 0 kết quả hoặc kết quả không khớp, tự động fallback sang từ khóa không dấu
+        const unaccented = removeVietnameseTones(trimmed);
+        if (!isFallback && relevantItems.length === 0 && unaccented !== trimmed.toLowerCase()) {
+          return await fetchQuery(unaccented, true);
+        }
+
+        setResults(relevantItems.length > 0 ? relevantItems : dataItems);
+        setSearchedKeyword(trimmed);
+        setIsSearching(false);
+      } catch (err: any) {
+        // Nếu là do huỷ request (Abort) thì bỏ qua
+        if (controller.signal.aborted || err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED') {
+          return;
+        }
+
+        // Nếu là lỗi khác, thử fallback không dấu nếu chưa thử
+        const unaccented = removeVietnameseTones(trimmed);
+        if (!isFallback && unaccented !== trimmed.toLowerCase()) {
+          return await fetchQuery(unaccented, true);
+        }
+
+        if (latestKeywordRef.current === trimmed) {
+          setResults([]);
+          setSearchedKeyword(trimmed);
+          setIsSearching(false);
+        }
+      }
+    };
+
+    await fetchQuery(trimmed);
+  }, []);
+
+  // Debounced search ổn định, không bao giờ bị re-create hay cancel oan uổng khi state re-render
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((text: string) => {
+        executeSearch(text);
+      }, 300),
+    [executeSearch]
+  );
+
+  // Huỷ debounce và abort request khi unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [debouncedSearch]);
 
   // Hàm clear keyword
   const clearKeyword = useCallback(() => {
     latestKeywordRef.current = '';
+    debouncedSearch.cancel();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     setKeyword('');
     setSearchedKeyword('');
     setResults([]);
     setSelectedPlaceId(null);
-    debouncedSearchRef.current?.cancel();
-  }, []);
+    setIsSearching(false);
+  }, [debouncedSearch]);
 
-  // Hàm search thực tế
-  const performSearch = useCallback(
+  // Xử lý khi text thay đổi
+  const handleChangeText = useCallback(
     (text: string) => {
-      const trimmedText = text.trim();
-      if (!trimmedText || trimmedText.length < 2) {
+      setKeyword(text);
+      const trimmed = text.trim();
+      latestKeywordRef.current = trimmed;
+
+      if (trimmed.length < 2) {
+        debouncedSearch.cancel();
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
         setResults([]);
         setSearchedKeyword('');
+        setIsSearching(false);
         return;
       }
 
-      latestKeywordRef.current = trimmedText;
+      // Xóa ngay kết quả cũ nếu từ khóa đã thay đổi để tránh hiển thị sai lệch data của từ khóa cũ
+      if (trimmed !== searchedKeyword) {
+        setResults([]);
+      }
 
-      const userLat = locationRef.current?.location?.coords?.latitude;
-      const userLng = locationRef.current?.location?.coords?.longitude;
-
-      // Kiểm tra xem vị trí người dùng có nằm trong lãnh thổ Việt Nam hay không
-      const isValidVNLocation =
-        typeof userLat === 'number' &&
-        typeof userLng === 'number' &&
-        userLat >= 8.0 &&
-        userLat <= 24.0 &&
-        userLng >= 102.0 &&
-        userLng <= 110.0;
-
-      // Tọa độ định vị: Ưu tiên GPS thực tế của user (nếu ở VN). Nếu ở Simulator hoặc GPS chưa load, mặc định tọa độ Hà Nội (21.0285, 105.8542)
-      const lat = isValidVNLocation ? userLat : 21.0285;
-      const lng = isValidVNLocation ? userLng : 105.8542;
-
-      const executeQuery = (queryStr: string, isFallback = false) => {
-        mutateSearchLocation(
-          {
-            keyword: queryStr,
-            latitude: lat,
-            longitude: lng,
-          },
-          {
-            onSuccess: (res: any) => {
-              if (latestKeywordRef.current !== trimmedText) return;
-
-              let dataItems: SearchLocation[] = [];
-              if (Array.isArray(res)) {
-                dataItems = res;
-              } else if (Array.isArray(res?.data)) {
-                dataItems = res.data;
-              } else if (Array.isArray(res?.data?.data)) {
-                dataItems = res.data.data;
-              }
-
-              // Lọc bỏ các địa chỉ rác/không phù hợp với từ khóa người dùng gõ
-              const relevantItems = dataItems.filter((item) =>
-                isResultRelevant(item?.formatted_address, trimmedText)
-              );
-
-              // Nếu tìm có dấu bị API trả kết quả lạc đề (như Chu Văn An khi gõ Văn Tiến Dũng) hoặc 0 kết quả,
-              // tự động thử lại bằng từ khóa không dấu (dùng index rộng hơn của Goong API)
-              const unaccented = removeVietnameseTones(trimmedText);
-              if (!isFallback && relevantItems.length === 0 && unaccented !== trimmedText.toLowerCase()) {
-                executeQuery(unaccented, true);
-                return;
-              }
-
-              setResults(relevantItems.length > 0 ? relevantItems : dataItems);
-              setSearchedKeyword(trimmedText);
-            },
-            onError: () => {
-              if (latestKeywordRef.current !== trimmedText) return;
-              const unaccented = removeVietnameseTones(trimmedText);
-              if (!isFallback && unaccented !== trimmedText.toLowerCase()) {
-                executeQuery(unaccented, true);
-                return;
-              }
-              setSearchedKeyword(trimmedText);
-            },
-          }
-        );
-      };
-
-      executeQuery(trimmedText);
+      debouncedSearch(trimmed);
     },
-    [mutateSearchLocation]
+    [debouncedSearch, searchedKeyword]
   );
 
-  // Khởi tạo Debounce 300ms ổn định hoàn toàn không bị reset/cancel khi re-render
-  useEffect(() => {
-    debouncedSearchRef.current = debounce((text: string) => {
-      performSearch(text);
-    }, 300);
-
-    return () => {
-      debouncedSearchRef.current?.cancel();
-    };
-  }, [performSearch]);
-
-  // Xử lý khi text thay đổi
-  const handleChangeText = (text: string) => {
-    setKeyword(text);
-    const trimmed = text.trim();
-    latestKeywordRef.current = trimmed;
-
-    if (trimmed.length < 2) {
-      debouncedSearchRef.current?.cancel();
-      setResults([]);
-      setSearchedKeyword('');
-      return;
-    }
-
-    // Xóa ngay kết quả cũ nếu từ khóa đã thay đổi để tránh hiển thị sai lệch data của từ khóa cũ
-    if (trimmed !== searchedKeyword) {
-      setResults([]);
-    }
-
-    debouncedSearchRef.current?.(trimmed);
-  };
-
   // Xử lý khi chọn 1 location từ kết quả
-  const handleSelect = (data: SearchLocation, callback: (detail: DetailLocation) => void) => {
-    setSelectedPlaceId(data.place_id);
-    mutateDetailLocation(
-      { place_id: data.place_id },
-      {
-        onSuccess: (res: any) => {
-          setSelectedPlaceId(null);
-          clearKeyword();
-          const detail = res?.data?.formatted_address
-            ? res.data
-            : res?.formatted_address
-            ? res
-            : null;
-          if (detail) {
-            callback(detail);
-          } else {
+  const handleSelect = useCallback(
+    (data: SearchLocation, callback: (detail: DetailLocation) => void) => {
+      setSelectedPlaceId(data.place_id);
+      mutateDetailLocation(
+        { place_id: data.place_id },
+        {
+          onSuccess: (res: any) => {
+            setSelectedPlaceId(null);
+            clearKeyword();
+            const detail = res?.data?.formatted_address
+              ? res.data
+              : res?.formatted_address
+              ? res
+              : null;
+            if (detail) {
+              callback(detail);
+            } else {
+              callback({
+                place_id: data.place_id,
+                formatted_address: data.formatted_address,
+                latitude: 0,
+                longitude: 0,
+              });
+            }
+          },
+          onError: (err) => {
+            setSelectedPlaceId(null);
+            clearKeyword();
+            handleError(err);
+            // Fallback để người dùng không bị kẹt ở màn hình tìm kiếm
             callback({
               place_id: data.place_id,
               formatted_address: data.formatted_address,
               latitude: 0,
               longitude: 0,
             });
-          }
-        },
-        onError: (err) => {
-          setSelectedPlaceId(null);
-          clearKeyword();
-          handleError(err);
-          // Fallback để người dùng không bị kẹt ở màn hình tìm kiếm
-          callback({
-            place_id: data.place_id,
-            formatted_address: data.formatted_address,
-            latitude: 0,
-            longitude: 0,
-          });
-        },
-      }
-    );
-  };
+          },
+        }
+      );
+    },
+    [clearKeyword, handleError, mutateDetailLocation]
+  );
 
   return {
     keyword,

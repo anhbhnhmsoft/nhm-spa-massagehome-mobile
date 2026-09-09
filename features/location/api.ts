@@ -16,8 +16,8 @@ const defaultUri = '/location';
 
 const locationApi = {
   // Tìm kiếm địa điểm
-  search: async (params: SearchLocationRequest): Promise<SearchLocationResponse> => {
-    const response = await client.get(`${defaultUri}/search`, { params });
+  search: async (params: SearchLocationRequest, signal?: AbortSignal): Promise<SearchLocationResponse> => {
+    const response = await client.get(`${defaultUri}/search`, { params, signal });
     return response.data;
   },
   // Lấy chi tiết địa điểm
