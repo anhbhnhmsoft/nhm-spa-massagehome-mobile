@@ -140,31 +140,31 @@ export const KtvIncomingProposalSection: React.FC = () => {
             key={proposal.id}
             className="mb-4 overflow-hidden rounded-2xl border border-blue-200/80 bg-white shadow-md shadow-blue-500/10">
             {/* Top Accent Bar: MasaHome Brand Blue */}
-            <View className="flex-row items-center justify-between bg-[#2B7BBE] px-4 py-2.5">
-              <View className="flex-row items-center flex-1 mr-2">
-                <BellRing size={15} color="#FFFFFF" />
-                <Text className="ml-2 font-inter-bold text-xs text-white" numberOfLines={1}>
+            <View className="flex-row items-center justify-between bg-[#2B7BBE] px-3.5 py-2.5">
+              <View className="flex-row items-center flex-1 min-w-0 mr-2">
+                <BellRing size={14} color="#FFFFFF" />
+                <Text className="ml-1.5 font-inter-bold text-[11px] text-white flex-shrink" numberOfLines={1}>
                   {t('service_request_form.proposal_badge', 'Yêu cầu CSKH ghép đơn')}
                 </Text>
               </View>
 
               {/* Urgency Badge */}
               {req?.urgency_level === _UrgencyLevel.NEED_NOW && (
-                <View className="rounded-full bg-red-500 px-2.5 py-0.5 shadow-sm">
+                <View className="flex-shrink-0 rounded-full bg-red-500 px-2 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_now', '⚡ Cần gấp 30-60p')}
                   </Text>
                 </View>
               )}
               {req?.urgency_level === _UrgencyLevel.TODAY && (
-                <View className="rounded-full bg-amber-500 px-2.5 py-0.5 shadow-sm">
+                <View className="flex-shrink-0 rounded-full bg-amber-500 px-2 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_today', '📅 Trong ngày')}
                   </Text>
                 </View>
               )}
               {req?.urgency_level === _UrgencyLevel.SCHEDULED && (
-                <View className="rounded-full bg-sky-500 px-2.5 py-0.5 shadow-sm">
+                <View className="flex-shrink-0 rounded-full bg-sky-500 px-2 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_scheduled', '⏰ Đặt lịch')}
                   </Text>

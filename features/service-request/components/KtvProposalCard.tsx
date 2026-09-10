@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { UserCheck, CheckCircle2, XCircle } from 'lucide-react-native';
 import { _ServiceRequestProposalInfo } from '@/features/service-request/types';
 import { useCustomerRespondProposalMutation } from '@/features/service-request/hooks/use-mutation';
+import useToast from '@/features/app/hooks/use-toast';
 
 interface KtvProposalCardProps {
   proposal: _ServiceRequestProposalInfo;
@@ -23,6 +24,7 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const respondMutation = useCustomerRespondProposalMutation();
+  const { error: toastError } = useToast();
 
   const handleRespond = (accept: boolean) => {
     respondMutation.mutate(
@@ -30,6 +32,15 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
       {
         onSuccess: () => {
           onSuccess?.();
+        },
+        onError: (err: any) => {
+          toastError({
+            title: t('common.error', 'Lỗi'),
+            message:
+              err?.response?.data?.message ||
+              err?.message ||
+              t('common.error_occurred', 'Có lỗi xảy ra, vui lòng thử lại!'),
+          });
         },
       }
     );
@@ -40,7 +51,7 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <UserCheck size={18} color="#0284C7" />
+        <UserCheck size={18} color="#2B7BBE" />
         <Text style={styles.headerTitle}>
           {t('service_request_form.proposals_title')}
         </Text>
@@ -75,7 +86,12 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
           ) : (
             <>
               <CheckCircle2 size={16} color="#FFFFFF" />
-              <Text style={styles.acceptButtonText}>
+              <Text
+                style={styles.acceptButtonText}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.75}
+              >
                 {t('service_request_form.accept_button')}
               </Text>
             </>
@@ -88,7 +104,12 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
           disabled={respondMutation.isPending}
         >
           <XCircle size={16} color="#E11D48" />
-          <Text style={styles.rejectButtonText}>
+          <Text
+            style={styles.rejectButtonText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t('service_request_form.reject_button')}
           </Text>
         </TouchableOpacity>
@@ -100,11 +121,11 @@ export const KtvProposalCard: React.FC<KtvProposalCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#BAE6FD',
-    marginBottom: 12,
+    borderColor: '#E2E8F0',
+    marginBottom: 8,
   },
   header: {
     flexDirection: 'row',
@@ -115,7 +136,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#0369A1',
+    color: '#2B7BBE',
   },
   ktvInfoRow: {
     flexDirection: 'row',
@@ -139,14 +160,14 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#475569',
+    color: '#2B7BBE',
   },
   ktvDetails: {
     flex: 1,
   },
   ktvName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#0F172A',
   },
   ktvPhone: {
@@ -163,16 +184,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingVertical: 11,
+    paddingHorizontal: 6,
+    borderRadius: 12,
   },
   acceptButton: {
-    backgroundColor: '#0284C7',
+    backgroundColor: '#2B7BBE',
   },
   acceptButtonText: {
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
+    flexShrink: 1,
   },
   rejectButton: {
     backgroundColor: '#FFF1F2',
@@ -182,6 +205,7 @@ const styles = StyleSheet.create({
   rejectButtonText: {
     color: '#E11D48',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
+    flexShrink: 1,
   },
 });

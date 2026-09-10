@@ -12,7 +12,7 @@ interface CskhMatchingBannerProps {
 
 export const CskhMatchingBanner: FC<CskhMatchingBannerProps> = ({ t, onPress }) => {
   return (
-    <View className="mt-4 px-4">
+    <View className="mt-4 mb-4 px-4">
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={onPress}
