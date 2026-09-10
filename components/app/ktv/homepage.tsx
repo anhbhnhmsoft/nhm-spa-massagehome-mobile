@@ -213,8 +213,11 @@ export const ReviewNewToday = ({ data }: { data?: ReviewItem[] }) => {
       {data && Array.isArray(data) && data.length > 0 ? (
         data.map((item, index) => <ReviewItemCard key={item.id + index} item={item} t={t} />)
       ) : (
-        <View className="flex-row overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <Text className="text-center text-sm text-slate-400">
+        <View className="items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white p-6 shadow-sm">
+          <View className="mb-2 h-10 w-10 items-center justify-center rounded-full bg-amber-50">
+            <Star size={20} color="#F59E0B" fill="#F59E0B" />
+          </View>
+          <Text className="font-inter-medium text-sm text-slate-500">
             {t('ktv.index.no_review_new_today')}
           </Text>
         </View>

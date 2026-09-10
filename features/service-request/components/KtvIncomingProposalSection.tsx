@@ -103,17 +103,17 @@ export const KtvIncomingProposalSection: React.FC = () => {
 
   return (
     <View className="mb-6">
-      {/* Section Header with pulsing indicator */}
-      <View className="mb-3 flex-row items-center justify-between">
+      {/* Section Header with brand blue indicator */}
+      <View className="mb-3.5 flex-row items-center justify-between">
         <View className="flex-row items-center">
-          <View className="mr-2 h-7 w-7 items-center justify-center rounded-full bg-amber-100">
-            <Sparkles size={16} color="#D97706" />
+          <View className="mr-2.5 h-8 w-8 items-center justify-center rounded-full bg-blue-50">
+            <Sparkles size={18} color="#2B7BBE" />
           </View>
           <Text className="font-inter-bold text-lg text-slate-900">
             {t('service_request_form.ktv_incoming_proposal_title', 'Đề xuất việc từ CSKH')}
           </Text>
         </View>
-        <View className="rounded-full bg-amber-500 px-2.5 py-0.5">
+        <View className="rounded-full bg-[#2B7BBE] px-3 py-1 shadow-sm">
           <Text className="font-inter-bold text-xs text-white">
             {pendingProposals.length} {t('common.new', 'Mới')}
           </Text>
@@ -138,33 +138,33 @@ export const KtvIncomingProposalSection: React.FC = () => {
         return (
           <View
             key={proposal.id}
-            className="mb-4 overflow-hidden rounded-2xl border-2 border-amber-300 bg-white shadow-md">
-            {/* Top Accent Bar */}
-            <View className="flex-row items-center justify-between bg-amber-500 px-4 py-2">
-              <View className="flex-row items-center">
-                <BellRing size={14} color="#FFFFFF" />
-                <Text className="ml-1.5 font-inter-semibold text-xs text-white">
-                  {t('service_request_form.proposal_badge', 'Yêu cầu CSKH ghép đơn')} #{req?.id || proposal.request_id}
+            className="mb-4 overflow-hidden rounded-2xl border border-blue-200/80 bg-white shadow-md shadow-blue-500/10">
+            {/* Top Accent Bar: MasaHome Brand Blue */}
+            <View className="flex-row items-center justify-between bg-[#2B7BBE] px-4 py-2.5">
+              <View className="flex-row items-center flex-1 mr-2">
+                <BellRing size={15} color="#FFFFFF" />
+                <Text className="ml-2 font-inter-bold text-xs text-white" numberOfLines={1}>
+                  {t('service_request_form.proposal_badge', 'Yêu cầu CSKH ghép đơn')}
                 </Text>
               </View>
 
               {/* Urgency Badge */}
               {req?.urgency_level === _UrgencyLevel.NEED_NOW && (
-                <View className="rounded-full bg-red-600 px-2 py-0.5">
+                <View className="rounded-full bg-red-500 px-2.5 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_now', '⚡ Cần gấp 30-60p')}
                   </Text>
                 </View>
               )}
               {req?.urgency_level === _UrgencyLevel.TODAY && (
-                <View className="rounded-full bg-amber-600 px-2 py-0.5">
+                <View className="rounded-full bg-amber-500 px-2.5 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_today', '📅 Trong ngày')}
                   </Text>
                 </View>
               )}
               {req?.urgency_level === _UrgencyLevel.SCHEDULED && (
-                <View className="rounded-full bg-sky-600 px-2 py-0.5">
+                <View className="rounded-full bg-sky-500 px-2.5 py-0.5 shadow-sm">
                   <Text className="font-inter-bold text-[10px] text-white">
                     {t('service_request_form.urgency_scheduled', '⏰ Đặt lịch')}
                   </Text>
@@ -173,30 +173,39 @@ export const KtvIncomingProposalSection: React.FC = () => {
             </View>
 
             <View className="p-4">
-              {/* Service Title & Price */}
-              <View className="mb-2.5 flex-row items-start justify-between">
-                <Text
-                  className="mr-2 flex-1 font-inter-bold text-base text-slate-900"
-                  numberOfLines={2}>
-                  {serviceTitle}
-                </Text>
-                {req?.service?.price ? (
-                  <Text className="font-inter-bold text-base text-[#2B7BBE]">
-                    {formatBalance(req.service.price)} đ
+              {/* Service Title, Request ID & Price */}
+              <View className="mb-3 flex-row items-start justify-between">
+                <View className="flex-1 mr-2">
+                  <Text className="text-[11px] font-inter-semibold text-slate-400 mb-0.5">
+                    Mã yêu cầu: #{req?.id || proposal.request_id}
                   </Text>
+                  <Text
+                    className="font-inter-bold text-base text-slate-900 leading-6"
+                    numberOfLines={2}>
+                    {serviceTitle}
+                  </Text>
+                </View>
+                {req?.service?.price ? (
+                  <View className="rounded-xl bg-emerald-50 px-2.5 py-1 border border-emerald-200">
+                    <Text className="font-inter-bold text-sm text-emerald-700">
+                      {formatBalance(req.service.price)} đ
+                    </Text>
+                  </View>
                 ) : null}
               </View>
 
               {/* Customer info & CSKH */}
-              <View className="mb-2 flex-row items-center">
-                <User size={14} color="#64748B" />
-                <Text className="ml-2 font-inter-medium text-sm text-slate-700">
-                  {customerName}
-                </Text>
+              <View className="mb-2.5 flex-row items-center flex-wrap gap-2">
+                <View className="flex-row items-center rounded-xl bg-slate-50 px-3 py-1.5 border border-slate-200/80">
+                  <User size={14} color="#64748B" />
+                  <Text className="ml-1.5 font-inter-semibold text-xs text-slate-700">
+                    {customerName}
+                  </Text>
+                </View>
                 {proposal.cskh?.name ? (
-                  <View className="ml-2 flex-row items-center rounded-md bg-slate-100 px-1.5 py-0.5">
-                    <Headphones size={11} color="#64748B" />
-                    <Text className="ml-1 text-[11px] text-slate-500">
+                  <View className="flex-row items-center rounded-xl bg-sky-50 px-3 py-1.5 border border-sky-200/80">
+                    <Headphones size={13} color="#0284C7" />
+                    <Text className="ml-1.5 font-inter-semibold text-xs text-sky-700">
                       CSKH: {proposal.cskh.name}
                     </Text>
                   </View>
@@ -205,9 +214,9 @@ export const KtvIncomingProposalSection: React.FC = () => {
 
               {/* Date & Time Slot */}
               {(req?.preferred_date || req?.time_slot) && (
-                <View className="mb-2 flex-row items-center">
+                <View className="mb-2.5 flex-row items-center rounded-xl bg-slate-50 px-3 py-1.5 border border-slate-200/80">
                   <Clock size={14} color="#64748B" />
-                  <Text className="ml-2 font-inter-regular text-sm text-slate-600">
+                  <Text className="ml-1.5 font-inter-medium text-xs text-slate-600">
                     {req?.preferred_date
                       ? dayjs(req.preferred_date).format('DD/MM/YYYY')
                       : ''}{' '}
@@ -218,10 +227,10 @@ export const KtvIncomingProposalSection: React.FC = () => {
 
               {/* Address */}
               {req?.address ? (
-                <View className="mb-2 flex-row items-start">
-                  <MapPin size={14} color="#EF4444" style={{ marginTop: 2 }} />
+                <View className="mb-2.5 flex-row items-start rounded-xl bg-slate-50 p-2.5 border border-slate-200/80">
+                  <MapPin size={15} color="#EF4444" style={{ marginTop: 1 }} />
                   <Text
-                    className="ml-2 flex-1 font-inter-regular text-sm text-slate-600"
+                    className="ml-2 flex-1 font-inter-medium text-xs text-slate-700 leading-5"
                     numberOfLines={2}>
                     {req.address}
                   </Text>
@@ -230,23 +239,23 @@ export const KtvIncomingProposalSection: React.FC = () => {
 
               {/* Customer Note */}
               {req?.note ? (
-                <View className="mb-3 flex-row items-start rounded-xl bg-amber-50/80 p-2.5">
-                  <MessageSquare size={13} color="#D97706" style={{ marginTop: 2 }} />
-                  <Text className="ml-2 flex-1 font-inter-regular text-xs text-amber-900">
+                <View className="mb-3.5 flex-row items-start rounded-xl bg-blue-50/70 p-3 border border-blue-100">
+                  <MessageSquare size={14} color="#2B7BBE" style={{ marginTop: 1 }} />
+                  <Text className="ml-2 flex-1 font-inter-regular text-xs text-slate-800 leading-5">
                     {t('service_request_form.note_prefix', 'Ghi chú:')} {req.note}
                   </Text>
                 </View>
               ) : null}
 
               {/* Action Buttons */}
-              <View className="mt-2 flex-row gap-3">
+              <View className="mt-1 flex-row gap-3">
                 {/* Từ chối */}
                 <TouchableOpacity
-                  className="flex-1 flex-row items-center justify-center rounded-xl border border-rose-200 bg-rose-50 py-3"
+                  className="flex-1 flex-row items-center justify-center rounded-xl border border-rose-300 bg-rose-50 py-3.5 active:bg-rose-100"
                   onPress={() => handleRespond(proposal.id, false)}
                   disabled={isPendingAction}
-                  activeOpacity={0.7}>
-                  <XCircle size={16} color="#E11D48" />
+                  activeOpacity={0.75}>
+                  <XCircle size={17} color="#E11D48" />
                   <Text className="ml-1.5 font-inter-bold text-sm text-rose-600">
                     {t('service_request_form.ktv_reject_job', 'Từ chối')}
                   </Text>
@@ -254,15 +263,15 @@ export const KtvIncomingProposalSection: React.FC = () => {
 
                 {/* Nhận đơn */}
                 <TouchableOpacity
-                  className="flex-1 flex-row items-center justify-center rounded-xl bg-emerald-600 py-3 shadow-sm"
+                  className="flex-1 flex-row items-center justify-center rounded-xl bg-[#2B7BBE] py-3.5 shadow-md shadow-blue-500/20 active:opacity-90"
                   onPress={() => handleRespond(proposal.id, true)}
                   disabled={isPendingAction}
-                  activeOpacity={0.7}>
+                  activeOpacity={0.75}>
                   {isPendingAction ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   ) : (
                     <>
-                      <CheckCircle2 size={16} color="#FFFFFF" />
+                      <CheckCircle2 size={17} color="#FFFFFF" />
                       <Text className="ml-1.5 font-inter-bold text-sm text-white">
                         {t('service_request_form.ktv_accept_job', 'Nhận đơn')}
                       </Text>

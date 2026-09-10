@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import { AppointmentCard, ReviewNewToday, ServiceOngoingItemCard, TodayEarnings, } from '@/components/app/ktv/homepage';
 import { useDashboardKtvQuery } from '@/features/ktv/hooks/use-query';
 import { KtvIncomingProposalSection } from '@/features/service-request/components';
+import { Calendar } from 'lucide-react-native';
 
 export default function KTVDashboard() {
   const { t } = useTranslation();
@@ -50,20 +51,28 @@ export default function KTVDashboard() {
         )}
         {/* Section: Đơn sắp tới */}
         <View className="mb-8">
-          <View className="mb-4 flex-row items-end justify-between">
-              <Text className="font-inter-bold text-lg text-slate-900">
-                {t('ktv.index.upcoming')}
-              </Text>
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="font-inter-bold text-lg text-slate-900">
+              {t('ktv.index.upcoming')}
+            </Text>
             <TouchableOpacity onPress={goSchedule}>
-              <Text className="text-sm text-primary-color-2">{t('common.see_all')}</Text>
+              <Text className="font-inter-semibold text-sm text-primary-color-2">
+                {t('common.see_all')}
+              </Text>
             </TouchableOpacity>
           </View>
           {data?.booking ? (
             <AppointmentCard item={data.booking} />
           ) : (
-            <View className="flex-row overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              <Text className="text-center text-sm text-slate-400">
+            <View className="items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white p-6 shadow-sm">
+              <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+                <Calendar size={22} color="#2B7BBE" />
+              </View>
+              <Text className="font-inter-bold text-sm text-slate-700">
                 {t('ktv.index.no_upcoming_booking')}
+              </Text>
+              <Text className="mt-1 text-center font-inter-regular text-xs text-slate-400">
+                {t('ktv.index.no_upcoming_desc', 'Các đơn hàng ghép thành công sẽ xuất hiện tại đây.')}
               </Text>
             </View>
           )}
