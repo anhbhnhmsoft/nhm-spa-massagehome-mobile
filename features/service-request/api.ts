@@ -31,7 +31,7 @@ export const serviceRequestApi = {
    * Khách hàng Phản hồi đề xuất KTV từ CSKH
    */
   respondProposalByCustomer: async (
-    proposalId: number,
+    proposalId: number | string,
     accept: boolean
   ): Promise<ResponseDataSuccessType<{ proposal: _ServiceRequestProposalInfo }>> => {
     const response = await client.post(
@@ -55,7 +55,7 @@ export const serviceRequestApi = {
    * KTV Phản hồi Lời mời đề xuất từ CSKH
    */
   respondProposalByKtv: async (
-    proposalId: number,
+    proposalId: number | string,
     accept: boolean
   ): Promise<ResponseDataSuccessType<_ServiceRequestProposalInfo>> => {
     const response = await client.post(

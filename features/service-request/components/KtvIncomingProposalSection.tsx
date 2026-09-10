@@ -66,7 +66,7 @@ export const KtvIncomingProposalSection: React.FC = () => {
     return null;
   }
 
-  const handleRespond = (proposalId: number, accept: boolean) => {
+  const handleRespond = (proposalId: number | string, accept: boolean) => {
     respondMutation.mutate(
       { proposalId, accept },
       {

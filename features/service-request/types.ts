@@ -42,8 +42,8 @@ export interface _CreateServiceRequestInput {
 }
 
 export interface _ServiceRequestProposalInfo {
-  id: number;
-  request_id: number;
+  id: number | string;
+  request_id: number | string;
   ktv_id: string;
   cskh_id?: string;
   status: _ProposalStatus;
@@ -64,7 +64,7 @@ export interface _ServiceRequestProposalInfo {
 }
 
 export interface _ServiceRequestInfo {
-  id: number;
+  id: number | string;
   customer_id: string;
   cskh_id?: string;
   service_id: number | string;

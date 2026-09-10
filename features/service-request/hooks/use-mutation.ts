@@ -25,7 +25,7 @@ export const useCustomerRespondProposalMutation = () => {
       proposalId,
       accept,
     }: {
-      proposalId: number;
+      proposalId: number | string;
       accept: boolean;
     }) => serviceRequestApi.respondProposalByCustomer(proposalId, accept),
     onSuccess: () => {
@@ -44,7 +44,7 @@ export const useKtvRespondProposalMutation = () => {
       proposalId,
       accept,
     }: {
-      proposalId: number;
+      proposalId: number | string;
       accept: boolean;
     }) => serviceRequestApi.respondProposalByKtv(proposalId, accept),
     onSuccess: () => {
