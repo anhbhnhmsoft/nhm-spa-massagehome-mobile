@@ -23,21 +23,25 @@ export const useGetRoomChat = () => {
         onSuccess: (res) => {
           const data = res.data;
           setRoom(data);
-          // Đánh dấu tin nhắn đọc trong phòng chat
-          seenMessages(data.id, {
-            onSuccess: () => {
-              setLoading(false);
-              if (forWho === 'customer') {
-                router.push('/(app)/(customer)/(service)/chat');
-              } else {
-                router.push('/(app)/(ktv)/(service)/chat');
-              }
-            },
-            onError: (error) => {
-              setLoading(false);
-              handleError(error);
-            },
-          });
+
+          const navigateToChat = () => {
+            setLoading(false);
+            if (forWho === 'customer') {
+              router.push('/(app)/(customer)/(service)/chat');
+            } else {
+              router.push('/(app)/(ktv)/(service)/chat');
+            }
+          };
+
+          // Đánh dấu tin nhắn đọc trong phòng chat nếu có room id (không chặn chuyển màn hình)
+          if (data?.id) {
+            seenMessages(data.id, {
+              onSuccess: () => navigateToChat(),
+              onError: () => navigateToChat(),
+            });
+          } else {
+            navigateToChat();
+          }
         },
         onError: (error) => {
           setLoading(false);
