@@ -339,7 +339,19 @@
     "service_body": "전신 마사지",
     "service_hand": "핸드 마사지",
     "service_head": "헤드 마사지",
-    "service_foot": "풋 마사지"
+    "service_foot": "풋 마사지",
+    "ktv_incoming_proposal_title": "고객센터 배정 제안",
+    "proposal_badge": "고객센터 매칭 요청",
+    "urgency_now": "⚡ 긴급 (30~60분 이내)",
+    "urgency_today": "📅 오늘 내",
+    "urgency_scheduled": "⏰ 사전 예약",
+    "default_service_name": "마사지 서비스",
+    "customer_default": "MasaHome 고객님",
+    "note_prefix": "비고:",
+    "ktv_accept_job": "수락",
+    "ktv_reject_job": "거절",
+    "ktv_accept_success": "제안을 수락하셨습니다! 고객님의 최종 확정을 기다려 주세요.",
+    "ktv_reject_success": "배정 제안을 거절했습니다."
   },
   "crm": {
     "title": "서비스 니즈 설문",

@@ -862,7 +862,19 @@
     "service_body": "全身按摩",
     "service_hand": "手部按摩",
     "service_head": "头部按摩",
-    "service_foot": "足部按摩"
+    "service_foot": "足部按摩",
+    "ktv_incoming_proposal_title": "来自客服的派单推荐",
+    "proposal_badge": "客服撮合需求",
+    "urgency_now": "⚡ 紧急 (30-60分钟)",
+    "urgency_today": "📅 今天",
+    "urgency_scheduled": "⏰ 预约时间",
+    "default_service_name": "按摩服务",
+    "customer_default": "MasaHome客户",
+    "note_prefix": "备注:",
+    "ktv_accept_job": "接单",
+    "ktv_reject_job": "拒绝",
+    "ktv_accept_success": "您已同意接单！请等待客户确认。",
+    "ktv_reject_success": "已拒绝此派单推荐。"
   },
   "crm": {
     "title": "服务需求调查",

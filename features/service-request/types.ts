@@ -48,11 +48,18 @@ export interface _ServiceRequestProposalInfo {
   cskh_id?: string;
   status: _ProposalStatus;
   expires_at?: string;
+  created_at?: string;
   ktv?: {
     id: string;
     name: string;
     phone: string;
     avatar_url?: string;
+  };
+  service_request?: _ServiceRequestInfo;
+  serviceRequest?: _ServiceRequestInfo;
+  cskh?: {
+    id: string;
+    name: string;
   };
 }
 
@@ -60,7 +67,7 @@ export interface _ServiceRequestInfo {
   id: number;
   customer_id: string;
   cskh_id?: string;
-  service_id: number;
+  service_id: number | string;
   preferred_techniques?: string[];
   province_code?: string;
   district_code?: string;
@@ -77,9 +84,19 @@ export interface _ServiceRequestInfo {
   expires_at?: string;
   created_at: string;
   service?: {
-    id: number;
+    id: number | string;
     title: string | Record<string, string>;
     price?: number;
+  };
+  category?: {
+    id: number | string;
+    title: string | Record<string, string>;
+  };
+  customer?: {
+    id: string;
+    name: string;
+    phone?: string;
+    avatar_url?: string;
   };
   proposals?: _ServiceRequestProposalInfo[];
 }

@@ -359,7 +359,19 @@
     "service_body": "Massage toàn thân",
     "service_hand": "Massage tay",
     "service_head": "Massage đầu",
-    "service_foot": "Massage chân"
+    "service_foot": "Massage chân",
+    "ktv_incoming_proposal_title": "Đề xuất việc từ CSKH",
+    "proposal_badge": "Yêu cầu CSKH ghép đơn",
+    "urgency_now": "⚡ Cần gấp 30-60p",
+    "urgency_today": "📅 Trong ngày",
+    "urgency_scheduled": "⏰ Đặt lịch",
+    "default_service_name": "Dịch vụ Massage",
+    "customer_default": "Khách hàng MasaHome",
+    "note_prefix": "Ghi chú:",
+    "ktv_accept_job": "Nhận đơn",
+    "ktv_reject_job": "Từ chối",
+    "ktv_accept_success": "Bạn đã đồng ý nhận yêu cầu dịch vụ! Đang chờ khách hàng xác nhận.",
+    "ktv_reject_success": "Đã từ chối đề xuất nhận việc."
   },
   "crm": {
     "title": "Khảo sát Nhu cầu Service",

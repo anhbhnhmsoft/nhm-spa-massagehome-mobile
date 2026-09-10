@@ -339,7 +339,19 @@
     "service_body": "全身マッサージ",
     "service_hand": "ハンドマッサージ",
     "service_head": "ヘッドマッサージ",
-    "service_foot": "フットマッサージ"
+    "service_foot": "フットマッサージ",
+    "ktv_incoming_proposal_title": "サポートからの案件提案",
+    "proposal_badge": "サポート案件マッチング",
+    "urgency_now": "⚡ 至急 (30〜60分以内)",
+    "urgency_today": "📅 本日中",
+    "urgency_scheduled": "⏰ 日時指定予約",
+    "default_service_name": "マッサージサービス",
+    "customer_default": "MasaHomeお客様",
+    "note_prefix": "備考:",
+    "ktv_accept_job": "案件を受ける",
+    "ktv_reject_job": "辞退する",
+    "ktv_accept_success": "案件を受諾しました！お客様の確認をお待ちください。",
+    "ktv_reject_success": "案件の提案を辞退しました。"
   },
   "crm": {
     "title": "サービスニーズ調査",

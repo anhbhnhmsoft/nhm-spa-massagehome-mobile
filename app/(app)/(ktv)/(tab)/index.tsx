@@ -8,6 +8,7 @@ import { useSingleTouch } from '@/features/app/hooks/use-single-touch';
 import { router } from 'expo-router';
 import { AppointmentCard, ReviewNewToday, ServiceOngoingItemCard, TodayEarnings, } from '@/components/app/ktv/homepage';
 import { useDashboardKtvQuery } from '@/features/ktv/hooks/use-query';
+import { KtvIncomingProposalSection } from '@/features/service-request/components';
 
 export default function KTVDashboard() {
   const { t } = useTranslation();
@@ -32,6 +33,9 @@ export default function KTVDashboard() {
         refreshControl={
           <RefreshControl refreshing={isRefetching || isLoading} onRefresh={() => refetch()} />
         }>
+        {/* Section: Đề xuất nhận việc từ CSKH */}
+        <KtvIncomingProposalSection />
+
         {/* Section: Đơn đang làm */}
         {data?.booking_ongoing && (
           <View className="mb-8">

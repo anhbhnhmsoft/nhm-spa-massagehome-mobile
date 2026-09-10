@@ -359,7 +359,19 @@
     "service_body": "Full Body Massage",
     "service_hand": "Hand Massage",
     "service_head": "Head Massage",
-    "service_foot": "Foot Massage"
+    "service_foot": "Foot Massage",
+    "ktv_incoming_proposal_title": "Job Proposals from CSKH",
+    "proposal_badge": "CSKH Matching Request",
+    "urgency_now": "⚡ Urgent (30-60 min)",
+    "urgency_today": "📅 Today",
+    "urgency_scheduled": "⏰ Scheduled",
+    "default_service_name": "Massage Service",
+    "customer_default": "MasaHome Customer",
+    "note_prefix": "Note:",
+    "ktv_accept_job": "Accept Job",
+    "ktv_reject_job": "Decline",
+    "ktv_accept_success": "You accepted the job proposal! Waiting for customer confirmation.",
+    "ktv_reject_success": "You declined the job proposal."
   },
   "crm": {
     "title": "Service Needs Survey",
