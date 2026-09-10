@@ -14,7 +14,10 @@ import {
   InviteIndividualHomepage,
   ListServiceHomePage,
 } from '@/components/app/customer';
-import { CreateServiceRequestModal } from '@/features/service-request/components';
+import {
+  CreateServiceRequestModal,
+  CustomerActiveRequestSection,
+} from '@/features/service-request/components';
 
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 
@@ -71,6 +74,9 @@ export default function UserDashboard() {
 
         {/* --- CSKH MATCHING PROACTIVE BANNER --- */}
         <CskhMatchingBanner t={t} onPress={() => redirectAuth(() => setShowCskhModal(true))} />
+
+        {/* --- CSKH ACTIVE REQUESTS & PROPOSALS --- */}
+        <CustomerActiveRequestSection />
 
         {/* --- TECHNICIANS SECTION --- */}
         <CarouselTechnicalHomePage queryKTV={queryKTV} t={t} />

@@ -351,7 +351,13 @@
     "ktv_accept_job": "수락",
     "ktv_reject_job": "거절",
     "ktv_accept_success": "제안을 수락하셨습니다! 고객님의 최종 확정을 기다려 주세요.",
-    "ktv_reject_success": "배정 제안을 거절했습니다."
+    "ktv_reject_success": "배정 제안을 거절했습니다.",
+    "has_ktv_ready": "✨ 적합한 테라피스트를 찾았습니다!",
+    "cskh_matching_title": "고객센터에서 테라피스트 매칭 중...",
+    "ktv_accepted_hint": "테라피스트가 요청을 수락했습니다! 확인 버튼을 눌러 예약을 확정하세요.",
+    "cskh_processing": "MasaHome 고객센터에서 최적의 테라피스트를 조율하고 있습니다.",
+    "cskh_notify_soon": "테라피스트 수락 시 정보가 여기에 표시됩니다.",
+    "customer_accept_success": "테라피스트 예약이 확정되었습니다!"
   },
   "crm": {
     "title": "서비스 니즈 설문",

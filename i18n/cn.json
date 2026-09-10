@@ -874,7 +874,13 @@
     "ktv_accept_job": "接单",
     "ktv_reject_job": "拒绝",
     "ktv_accept_success": "您已同意接单！请等待客户确认。",
-    "ktv_reject_success": "已拒绝此派单推荐。"
+    "ktv_reject_success": "已拒绝此派单推荐。",
+    "has_ktv_ready": "✨ 已为您匹配到合适技师！",
+    "cskh_matching_title": "客服正在寻找技师...",
+    "ktv_accepted_hint": "该技师已同意接单！请点击同意确认预约。",
+    "cskh_processing": "MasaHome客服正在为您联系最优秀的技师。",
+    "cskh_notify_soon": "技师接单后，其信息将在此展示供您确认。",
+    "customer_accept_success": "确认技师成功！您的预约已生成。"
   },
   "crm": {
     "title": "服务需求调查",

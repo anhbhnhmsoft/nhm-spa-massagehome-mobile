@@ -371,7 +371,13 @@
     "ktv_accept_job": "Nhận đơn",
     "ktv_reject_job": "Từ chối",
     "ktv_accept_success": "Bạn đã đồng ý nhận yêu cầu dịch vụ! Đang chờ khách hàng xác nhận.",
-    "ktv_reject_success": "Đã từ chối đề xuất nhận việc."
+    "ktv_reject_success": "Đã từ chối đề xuất nhận việc.",
+    "has_ktv_ready": "✨ ĐÃ TÌM THẤY KTV PHÙ HỢP!",
+    "cskh_matching_title": "CSKH Đang Tìm KTV...",
+    "ktv_accepted_hint": "KTV này đã đồng ý nhận việc! Bạn vui lòng bấm Đồng ý để chốt đơn.",
+    "cskh_processing": "CSKH MasaHome đang liên hệ KTV tốt nhất cho bạn.",
+    "cskh_notify_soon": "Khi KTV nhận đơn, thông tin KTV sẽ hiện tại đây để bạn duyệt.",
+    "customer_accept_success": "Đã chốt KTV thành công! Đơn lịch hẹn của bạn đã được tạo."
   },
   "crm": {
     "title": "Khảo sát Nhu cầu Service",

@@ -371,7 +371,13 @@
     "ktv_accept_job": "Accept Job",
     "ktv_reject_job": "Decline",
     "ktv_accept_success": "You accepted the job proposal! Waiting for customer confirmation.",
-    "ktv_reject_success": "You declined the job proposal."
+    "ktv_reject_success": "You declined the job proposal.",
+    "has_ktv_ready": "✨ MATCHED KTV FOUND!",
+    "cskh_matching_title": "CSKH Finding KTV...",
+    "ktv_accepted_hint": "This KTV has accepted your request! Please tap Accept to confirm.",
+    "cskh_processing": "MasaHome CSKH is contacting the best KTVs for you.",
+    "cskh_notify_soon": "Once a KTV accepts, their info will appear here for your approval.",
+    "customer_accept_success": "KTV confirmed successfully! Your appointment has been booked."
   },
   "crm": {
     "title": "Service Needs Survey",

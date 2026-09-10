@@ -351,7 +351,13 @@
     "ktv_accept_job": "案件を受ける",
     "ktv_reject_job": "辞退する",
     "ktv_accept_success": "案件を受諾しました！お客様の確認をお待ちください。",
-    "ktv_reject_success": "案件の提案を辞退しました。"
+    "ktv_reject_success": "案件の提案を辞退しました。",
+    "has_ktv_ready": "✨ マッチしたセラピストが見つかりました！",
+    "cskh_matching_title": "サポートがセラピストを探しています...",
+    "ktv_accepted_hint": "セラピストが依頼を受諾しました！「同意」をタップして予約を確定してください。",
+    "cskh_processing": "MasaHomeサポートが最適なセラピストと連絡を取っています。",
+    "cskh_notify_soon": "セラピストが受諾次第、こちらに情報が表示されます。",
+    "customer_accept_success": "セラピストの予約が確定しました！"
   },
   "crm": {
     "title": "サービスニーズ調査",
