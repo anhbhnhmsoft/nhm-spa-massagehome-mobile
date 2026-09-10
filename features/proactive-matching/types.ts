@@ -7,7 +7,7 @@ export interface MaskedCustomerType {
 }
 
 export interface NearbyDemandItemType {
-  request_id: number;
+  request_id: number | string;
   service_name: string;
   preferred_techniques?: string[];
   preferred_date?: string;
@@ -22,10 +22,10 @@ export interface NearbyDemandItemType {
 }
 
 export interface KtvProactiveInviteType {
-  id: number;
+  id: number | string;
   ktv_id: string;
   customer_id: string;
-  request_id?: number | null;
+  request_id?: number | string | null;
   status: InvitationStatusType;
   note?: string | null;
   expires_at: string;

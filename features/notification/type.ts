@@ -2,7 +2,7 @@ import { Paginator, ResponseDataSuccessType } from '@/lib/types';
 import { NotificationStatus, NotificationType } from './const';
 
 export type Notification = {
-  id: number;
+  id: string | number;
   user_id: string;
 
   title: string;

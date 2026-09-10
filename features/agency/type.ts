@@ -18,7 +18,7 @@ export type ReferralAffiliateSummary = {
 };
 
 export type KtvPerformance = {
-  id: number;
+  id: string | number;
   name: string;
   avatar_url: string | null;
   phone: string;

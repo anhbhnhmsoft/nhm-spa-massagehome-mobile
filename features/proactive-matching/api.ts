@@ -13,7 +13,7 @@ export const proactiveMatchingApi = {
   },
 
   // KTV gửi lời mời trực tiếp
-  sendInvite: async (payload: { customer_id: string; request_id?: number; note?: string }) => {
+  sendInvite: async (payload: { customer_id: string; request_id?: number | string; note?: string }) => {
     const response = await client.post<ResponseDataSuccessType<KtvProactiveInviteType>>(
       '/service-requests/proactive/send-invite',
       payload
@@ -30,7 +30,7 @@ export const proactiveMatchingApi = {
   },
 
   // Khách hàng phản hồi (Đồng ý / Từ chối)
-  respondInvite: async (inviteId: number, accept: boolean) => {
+  respondInvite: async (inviteId: number | string, accept: boolean) => {
     const response = await client.post<ResponseDataSuccessType<{ invite: KtvProactiveInviteType; booking?: any }>>(
       `/service-requests/proactive/invites/${inviteId}/respond`,
       { accept }

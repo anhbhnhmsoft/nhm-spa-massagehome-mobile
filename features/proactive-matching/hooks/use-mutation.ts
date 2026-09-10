@@ -15,7 +15,7 @@ export const useSendInviteMutation = () => {
 export const useRespondInviteMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ inviteId, accept }: { inviteId: number; accept: boolean }) =>
+    mutationFn: ({ inviteId, accept }: { inviteId: number | string; accept: boolean }) =>
       proactiveMatchingApi.respondInvite(inviteId, accept),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PROACTIVE_KEYS.customerInvites });

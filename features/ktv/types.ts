@@ -189,7 +189,7 @@ export type KTVConfigSchedule = {
   is_working: boolean;
 };
 export interface FinishBooking {
-  booking_id: number;
+  booking_id: string | number;
   end_time: string; // ISO string: "2026-01-23T02:15:30.000Z"
   already_finished: boolean;
 }
