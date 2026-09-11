@@ -14,7 +14,7 @@ import { Icon } from '@/components/ui/icon';
 import BaseBottomModal from '@/components/ui/base-bottom-modal';
 import { useCreateServiceRequestMutation } from '@/features/service-request/hooks/use-mutation';
 import { _UrgencyLevel } from '@/features/service-request/types';
-import { cn } from '@/lib/utils';
+import { cn, formatBalance } from '@/lib/utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApplicationStore } from '@/features/app/stores';
 import { ListLocationModal } from '@/components/app/location';
@@ -50,6 +50,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
   const locationUser = useApplicationStore((s) => s.location);
 
   const [selectedServiceId, setSelectedServiceId] = useState<string | number>(propServiceId || '');
+  const [selectedDuration, setSelectedDuration] = useState<number>(60);
   const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
   const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(_UrgencyLevel.NEED_NOW);
   const [address, setAddress] = useState<string>('');
@@ -81,6 +82,20 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
       setSelectedServiceId(propServiceId);
     }
   }, [propServiceId]);
+
+  // Tự động đồng bộ thời lượng theo bảng giá cấu hình của dịch vụ được chọn
+  const currentCategory = categories.find((c) => String(c.id) === String(selectedServiceId));
+  const priceOptions = currentCategory?.prices || [];
+
+  useEffect(() => {
+    if (priceOptions.length > 0) {
+      const hasCurrent = priceOptions.some((p) => Number(p.duration) === selectedDuration);
+      if (!hasCurrent) {
+        const match60 = priceOptions.find((p) => Number(p.duration) === 60);
+        setSelectedDuration(match60 ? 60 : Number(priceOptions[0].duration));
+      }
+    }
+  }, [selectedServiceId, priceOptions]);
 
   useEffect(() => {
     if (visible && locationUser?.address && !address) {
@@ -133,6 +148,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
     createMutation.mutate(
       {
         service_id: propServiceId || selectedServiceId,
+        duration: selectedDuration,
         preferred_techniques: selectedTechniques,
         urgency_level: urgencyLevel,
         address: address.trim(),
@@ -236,6 +252,86 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
               )}
             </View>
           )}
+
+          {/* Thời lượng gói dịch vụ */}
+          <View className="mb-4">
+            <View className="mb-2 flex-row items-center gap-1.5">
+              <Clock size={14} className="text-primary-color-2" />
+              <Text className="font-inter-semibold text-sm text-slate-800">
+                {t('service_request_form.duration_label', 'Thời lượng gói dịch vụ')} *
+              </Text>
+            </View>
+            {priceOptions.length > 0 ? (
+              <View className="flex-row flex-wrap gap-2">
+                {priceOptions.map((opt) => {
+                  const dur = Number(opt.duration);
+                  const isSelected = selectedDuration === dur;
+                  return (
+                    <TouchableOpacity
+                      key={opt.id || dur}
+                      onPress={() => setSelectedDuration(dur)}
+                      className={cn(
+                        'flex-1 min-w-[28%] rounded-xl p-3 border items-center justify-center',
+                        isSelected
+                          ? 'bg-primary-color-2/10 border-primary-color-2'
+                          : 'bg-slate-50 border-slate-200'
+                      )}
+                    >
+                      <View className="flex-row items-center gap-1">
+                        {isSelected && <Check size={14} className="text-primary-color-2" />}
+                        <Text
+                          className={cn(
+                            'text-xs font-inter-semibold',
+                            isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
+                          )}
+                        >
+                          {dur} {t('common.minute', 'phút')}
+                        </Text>
+                      </View>
+                      <Text
+                        className={cn(
+                          'text-xs mt-1',
+                          isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-500'
+                        )}
+                      >
+                        {formatBalance(opt.price)} {t('common.currency', 'đ')}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ) : (
+              <View className="flex-row flex-wrap gap-2">
+                {[60, 90, 120].map((dur) => {
+                  const isSelected = selectedDuration === dur;
+                  return (
+                    <TouchableOpacity
+                      key={dur}
+                      onPress={() => setSelectedDuration(dur)}
+                      className={cn(
+                        'flex-1 min-w-[28%] rounded-xl p-3 border items-center justify-center',
+                        isSelected
+                          ? 'bg-primary-color-2/10 border-primary-color-2'
+                          : 'bg-slate-50 border-slate-200'
+                      )}
+                    >
+                      <View className="flex-row items-center gap-1">
+                        {isSelected && <Check size={14} className="text-primary-color-2" />}
+                        <Text
+                          className={cn(
+                            'text-xs font-inter-semibold',
+                            isSelected ? 'text-primary-color-2 font-inter-bold' : 'text-slate-700'
+                          )}
+                        >
+                          {dur} {t('common.minute', 'phút')}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
 
           {/* Kỹ thuật mong muốn */}
           <Text className="mb-2 font-inter-semibold text-sm text-slate-800">

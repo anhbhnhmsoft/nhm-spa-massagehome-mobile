@@ -6,6 +6,13 @@ import {
   LanguageTranslations,
 } from '@/lib/types';
 
+export type CategoryPriceItem = {
+  id: string;
+  category_id: string;
+  price: string | number;
+  duration: number;
+};
+
 export type CategoryItem = {
   id: string;
   name: string;
@@ -13,6 +20,7 @@ export type CategoryItem = {
   image_url: string | null;
   usage_count: number; // Số lần sử dụng
   description: string | null;
+  prices?: CategoryPriceItem[];
 };
 
 export type CategoryListFilterPatch = Partial<CategoryListRequest['filter']>;
