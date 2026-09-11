@@ -61,7 +61,7 @@ export const useBookingCountdown = () => {
         if (prevNotif) {
           try {
             await Notifications.cancelScheduledNotificationAsync(prevNotif);
-          } catch {}
+          } catch { }
         }
         await queryClient.invalidateQueries({
           queryKey: ['bookingApi-details-ktv', bookingStart.booking_id],
@@ -260,7 +260,7 @@ export const useBooking = (id: string, mode: BookingDetailMode = 'booking') => {
           },
         ]
       );
-    }else{
+    } else {
       // bắt đầu dịch vụ
       startBookingMutate(data.id, {
         onSuccess: async (res) => {

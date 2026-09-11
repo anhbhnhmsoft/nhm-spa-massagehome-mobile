@@ -85,12 +85,10 @@ export default function BookingItemKtv({
   // {distance ? formatDistance(distance) : '-'}
 
   return (
-    <Pressable
-      onPress={useSingleTouch(() => onPress?.(item))}
-      className="overflow-hidden rounded-xl border border-blue-100 bg-white px-3 py-2">
+    <View className="overflow-hidden rounded-xl border border-blue-100 bg-white px-3 py-2">
       {/* Badge status */}
       <View
-        className="absolute right-0 top-0 rounded-bl-lg px-2 py-0.5"
+        className="absolute right-0 top-0 z-10 rounded-bl-lg px-2 py-0.5"
         style={{
           backgroundColor: styles.background,
         }}>
@@ -103,8 +101,10 @@ export default function BookingItemKtv({
         </Text>
       </View>
 
-      {/* Main content */}
-      <View className="flex-1">
+      {/* Main content clickable */}
+      <Pressable
+        onPress={useSingleTouch(() => onPress?.(item))}
+        className="flex-1 active:opacity-75">
         {/* title on blue block */}
         <Text className="pr-28 font-inter-semibold text-[15px] text-primary-color-2" numberOfLines={1}>
           {item.user.name}
@@ -157,89 +157,89 @@ export default function BookingItemKtv({
             </Text>
           </View>
         ) : null}
+      </Pressable>
 
-        <View className="mt-2 flex-row flex-wrap gap-1.5">
-          {item.can_open_map ? (
-            <Pressable
-              className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5"
-              onPress={() => {
-                if (!item?.lat && !item?.lng) {
-                  return;
-                }
-                openMap(item?.lat, item?.lng);
-              }}>
-              <Icon as={Navigation2} size={13} className="mr-1.5 text-white" />
-              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
-                {t('booking.see_directions')}
-              </Text>
-            </Pressable>
-          ) : null}
-          {isApplicationBooking && isOriginalKtv ? (
-            <Pressable
-              disabled={confirmDisabled}
-              className={cn(
-                'min-w-[92px] flex-1 flex-row items-center justify-center rounded-md px-2 py-1.5',
-                confirmDisabled ? 'bg-slate-300' : 'bg-primary-color-2'
-              )}
-              onPress={() => onConfirmNow?.(item)}
-            >
-              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
-                {confirming ? t('common.loading') : t('booking.confirm_booking_action')}
-              </Text>
-            </Pressable>
-          ) : null}
-          {isApplicationBooking && !isOriginalKtv ? (
-            <Pressable
-              disabled={applicationDisabled}
-              className={cn(
-                'min-w-[92px] flex-1 flex-row items-center justify-center rounded-md px-2 py-1.5',
-                applicationDisabled ? 'bg-slate-300' : 'bg-primary-color-2'
-              )}
-              onPress={() => onApplyNow?.(item)}
-            >
-              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
-                {applying ? t('common.loading') : applicationDisabled ? t('booking.applied_label') : t('booking.apply_now')}
-              </Text>
-            </Pressable>
-          ) : null}
-          {item.can_chat ? (
-            <Pressable
-              className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5"
-              onPress={() => {
-                if (item?.user?.id) {
-                  joinRoomChat(
-                    {
-                      user_id: item?.user?.id,
-                    },
-                    'ktv'
-                  );
-                }
-              }}>
-              <Icon as={MessageCircle} size={13} className="mr-1.5 text-white" />
-              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>{t('booking.inbox')}</Text>
-            </Pressable>
-          ) : null}
-          {item.can_call ? (
-            <Pressable
-              className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5"
-              onPress={async () => {
-                const phoneNumber = item?.user?.phone;
-                if (phoneNumber) {
-                  await Linking.openURL(`tel:${phoneNumber}`);
-                } else {
-                  Alert.alert(
-                    t('common.no_phone'),
-                    t('common.no_phone_message'),
-                    [{ text: t('common.ok') }]
-                  );
-                }
-              }}>
-              <Icon as={Phone} size={13} className="mr-1.5 text-white" />
-              <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>{t('common.call')}</Text>
-            </Pressable>
-          ) : null}
-        </View>
+      <View className="mt-2 flex-row flex-wrap gap-1.5">
+        {item.can_open_map ? (
+          <Pressable
+            className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5 active:opacity-80"
+            onPress={() => {
+              if (!item?.lat && !item?.lng) {
+                return;
+              }
+              openMap(item?.lat, item?.lng);
+            }}>
+            <Icon as={Navigation2} size={13} className="mr-1.5 text-white" />
+            <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
+              {t('booking.see_directions')}
+            </Text>
+          </Pressable>
+        ) : null}
+        {isApplicationBooking && isOriginalKtv ? (
+          <Pressable
+            disabled={confirmDisabled}
+            className={cn(
+              'min-w-[92px] flex-1 flex-row items-center justify-center rounded-md px-2 py-1.5',
+              confirmDisabled ? 'bg-slate-300' : 'bg-primary-color-2'
+            )}
+            onPress={() => onConfirmNow?.(item)}
+          >
+            <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
+              {confirming ? t('common.loading') : t('booking.confirm_booking_action')}
+            </Text>
+          </Pressable>
+        ) : null}
+        {isApplicationBooking && !isOriginalKtv ? (
+          <Pressable
+            disabled={applicationDisabled}
+            className={cn(
+              'min-w-[92px] flex-1 flex-row items-center justify-center rounded-md px-2 py-1.5',
+              applicationDisabled ? 'bg-slate-300' : 'bg-primary-color-2'
+            )}
+            onPress={() => onApplyNow?.(item)}
+          >
+            <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>
+              {applying ? t('common.loading') : applicationDisabled ? t('booking.applied_label') : t('booking.apply_now')}
+            </Text>
+          </Pressable>
+        ) : null}
+        {item.can_chat ? (
+          <Pressable
+            className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5 active:opacity-80"
+            onPress={() => {
+              if (item?.user?.id) {
+                joinRoomChat(
+                  {
+                    user_id: item?.user?.id,
+                  },
+                  'ktv'
+                );
+              }
+            }}>
+            <Icon as={MessageCircle} size={13} className="mr-1.5 text-white" />
+            <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>{t('booking.inbox')}</Text>
+          </Pressable>
+        ) : null}
+        {item.can_call ? (
+          <Pressable
+            className="min-w-[92px] flex-1 flex-row items-center justify-center rounded-md bg-primary-color-2 px-2 py-1.5 active:opacity-80"
+            onPress={async () => {
+              const phoneNumber = item?.user?.phone;
+              if (phoneNumber) {
+                await Linking.openURL(`tel:${phoneNumber}`);
+              } else {
+                Alert.alert(
+                  t('common.no_phone'),
+                  t('common.no_phone_message'),
+                  [{ text: t('common.ok') }]
+                );
+              }
+            }}>
+            <Icon as={Phone} size={13} className="mr-1.5 text-white" />
+            <Text className="font-inter-medium text-[12px] text-white" numberOfLines={1}>{t('common.call')}</Text>
+          </Pressable>
+        ) : null}
       </View>
-    </Pressable>
+    </View>
   );
 }
