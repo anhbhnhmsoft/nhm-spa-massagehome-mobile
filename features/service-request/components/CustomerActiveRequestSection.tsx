@@ -118,7 +118,7 @@ export const CustomerActiveRequestSection: React.FC = () => {
               <View className="mb-3 flex-row items-start justify-between">
                 <View className="flex-1 mr-2">
                   <Text className="text-[11px] font-inter-semibold text-slate-400 mb-0.5">
-                    Mã yêu cầu: #{req.id}
+                    {t('service_request_form.request_code', 'Mã yêu cầu')}: #{req.id}
                   </Text>
                   <Text className="font-inter-bold text-base text-slate-900 leading-6" numberOfLines={2}>
                     {serviceTitle}
@@ -127,7 +127,7 @@ export const CustomerActiveRequestSection: React.FC = () => {
                 {req.service?.price ? (
                   <View className="rounded-xl bg-emerald-50 px-2.5 py-1 border border-emerald-200">
                     <Text className="font-inter-bold text-sm text-emerald-700">
-                      {formatBalance(req.service.price)} đ
+                      {formatBalance(req.service.price)} {t('common.currency', 'đ')}
                     </Text>
                   </View>
                 ) : null}
@@ -143,11 +143,12 @@ export const CustomerActiveRequestSection: React.FC = () => {
                 </View>
               ) : null}
 
-              {(req.preferred_date || req.time_slot) && (
+              {(req.preferred_date || req.time_slot || req.duration) && (
                 <View className="mb-3 flex-row items-center rounded-xl bg-slate-50 px-3 py-1.5 border border-slate-100">
                   <Clock size={14} color="#64748B" />
                   <Text className="ml-1.5 font-inter-medium text-xs text-slate-600">
-                    {req.preferred_date ? dayjs(req.preferred_date).format('DD/MM/YYYY') : ''}{' '}
+                    {req.duration ? `${req.duration} ${t('common.minute', 'phút')} ` : ''}
+                    {req.preferred_date ? `• ${dayjs(req.preferred_date).format('DD/MM/YYYY')}` : ''}{' '}
                     {req.time_slot ? `(${req.time_slot})` : ''}
                   </Text>
                 </View>
