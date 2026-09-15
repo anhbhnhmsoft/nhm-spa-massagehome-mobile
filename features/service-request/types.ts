@@ -28,7 +28,7 @@ export enum _ProposalStatus {
 export interface _CreateServiceRequestInput {
   service_id: string | number;
   duration?: number;
-  preferred_techniques?: string[];
+  preferred_techniques?: number[];
   province_code?: string;
   district_code?: string;
   ward_code?: string;
@@ -70,7 +70,7 @@ export interface _ServiceRequestInfo {
   cskh_id?: string;
   service_id: number | string;
   duration?: number;
-  preferred_techniques?: string[];
+  preferred_techniques?: (number | string)[];
   province_code?: string;
   district_code?: string;
   ward_code?: string;

@@ -22,7 +22,7 @@ export type CustomerCrmPreferences = {
   ward_id?: string | null;
   address_detail?: string | null;
   preferred_services: string[];
-  preferred_techniques: string[];
+  preferred_techniques: (number | string)[];
   preferred_time_slots: number[];
   demand_status: number;
 };

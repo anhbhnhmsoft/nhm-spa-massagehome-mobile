@@ -9,7 +9,7 @@ export interface MaskedCustomerType {
 export interface NearbyDemandItemType {
   request_id: number | string;
   service_name: string;
-  preferred_techniques?: string[];
+  preferred_techniques?: (number | string)[];
   preferred_date?: string;
   time_slot?: string;
   urgency_level?: string;

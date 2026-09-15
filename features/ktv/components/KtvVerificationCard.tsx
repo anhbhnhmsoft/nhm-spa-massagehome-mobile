@@ -6,7 +6,12 @@ import { Card } from '@/components/ui/card';
 import { CheckCircle2, XCircle, ShieldCheck, Award, MapPin, Wrench } from 'lucide-react-native';
 import DefaultColor from '@/components/styles/color';
 import { KtvVerificationInfo } from '@/features/ktv/types';
-import { _KtvTechniqueLabels, _KtvServiceLocationLabels } from '@/features/ktv/consts';
+import {
+  _KtvTechnique,
+  _KtvTechniqueLabels,
+  _KtvServiceLocationLabels,
+  normalizeKtvTechniqueIds,
+} from '@/features/ktv/consts';
 import { useUpdateKtvVerificationMutation } from '@/features/ktv/hooks/use-mutation';
 
 interface KtvVerificationCardProps {
@@ -19,8 +24,8 @@ export const KtvVerificationCard: React.FC<KtvVerificationCardProps> = ({
   onRefresh,
 }) => {
   const { t } = useTranslation();
-  const [selectedTechniques, setSelectedTechniques] = useState<string[]>(
-    verification?.techniques || []
+  const [selectedTechniques, setSelectedTechniques] = useState<_KtvTechnique[]>(
+    normalizeKtvTechniqueIds(verification?.techniques)
   );
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     verification?.service_locations || []
@@ -28,7 +33,7 @@ export const KtvVerificationCard: React.FC<KtvVerificationCardProps> = ({
 
   const updateMutation = useUpdateKtvVerificationMutation();
 
-  const handleToggleTechnique = (tech: string) => {
+  const handleToggleTechnique = (tech: _KtvTechnique) => {
     const updated = selectedTechniques.includes(tech)
       ? selectedTechniques.filter((t) => t !== tech)
       : [...selectedTechniques, tech];
@@ -163,11 +168,12 @@ export const KtvVerificationCard: React.FC<KtvVerificationCardProps> = ({
 
         <View className="flex-row flex-wrap gap-2">
           {Object.entries(_KtvTechniqueLabels).map(([key, labelKey]) => {
-            const isSelected = selectedTechniques.includes(key);
+            const techniqueId = Number(key) as _KtvTechnique;
+            const isSelected = selectedTechniques.includes(techniqueId);
             return (
               <TouchableOpacity
                 key={key}
-                onPress={() => handleToggleTechnique(key)}
+                onPress={() => handleToggleTechnique(techniqueId)}
                 className={`px-3 py-2 rounded-full border ${
                   isSelected
                     ? 'bg-emerald-50 border-emerald-500'

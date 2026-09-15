@@ -44,7 +44,7 @@ export type ListKTVItem = {
     is_priority?: boolean;
     portrait_verified?: boolean;
     certificate_verified?: boolean;
-    techniques?: string[];
+    techniques?: (number | string)[];
     strength_service_ids?: (number | string)[];
   };
   location: {

@@ -10,6 +10,7 @@ import { Text } from '@/components/ui/text';
 import { MapPin, Clock, Send } from 'lucide-react-native';
 import { NearbyDemandItemType } from '../types';
 import { useSendInviteMutation } from '../hooks/use-mutation';
+import { getKtvTechniqueLabel } from '@/features/ktv/consts';
 
 interface NearbyDemandCardProps {
   item: NearbyDemandItemType;
@@ -65,7 +66,7 @@ export const NearbyDemandCard: React.FC<NearbyDemandCardProps> = ({
         <View className="flex-row flex-wrap gap-1.5 mb-2">
           {item.preferred_techniques.map((tech, idx) => (
             <View key={idx} className="bg-slate-100 px-2 py-1 rounded-md">
-              <Text className="text-xs text-slate-600">{tech}</Text>
+              <Text className="text-xs text-slate-600">{getKtvTechniqueLabel(tech, t)}</Text>
             </View>
           ))}
         </View>

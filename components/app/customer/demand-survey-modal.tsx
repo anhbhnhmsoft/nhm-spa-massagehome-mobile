@@ -10,6 +10,7 @@ import { useMutationUpdateCrmPreferences } from '@/features/profile/hooks/use-mu
 import { useQueryCrmPreferences } from '@/features/profile/hooks/use-query';
 import useToast from '@/features/app/hooks/use-toast';
 import { useAuthStore } from '@/features/auth/stores';
+import { _KtvTechnique, normalizeKtvTechniqueIds } from '@/features/ktv/consts';
 
 interface DemandSurveyModalProps {
   visible: boolean;
@@ -33,11 +34,11 @@ const SERVICE_OPTIONS = [
 ];
 
 const TECHNIQUE_OPTIONS = [
-  { value: 'acupressure', label: 'Ấn huyệt' },
-  { value: 'massage', label: 'Xoa bóp' },
-  { value: 'therapy', label: 'Trị liệu chuyên sâu' },
-  { value: 'stretching', label: 'Giãn cơ' },
-  { value: 'essential_oil', label: 'Thư giãn tinh dầu' },
+  { value: _KtvTechnique.ACUPRESSURE, label: 'Ấn huyệt' },
+  { value: _KtvTechnique.MASSAGE, label: 'Xoa bóp' },
+  { value: _KtvTechnique.THERAPY, label: 'Trị liệu chuyên sâu' },
+  { value: _KtvTechnique.STRETCHING, label: 'Giãn cơ' },
+  { value: _KtvTechnique.AROMA_RELAX, label: 'Thư giãn tinh dầu' },
 ];
 
 const TIME_SLOT_OPTIONS = [
@@ -69,7 +70,7 @@ export const DemandSurveyModal: React.FC<DemandSurveyModalProps> = ({
 
   const [languages, setLanguages] = useState<string[]>(['vi']);
   const [preferredServices, setPreferredServices] = useState<string[]>([]);
-  const [preferredTechniques, setPreferredTechniques] = useState<string[]>([]);
+  const [preferredTechniques, setPreferredTechniques] = useState<_KtvTechnique[]>([]);
   const [preferredTimeSlots, setPreferredTimeSlots] = useState<number[]>([]);
   const [demandStatus, setDemandStatus] = useState<number>(2);
 
@@ -77,7 +78,7 @@ export const DemandSurveyModal: React.FC<DemandSurveyModalProps> = ({
     if (initialData) {
       setLanguages(initialData.languages || ['vi']);
       setPreferredServices(initialData.preferred_services || []);
-      setPreferredTechniques(initialData.preferred_techniques || []);
+      setPreferredTechniques(normalizeKtvTechniqueIds(initialData.preferred_techniques));
       setPreferredTimeSlots(initialData.preferred_time_slots || []);
       setDemandStatus(initialData.demand_status || 2);
     }

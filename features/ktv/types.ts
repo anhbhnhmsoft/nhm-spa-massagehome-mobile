@@ -153,7 +153,7 @@ export type KtvVerificationInfo = {
   portrait_verified_at?: string | null;
   certificate_verified: boolean;
   certificates: Array<{ id: string; file_path: string; uploaded_at?: string }>;
-  techniques: string[];
+  techniques: (number | string)[];
   strength_service_ids: number[];
   province_code?: string | null;
   district_code?: string | null;
@@ -164,7 +164,7 @@ export type KtvVerificationInfo = {
 
 export type UpdateVerificationRequest = {
   contact_phone?: string;
-  techniques?: string[];
+  techniques?: number[];
   strength_service_ids?: number[];
   province_code?: string;
   district_code?: string;

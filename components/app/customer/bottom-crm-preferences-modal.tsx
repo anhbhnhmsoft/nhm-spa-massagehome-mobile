@@ -15,6 +15,7 @@ import { Globe, Sparkles, Wrench, Clock, Target, Check, X } from 'lucide-react-n
 import { CustomerCrmPreferences } from '@/features/profile/types';
 import { useMutationUpdateCrmPreferences } from '@/features/profile/hooks/use-mutation';
 import useToast from '@/features/app/hooks/use-toast';
+import { _KtvTechnique, normalizeKtvTechniqueIds } from '@/features/ktv/consts';
 
 export interface BottomCrmPreferencesModalProps {
   initialData?: CustomerCrmPreferences;
@@ -37,11 +38,11 @@ const SERVICE_OPTIONS = [
 ];
 
 const TECHNIQUE_OPTIONS = [
-  { value: 'acupressure', labelKey: 'crm.technique.acupressure', defaultLabel: 'Ấn huyệt' },
-  { value: 'massage', labelKey: 'crm.technique.massage', defaultLabel: 'Xoa bóp' },
-  { value: 'therapy', labelKey: 'crm.technique.therapy', defaultLabel: 'Trị liệu chuyên sâu' },
-  { value: 'stretching', labelKey: 'crm.technique.stretching', defaultLabel: 'Giãn cơ' },
-  { value: 'essential_oil', labelKey: 'crm.technique.essential_oil', defaultLabel: 'Thư giãn tinh dầu' },
+  { value: _KtvTechnique.ACUPRESSURE, labelKey: 'crm.technique.acupressure', defaultLabel: 'Ấn huyệt' },
+  { value: _KtvTechnique.MASSAGE, labelKey: 'crm.technique.massage', defaultLabel: 'Xoa bóp' },
+  { value: _KtvTechnique.THERAPY, labelKey: 'crm.technique.therapy', defaultLabel: 'Trị liệu chuyên sâu' },
+  { value: _KtvTechnique.STRETCHING, labelKey: 'crm.technique.stretching', defaultLabel: 'Giãn cơ' },
+  { value: _KtvTechnique.AROMA_RELAX, labelKey: 'crm.technique.essential_oil', defaultLabel: 'Thư giãn tinh dầu' },
 ];
 
 const TIME_SLOT_OPTIONS = [
@@ -69,7 +70,7 @@ export const BottomCrmPreferencesModal = forwardRef<
 
   const [languages, setLanguages] = useState<string[]>([]);
   const [preferredServices, setPreferredServices] = useState<string[]>([]);
-  const [preferredTechniques, setPreferredTechniques] = useState<string[]>([]);
+  const [preferredTechniques, setPreferredTechniques] = useState<_KtvTechnique[]>([]);
   const [preferredTimeSlots, setPreferredTimeSlots] = useState<number[]>([]);
   const [demandStatus, setDemandStatus] = useState<number>(2);
 
@@ -77,7 +78,7 @@ export const BottomCrmPreferencesModal = forwardRef<
     if (initialData) {
       setLanguages(initialData.languages || ['vi']);
       setPreferredServices(initialData.preferred_services || []);
-      setPreferredTechniques(initialData.preferred_techniques || []);
+      setPreferredTechniques(normalizeKtvTechniqueIds(initialData.preferred_techniques));
       setPreferredTimeSlots(initialData.preferred_time_slots || []);
       setDemandStatus(initialData.demand_status || 2);
     }

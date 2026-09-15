@@ -14,6 +14,7 @@ import { Icon } from '@/components/ui/icon';
 import BaseBottomModal from '@/components/ui/base-bottom-modal';
 import { useCreateServiceRequestMutation } from '@/features/service-request/hooks/use-mutation';
 import { _UrgencyLevel } from '@/features/service-request/types';
+import { _KtvTechnique } from '@/features/ktv/consts';
 import { cn, formatBalance } from '@/lib/utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApplicationStore } from '@/features/app/stores';
@@ -31,11 +32,11 @@ interface CreateServiceRequestModalProps {
 }
 
 const TECHNIQUES_OPTIONS = [
-  { id: 'acupressure', labelKey: 'admin.ktv_technique.acupressure', defaultLabel: 'Ấn huyệt' },
-  { id: 'massage', labelKey: 'admin.ktv_technique.massage', defaultLabel: 'Xoa bóp' },
-  { id: 'therapy', labelKey: 'admin.ktv_technique.therapy', defaultLabel: 'Trị liệu' },
-  { id: 'stretching', labelKey: 'admin.ktv_technique.stretching', defaultLabel: 'Giãn cơ' },
-  { id: 'essential_oil', labelKey: 'admin.ktv_technique.essential_oil', defaultLabel: 'Tinh dầu' },
+  { id: _KtvTechnique.ACUPRESSURE, labelKey: 'admin.ktv_technique.acupressure', defaultLabel: 'Ấn huyệt' },
+  { id: _KtvTechnique.MASSAGE, labelKey: 'admin.ktv_technique.massage', defaultLabel: 'Xoa bóp' },
+  { id: _KtvTechnique.THERAPY, labelKey: 'admin.ktv_technique.therapy', defaultLabel: 'Trị liệu' },
+  { id: _KtvTechnique.STRETCHING, labelKey: 'admin.ktv_technique.stretching', defaultLabel: 'Giãn cơ' },
+  { id: _KtvTechnique.AROMA_RELAX, labelKey: 'admin.ktv_technique.essential_oil', defaultLabel: 'Tinh dầu' },
 ];
 
 export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps> = ({
@@ -51,7 +52,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
 
   const [selectedServiceId, setSelectedServiceId] = useState<string | number>(propServiceId || '');
   const [selectedDuration, setSelectedDuration] = useState<number>(60);
-  const [selectedTechniques, setSelectedTechniques] = useState<string[]>([]);
+  const [selectedTechniques, setSelectedTechniques] = useState<_KtvTechnique[]>([]);
   const [urgencyLevel, setUrgencyLevel] = useState<_UrgencyLevel>(_UrgencyLevel.NEED_NOW);
   const [address, setAddress] = useState<string>('');
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
@@ -107,7 +108,7 @@ export const CreateServiceRequestModal: React.FC<CreateServiceRequestModalProps>
     }
   }, [visible, locationUser]);
 
-  const toggleTechnique = (id: string) => {
+  const toggleTechnique = (id: _KtvTechnique) => {
     setSelectedTechniques((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );

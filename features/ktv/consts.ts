@@ -89,13 +89,35 @@ export const _DefaultValueFormConfigSchedule: EditConfigScheduleRequest = {
   is_working: false,
 };
 
+// Khớp App\Enums\KtvTechnique phía backend
 export enum _KtvTechnique {
-  ACUPRESSURE = 'acupressure',
-  MASSAGE = 'massage',
-  THERAPY = 'therapy',
-  STRETCHING = 'stretching',
-  AROMA_RELAX = 'aroma_relax',
+  ACUPRESSURE = 1,
+  MASSAGE = 2,
+  THERAPY = 3,
+  STRETCHING = 4,
+  AROMA_RELAX = 5,
 }
+
+// Dữ liệu cũ trong DB có thể còn lưu mã chuỗi
+const _LegacyKtvTechniqueCodes: Record<string, _KtvTechnique> = {
+  acupressure: _KtvTechnique.ACUPRESSURE,
+  massage: _KtvTechnique.MASSAGE,
+  therapy: _KtvTechnique.THERAPY,
+  stretching: _KtvTechnique.STRETCHING,
+  essential_oil: _KtvTechnique.AROMA_RELAX,
+  aroma_relax: _KtvTechnique.AROMA_RELAX,
+};
+
+export const normalizeKtvTechniqueIds = (
+  values?: (string | number)[] | null
+): _KtvTechnique[] => {
+  const ids = (values ?? [])
+    .map((v) =>
+      typeof v === 'string' && v in _LegacyKtvTechniqueCodes ? _LegacyKtvTechniqueCodes[v] : Number(v)
+    )
+    .filter((v): v is _KtvTechnique => Object.values(_KtvTechnique).includes(v));
+  return Array.from(new Set(ids));
+};
 
 export const _KtvTechniqueLabels: Record<_KtvTechnique, string> = {
   [_KtvTechnique.ACUPRESSURE]: 'enum.KtvTechnique.acupressure',
