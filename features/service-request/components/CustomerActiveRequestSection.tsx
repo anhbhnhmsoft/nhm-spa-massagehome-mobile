@@ -47,7 +47,7 @@ export const CustomerActiveRequestSection: React.FC = () => {
   }
 
   return (
-    <View className="mb-6 px-4">
+    <View className="mt-4 mb-6 px-4">
       {activeRequests.map((req) => {
         const serviceTitle =
           getLocalizedText(req.service?.title, i18n.language) ||
