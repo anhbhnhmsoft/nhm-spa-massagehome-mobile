@@ -18,6 +18,7 @@ import {
   CreateServiceRequestModal,
   CustomerActiveRequestSection,
 } from '@/features/service-request/components';
+import { useActiveCustomerServiceRequestsQuery } from '@/features/service-request/hooks/use-query';
 
 import { useCheckAuthToRedirect } from '@/features/auth/hooks';
 
@@ -30,6 +31,9 @@ export default function UserDashboard() {
 
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showCskhModal, setShowCskhModal] = useState(false);
+  const { data: activeServiceRequests } = useActiveCustomerServiceRequestsQuery({
+    refetchInterval: 4000,
+  });
 
   const bannerQuery = useListBannerQuery();
 
@@ -73,7 +77,9 @@ export default function UserDashboard() {
         <InviteIndividualHomepage t={t} />
 
         {/* --- CSKH MATCHING PROACTIVE BANNER --- */}
-        <CskhMatchingBanner t={t} onPress={() => redirectAuth(() => setShowCskhModal(true))} />
+        {!activeServiceRequests?.length && (
+          <CskhMatchingBanner t={t} onPress={() => redirectAuth(() => setShowCskhModal(true))} />
+        )}
 
         {/* --- CSKH ACTIVE REQUESTS & PROPOSALS --- */}
         <CustomerActiveRequestSection />

@@ -1,14 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Clock, CheckCircle2, Headphones, MapPin } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import { Text } from '@/components/ui/text';
-import { useCustomerServiceRequestsQuery } from '@/features/service-request/hooks/use-query';
+import { useActiveCustomerServiceRequestsQuery } from '@/features/service-request/hooks/use-query';
 import {
   _ProposalStatus,
   _ServiceRequestInfo,
-  _ServiceRequestStatus,
   _UrgencyLevel,
 } from '@/features/service-request/types';
 import { KtvProposalCard } from './KtvProposalCard';
@@ -38,23 +37,10 @@ const getLocalizedText = (value: any, lang = 'vi'): string => {
 
 export const CustomerActiveRequestSection: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { data: requests, refetch } = useCustomerServiceRequestsQuery({
+  const { data: activeRequests, refetch } = useActiveCustomerServiceRequestsQuery({
     refetchInterval: 4000,
   });
   const { success } = useToast();
-
-  const activeRequests = useMemo(() => {
-    if (!requests || !Array.isArray(requests)) return [];
-    return requests.filter((r) =>
-      [
-        _ServiceRequestStatus.NEW,
-        _ServiceRequestStatus.ASSIGNED,
-        _ServiceRequestStatus.SEARCHING_KTV,
-        _ServiceRequestStatus.PROPOSAL_SENT,
-        _ServiceRequestStatus.WAITING_CUSTOMER_CONFIRM,
-      ].includes(r.status)
-    );
-  }, [requests]);
 
   if (!activeRequests || activeRequests.length === 0) {
     return null;
