@@ -339,25 +339,7 @@ export const useListLocation = (visible: boolean = true) => {
     }
   }, [status]);
 
-  // Ngay khi mở modal / màn hình "Địa chỉ đã lưu" (visible === true):
-  // Chủ động lấy/làm mới vị trí GPS hiện tại ngay lập tức để sẵn sàng từ sớm
-  useEffect(() => {
-    if (visible) {
-      (async () => {
-        try {
-          if (!location) {
-            setIsLocating(true);
-          }
-          await getCurrentLocation();
-        } catch {
-          // Bỏ qua lỗi ngầm khi dò vị trí
-        } finally {
-          setIsLocating(false);
-        }
-      })();
-    }
-  }, [visible]);
-
+  // Không tự động lấy lại GPS khi mở modal để tránh ghi đè địa chỉ người dùng đã chọn
   useEffect(() => {
     // Nếu cần refresh danh sách
     if (refresh_list) {

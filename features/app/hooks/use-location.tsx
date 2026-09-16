@@ -6,7 +6,7 @@ import { useMutationSetDefaultAddress } from '@/features/location/hooks/use-muta
 import { useTranslation } from 'react-i18next';
 import { _TIME_OUT_LOADING_SCREEN_LAYOUT } from '@/lib/const';
 import { useAuthStore } from '@/features/auth/stores';
-import { _AuthStatus } from '@/features/auth/const';
+import { _AuthStatus, _UserRole } from '@/features/auth/const';
 
 /**
  * Kiểm tra có phải là sự thay đổi đáng kể hay không
@@ -134,7 +134,12 @@ export const useLocation = ({ enabled = true }: { enabled?: boolean } = {}) => {
       if (currentPos) {
         const formatted = await formatLocation(currentPos);
         if (formatted) {
-          setAppLocation(formatted);
+          const currentStoreLocation = useApplicationStore.getState().location;
+          const userRole = useAuthStore.getState().user?.role;
+          // Chỉ set nếu chưa có location trong store hoặc là KTV
+          if (!currentStoreLocation || userRole === _UserRole.KTV) {
+            setAppLocation(formatted);
+          }
           // Gửi lên server luôn nếu đã có Auth
           if (statusAuth === _AuthStatus.AUTHORIZED) {
             mutation.mutate({
@@ -158,13 +163,16 @@ export const useLocation = ({ enabled = true }: { enabled?: boolean } = {}) => {
         },
         async (locationObject) => {
           const oldLocation = useApplicationStore.getState().location;
+          const userRole = useAuthStore.getState().user?.role;
           const newLocation = await formatLocation(locationObject);
 
           if (newLocation) {
-            // So sánh vị trí mới với vị trí cũ
-            const check = isSignificantChange(oldLocation?.location ?? null, newLocation.location);
-            if (check) {
-              setAppLocation(newLocation);
+            // Không tự động ghi đè nếu customer đã có địa chỉ trong store
+            if (!oldLocation || userRole === _UserRole.KTV) {
+              const check = isSignificantChange(oldLocation?.location ?? null, newLocation.location);
+              if (check) {
+                setAppLocation(newLocation);
+              }
             }
           }
         }

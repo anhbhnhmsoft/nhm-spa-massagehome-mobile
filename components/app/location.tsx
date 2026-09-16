@@ -74,11 +74,9 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
             <View className="border-b-2 border-b-gray-100 pb-4">
               <TouchableOpacity
                 activeOpacity={0.8}
+                disabled={isLocating}
                 onPress={async () => {
-                  let loc = location;
-                  if (!loc) {
-                    loc = await getCurrentLocation();
-                  }
+                  const loc = await getCurrentLocation();
                   if (loc) {
                     if (onSelect) {
                       onSelect({
@@ -93,40 +91,33 @@ export const ListLocationModal = ({ visible, onClose, onSelect }: ListLocationMo
                     }
                   }
                 }}
-                className="flex-row items-center justify-between rounded-xl border border-gray-100 bg-orange-50 p-4 active:bg-orange-100">
+                className="flex-row items-center justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4 active:bg-blue-100">
                 {/* ICON BÊN TRÁI */}
-                <View
-                  className={
-                    'mr-4 h-10 w-10 items-center justify-center rounded-full bg-orange-100'
-                  }>
-                  {isLocating && !location ? (
-                    <ActivityIndicator size="small" color="#F97316" />
+                <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                  {isLocating ? (
+                    <ActivityIndicator size="small" color="#0284c7" />
                   ) : (
-                    <Icon as={Star} size={20} className={'text-orange-500'} fill={'currentColor'} />
+                    <Icon as={MapPin} size={20} className="text-primary-color-2" />
                   )}
                 </View>
                 {/* NỘI DUNG TEXT */}
                 <View className="flex-1 pr-2">
                   <View className="flex-row items-center gap-2">
                     <Text className="font-inter-bold text-base text-slate-800" numberOfLines={1}>
-                      {location
-                        ? location.address.split(',')[0]
-                        : isLocating
-                        ? t('location.locating_current')
-                        : t('header_app.need_location')}
+                      {t('location.use_current_location')}
                     </Text>
                   </View>
 
-                  {/* Địa chỉ chi tiết */}
-                  <Text className="mt-0.5 text-sm text-orange-500" numberOfLines={1}>
-                    {location ? location.address : t('location.primary_address')}
+                  {/* Mô tả phụ */}
+                  <Text className="mt-0.5 text-sm text-slate-500" numberOfLines={1}>
+                    {t('location.get_current_location')}
                   </Text>
                 </View>
 
                 {/* NÚT THAO TÁC (KHI QUẢN LÝ ĐỊA CHỈ) */}
                 {!onSelect && (
-                  <View className="rounded-lg bg-orange-500/10 px-2.5 py-1.5">
-                    <Text className="font-inter-medium text-xs text-orange-600">
+                  <View className="rounded-lg bg-primary-color-2/10 px-2.5 py-1.5">
+                    <Text className="font-inter-medium text-xs text-primary-color-2">
                       {t('location.save_this_address')}
                     </Text>
                   </View>
